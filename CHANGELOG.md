@@ -8,6 +8,12 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **LP: link do WhatsApp plugado** — 2026-07-20
+  - Botão flutuante e link "Suporte no WhatsApp" do rodapé agora apontam para
+    `https://wa.me/message/W2USYZZK75FMC1` (antes `href="#"`), com `target="_blank"`.
+  - Passo embutido em `scripts/port-lp.mjs` (sobrevive a reexecuções do porte).
+  - Pendências ainda a povoar: URL do checkout Guru, Termos de uso e Privacidade·LGPD.
+
 - **LP: glow pulsante no card de preço da Oferta** — 2026-07-20
   - Aplicado o mesmo efeito `.vs-hl` (animação `@keyframes vsGlow`, halo dourado
     pulsante) usado no box verde da seção "A Diferença" ao card de preço (R$ 397)

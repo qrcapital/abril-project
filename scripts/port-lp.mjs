@@ -57,6 +57,25 @@ body = body.replace(/<img\b(?![^>]*\bdecoding=)/gi, '<img decoding="async"');
   if (body === before) console.warn('AVISO: card de preco nao encontrado para o glow (.vs-hl) — revisar seletor.');
 }
 
+// 8) pluga o link do WhatsApp (botao flutuante + link do rodape), que vem como
+//    href="#" no bundle. Trocar aqui caso o canal mude.
+{
+  const WHATSAPP = 'https://wa.me/message/W2USYZZK75FMC1';
+  let n = 0;
+  const rel = `href="${WHATSAPP}" target="_blank" rel="noopener"`;
+  // botao flutuante: identificado pelo title de placeholder
+  body = body.replace(
+    /<a href="#"(\s+title="Suporte via WhatsApp)[^"]*"/,
+    (_, g1) => { n++; return `<a ${rel}${g1}"`; }
+  );
+  // link "Suporte no WhatsApp" no rodape
+  body = body.replace(
+    /<a href="#"(\s+style="[^"]*">Suporte no WhatsApp<\/a>)/,
+    (_, g1) => { n++; return `<a ${rel}${g1}`; }
+  );
+  if (n < 2) console.warn(`AVISO: WhatsApp plugado em ${n}/2 pontos — revisar seletores.`);
+}
+
 fs.writeFileSync('app/_lp/styles.css', styles.trim());
 fs.writeFileSync('app/_lp/body.html', body.trim());
 console.log('styles.css:', styles.length, 'body.html:', body.length);
