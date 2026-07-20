@@ -8,6 +8,18 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **Área do aluno: tela de Login (P1)** — 2026-07-20
+  - Primeira tela da área interna (`/app/login`), design portado fiel do bundle
+    `Area-do-Aluno.html` (split "Bem-vindo de volta" + marca VEJA × BlockTrends).
+  - Novo pipeline `scripts/port-area.mjs`: extrai assets (WebP), CSS e cada tela
+    (bloco `<sc-if>`, resolvido para o estado padrão via `hint-placeholder-val`).
+  - Infra da área: `app/app/layout.tsx` (injeta o CSS, tema dark, `noindex`),
+    `AreaInteractions` (hover + focus, com MutationObserver para telas futuras).
+  - Interatividade de homolog: "Entrar" navega para `/app` (auth Supabase depois),
+    "Fale no WhatsApp" ligado. "Esqueci minha senha" fica placeholder até a rota existir.
+  - Próximas telas: Home (P2), Aula (P3), Prova (P4), Resultado (P5), Certificado (P6),
+    Minha conta (P7).
+
 - **LP: rodapé reestruturado** — 2026-07-20
   - Rodapé de uma linha substituído por um estruturado, inspirado no
     `cca.blocktrends.com.br` (mesma empresa): colunas **Institucional** (nav para as
