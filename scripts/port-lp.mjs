@@ -1,17 +1,24 @@
-import fs from 'node:fs'; import zlib from 'node:zlib';
+import fs from 'node:fs'; import zlib from 'node:zlib'; import sharp from 'sharp';
 const raw = fs.readFileSync('referencias/htmls/LP-Estrategia-Internacional.html','utf8');
 const grab = (tag) => { const o=raw.indexOf(tag); const s=raw.indexOf('>',o)+1; const e=raw.indexOf('</script>',s); return raw.slice(s,e).trim(); };
 const mani = JSON.parse(grab('<script type="__bundler/manifest">'));
 let html = JSON.parse(grab('<script type="__bundler/template">'));
 
 // 1) extrai assets (imagem + fonte) e monta mapa uuid -> /lp/uuid.ext
+// PNG/JPEG sao convertidos para WebP (peso: ~5,6MB -> ~0,7MB); SVG/WOFF2/WebP passam direto.
 const extMap = { 'image/webp':'webp','image/png':'png','image/jpeg':'jpg','image/svg+xml':'svg','font/woff2':'woff2' };
 const paths = {};
 for (const [uuid, ent] of Object.entries(mani)) {
   const ext = extMap[ent.mime]; if (!ext) continue;            // pula JS
   let b = Buffer.from(ent.data,'base64'); if (ent.compressed) b = zlib.gunzipSync(b);
-  fs.writeFileSync(`public/lp/${uuid}.${ext}`, b);
-  paths[uuid] = `/lp/${uuid}.${ext}`;
+  if (ext === 'png' || ext === 'jpg') {                        // rasteriza pesado -> WebP
+    b = await sharp(b).webp({ quality: 82, effort: 6 }).toBuffer();
+    fs.writeFileSync(`public/lp/${uuid}.webp`, b);
+    paths[uuid] = `/lp/${uuid}.webp`;
+  } else {
+    fs.writeFileSync(`public/lp/${uuid}.${ext}`, b);
+    paths[uuid] = `/lp/${uuid}.${ext}`;
+  }
 }
 console.log('assets extraidos:', Object.keys(paths).length);
 
@@ -32,6 +39,12 @@ const hEnd = body.indexOf('</helmet>');
 if (hEnd >= 0) body = body.slice(hEnd + '</helmet>'.length);
 body = body.replace(/<\/?x-dc[^>]*>/gi, '').replace(/<\/?helmet[^>]*>/gi, '');
 body = body.replace(/<style[\s\S]*?<\/style>/gi, '');   // tira estilos do corpo (ja estao no css)
+
+// 6) performance de imagem: decoding assincrono em todas; lazy-load da 9a img em diante
+//    (as 8 primeiras cobrem logo + hero -> ficam eager para nao penalizar o LCP).
+let imgN = 0;
+body = body.replace(/<img\b(?![^>]*\bloading=)/gi, (m) => (++imgN > 8 ? '<img loading="lazy"' : m));
+body = body.replace(/<img\b(?![^>]*\bdecoding=)/gi, '<img decoding="async"');
 
 fs.writeFileSync('app/_lp/styles.css', styles.trim());
 fs.writeFileSync('app/_lp/body.html', body.trim());
