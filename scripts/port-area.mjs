@@ -27,6 +27,13 @@ for (const [uuid, ent] of Object.entries(mani)) {
 }
 console.log('assets extraidos:', Object.keys(paths).length);
 
+// icone de alerta adicionado manualmente (referencias/cowork/atencao.png) -> WebP.
+// Preto com alpha; recolorido via CSS mask onde usado (tela de reprovacao).
+if (fs.existsSync('referencias/cowork/atencao.png')) {
+  const ico = await sharp('referencias/cowork/atencao.png').webp({ quality: 90 }).toBuffer();
+  fs.writeFileSync('public/app/atencao.webp', ico);
+}
+
 // 2) CSS (todos os <style> do helmet) + corpo (apos </helmet>)
 let styles = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map(m=>m[1]).join('\n');
 let body = html;
@@ -79,6 +86,35 @@ function stripSlots(s) {
 }
 // prepara o markup de uma tela: resolve sc-if, limpa handlers/placeholders, slots
 const prep = (raw, vars) => stripSlots(clean(resolveScIf(raw), vars));
+
+// expande o <sc-for> de alternativas da prova em 4 opcoes (A-D), estado
+// nao-selecionado. O texto real das questoes vem do Supabase; aqui e placeholder.
+// data-alt="X" marca cada opcao para o QuizClient tratar a selecao.
+function expandAlternatives(s) {
+  const box = 'display:flex;align-items:center;gap:14px;padding:15px 18px;border:1.5px solid #E4DACC;border-radius:10px;cursor:pointer;background:#fff;margin-bottom:10px;transition:all .14s ease';
+  const dot = 'width:26px;height:26px;flex:0 0 auto;border-radius:50%;border:1.5px solid #C9BCA8;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#7E6836';
+  const texts = {
+    A: 'Primeira alternativa de resposta (exemplo).',
+    B: 'Segunda alternativa de resposta (exemplo).',
+    C: 'Terceira alternativa de resposta (exemplo).',
+    D: 'Quarta alternativa de resposta (exemplo).',
+  };
+  const items = ['A', 'B', 'C', 'D'].map((L) =>
+    `<div data-alt="${L}" style="${box}"><span style="${dot}">${L}</span><span style="font-size:13.5px;color:#333333;line-height:1.4">${texts[L]}</span></div>`
+  ).join('\n');
+  return s.replace(/<sc-for[\s\S]*?<\/sc-for>/, items);
+}
+
+// expande o <sc-for> do NPS (certificado) em 11 botoes 0..10, reusando o estilo
+// do template. data-nps="n" marca cada botao para o CertificadoClient tratar.
+function expandNps(s) {
+  return s.replace(/<sc-for list="\{\{ npsScale \}\}"[\s\S]*?<\/sc-for>/, (block) => {
+    const tpl = block.match(/<button[\s\S]*?<\/button>/)[0];
+    return Array.from({ length: 11 }, (_, i) =>
+      tpl.replace('<button', `<button data-nps="${i}"`).split('{{ n }}').join(String(i))
+    ).join('\n');
+  });
+}
 
 // Config de contato (mesma da LP).
 const WHATSAPP = 'https://wa.me/message/W2USYZZK75FMC1';
@@ -133,7 +169,10 @@ fs.mkdirSync(`${outDir}/screens`, { recursive: true });
 // O container da arte e position:relative com aspect-ratio -> preenchemos exato
 // com position:absolute;inset:0 (nunca transborda para cima do texto do card).
 styles += `\n/* placeholder de arte de modulo (x-import image-slot pendente) */
-.art-slot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f3226,#17513a);color:#7c9184;font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:10px}`;
+.art-slot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f3226,#17513a);color:#7c9184;font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:10px}
+/* glow pulsante (mesmo da LP: card de preco / secao A Diferenca) */
+.vs-hl{animation:vsGlow 2.6s ease-in-out infinite;will-change:box-shadow}
+@keyframes vsGlow{0%,100%{box-shadow:0 12px 30px rgba(11,45,32,.18),0 0 0 1px rgba(217,190,133,.35)}50%{box-shadow:0 22px 66px rgba(217,190,133,.55),0 0 0 3px rgba(217,190,133,.8)}}`;
 fs.writeFileSync(`${outDir}/styles.css`, styles.trim());
 
 // chrome compartilhado (autenticado): topbar + footer
@@ -155,9 +194,68 @@ fs.writeFileSync(`${outDir}/chrome-top.html`, topbar);
 fs.writeFileSync(`${outDir}/chrome-foot.html`, buildFooter());
 
 // telas
+const V = {
+  firstName: 'Pedro', initial: 'P', loginBtn: 'ENTRAR', passMark: '70%', examMinutes: '120',
+  // header da questao (valores iniciais; o QuizClient atualiza ao vivo)
+  timerColor: '#A98E4E', timerDisplay: '120:00', qNumber: '1', qTotal: '20', answeredCount: '0', qPct: '5%',
+  // certificado / conta
+  fullName: 'Pedro Metal', accessUntil: '20/07/2027',
+};
+// Login e suas variantes de estado. Cada estado é um sc-if do template; aqui
+// viramos o hint do estado desejado para true (e o "regular" para false no 1º acesso).
+const loginRaw = extractScreen(body, 'isLogin');
+const flip = (s, key, from, to) =>
+  s.split(`value="{{ ${key} }}" hint-placeholder-val="{{ ${from} }}"`)
+   .join(`value="{{ ${key} }}" hint-placeholder-val="{{ ${to} }}"`);
+
 const screens = {
-  login: prep(extractScreen(body, 'isLogin'), { loginBtn: 'ENTRAR' }),
-  home:  prep(extractScreen(body, 'isHome'),  { firstName: 'Pedro' }),
+  login:            prep(loginRaw, V),                                              // "Bem-vindo de volta"
+  'login-error':    prep(flip(loginRaw, 'loginError', 'false', 'true'), V),         // senha errada
+  'login-pending':  prep(flip(loginRaw, 'loginPending', 'false', 'true'), V),       // pagamento em processamento
+  'login-first':    prep(                                                            // 1º acesso: defina sua senha
+                      flip(flip(loginRaw, 'loginFirst', 'false', 'true'), 'loginRegular', 'true', 'false'),
+                      { ...V, loginBtn: 'DEFINIR SENHA' }),
+  home:       prep(extractScreen(body, 'isHome'),       V),
+  // player: bloco full-width com o video centralizado (letterbox preto). O design
+  // vinha com aspect-ratio:16/6.4 + max-height, que encolhia a largura via altura.
+  aula:       prep(extractScreen(body, 'isAula'), V)
+                .replace('aspect-ratio:16/6.4;max-height:520px', 'width:100%;height:clamp(300px,46vw,520px)'),
+  // prova (instrucoes): troca o icone de estrela pelo selo/chancela com o olho no
+  // centro (mesma composicao da tela de resultado: anel + olho sobreposto).
+  'prova':    prep(extractScreen(body, 'isProvaInstr'), V)
+                .replace(/<div style="width:58px;height:58px;[\s\S]*?<\/svg>\s*<\/div>/,
+                  '<div style="position:relative;width:92px;height:92px;margin:0 auto 18px">' +
+                  '<img src="/app/dec6993b-f88c-4b38-a7bb-33d730441044.svg" alt="Chancela editorial VEJA Negócios · Grupo Abril" style="width:92px;height:92px;display:block;transform:rotate(-38deg)">' +
+                  '<img src="/app/280505b4-fa9f-4519-b1d2-064fbb4ecad1.webp" alt="" style="position:absolute;top:49%;left:50%;transform:translate(-50%,-50%);width:44px;height:auto;display:block">' +
+                  '</div>'),
+  'prova-questao': expandAlternatives(prep(extractScreen(body, 'isProvaQ'), V)),
+  // resultado: por padrao mostra a variante APROVADO (caminho feliz -> certificado).
+  // REPROVADO e a outra variante (resReprovado), tratada depois se preciso.
+  resultado:  prep(
+                extractScreen(body, 'isResultado')
+                  .replace('value="{{ resAprovado }}" hint-placeholder-val="{{ false }}"',
+                           'value="{{ resAprovado }}" hint-placeholder-val="{{ true }}"'),
+                V)
+                // glow pulsante (.vs-hl) no card da nota, como o card de preco da LP
+                .replace('<div style="display:inline-flex;flex-direction:column;align-items:center;background:#fff;border:1px solid #E4DACC;border-radius:14px;padding:22px 48px',
+                         '<div class="vs-hl" style="display:inline-flex;flex-direction:column;align-items:center;background:#fff;border:1px solid #E4DACC;border-radius:14px;padding:22px 48px'),
+  // variante REPROVADO (para o cenario de teste de homolog)
+  'resultado-reprovado': prep(
+                extractScreen(body, 'isResultado')
+                  .replace('value="{{ resReprovado }}" hint-placeholder-val="{{ false }}"',
+                           'value="{{ resReprovado }}" hint-placeholder-val="{{ true }}"'),
+                V)
+                // troca o icone pelo de alerta do cowork (atencao), recolorido em #b0413e
+                .replace(/<svg width="28" height="28"[^>]*stroke="#b0413e"[\s\S]*?<\/svg>/,
+                  '<span style="width:30px;height:30px;display:block;background:#b0413e;-webkit-mask:url(/app/atencao.webp) center/contain no-repeat;mask:url(/app/atencao.webp) center/contain no-repeat"></span>'),
+  certificado:expandNps(prep(extractScreen(body, 'isCert'), V))
+                // ano de emissao no canto inferior esquerdo do certificado
+                .replace(/(<div style="position:relative;border:2px solid #A98E4E;[^"]*">)/,
+                  '$1<span style="position:absolute;right:26px;bottom:18px;font-size:10px;letter-spacing:.16em;color:#A98E4E;font-weight:600">2026</span>')
+                // icone oficial do LinkedIn (marca "in", azul #0A66C2)
+                .replace(/<svg width="15" height="15" viewBox="0 0 24 24" fill="#565049">[\s\S]*?<\/svg>/,
+                  '<svg width="15" height="15" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"></path></svg>'),
+  conta:      prep(extractScreen(body, 'isConta'),      V),
 };
 for (const [name, out] of Object.entries(screens)) fs.writeFileSync(`${outDir}/screens/${name}.html`, out);
 

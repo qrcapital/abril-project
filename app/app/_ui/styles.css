@@ -515,3 +515,6 @@ summary::-webkit-details-marker{display:none}
 
 /* placeholder de arte de modulo (x-import image-slot pendente) */
 .art-slot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f3226,#17513a);color:#7c9184;font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:10px}
+/* glow pulsante (mesmo da LP: card de preco / secao A Diferenca) */
+.vs-hl{animation:vsGlow 2.6s ease-in-out infinite;will-change:box-shadow}
+@keyframes vsGlow{0%,100%{box-shadow:0 12px 30px rgba(11,45,32,.18),0 0 0 1px rgba(217,190,133,.35)}50%{box-shadow:0 22px 66px rgba(217,190,133,.55),0 0 0 3px rgba(217,190,133,.8)}}

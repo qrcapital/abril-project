@@ -7,7 +7,45 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 
 ## Não lançado
 
+### Adicionado
+- **Área do aluno: estados de login e atalhos de teste (homolog)** — 2026-07-20
+  - Estados da tela de login por query param: **senha errada** (`?s=erro`), **pagamento
+    em processamento** (`?s=pendente`) e **1º acesso / defina sua senha** (`?s=primeiro`),
+    além do normal. Saem dos próprios `sc-if` do design (nenhum markup novo).
+  - Barra fixa de **atalhos de teste** no login para pular entre os estados.
+  - **Resultado — variante REPROVADO** (`/app/prova/resultado?r=reprovado`): "Faltou
+    pouco", nota, desempenho por módulo, "Solicitar 2ª chamada no WhatsApp". Ícone de
+    alerta do cowork (`atencao.png`) recolorido via CSS mask.
+  - Atalhos de teste na tela de questão: **Simular aprovação / reprovação**.
+  - Refinos: selo (chancela com olho) na prova; glow `vsGlow` no card da nota (aprovado);
+    ícone oficial do LinkedIn no certificado; ano de emissão no canto do certificado.
+
+- **Área do aluno: telas P3–P7 (aula, prova, resultado, certificado, conta)** — 2026-07-20
+  - **P3 · Aula** (`/app/modulo/[m]/aula/[n]`): player full-width (letterbox), coluna
+    com breadcrumb/título/materiais, sidebar de progresso com acordeões nativos.
+    Botões ← / Próxima navegam entre aulas.
+  - **P4a · Prova, instruções** (`/app/prova`): checkbox "estou ciente" habilita o
+    "INICIAR PROVA" (desabilitado por padrão) → questão 1.
+  - **P4b · Prova, questão** (`/app/prova/questao/[q]`): alternativas selecionáveis
+    (radio, persistidas), cronômetro regressivo com deadline em sessionStorage
+    (sobrevive à navegação/refresh), contador + barra de progresso, "Enviar prova"
+    na última questão → resultado. Enunciado/alternativas são placeholders.
+  - **P5 · Resultado** (`/app/prova/resultado`): variante APROVADO (nota, desempenho
+    por módulo, selo VEJA) → "Emitir certificado". REPROVADO é a outra variante.
+  - **P6 · Certificado** (`/app/certificado`): preview do certificado, código de
+    verificação, Baixar PDF / Compartilhar (pendentes), NPS 0–10 selecionável.
+  - **P7 · Minha conta** (`/app/conta`): dados, prazo de acesso, suporte no WhatsApp.
+  - `port-area.mjs`: expande os `sc-for` (alternativas da prova, escala NPS), resolve
+    a variante do resultado e o player full-width; placeholders resolvidos.
+
 ### Corrigido
+- **Área do aluno: prova (P4b)** — 2026-07-20
+  - **Seleção dupla**: ao navegar entre questões o DOM é reaproveitado; reler o estilo
+    base do DOM pegava a versão já pintada e a seleção anterior grudava. Agora o base
+    limpo fica num WeakMap de módulo. Também limpo listeners com AbortController.
+  - **Barra de progresso** passou a refletir a posição da questão (q/20), assada no
+    servidor por questão — antes resetava ao valor padrão a cada navegação.
+
 - **Área do aluno: ajustes da Home (P2)** — 2026-07-20
   - Placeholder de arte do módulo (`.art-slot`) passou a `position:absolute;inset:0`
     — antes transbordava a área e sobrepunha o texto do card.
