@@ -1,0 +1,371 @@
+<style>
+/*__FONTS__*/
+
+:root{
+  --bg:#F7F5F2; --bg-2:#EDE6DD; --surface:#FFFFFF; --surface-2:#FBFAF8;
+  --ink:#333333; --heading:#0B2D20; --muted:#6D6D6D; --faint:#8F887E;
+  --border:#E4D9CF; --border-strong:#D6C3C2;
+  --accent:#A98E4E; --accent-strong:#7E6836; --accent-lit:#C9A94F;
+  --chip-bg:#F0E9D8; --chip-ink:#7E6836;
+  --good:#2E7D53; --warn:#9A6B2F;
+  --dot:rgba(11,45,32,.05);
+  --shadow:0 1px 2px rgba(11,45,32,.04), 0 14px 34px rgba(11,45,32,.06);
+  --shadow-hover:0 2px 6px rgba(11,45,32,.06), 0 26px 56px rgba(11,45,32,.12);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0A2B1E; --bg-2:#0B2D20; --surface:#0F3526; --surface-2:#123B2B;
+    --ink:#E4EAE4; --heading:#F7F5F2; --muted:#A9B8AE; --faint:#8FA398;
+    --border:rgba(217,190,133,.16); --border-strong:rgba(217,190,133,.28);
+    --accent:#D9BE85; --accent-strong:#C9A94F; --accent-lit:#EBD9AC;
+    --chip-bg:rgba(217,190,133,.14); --chip-ink:#EBD9AC;
+    --good:#7FCBA0; --warn:#E0B57A;
+    --dot:rgba(247,245,242,.06);
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 18px 40px rgba(0,0,0,.34);
+    --shadow-hover:0 2px 8px rgba(0,0,0,.36), 0 30px 64px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F7F5F2; --bg-2:#EDE6DD; --surface:#FFFFFF; --surface-2:#FBFAF8;
+  --ink:#333333; --heading:#0B2D20; --muted:#6D6D6D; --faint:#8F887E;
+  --border:#E4D9CF; --border-strong:#D6C3C2;
+  --accent:#A98E4E; --accent-strong:#7E6836; --accent-lit:#C9A94F;
+  --chip-bg:#F0E9D8; --chip-ink:#7E6836;
+  --good:#2E7D53; --warn:#9A6B2F;
+  --dot:rgba(11,45,32,.05);
+  --shadow:0 1px 2px rgba(11,45,32,.04), 0 14px 34px rgba(11,45,32,.06);
+  --shadow-hover:0 2px 6px rgba(11,45,32,.06), 0 26px 56px rgba(11,45,32,.12);
+}
+:root[data-theme="dark"]{
+  --bg:#0A2B1E; --bg-2:#0B2D20; --surface:#0F3526; --surface-2:#123B2B;
+  --ink:#E4EAE4; --heading:#F7F5F2; --muted:#A9B8AE; --faint:#8FA398;
+  --border:rgba(217,190,133,.16); --border-strong:rgba(217,190,133,.28);
+  --accent:#D9BE85; --accent-strong:#C9A94F; --accent-lit:#EBD9AC;
+  --chip-bg:rgba(217,190,133,.14); --chip-ink:#EBD9AC;
+  --good:#7FCBA0; --warn:#E0B57A;
+  --dot:rgba(247,245,242,.06);
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 18px 40px rgba(0,0,0,.34);
+  --shadow-hover:0 2px 8px rgba(0,0,0,.36), 0 30px 64px rgba(0,0,0,.5);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Montserrat',system-ui,-apple-system,sans-serif;
+  font-size:16px; line-height:1.62; -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.serif{font-family:'Playfair Display',Georgia,serif}
+.wrap{max-width:1080px; margin:0 auto; padding:0 clamp(20px,5vw,44px)}
+
+/* ---- eyebrow / labels ---- */
+.eyebrow{
+  font-size:11px; font-weight:800; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--accent-strong); margin:0 0 14px;
+}
+.eyebrow.on-dark{color:var(--accent-lit)}
+
+/* ---- wordmark lockup ---- */
+.wordmark{display:inline-flex; flex-direction:column; align-items:center; gap:.42em; line-height:1}
+.wordmark b{font-family:'Playfair Display',Georgia,serif; font-weight:600; letter-spacing:.26em;
+  font-size:clamp(19px,2.4vw,26px); color:var(--heading); padding-left:.26em}
+.wordmark .intl{display:flex; align-items:center; gap:.7em; font-family:'Montserrat',sans-serif;
+  font-size:9px; font-weight:700; letter-spacing:.36em; text-transform:uppercase; color:var(--accent)}
+.wordmark .intl::before,.wordmark .intl::after{content:""; height:1px; width:clamp(20px,4vw,40px);
+  background:linear-gradient(90deg,transparent,var(--accent))}
+.wordmark .intl::after{background:linear-gradient(90deg,var(--accent),transparent)}
+
+/* ---- hero ---- */
+.hero{position:relative; overflow:hidden;
+  background:
+    radial-gradient(780px 440px at 82% 12%, rgba(169,142,78,.16), transparent 60%),
+    linear-gradient(180deg, var(--bg-2), var(--bg));
+  border-bottom:1px solid var(--border)}
+.hero::before{content:""; position:absolute; inset:0;
+  background-image:radial-gradient(var(--dot) 1.2px, transparent 1.2px); background-size:30px 30px;
+  -webkit-mask-image:linear-gradient(180deg,black,transparent 88%); mask-image:linear-gradient(180deg,black,transparent 88%)}
+.hero-inner{position:relative; z-index:1; padding:clamp(40px,7vw,76px) 0 clamp(34px,5vw,56px);
+  display:flex; flex-direction:column; align-items:center; text-align:center}
+.hero h1{font-family:'Playfair Display',Georgia,serif; font-weight:600; color:var(--heading);
+  font-size:clamp(34px,6vw,60px); line-height:1.02; letter-spacing:-.01em; margin:26px 0 0; text-wrap:balance; max-width:16ch}
+.hero h1 em{font-style:italic; color:var(--accent-strong)}
+.hero .thesis{margin:20px 0 0; max-width:60ch; color:var(--muted); font-size:clamp(15px,1.9vw,18px)}
+.hero-meta{display:flex; flex-wrap:wrap; justify-content:center; gap:8px 10px; margin-top:30px}
+.tag{font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--chip-ink); background:var(--chip-bg); border:1px solid var(--border-strong);
+  padding:6px 12px; border-radius:999px}
+
+/* ---- section rhythm ---- */
+section{padding:clamp(44px,6vw,72px) 0}
+section + section{border-top:1px solid var(--border)}
+.sec-head{max-width:64ch; margin:0 0 30px}
+.sec-head h2{font-family:'Playfair Display',Georgia,serif; font-weight:600; color:var(--heading);
+  font-size:clamp(24px,3.4vw,36px); line-height:1.1; margin:0; letter-spacing:-.01em; text-wrap:balance}
+.sec-head p{margin:12px 0 0; color:var(--muted); font-size:15.5px}
+
+/* ---- at a glance table ---- */
+.table-scroll{overflow-x:auto; border:1px solid var(--border); border-radius:14px; background:var(--surface); box-shadow:var(--shadow)}
+table.glance{border-collapse:collapse; width:100%; min-width:560px; font-size:14px}
+table.glance th{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint);
+  font-weight:800; text-align:left; padding:15px 18px; border-bottom:1px solid var(--border)}
+table.glance td{padding:14px 18px; border-bottom:1px solid var(--border); vertical-align:top; color:var(--ink)}
+table.glance tr:last-child td{border-bottom:none}
+table.glance tbody tr:hover td{background:var(--surface-2)}
+table.glance .layer{font-weight:700; color:var(--heading); white-space:nowrap}
+table.glance .tool{font-weight:700; color:var(--accent-strong)}
+
+/* ---- group of tool cards ---- */
+.group{margin-top:8px}
+.group-label{display:flex; align-items:baseline; gap:12px; margin:0 0 18px}
+.group-label .n{font-family:'Playfair Display',Georgia,serif; font-size:15px; font-weight:600; color:var(--accent)}
+.group-label h3{margin:0; font-size:13px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--heading)}
+.group-label .rule{flex:1; height:1px; background:var(--border)}
+.cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; margin-bottom:34px}
+.card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px 20px 22px;
+  box-shadow:var(--shadow); transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease}
+.card:hover{transform:translateY(-4px); box-shadow:var(--shadow-hover); border-color:var(--border-strong)}
+.card .top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:4px}
+.card h4{margin:0; font-size:17px; font-weight:700; color:var(--heading); letter-spacing:-.01em}
+.card .role{margin:2px 0 12px; font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-strong)}
+.card p{margin:0; font-size:14px; color:var(--ink); line-height:1.6}
+.card p + p{margin-top:9px}
+.chip{flex:none; font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+  padding:4px 9px; border-radius:999px; border:1px solid transparent; white-space:nowrap}
+.chip.have{color:var(--good); border-color:color-mix(in srgb, var(--good) 40%, transparent); background:color-mix(in srgb, var(--good) 12%, transparent)}
+.chip.todo{color:var(--warn); border-color:color-mix(in srgb, var(--warn) 40%, transparent); background:color-mix(in srgb, var(--warn) 12%, transparent)}
+.chip.info{color:var(--chip-ink); border-color:var(--border-strong); background:var(--chip-bg)}
+
+/* ---- callout ---- */
+.callout{margin-top:20px; display:flex; gap:14px; align-items:flex-start;
+  background:var(--surface-2); border:1px solid var(--border); border-left:3px solid var(--accent);
+  border-radius:12px; padding:16px 18px}
+.callout .k{font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-strong); flex:none; padding-top:2px}
+.callout p{margin:0; font-size:14px; color:var(--ink)}
+
+/* ---- decisions / discard list ---- */
+.stack-list{display:flex; flex-direction:column; gap:14px}
+.dec{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 20px; box-shadow:var(--shadow)}
+.dec h4{margin:0 0 6px; font-size:15.5px; font-weight:700; color:var(--heading)}
+.dec p{margin:0; font-size:14px; color:var(--muted)}
+.dec p b{color:var(--ink); font-weight:700}
+
+/* ---- cost strip ---- */
+.cost{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px}
+.cost .box{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; box-shadow:var(--shadow)}
+.cost .num{font-family:'Playfair Display',Georgia,serif; font-weight:600; color:var(--heading);
+  font-size:30px; letter-spacing:-.01em; font-variant-numeric:tabular-nums}
+.cost .lbl{margin-top:6px; font-size:12.5px; color:var(--muted)}
+.pend{margin-top:18px; font-size:14px; color:var(--ink)}
+.pend b{color:var(--heading)}
+
+/* ---- footer ---- */
+footer{padding:34px 0 48px; border-top:1px solid var(--border); text-align:center}
+footer .marks{display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap;
+  font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--faint)}
+footer .dot{width:5px; height:5px; border-radius:50%; background:var(--accent)}
+footer .fine{margin-top:12px; font-size:12px; color:var(--faint)}
+
+/* ---- entrance ---- */
+@media (prefers-reduced-motion:no-preference){
+  .reveal{opacity:0; transform:translateY(14px); animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
+  .hero .reveal:nth-child(1){animation-delay:.02s}
+  .hero .reveal:nth-child(2){animation-delay:.10s}
+  .hero .reveal:nth-child(3){animation-delay:.18s}
+  .hero .reveal:nth-child(4){animation-delay:.26s}
+  @keyframes rise{to{opacity:1; transform:none}}
+}
+</style>
+
+<header class="hero">
+  <div class="wrap hero-inner">
+    <div class="wordmark reveal"><b>ESTRATÉGIA</b><span class="intl">Internacional</span></div>
+    <p class="eyebrow reveal" style="margin-top:34px;margin-bottom:0">Arcabouço ferramental &middot; para o time</p>
+    <h1 class="serif reveal">Com o que a gente <em>constrói</em>, e por quê</h1>
+    <p class="thesis reveal">Uma decisão de stack por vez, cada uma amarrada a uma necessidade real do produto: uma LP que vende e converte, uma área do aluno que entrega o curso, e um certificado que vale. Sem ferramenta escolhida por moda.</p>
+    <div class="hero-meta">
+      <span class="tag">BlockTrends &times; VEJA Negócios</span>
+      <span class="tag">LP + Área do aluno</span>
+      <span class="tag">Lançamento set/2026</span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Em resumo</p>
+      <h2>O mapa completo, numa olhada</h2>
+      <p>Doze peças em quatro frentes. As seções seguintes destrincham o porquê de cada uma.</p>
+    </div>
+    <div class="table-scroll">
+      <table class="glance">
+        <thead><tr><th>Camada</th><th>Escolha</th><th>Papel no produto</th></tr></thead>
+        <tbody>
+          <tr><td class="layer">Linguagem</td><td class="tool">TypeScript</td><td>Todo o código, do componente ao webhook</td></tr>
+          <tr><td class="layer">Framework</td><td class="tool">Next.js (App Router + RSC)</td><td>LP estática e plataforma dinâmica no mesmo projeto</td></tr>
+          <tr><td class="layer">Interface</td><td class="tool">React + Tailwind (Meridiano)</td><td>Componentes e o design system aplicado</td></tr>
+          <tr><td class="layer">Banco, login, arquivos</td><td class="tool">Supabase (Postgres)</td><td>Dados, autenticação e storage de materiais</td></tr>
+          <tr><td class="layer">Segurança de dado</td><td class="tool">RLS no Postgres</td><td>Cada aluno enxerga só o que é dele</td></tr>
+          <tr><td class="layer">Processos agendados</td><td class="tool">Edge Functions + pg_cron</td><td>E-mails de rotina, expiração, prova estourada</td></tr>
+          <tr><td class="layer">Vídeo</td><td class="tool">Panda Video</td><td>Player fechado, retomada e progresso automático</td></tr>
+          <tr><td class="layer">E-mail</td><td class="tool">Amazon SES</td><td>Os 14 transacionais da jornada</td></tr>
+          <tr><td class="layer">Pagamento</td><td class="tool">Guru + Pagar.me</td><td>Checkout externo e webhook de ativação</td></tr>
+          <tr><td class="layer">Suporte</td><td class="tool">WhatsApp (wa.me)</td><td>Canal único de atendimento</td></tr>
+          <tr><td class="layer">Entrega</td><td class="tool">Netlify</td><td>Deploy e hospedagem (conta que já temos)</td></tr>
+          <tr><td class="layer">Medição</td><td class="tool">Meta Pixel + GA4</td><td>Os quatro eventos de conversão</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">A fundo</p>
+      <h2>Cada peça, e a razão de estar aqui</h2>
+      <p>Agrupadas por frente: o núcleo da aplicação, os dados, as integrações externas e a entrega.</p>
+    </div>
+
+    <div class="group">
+      <div class="group-label"><span class="n serif">I</span><h3>Núcleo da aplicação</h3><span class="rule"></span></div>
+      <div class="cards">
+        <div class="card">
+          <div class="top"><h4>TypeScript</h4></div>
+          <p class="role">Uma linguagem só</p>
+          <p>Do componente ao webhook, um runtime só. A tipagem forte protege os contratos que não podem falhar em silêncio: o payload do Guru, o evento do Panda, o schema do banco. Uma compra que não vira conta é receita perdida.</p>
+        </div>
+        <div class="card">
+          <div class="top"><h4>Next.js</h4></div>
+          <p class="role">App Router + Server Components</p>
+          <p>Resolve o requisito central: LP e plataforma no mesmo código, com naturezas opostas. A LP em <code>/</code> é estática e indexável (SSG, Lighthouse acima de 90). A plataforma em <code>/app</code> é dinâmica e autenticada, cada tela buscando seus dados numa ida só ao banco.</p>
+        </div>
+        <div class="card">
+          <div class="top"><h4>React + Tailwind</h4></div>
+          <p class="role">A interface, no Meridiano</p>
+          <p>Componentes em React, estilo com os tokens do design system Meridiano (verde e dourado, Playfair e Montserrat). As duas fontes são self-hosted; nada de fonte default de stack brigando com a identidade.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-label"><span class="n serif">II</span><h3>Dados e identidade</h3><span class="rule"></span></div>
+      <div class="cards">
+        <div class="card">
+          <div class="top"><h4>Supabase</h4><span class="chip todo">a provisionar</span></div>
+          <p class="role">Postgres, Auth e Storage</p>
+          <p>Um fornecedor cobre banco, login e arquivos, o que reduz a superfície de integração num time enxuto. O domínio é relacional de verdade (aluno, matrícula, progresso, prova, certificado): joins e agregações, não documentos soltos.</p>
+          <p>O login nativo cobre e-mail e senha, primeiro acesso por link e redefinição. O storage guarda apostilas, planilhas, e-book e os PDFs de certificado.</p>
+        </div>
+        <div class="card">
+          <div class="top"><h4>RLS</h4></div>
+          <p class="role">Segurança dentro do banco</p>
+          <p>A regra "o aluno só lê o próprio progresso e a própria prova" mora no banco, não apenas na aplicação. Se um endpoint vazar, o banco ainda barra. É o motivo forte de escolher Postgres gerenciado com política no próprio dado.</p>
+        </div>
+        <div class="card">
+          <div class="top"><h4>Edge Functions + pg_cron</h4></div>
+          <p class="role">Os processos agendados</p>
+          <p>Os cinco processos de rotina (D+3 sem login, inatividade, aviso de expiração, expiração de acesso e prova com tempo estourado) rodam no próprio Supabase, com cadência proporcional. Sem subir um agendador à parte.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-label"><span class="n serif">III</span><h3>Integrações externas</h3><span class="rule"></span></div>
+      <div class="cards">
+        <div class="card">
+          <div class="top"><h4>Panda Video</h4><span class="chip have">já contratado</span></div>
+          <p class="role">O vídeo do curso</p>
+          <p>Player fechado atrás de login, com retomada automática e, o que mais importa, o evento de progresso acima de 90% que conclui a aula sozinho. É a conta da casa. Player público não entrega nenhuma das três coisas.</p>
+        </div>
+        <div class="card">
+          <div class="top"><h4>Amazon SES</h4><span class="chip todo">a configurar</span></div>
+          <p class="role">Os e-mails da jornada</p>
+          <p>Os 14 transacionais a custo baixo, do "pedido recebido" ao "certificado emitido". Em troca, exige reputação de domínio (SPF, DKIM, DMARC) com warm-up iniciado cedo, para chegar na caixa de entrada e não no spam.</p>
+        </div>
+        <div class="card">
+          <div class="top"><h4>Guru + Pagar.me</h4><span class="chip have">já contratado</span></div>
+          <p class="role">Checkout e ativação</p>
+          <p>O pagamento é externo: nós nunca tocamos em cartão, o que tira PCI do nosso escopo. A plataforma reage ao webhook (compra aprovada cria a conta, reembolso revoga). Em troca, o webhook precisa ser idempotente e ter a assinatura validada.</p>
+        </div>
+        <div class="card">
+          <div class="top"><h4>WhatsApp</h4><span class="chip info">wa.me, sem API</span></div>
+          <p class="role">Suporte, canal único</p>
+          <p>Um link com mensagem pré-preenchida cobre acesso, pagamento, certificado e segunda chamada da prova, a custo zero de integração. Sobe para a API oficial só se o volume justificar, na fase 2.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-label"><span class="n serif">IV</span><h3>Entrega e medição</h3><span class="rule"></span></div>
+      <div class="cards">
+        <div class="card">
+          <div class="top"><h4>Netlify</h4><span class="chip have">conta existente</span></div>
+          <p class="role">Deploy e hospedagem</p>
+          <p>Roda o Next.js na conta que o time já mantém: um vendor e um custo a menos. Cobre o que usamos (App Router, Server Components, SSG da LP, SSR da plataforma). A LP estática vai para o CDN sem esforço.</p>
+        </div>
+        <div class="card">
+          <div class="top"><h4>Meta Pixel + GA4</h4></div>
+          <p class="role">Os quatro eventos</p>
+          <p>Instalados no dia 1, mesmo sem mídia paga, para acumular audiências de graça. PageView na chegada, ViewContent no scroll, InitiateCheckout no clique de compra, Purchase na página de obrigado.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="k">Nota de região</span>
+      <p>As funções serverless do Netlify rodam em AWS (us-east-1 por padrão). Para manter a regra de "uma tela, uma ida ao banco", o Supabase é provisionado na mesma região das funções. Alinhamos as duas pontas no setup.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">O caminho não tomado</p>
+      <h2>O que ficou de fora, de propósito</h2>
+      <p>Escolher uma ferramenta é recusar as outras. As recusas com racional, para o time não reabrir sem contexto.</p>
+    </div>
+    <div class="stack-list">
+      <div class="dec">
+        <h4>Plataforma de curso pronta (Cademi, Hotmart Club, Memberkit)</h4>
+        <p>Serviu de <b>auditoria de UX</b> (vitrine na home, sidebar de progresso, prova com instruções), mas amarra marca, dados e regras ao que a ferramenta permite. O certificado é peça de marca, a prova tem regra própria (120 minutos, segunda chamada manual) e a home tem identidade Meridiano. Build próprio dá controle total.</p>
+      </div>
+      <div class="dec">
+        <h4>WordPress ou tema de LP</h4>
+        <p>Perderíamos performance e o design system, e ganharíamos superfície de manutenção. A LP como rota estática do mesmo Next é mais rápida e coesa com a plataforma.</p>
+      </div>
+      <div class="dec">
+        <h4>NoSQL ou Firebase</h4>
+        <p>O domínio é relacional. Forçar documento aqui complicaria justamente as consultas que mais importam: quem concluiu o módulo, quem desbloqueou a prova, de quem o acesso expira em 30 dias.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Números e pontas soltas</p>
+      <h2>Custo e o que ainda destrava</h2>
+    </div>
+    <div class="cost">
+      <div class="box"><div class="num">R$ 340&ndash;500</div><div class="lbl">custo fixo estimado por mês (Supabase, Netlify, Panda, SES, domínio)</div></div>
+      <div class="box"><div class="num">12</div><div class="lbl">peças no arcabouço, em quatro frentes</div></div>
+      <div class="box"><div class="num">0</div><div class="lbl">dado de cartão que passa por nós (checkout é externo)</div></div>
+    </div>
+    <p class="pend"><b>Pendências que destravam cada peça (credenciais):</b> organização no Supabase, projeto e repositório no Netlify, API key do Panda, webhook secret e docs do payload do Guru, domínio verificado no SES. Quase toda a estrutura (schema, RLS, telas, esqueleto do webhook em sandbox) sobe antes de qualquer chave chegar.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="marks"><span>BlockTrends</span><span class="dot"></span><span>Grupo Abril</span><span class="dot"></span><span>Estratégia Internacional</span></div>
+    <p class="fine">Arcabouço ferramental &middot; uso interno &middot; atualizado em 17 de julho de 2026</p>
+  </div>
+</footer>

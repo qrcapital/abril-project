@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Fontes self-hosted (Meridiano). woff2 variáveis, subset latin.
+   ============================================================ */
+@font-face {
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url("/fonts/montserrat-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Playfair Display";
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url("/fonts/playfair-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Playfair Display";
+  font-style: italic;
+  font-weight: 500 600;
+  font-display: swap;
+  src: url("/fonts/playfair-italic-latin.woff2") format("woff2");
+}
+
+/* ============================================================
+   Tokens do Meridiano expostos ao Tailwind.
+   Uso: bg-verde, text-gold, font-serif, rounded-card, etc.
+   Fonte de verdade: docs/DESIGN.md
+   ============================================================ */
+@theme {
+  /* verdes */
+  --color-verde: #0b2d20;
+  --color-verde-2: #123b2b;
+  --color-verde-3: #0a2b1e;
+  --color-verde-card: #0f3526;
+  /* claros */
+  --color-offwhite: #f7f5f2;
+  --color-bege: #ede6dd;
+  --color-areia: #d6c3c2;
+  /* neutros */
+  --color-pedra: #8f887e;
+  --color-grafite: #333333;
+  --color-medio: #6d6d6d;
+  /* dourados (acento único) */
+  --color-gold: #a98e4e;
+  --color-gold-dark: #7e6836;
+  --color-gold-lit: #d9be85;
+  --color-gold-soft: #f0e9d8;
+  /* apoio */
+  --color-wpp: #25d366;
+  --color-muted: #8fa398;
+  --color-muted2: #a9b8ae;
+  --color-erro: #b0413e;
+
+  /* tipografia */
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Montserrat", system-ui, -apple-system, sans-serif;
+
+  /* forma (teto 14px; pill à parte) */
+  --radius-chip: 4px;
+  --radius-card: 10px;
+  --radius-panel: 14px;
+}
+
+/* base neutra; cada superfície (LP clara / plataforma dark) define o próprio fundo */
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
