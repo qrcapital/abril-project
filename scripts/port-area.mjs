@@ -28,14 +28,18 @@ for (const [uuid, ent] of Object.entries(mani)) {
 console.log('assets extraidos:', Object.keys(paths).length);
 
 // 2) CSS (todos os <style> do helmet) + corpo (apos </helmet>)
-const styles = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map(m=>m[1]).join('\n');
+let styles = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map(m=>m[1]).join('\n');
 let body = html;
 const hEnd = body.indexOf('</helmet>'); if (hEnd >= 0) body = body.slice(hEnd + '</helmet>'.length);
 body = body.replace(/<\/?x-dc[^>]*>/gi, '').replace(/<\/?helmet[^>]*>/gi, '');
 body = body.replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<script[\s\S]*?<\/script>/gi, '');
 
-// 3) reescreve refs de asset (uuid -> caminho em /app)
-for (const [uuid, p] of Object.entries(paths)) body = body.split(uuid).join(p);
+// 3) reescreve refs de asset (uuid -> caminho em /app) — no corpo E no CSS
+//    (o CSS carrega as fontes via @font-face src:url(uuid); sem isso -> 404).
+for (const [uuid, p] of Object.entries(paths)) {
+  body = body.split(uuid).join(p);
+  styles = styles.split(uuid).join(p);
+}
 
 // --- helpers -------------------------------------------------------------
 // extrai o bloco <sc-if value="{{ key }}"> ... </sc-if> (balanceado) pela key
