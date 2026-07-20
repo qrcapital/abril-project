@@ -69,17 +69,43 @@ function clean(s, vars = {}) {
   for (const [k, v] of Object.entries(vars)) s = s.split(`{{ ${k} }}`).join(v);
   return s.trim();
 }
+// x-import image-slot (arte de modulo, componente JS do bundle) -> placeholder
+// on-brand. As artes ainda nao existem no design (slot); tratado como pendencia.
+function stripSlots(s) {
+  return s.replace(
+    /<x-import\b[^>]*?placeholder="([^"]*)"[^>]*>(?:\s*<\/x-import>)?/gi,
+    (_, ph) => `<div class="art-slot">${ph}</div>`
+  );
+}
+// prepara o markup de uma tela: resolve sc-if, limpa handlers/placeholders, slots
+const prep = (raw, vars) => stripSlots(clean(resolveScIf(raw), vars));
 
-// 4) telas
+// 4) saida
 const outDir = 'app/app/_ui';
 fs.mkdirSync(`${outDir}/screens`, { recursive: true });
+
+// CSS + regra do placeholder de arte de modulo
+styles += `\n/* placeholder de arte de modulo (x-import image-slot pendente) */
+.art-slot{width:100%;height:100%;min-height:120px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f3226,#17513a);color:#7c9184;font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:10px}`;
 fs.writeFileSync(`${outDir}/styles.css`, styles.trim());
 
-// Login: estado padrao = loginRegular ("Bem-vindo de volta")
-const login = clean(resolveScIf(extractScreen(body, 'isLogin')), { loginBtn: 'Entrar' });
-fs.writeFileSync(`${outDir}/screens/login.html`, login);
+// chrome compartilhado (autenticado): topbar + footer
+const CHROME = { firstName: 'Pedro', initial: 'P' };
+const topbar = prep(extractScreen(body, 'showChrome'), CHROME);   // 1a ocorrencia = topbar
+fs.writeFileSync(`${outDir}/chrome-top.html`, topbar);
+const footRaw = (body.match(/<footer[\s\S]*?<\/footer>/i) || [''])[0];
+fs.writeFileSync(`${outDir}/chrome-foot.html`, prep(footRaw, CHROME));
+
+// telas
+const screens = {
+  login: prep(extractScreen(body, 'isLogin'), { loginBtn: 'ENTRAR' }),
+  home:  prep(extractScreen(body, 'isHome'),  { firstName: 'Pedro' }),
+};
+for (const [name, out] of Object.entries(screens)) fs.writeFileSync(`${outDir}/screens/${name}.html`, out);
 
 // relatorio de placeholders remanescentes (para os proximos passos)
-const leftover = [...login.matchAll(/\{\{\s*([^}]+?)\s*\}\}/g)].map(m => m[1]);
-console.log('login.html chars:', login.length, '| placeholders restantes:', leftover.length ? [...new Set(leftover)].join(', ') : 'nenhum');
+for (const [name, out] of [['topbar', topbar], ['footer', prep(footRaw, CHROME)], ...Object.entries(screens)]) {
+  const left = [...out.matchAll(/\{\{\s*([^}]+?)\s*\}\}/g)].map(m => m[1]);
+  console.log(`${name}: ${out.length} chars | placeholders: ${left.length ? [...new Set(left)].join(', ') : 'nenhum'}`);
+}
 console.log('styles.css chars:', styles.length);

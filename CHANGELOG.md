@@ -8,6 +8,16 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **Área do aluno: Home / vitrine (P2)** — 2026-07-20
+  - Segunda tela (`/app`): banner "Continue de onde parou" + prateleira "A Formação"
+    (5 módulos com estado e progresso) + materiais/certificação. Design portado fiel.
+  - Chrome autenticado: route group `(sala)` com `AreaChrome` (topbar + footer). O login
+    fica fora do grupo, sem chrome. Nav: Início → `/app`, FAQ → LP, Suporte → WhatsApp.
+  - `port-area.mjs` agora extrai também topbar, footer e a Home; os `x-import`
+    (arte de módulo) viram placeholders on-brand (`.art-slot`) — arte é pendência.
+  - CTA/cards levam à página de aula (P3, próxima tela; ainda 404).
+  - Correção: botão de login em caixa alta (**ENTRAR**).
+
 - **Área do aluno: tela de Login (P1)** — 2026-07-20
   - Primeira tela da área interna (`/app/login`), design portado fiel do bundle
     `Area-do-Aluno.html` (split "Bem-vindo de volta" + marca VEJA × BlockTrends).
