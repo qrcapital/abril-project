@@ -1,0 +1,12 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <defs>
+    <path id="chArcTop" d="M 36 120 A 84 84 0 0 1 204 120"></path>
+    <path id="chArcBot" d="M 33 120 A 87 87 0 0 0 207 120"></path>
+  </defs>
+  <circle cx="120" cy="120" r="116" stroke="#A98E4E" stroke-width="1.2"></circle>
+  <circle cx="120" cy="120" r="106" stroke="#A98E4E" stroke-width="2.6"></circle>
+  <circle cx="120" cy="120" r="66" stroke="#A98E4E" stroke-width="1"></circle>
+  <text fill="#7E6836" font-family="Montserrat, Arial, sans-serif" font-size="13.5" font-weight="700" letter-spacing="3.4"><textPath href="#chArcTop" startOffset="50%" text-anchor="middle">CHANCELA EDITORIAL</textPath></text>
+  <text fill="#7E6836" font-family="Montserrat, Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="3"><textPath href="#chArcBot" startOffset="50%" text-anchor="middle">VEJA · GRUPO ABRIL</textPath></text>
+  <g fill="#A98E4E"><rect x="14.5" y="115.5" width="9" height="9" transform="rotate(45 19 120)"></rect><rect x="216.5" y="115.5" width="9" height="9" transform="rotate(45 221 120)"></rect></g>
+</svg>

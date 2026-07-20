@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import "./globals.css";
+// A LP injeta o próprio CSS (design portado). O Tailwind/Meridiano volta
+// num layout de grupo quando a área do aluno (/app) for construída.
 
 export const metadata: Metadata = {
   title: {
