@@ -32,6 +32,10 @@ Assim que os docs estiverem no lugar, me avisa que eu leio tudo e a gente segue 
 | `docs/AMBIENTES.md` | Estratégia de ambientes (local, homolog, produção), deploy Netlify e checklist de provisionamento. |
 | `docs/apresentacao-stack.html` | Apresentação do arcabouço ferramental para o time (também publicada como artifact). |
 
+## Histórico de mudanças
+
+Todas as mudanças relevantes ficam registradas em [`CHANGELOG.md`](CHANGELOG.md).
+
 ## Estrutura
 
 ```

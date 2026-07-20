@@ -1,0 +1,65 @@
+# Changelog — Abril · Estratégia Internacional
+
+Registro de todas as mudanças relevantes do projeto (Landing Page + Área de Membros).
+Formato inspirado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
+Datas em `AAAA-MM-DD`. Enquanto não houver release em produção, tudo vive em **Não lançado**
+e é validado no ambiente de **homolog** (branch `homolog`).
+
+## Não lançado
+
+### Performance
+- **LP: imagens otimizadas (WebP + lazy-load)** — `ac21497` · 2026-07-20
+  - PNG/JPEG convertidos para **WebP** no porte: `public/lp` de **6,3 MB → 1,3 MB**
+    (raster de **5,65 MB → 0,66 MB**). Ex.: hero **2,98 MB → 214 KB**; outro **1,05 MB → 54 KB**.
+  - `loading="lazy"` da 9ª imagem em diante (logo + hero seguem *eager* para preservar o LCP)
+    e `decoding="async"` nas 21 imagens.
+  - `scripts/port-lp.mjs` passou a aplicar essa otimização, então reexecuções do porte
+    **não regridem** o ganho. `sharp` declarado em `devDependencies`.
+  - _Pendência conhecida:_ as animações JS do bundle continuam de fora (o porte remove
+    `<script>`); serão tratadas à parte.
+
+### Landing Page
+- **LP: porte fiel do design original do bundle** — `3b4470e` · 2026-07-20
+  - A LP passa a renderizar o **HTML+CSS reais** do `LP-Estrategia-Internacional.html`
+    (bundle do Claude Design) via `app/_lp/{body.html,styles.css}`, injetados na página (SSG).
+  - `scripts/port-lp.mjs`: extrai assets, resolve `{{ preco }}`/`{{ parcelas }}`,
+    desembrulha `<sc-if>` (VSL e WhatsApp) e reescreve as refs de asset para `/public/lp`.
+  - 35 assets (olho em gravura, fotos duotone, gravuras, fontes) em `public/lp`.
+  - LP isolada do Tailwind (o layout não importa mais `globals.css`) para máxima fidelidade.
+  - Remove a LP reescrita anterior e os assets órfãos.
+  - _Motivo:_ a versão React reescrita divergia visualmente do design aprovado; agora a LP
+    é o design original, pixel a pixel.
+
+- **LP: reconstrução da landing page (SSG) no Meridiano** — `c578a69` · 2026-07-20
+  _(substituída pelo porte fiel acima)_
+  - `app/page.tsx` com 10 seções fiéis ao design (topbar, hero, ficha, diagnóstico, docentes,
+    formação, diferença, quem assina, oferta, FAQ, CTA + footer).
+  - Tokens do Meridiano via Tailwind + efeitos em `globals.css` (textura de pontos, wordmark,
+    atos, duotone dos docentes, glow da oferta, acordeões, menu mobile).
+  - Decisões aplicadas: kicker de marcas no hero, **R$ 397 / 10x sem juros**, chancela
+    editorial VEJA (não "Certificação VEJA").
+  - Fotos dos docentes e olho em `public/`; layout pt-BR sem fontes Geist.
+  - `proxy` não bloqueia quando o Supabase ainda não está configurado (shell no homolog).
+
+### Infraestrutura
+- **Arquitetura de ambientes (homolog-first)** — `5d5af09` · 2026-07-20
+  - `netlify.toml`: contextos **production** (branch `main`) e **homolog** (branch `homolog`).
+  - `docs/AMBIENTES.md`: estratégia de 3 ambientes (local, homolog, produção), deploy e checklist.
+  - `LEIA-ME`: índice de ambientes.
+
+- **Scaffold: Next.js 16 + Supabase + fundação do produto** — `9e85719` · 2026-07-20
+  - Next.js 16 (App Router, RSC) + Tailwind v4 com tokens do Meridiano.
+  - Fontes Playfair/Montserrat self-hosted em `public/fonts`.
+  - Supabase: clientes anon (server/client) e service role (admin).
+  - `proxy.ts` (ex-middleware) para renovar sessão e proteger `/app/*`.
+  - Schema inicial: 10 tabelas, enums, RLS, funções (`is_admin`, `has_active_access`,
+    `sortear_prova`, `verify_certificate`) e trigger de perfil.
+  - Seed de dev: módulos, 16 aulas reais e banco de questões de exemplo.
+  - Esqueleto do webhook Guru: idempotente, provisiona conta/matrícula, revoga em reembolso
+    (assinatura e SES marcados como pendência).
+  - Fundação do projeto em `docs/` (PRD, ROUTES, DESIGN, BACKLOG).
+
+---
+
+_Convenção: cada entrada referencia o commit (`hash`) e a data. Ao abrir a versão de produção,
+mover os itens de **Não lançado** para uma seção versionada (ex.: `## [1.0.0] — AAAA-MM-DD`)._
