@@ -514,4 +514,4 @@ summary::-webkit-details-marker{display:none}
 }
 
 /* placeholder de arte de modulo (x-import image-slot pendente) */
-.art-slot{width:100%;height:100%;min-height:120px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f3226,#17513a);color:#7c9184;font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:10px}
+.art-slot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f3226,#17513a);color:#7c9184;font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:10px}

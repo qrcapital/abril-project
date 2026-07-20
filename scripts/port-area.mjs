@@ -80,21 +80,79 @@ function stripSlots(s) {
 // prepara o markup de uma tela: resolve sc-if, limpa handlers/placeholders, slots
 const prep = (raw, vars) => stripSlots(clean(resolveScIf(raw), vars));
 
+// Config de contato (mesma da LP).
+const WHATSAPP = 'https://wa.me/message/W2USYZZK75FMC1';
+const DPO_EMAIL = 'dpo@qr.capital';
+
+// Rodape estruturado, igual ao da LP (Institucional / Politicas / Contato +
+// copyright + voltar ao topo). Ancoras da coluna Institucional -> absolutas para
+// a LP; "Voltar ao topo" recebe data-scrolltop (rolagem tratada no AreaChrome).
+function buildFooter() {
+  const kicker = "font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:#D9BE85;margin-bottom:4px";
+  const lnk = 'style="color:#8FA398;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#F7F5F2"';
+  return `<footer style="background:#081F16;color:#8FA398;padding:64px 0 26px;font-family:'Montserrat',system-ui,sans-serif">
+<div style="max-width:1180px;margin:0 auto;padding:0 28px;display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap">
+<div style="flex:1 1 300px;min-width:240px">
+<a href="/" style="display:inline-block;color:#F7F5F2;text-decoration:none">
+<b style="display:block;font-family:'Playfair Display',serif;font-size:20px;letter-spacing:.26em;font-weight:500;color:#F7F5F2;line-height:1;white-space:nowrap">ESTRATÉGIA</b>
+<span style="display:flex;align-items:center;gap:10px;font-size:8px;letter-spacing:.44em;color:#EDE6DD;font-weight:600;margin-top:5px;white-space:nowrap"><i style="flex:1;height:1px;background:#A98E4E;min-width:16px"></i>INTERNACIONAL<i style="flex:1;height:1px;background:#A98E4E;min-width:16px"></i></span>
+</a>
+<p style="font-size:12.5px;line-height:1.7;margin:18px 0 0;max-width:300px;color:#8FA398">Formação em dolarização de patrimônio e investimento internacional. BlockTrends, com chancela editorial da VEJA Negócios.</p>
+</div>
+<nav style="display:flex;flex-direction:column;gap:12px;flex:0 0 auto">
+<div style="${kicker}">Institucional</div>
+<a href="/#tese" ${lnk}>O Diagnóstico</a>
+<a href="/#docentes" ${lnk}>Corpo Docente</a>
+<a href="/#curriculo" ${lnk}>A Formação</a>
+<a href="/#chancela" ${lnk}>Quem Assina</a>
+<a href="/#faq" ${lnk}>FAQ</a>
+</nav>
+<div style="display:flex;flex-direction:column;gap:12px;flex:0 0 auto">
+<div style="${kicker}">Políticas</div>
+<a href="#" ${lnk}>Termos de uso</a>
+<a href="#" ${lnk}>Privacidade · LGPD</a>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;flex:0 0 auto">
+<div style="${kicker}">Contato</div>
+<a href="${WHATSAPP}" target="_blank" rel="noopener" ${lnk}>Suporte no WhatsApp</a>
+<a href="mailto:${DPO_EMAIL}" ${lnk}>DPO · ${DPO_EMAIL}</a>
+</div>
+</div>
+<div style="max-width:1180px;margin:34px auto 0;padding:22px 28px 0;border-top:1px solid rgba(217,190,133,.14);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+<span style="font-size:11.5px;color:#5F7469">© 2026 Estratégia Internacional · 1971 Comunicações e Sistemas LTDA. Todos os direitos reservados.</span>
+<a href="#" data-scrolltop="1" style="color:#8FA398;font-size:11.5px;text-decoration:none;transition:color .2s ease" style-hover="color:#D9BE85">Voltar ao topo ↑</a>
+</div>
+</footer>`;
+}
+
 // 4) saida
 const outDir = 'app/app/_ui';
 fs.mkdirSync(`${outDir}/screens`, { recursive: true });
 
 // CSS + regra do placeholder de arte de modulo
+// O container da arte e position:relative com aspect-ratio -> preenchemos exato
+// com position:absolute;inset:0 (nunca transborda para cima do texto do card).
 styles += `\n/* placeholder de arte de modulo (x-import image-slot pendente) */
-.art-slot{width:100%;height:100%;min-height:120px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f3226,#17513a);color:#7c9184;font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:10px}`;
+.art-slot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f3226,#17513a);color:#7c9184;font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:10px}`;
 fs.writeFileSync(`${outDir}/styles.css`, styles.trim());
 
 // chrome compartilhado (autenticado): topbar + footer
 const CHROME = { firstName: 'Pedro', initial: 'P' };
-const topbar = prep(extractScreen(body, 'showChrome'), CHROME);   // 1a ocorrencia = topbar
+
+// topbar (1a ocorrencia de showChrome). O menu de conta (accountOpen) some no
+// resolveScIf por ser hint-false; aqui desembrulhamos mantendo o dropdown oculto
+// (id="account-menu" hidden) e marcamos o avatar (data-account-toggle) para o JS.
+let topRaw = extractScreen(body, 'showChrome')
+  .replace(/onclick="\{\{ toggleAccount \}\}"/, 'data-account-toggle="1"')
+  .replace(/<sc-if value="\{\{ accountOpen \}\}"[^>]*>/, '')
+  .replace('<div style="position:absolute;top:46px', '<div id="account-menu" hidden style="position:absolute;top:46px')
+  .replace('</sc-if>', '');
+const topbar = prep(topRaw, CHROME);
 fs.writeFileSync(`${outDir}/chrome-top.html`, topbar);
-const footRaw = (body.match(/<footer[\s\S]*?<\/footer>/i) || [''])[0];
-fs.writeFileSync(`${outDir}/chrome-foot.html`, prep(footRaw, CHROME));
+
+// footer: o mesmo rodape estruturado da LP. Ancoras internas -> absolutas para a
+// LP (a area nao tem essas secoes). "Voltar ao topo" rola a propria pagina (JS).
+fs.writeFileSync(`${outDir}/chrome-foot.html`, buildFooter());
 
 // telas
 const screens = {
@@ -104,7 +162,7 @@ const screens = {
 for (const [name, out] of Object.entries(screens)) fs.writeFileSync(`${outDir}/screens/${name}.html`, out);
 
 // relatorio de placeholders remanescentes (para os proximos passos)
-for (const [name, out] of [['topbar', topbar], ['footer', prep(footRaw, CHROME)], ...Object.entries(screens)]) {
+for (const [name, out] of [['topbar', topbar], ['footer', buildFooter()], ...Object.entries(screens)]) {
   const left = [...out.matchAll(/\{\{\s*([^}]+?)\s*\}\}/g)].map(m => m[1]);
   console.log(`${name}: ${out.length} chars | placeholders: ${left.length ? [...new Set(left)].join(', ') : 'nenhum'}`);
 }

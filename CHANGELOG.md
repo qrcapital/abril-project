@@ -7,6 +7,16 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 
 ## Não lançado
 
+### Corrigido
+- **Área do aluno: ajustes da Home (P2)** — 2026-07-20
+  - Placeholder de arte do módulo (`.art-slot`) passou a `position:absolute;inset:0`
+    — antes transbordava a área e sobrepunha o texto do card.
+  - Menu de conta (avatar): o dropdown "Minha conta / Sair" (bloco `accountOpen`)
+    era descartado no porte; agora é preservado oculto e alterna no clique do avatar
+    (fecha no fora-clique). "Minha conta" → `/app/conta`, "Sair" → `/app/login`.
+  - Rodapé da área trocado pelo mesmo rodapé estruturado da LP (Institucional /
+    Políticas / Contato + DPO + copyright + Voltar ao topo).
+
 ### Adicionado
 - **Área do aluno: Home / vitrine (P2)** — 2026-07-20
   - Segunda tela (`/app`): banner "Continue de onde parou" + prateleira "A Formação"

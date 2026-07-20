@@ -51,6 +51,42 @@ export default function AreaChrome({
         a.rel = "noopener";
       }
     });
+
+    // menu de conta: avatar abre/fecha o dropdown; fora-clique fecha
+    const avatar = root.querySelector<HTMLElement>("[data-account-toggle]");
+    const menu = root.querySelector<HTMLElement>("#account-menu");
+    const toggle = (e: Event) => {
+      e.stopPropagation();
+      if (menu) menu.hidden = !menu.hidden;
+    };
+    const closeOutside = () => {
+      if (menu && !menu.hidden) menu.hidden = true;
+    };
+    avatar?.addEventListener("click", toggle);
+    document.addEventListener("click", closeOutside);
+
+    // itens do dropdown
+    menu?.querySelectorAll<HTMLAnchorElement>("a").forEach((a) => {
+      const t = (a.textContent || "").trim();
+      if (/Minha conta/i.test(t)) a.href = "/app/conta";
+      else if (/Sair/i.test(t)) {
+        a.href = "/app/login";
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          router.push("/app/login");
+        });
+      }
+    });
+
+    // "Voltar ao topo" do rodapé
+    root.querySelectorAll<HTMLElement>("[data-scrolltop]").forEach((el) =>
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        (document.scrollingElement || document.documentElement).scrollTo({ top: 0, behavior: "smooth" });
+      })
+    );
+
+    return () => document.removeEventListener("click", closeOutside);
   }, [router]);
 
   return (
