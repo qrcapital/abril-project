@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import HoverRuntime from "./_lp/HoverRuntime";
 
 export const metadata: Metadata = {
   title: "Estratégia Internacional | Dolarização de patrimônio com método",
@@ -24,6 +25,7 @@ export default function Home() {
     <>
       <style dangerouslySetInnerHTML={{ __html: lpCss }} />
       <div dangerouslySetInnerHTML={{ __html: lpBody }} />
+      <HoverRuntime />
     </>
   );
 }

@@ -7,6 +7,20 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 
 ## Não lançado
 
+### Corrigido
+- **LP: hovers de botões/links restaurados** — 2026-07-20
+  - O bundle original aplicava os hovers via atributo `style-hover` (estilo inline
+    trocado por JS em runtime); o porte estático removeu esse JS e os 12 hovers de
+    botões/links ficaram inertes. Restaurados por um client component leve
+    (`app/_lp/HoverRuntime.tsx`, ~15 linhas, sem framework de animação) que
+    reproduz o mesmo comportamento — as transições já viviam no `style` base, então
+    a suavidade voltou idêntica ao design.
+  - Diagnóstico: os "JS" do bundle eram apenas React/ReactDOM — não havia biblioteca
+    de motion. Menu mobile (checkbox `:checked`) e acordeões (`<details>` nativos) já
+    funcionavam no porte; o glow do selo VEJA (`@keyframes vsGlow`) idem.
+  - Verificado no navegador: 12/12 hovers reagindo, 12 acordeões alternando, menu e
+    glow intactos.
+
 ### Performance
 - **LP: imagens otimizadas (WebP + lazy-load)** — `ac21497` · 2026-07-20
   - PNG/JPEG convertidos para **WebP** no porte: `public/lp` de **6,3 MB → 1,3 MB**
