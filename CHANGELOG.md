@@ -8,6 +8,16 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **LP: rodapé reestruturado** — 2026-07-20
+  - Rodapé de uma linha substituído por um estruturado, inspirado no
+    `cca.blocktrends.com.br` (mesma empresa): colunas **Institucional** (nav para as
+    seções), **Políticas** (Termos, Privacidade) e **Contato** (WhatsApp + DPO
+    `dpo@qr.capital`), mais barra de copyright e "Voltar ao topo".
+  - Mantém a identidade Meridiano (verde/dourado, Playfair), não o preto da referência.
+  - Feito em `scripts/port-lp.mjs` (passo 9) → sobrevive a reexecuções do porte.
+  - _A confirmar:_ razão social ("1971 Comunicações e Sistemas LTDA.") e DPO, herdados
+    do site da QR Capital. Termos e Privacidade seguem como `#` até as páginas existirem.
+
 - **LP: link do WhatsApp plugado** — 2026-07-20
   - Botão flutuante e link "Suporte no WhatsApp" do rodapé agora apontam para
     `https://wa.me/message/W2USYZZK75FMC1` (antes `href="#"`), com `target="_blank"`.

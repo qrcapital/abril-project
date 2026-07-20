@@ -57,23 +57,61 @@ body = body.replace(/<img\b(?![^>]*\bdecoding=)/gi, '<img decoding="async"');
   if (body === before) console.warn('AVISO: card de preco nao encontrado para o glow (.vs-hl) — revisar seletor.');
 }
 
-// 8) pluga o link do WhatsApp (botao flutuante + link do rodape), que vem como
-//    href="#" no bundle. Trocar aqui caso o canal mude.
+// Config de contato (trocar aqui caso mude o canal / DPO).
+const WHATSAPP = 'https://wa.me/message/W2USYZZK75FMC1';
+const DPO_EMAIL = 'dpo@qr.capital';
+
+// 8) pluga o WhatsApp no botao flutuante (vem como href="#" no bundle).
 {
-  const WHATSAPP = 'https://wa.me/message/W2USYZZK75FMC1';
-  let n = 0;
-  const rel = `href="${WHATSAPP}" target="_blank" rel="noopener"`;
-  // botao flutuante: identificado pelo title de placeholder
+  const before = body;
   body = body.replace(
     /<a href="#"(\s+title="Suporte via WhatsApp)[^"]*"/,
-    (_, g1) => { n++; return `<a ${rel}${g1}"`; }
+    (_, g1) => `<a href="${WHATSAPP}" target="_blank" rel="noopener"${g1}"`
   );
-  // link "Suporte no WhatsApp" no rodape
-  body = body.replace(
-    /<a href="#"(\s+style="[^"]*">Suporte no WhatsApp<\/a>)/,
-    (_, g1) => { n++; return `<a ${rel}${g1}`; }
-  );
-  if (n < 2) console.warn(`AVISO: WhatsApp plugado em ${n}/2 pontos — revisar seletores.`);
+  if (body === before) console.warn('AVISO: botao flutuante do WhatsApp nao encontrado — revisar seletor.');
+}
+
+// 9) substitui o rodape do bundle (uma linha so) por um rodape estruturado,
+//    inspirado no cca.blocktrends.com.br (mesma empresa): colunas Institucional /
+//    Politicas / Contato + barra de copyright e "voltar ao topo". Mantem a
+//    identidade Meridiano (verde/dourado, Playfair), nao o preto da referencia.
+{
+  const kicker = "font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:#D9BE85;margin-bottom:4px";
+  const lnk = 'style="color:#8FA398;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#F7F5F2"';
+  const newFooter = `<footer style="background:#081F16;color:#8FA398;padding:64px 0 26px;font-family:'Montserrat',system-ui,sans-serif">
+<div style="max-width:1180px;margin:0 auto;padding:0 28px;display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap">
+<div style="flex:1 1 300px;min-width:240px">
+<div style="font-family:'Playfair Display',serif;font-size:21px;letter-spacing:.05em;color:#F7F5F2;line-height:1">ESTRATÉGIA</div>
+<div style="font-size:10.5px;letter-spacing:.36em;color:#D9BE85;margin-top:4px">INTERNACIONAL</div>
+<p style="font-size:12.5px;line-height:1.7;margin:18px 0 0;max-width:300px;color:#8FA398">Formação em dolarização de patrimônio e investimento internacional. BlockTrends, com chancela editorial da VEJA Negócios.</p>
+</div>
+<nav style="display:flex;flex-direction:column;gap:12px;flex:0 0 auto">
+<div style="${kicker}">Institucional</div>
+<a href="#tese" ${lnk}>O Diagnóstico</a>
+<a href="#docentes" ${lnk}>Corpo Docente</a>
+<a href="#curriculo" ${lnk}>A Formação</a>
+<a href="#chancela" ${lnk}>Quem Assina</a>
+<a href="#faq" ${lnk}>FAQ</a>
+</nav>
+<div style="display:flex;flex-direction:column;gap:12px;flex:0 0 auto">
+<div style="${kicker}">Políticas</div>
+<a href="#" ${lnk}>Termos de uso</a>
+<a href="#" ${lnk}>Privacidade · LGPD</a>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;flex:0 0 auto">
+<div style="${kicker}">Contato</div>
+<a href="${WHATSAPP}" target="_blank" rel="noopener" ${lnk}>Suporte no WhatsApp</a>
+<a href="mailto:${DPO_EMAIL}" ${lnk}>DPO · ${DPO_EMAIL}</a>
+</div>
+</div>
+<div style="max-width:1180px;margin:34px auto 0;padding:22px 28px 0;border-top:1px solid rgba(217,190,133,.14);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+<span style="font-size:11.5px;color:#5F7469">© 2026 Estratégia Internacional · 1971 Comunicações e Sistemas LTDA. Todos os direitos reservados.</span>
+<a href="#hero" style="color:#8FA398;font-size:11.5px;text-decoration:none;transition:color .2s ease" style-hover="color:#D9BE85">Voltar ao topo ↑</a>
+</div>
+</footer>`;
+  const before = body;
+  body = body.replace(/<footer[\s\S]*?<\/footer>/i, newFooter);
+  if (body === before) console.warn('AVISO: rodape do bundle nao encontrado para substituir.');
 }
 
 fs.writeFileSync('app/_lp/styles.css', styles.trim());
