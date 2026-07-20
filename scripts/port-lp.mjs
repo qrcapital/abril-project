@@ -61,6 +61,14 @@ body = body.replace(/<img\b(?![^>]*\bdecoding=)/gi, '<img decoding="async"');
 const WHATSAPP = 'https://wa.me/message/W2USYZZK75FMC1';
 const DPO_EMAIL = 'dpo@qr.capital';
 
+// 7b) "Entrar" da topbar -> rota de login da area do aluno (vem como
+//     href="Area-do-Aluno.html" no bundle).
+{
+  const before = body;
+  body = body.replace(/(<a class="tb-entrar" href=")Area-do-Aluno\.html(")/, '$1/app/login$2');
+  if (body === before) console.warn('AVISO: botao "Entrar" da topbar nao encontrado — revisar seletor.');
+}
+
 // 8) pluga o WhatsApp no botao flutuante (vem como href="#" no bundle).
 {
   const before = body;

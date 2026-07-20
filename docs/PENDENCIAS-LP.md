@@ -28,8 +28,6 @@ _Última atualização: 2026-07-20._
 
 ## 🟡 Depende de outra fase
 
-- [ ] **"Entrar"** (topbar) — aponta para `Area-do-Aluno.html` (arquivo local, não existe
-      no deploy). Vira a rota real de login quando a **área do aluno** for construída.
 - [ ] **`{{ preco }}` / `{{ parcelas }}`** — hoje hardcoded no porte (`R$ 397` / `10x sem
       juros de R$ 39,70`). O PRD previa configuráveis sem deploy (variáveis de template).
 
@@ -40,6 +38,7 @@ _Última atualização: 2026-07-20._
 - [x] **Performance de imagens** — PNG/JPG → WebP + lazy-load (6,3 MB → 1,3 MB).
 - [x] **Hovers de botões/links** — restaurados via `HoverRuntime` (`style-hover`).
 - [x] **Glow do card de preço** — efeito `.vs-hl` aplicado à Oferta.
+- [x] **"Entrar" da topbar** → `/app/login` (área do aluno). Login já construído (2026-07-20).
 - [x] **Rodapé reestruturado** — colunas Institucional/Políticas/Contato + DPO + copyright
       + voltar ao topo, inspirado no cca.blocktrends.com.br (2026-07-20).
 
