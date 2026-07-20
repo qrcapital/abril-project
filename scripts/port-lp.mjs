@@ -46,6 +46,17 @@ let imgN = 0;
 body = body.replace(/<img\b(?![^>]*\bloading=)/gi, (m) => (++imgN > 8 ? '<img loading="lazy"' : m));
 body = body.replace(/<img\b(?![^>]*\bdecoding=)/gi, '<img decoding="async"');
 
+// 7) aplica o glow pulsante (.vs-hl, mesmo da secao "A Diferenca") ao card de
+//    preco da Oferta. Match pela borda dourada, que so esse card usa.
+{
+  const before = body;
+  body = body.replace(
+    /<div style="(background:#F7F5F2;color:#333333;border-radius:14px;border-top:3px solid #A98E4E;[^"]*)"/,
+    '<div class="vs-hl" style="$1"'
+  );
+  if (body === before) console.warn('AVISO: card de preco nao encontrado para o glow (.vs-hl) — revisar seletor.');
+}
+
 fs.writeFileSync('app/_lp/styles.css', styles.trim());
 fs.writeFileSync('app/_lp/body.html', body.trim());
 console.log('styles.css:', styles.length, 'body.html:', body.length);

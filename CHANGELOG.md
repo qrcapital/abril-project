@@ -7,6 +7,14 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 
 ## Não lançado
 
+### Adicionado
+- **LP: glow pulsante no card de preço da Oferta** — 2026-07-20
+  - Aplicado o mesmo efeito `.vs-hl` (animação `@keyframes vsGlow`, halo dourado
+    pulsante) usado no box verde da seção "A Diferença" ao card de preço (R$ 397)
+    da seção Oferta. O card claro sobre o fundo verde escuro faz o halo destacar.
+  - O passo foi embutido em `scripts/port-lp.mjs` (match pela borda dourada
+    exclusiva do card), então sobrevive a reexecuções do porte.
+
 ### Corrigido
 - **LP: hovers de botões/links restaurados** — 2026-07-20
   - O bundle original aplicava os hovers via atributo `style-hover` (estilo inline
