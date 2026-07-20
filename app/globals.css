@@ -70,3 +70,81 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
+
+/* ============================================================
+   LP (landing) — efeitos do Meridiano. Fonte: docs/DESIGN.md
+   ============================================================ */
+html { scroll-behavior: smooth; }
+
+/* gradientes do Meridiano (o único gradiente do sistema é o CTA dourado) */
+.grad-gold { background-image: linear-gradient(160deg, #d9be85, #a98e4e); }
+.grad-verde { background-image: linear-gradient(135deg, #0a2b1e, #0b2d20 65%); }
+
+/* textura de pontos sobre fundos verdes */
+.lp-dots { position: relative; }
+.lp-dots::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(rgba(247, 245, 242, 0.08) 1.2px, transparent 1.2px);
+  background-size: 30px 30px;
+  -webkit-mask-image: linear-gradient(180deg, black, transparent 92%);
+  mask-image: linear-gradient(180deg, black, transparent 92%);
+}
+
+/* wordmark lockup: ESTRATÉGIA + hairlines douradas + INTERNACIONAL */
+.wordmark { display: inline-flex; flex-direction: column; align-items: center; gap: 0.42em; line-height: 1; }
+.wordmark b { font-family: var(--font-serif); font-weight: 600; letter-spacing: 0.26em; padding-left: 0.26em; }
+.wordmark .intl {
+  display: flex; align-items: center; gap: 0.7em; font-family: var(--font-sans);
+  font-weight: 700; letter-spacing: 0.36em; text-transform: uppercase; font-size: 0.42em;
+}
+.wordmark .intl::before, .wordmark .intl::after {
+  content: ""; height: 1px; width: clamp(18px, 4vw, 38px);
+}
+.wordmark .intl::before { background: linear-gradient(90deg, transparent, currentColor); }
+.wordmark .intl::after { background: linear-gradient(90deg, currentColor, transparent); }
+
+/* atos do diagnóstico: o ativo/hover inverte para verde */
+.ato { transition: background-color 0.4s ease, color 0.4s ease; }
+.atos:has(.ato:hover) .ato:not(:hover) { opacity: 0.75; }
+
+/* card de docente: foto duotone verde que colore no hover */
+.prof { transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease; }
+.prof:hover { transform: translateY(-6px); }
+.prof .ph img { transition: filter 0.5s ease, transform 0.6s ease; filter: grayscale(1) brightness(0.85) sepia(0.35) hue-rotate(75deg) saturate(1.4); }
+.prof .ph::after {
+  content: ""; position: absolute; inset: 0; background: #0b2d20; mix-blend-mode: color;
+  opacity: 0.55; transition: opacity 0.5s ease; pointer-events: none;
+}
+.prof:hover .ph img { filter: none; transform: scale(1.04); }
+.prof:hover .ph::after { opacity: 0; }
+
+/* glow dourado da oferta (único elemento pulsante) */
+@keyframes vsGlow {
+  0%, 100% { box-shadow: 0 12px 30px rgba(11, 45, 32, 0.18), 0 0 0 1px rgba(217, 190, 133, 0.35); }
+  50% { box-shadow: 0 22px 66px rgba(217, 190, 133, 0.6), 0 0 0 3px rgba(217, 190, 133, 0.9); }
+}
+.vs-glow { animation: vsGlow 2.6s ease-in-out infinite; will-change: box-shadow; }
+
+/* acordeão do currículo */
+.mod summary { list-style: none; cursor: pointer; }
+.mod summary::-webkit-details-marker { display: none; }
+.mod .tgl { transition: transform 0.3s ease; }
+.mod[open] .tgl { transform: rotate(45deg); }
+
+/* menu mobile da topbar (sem JS) */
+.nav-toggle { display: none; }
+@media (max-width: 1024px) {
+  .nav-links { display: none; }
+  .nav-toggle:checked ~ .nav-links {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
+    position: absolute; top: 100%; left: 0; right: 0; padding: 20px 28px 24px;
+    background: var(--color-verde-3); border-bottom: 1px solid rgba(217, 190, 133, 0.18);
+  }
+  .nav-hamb { display: inline-flex; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .vs-glow { animation: none; }
+  .prof, .prof .ph img, .ato { transition: none; }
+}
