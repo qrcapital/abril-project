@@ -29,6 +29,7 @@ Assim que os docs estiverem no lugar, me avisa que eu leio tudo e a gente segue 
 | `docs/ROUTES.md` | Mapa de telas por estado de acesso (LP/conversão, área do aluno pré/pós-sessão, admin) + deep links de e-mail. |
 | `docs/DESIGN.md` | Design system "Meridiano": tokens exatos, patterns com código, anti-slop checklist e lista negra. |
 | `docs/BACKLOG.md` | Itens fora do v1 para reavaliar pós-launch (modo claro, exit-intent, WhatsApp API, gamificação). |
+| `docs/AMBIENTES.md` | Estratégia de ambientes (local, homolog, produção), deploy Netlify e checklist de provisionamento. |
 | `docs/apresentacao-stack.html` | Apresentação do arcabouço ferramental para o time (também publicada como artifact). |
 
 ## Estrutura

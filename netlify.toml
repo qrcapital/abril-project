@@ -1,0 +1,30 @@
+# Netlify — Estratégia Internacional
+# Deploy do Next.js 16. Segredos NUNCA aqui: vão no painel do Netlify,
+# por contexto (Site settings > Environment variables). Ver docs/AMBIENTES.md.
+
+[build]
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Runtime oficial do Next.js no Netlify (App Router, RSC, SSR, funções).
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# ------------------------------------------------------------
+# Contextos de deploy
+#   production  -> branch main  (ambiente de produção)
+#   homolog     -> branch homolog (ambiente de homologação, stakeholders)
+# As variáveis de ambiente de cada contexto (chaves Supabase, etc.)
+# são definidas no painel do Netlify, escopadas por contexto.
+# ------------------------------------------------------------
+[context.production.environment]
+  NEXT_PUBLIC_APP_ENV = "production"
+
+[context.homolog.environment]
+  NEXT_PUBLIC_APP_ENV = "homolog"
+
+# Deploy previews de Pull Request herdam as variáveis de homolog por padrão.
+[context.deploy-preview.environment]
+  NEXT_PUBLIC_APP_ENV = "homolog"
