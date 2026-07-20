@@ -14,6 +14,8 @@ e é validado no ambiente de **homolog** (branch `homolog`).
     seções), **Políticas** (Termos, Privacidade) e **Contato** (WhatsApp + DPO
     `dpo@qr.capital`), mais barra de copyright e "Voltar ao topo".
   - Mantém a identidade Meridiano (verde/dourado, Playfair), não o preto da referência.
+  - Wordmark do rodapé usa o markup idêntico ao da topbar (ESTRATÉGIA + INTERNACIONAL
+    entre as duas linhas douradas), para consistência de marca.
   - Feito em `scripts/port-lp.mjs` (passo 9) → sobrevive a reexecuções do porte.
   - _A confirmar:_ razão social ("1971 Comunicações e Sistemas LTDA.") e DPO, herdados
     do site da QR Capital. Termos e Privacidade seguem como `#` até as páginas existirem.

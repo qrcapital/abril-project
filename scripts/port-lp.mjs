@@ -81,8 +81,10 @@ const DPO_EMAIL = 'dpo@qr.capital';
   const newFooter = `<footer style="background:#081F16;color:#8FA398;padding:64px 0 26px;font-family:'Montserrat',system-ui,sans-serif">
 <div style="max-width:1180px;margin:0 auto;padding:0 28px;display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap">
 <div style="flex:1 1 300px;min-width:240px">
-<div style="font-family:'Playfair Display',serif;font-size:21px;letter-spacing:.05em;color:#F7F5F2;line-height:1">ESTRATÉGIA</div>
-<div style="font-size:10.5px;letter-spacing:.36em;color:#D9BE85;margin-top:4px">INTERNACIONAL</div>
+<a href="#hero" style="display:inline-block;color:#F7F5F2;text-decoration:none">
+<b style="display:block;font-family:'Playfair Display',serif;font-size:20px;letter-spacing:.26em;font-weight:500;color:#F7F5F2;line-height:1;white-space:nowrap">ESTRATÉGIA</b>
+<span style="display:flex;align-items:center;gap:10px;font-size:8px;letter-spacing:.44em;color:#EDE6DD;font-weight:600;margin-top:5px;white-space:nowrap"><i style="flex:1;height:1px;background:#A98E4E;min-width:16px"></i>INTERNACIONAL<i style="flex:1;height:1px;background:#A98E4E;min-width:16px"></i></span>
+</a>
 <p style="font-size:12.5px;line-height:1.7;margin:18px 0 0;max-width:300px;color:#8FA398">Formação em dolarização de patrimônio e investimento internacional. BlockTrends, com chancela editorial da VEJA Negócios.</p>
 </div>
 <nav style="display:flex;flex-direction:column;gap:12px;flex:0 0 auto">
