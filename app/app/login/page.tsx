@@ -19,5 +19,10 @@ export default async function LoginPage({
   searchParams: Promise<{ s?: string }>;
 }) {
   const { s } = await searchParams;
-  return <LoginClient html={variants[s ?? "regular"] ?? variants.regular} />;
+  return (
+    <LoginClient
+      html={variants[s ?? "regular"] ?? variants.regular}
+      mode={s === "primeiro" ? "primeiro" : "login"}
+    />
+  );
 }

@@ -2,13 +2,17 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 const WHATSAPP = "https://wa.me/message/W2USYZZK75FMC1";
 
 /**
  * Chrome das telas autenticadas da área (topbar + footer, design portado).
- * Envolve as telas do route group (sala). O login fica fora, sem chrome.
- * Interatividade de homolog: "Início"/wordmark → /app, FAQ → LP, Suporte → WhatsApp.
+ * Delegação de evento no container (que persiste) — sobrevive a router.refresh
+ * (ex.: ao marcar aula concluída), que re-injeta o HTML e apagaria listeners presos
+ * nos elementos. "Início"/wordmark (data-home) → /app; FAQ → LP; Suporte → WhatsApp;
+ * menu de conta abre/fecha; "Voltar ao topo" rola a página. Links com href real
+ * (rodapé) navegam nativamente.
  */
 export default function AreaChrome({
   top,
@@ -25,68 +29,76 @@ export default function AreaChrome({
   useEffect(() => {
     const root = ref.current;
     if (!root) return;
+    const menu = () => root.querySelector<HTMLElement>("#account-menu");
 
-    const goHome = (e: Event) => {
-      e.preventDefault();
-      router.push("/app");
-    };
+    const onClick = (e: Event) => {
+      const t = e.target as Element;
 
-    // wordmark → Início
-    const wordmark = root.querySelector("b")?.closest("div") as HTMLElement | null;
-    if (wordmark) {
-      wordmark.style.cursor = "pointer";
-      wordmark.addEventListener("click", goHome);
-    }
-
-    root.querySelectorAll<HTMLAnchorElement>("nav a").forEach((a) => {
-      const t = (a.textContent || "").trim();
-      if (t === "Início") {
-        a.href = "/app";
-        a.addEventListener("click", goHome);
-      } else if (/FAQ/i.test(t)) {
-        a.href = "/#faq";
-      } else if (/Suporte|WhatsApp/i.test(t)) {
-        a.href = WHATSAPP;
-        a.target = "_blank";
-        a.rel = "noopener";
+      if (t.closest("[data-account-toggle]")) {
+        e.stopPropagation();
+        const m = menu();
+        if (m) m.hidden = !m.hidden;
+        return;
       }
-    });
-
-    // menu de conta: avatar abre/fecha o dropdown; fora-clique fecha
-    const avatar = root.querySelector<HTMLElement>("[data-account-toggle]");
-    const menu = root.querySelector<HTMLElement>("#account-menu");
-    const toggle = (e: Event) => {
-      e.stopPropagation();
-      if (menu) menu.hidden = !menu.hidden;
-    };
-    const closeOutside = () => {
-      if (menu && !menu.hidden) menu.hidden = true;
-    };
-    avatar?.addEventListener("click", toggle);
-    document.addEventListener("click", closeOutside);
-
-    // itens do dropdown
-    menu?.querySelectorAll<HTMLAnchorElement>("a").forEach((a) => {
-      const t = (a.textContent || "").trim();
-      if (/Minha conta/i.test(t)) a.href = "/app/conta";
-      else if (/Sair/i.test(t)) {
-        a.href = "/app/login";
-        a.addEventListener("click", (e) => {
-          e.preventDefault();
-          router.push("/app/login");
+      if (t.closest("[data-home]")) {
+        e.preventDefault();
+        return router.push("/app");
+      }
+      if (t.closest("[data-scrolltop]")) {
+        e.preventDefault();
+        return (document.scrollingElement || document.documentElement).scrollTo({
+          top: 0,
+          behavior: "smooth",
         });
       }
-    });
 
-    // "Voltar ao topo" do rodapé
-    root.querySelectorAll<HTMLElement>("[data-scrolltop]").forEach((el) =>
-      el.addEventListener("click", (e) => {
+      const a = t.closest("a");
+      if (!a) return;
+      const txt = (a.textContent || "").trim();
+
+      if (a.closest("#account-menu")) {
         e.preventDefault();
-        (document.scrollingElement || document.documentElement).scrollTo({ top: 0, behavior: "smooth" });
-      })
-    );
+        if (/Sair/i.test(txt)) {
+          createClient()
+            .auth.signOut()
+            .finally(() => {
+              router.push("/app/login");
+              router.refresh();
+            });
+        } else {
+          router.push("/app/conta");
+        }
+        return;
+      }
+      if (a.closest("nav")) {
+        if (/^In[ií]cio$/i.test(txt)) {
+          e.preventDefault();
+          return router.push("/app");
+        }
+        if (/FAQ/i.test(txt)) {
+          e.preventDefault();
+          return router.push("/#faq");
+        }
+        if (/Suporte|WhatsApp/i.test(txt)) {
+          e.preventDefault();
+          window.open(WHATSAPP, "_blank", "noopener");
+        }
+      }
+      // demais links (rodapé com href real) navegam nativamente
+    };
 
-    return () => document.removeEventListener("click", closeOutside);
+    const closeOutside = (e: Event) => {
+      const m = menu();
+      if (m && !m.hidden && !(e.target as Element).closest("[data-account-toggle],#account-menu"))
+        m.hidden = true;
+    };
+
+    root.addEventListener("click", onClick);
+    document.addEventListener("click", closeOutside);
+    return () => {
+      root.removeEventListener("click", onClick);
+      document.removeEventListener("click", closeOutside);
+    };
   }, [router]);
 
   return (

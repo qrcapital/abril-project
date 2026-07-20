@@ -1,38 +1,53 @@
-# Pendências da Landing Page
+# Pendências — LP + Área do Aluno
 
-Checklist vivo do que falta na LP antes do "pronto para produção". Atualizado
-conforme os insumos chegam. Quando o Pedro perguntar "quais as pendências da LP?",
-este é o documento a puxar.
+Checklist vivo do que falta antes do "pronto para produção" (V1/homolog). Atualizado
+conforme os insumos chegam. Quando o Pedro perguntar "quais as pendências?", este é o
+documento a puxar. (O admin é V2 — ver `PLANO-ADMIN.md`.)
 
 _Última atualização: 2026-07-20._
 
-## 🔴 Destrava a venda (prioridade máxima)
+> Legenda: 🟢 dá para fazer agora (sem insumo externo) · 🔒 bloqueado por insumo/decisão.
 
-- [ ] **Checkout do Guru** — o CTA final **"GARANTIR MINHA VAGA"** (e o `title="checkout (D2)"`)
-      aponta para `href="#"`. Precisa da **URL do checkout Guru**. Todos os CTAs de compra
-      devem levar a essa URL (PRD §3). Sem isso a LP não converte.
-      - _Insumo necessário:_ URL do checkout (PH providencia junto com docs/secret do webhook).
+## 🔴 Venda / checkout
 
-## 🟠 Conteúdo / links a povoar
+- [x] **Homolog: compra → primeiro acesso** — "GARANTIR MINHA VAGA" leva a
+      `/app/login?s=primeiro` (simula a compra, sem Guru) (2026-07-20).
+- [ ] **Produção: checkout do Guru** — trocar o CTA pela **URL do checkout Guru**.
+      _Insumo:_ URL do checkout (PH, com docs/secret do webhook).
 
-- [ ] **Termos de uso** (rodapé) — hoje `href="#"`. Falta a página/URL.
-- [ ] **Privacidade · LGPD** (rodapé) — hoje `href="#"`. Falta a página/URL.
-- [ ] **Confirmar dados jurídicos do rodapé** — razão social "1971 Comunicações e
-      Sistemas LTDA." e DPO `dpo@qr.capital` foram herdados do site da QR Capital
-      (`cca.blocktrends.com.br`). Confirmar se valem para este produto.
-- [ ] **VSL do hero** — hoje é `placeholder do VSL` (caixa vazia). Precisa do vídeo
-      (ou decidir manter imagem; o design prevê `showVsl` configurável, PRD §2).
-- [ ] **`og:image`** — sem imagem de preview para compartilhamento (WhatsApp/redes).
-- [ ] **Pixels de tracking** — sem `fbq`/`gtag`. O PRD pede evento `InitiateCheckout`
-      e pixels de remarketing (PRD §1 e §6).
+## 🟢 Dá para fazer agora (sem insumo)
 
-## 🟡 Depende de outra fase
+- [ ] **Prova funcional** — banco de questões real + correção; resultado da nota;
+      destrava com 16/16.
+- [ ] **`{{ preco }}` / `{{ parcelas }}`** configuráveis (hoje hardcoded no porte).
+- [ ] **Telas secundárias** — `/obrigado`, `/app/recuperar-senha`, `/app/redefinir-senha`, `/app/acesso`.
+- [ ] **Remover atalhos de teste** (login e prova) antes do go-live.
+- [ ] **Pixels de tracking** (`fbq`/`gtag`) — estrutura pronta; precisa dos IDs.
 
-- [ ] **`{{ preco }}` / `{{ parcelas }}`** — hoje hardcoded no porte (`R$ 397` / `10x sem
-      juros de R$ 39,70`). O PRD previa configuráveis sem deploy (variáveis de template).
+## 🚫 Fora do homolog (decisão 2026-07-20)
+
+Não entram no homolog; ficam para produção com o conteúdo real:
+- **Termos de uso** e **Privacidade · LGPD** (páginas/URLs) — rodapé segue `href="#"`.
+- **VSL do hero** — segue placeholder.
+- **Vídeo real (Panda)** — homolog usa clipe de exemplo.
+- **Materiais reais** (apostilas/planilhas) — homolog baixa PDF de exemplo.
+- **Arte dos módulos** — homolog usa placeholder.
+
+## 🔌 Backend (Fase 2)
+
+- **Auth Supabase** (login real, sessão, guarda de rotas).
+- **Webhook Guru** (provisionar acesso na compra).
+- **E-mails** (boas-vindas, reset, resultado).
+- Trocar as fontes de dados (progresso/curso/certificado) para o banco.
 
 ## ✅ Já resolvido
 
+- [x] **Dados jurídicos do rodapé confirmados** — razão social "1971 Comunicações e Sistemas LTDA." + DPO `dpo@qr.capital` (2026-07-20).
+
+- [x] **Progresso real** — marcar aula concluída (cookie); sidebar/%/home/"Continuar"/gate da prova reagem (2026-07-20).
+- [x] **Certificado — Baixar PDF** (imprime o preview, fiel ao design) + **Compartilhar no LinkedIn** (add-to-profile oficial) + "Validar" → `/verificar` (2026-07-20).
+- [x] **Página pública `/verificar/:codigo`** — válido/inválido, on-brand (2026-07-20).
+- [x] **`og:image` da LP** — imagem 1200×630 branded + twitter card (2026-07-20).
 - [x] **WhatsApp** — botão flutuante + link do rodapé plugados em
       `https://wa.me/message/W2USYZZK75FMC1` (2026-07-20).
 - [x] **Performance de imagens** — PNG/JPG → WebP + lazy-load (6,3 MB → 1,3 MB).

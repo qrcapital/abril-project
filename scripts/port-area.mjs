@@ -34,6 +34,17 @@ if (fs.existsSync('referencias/cowork/atencao.png')) {
   fs.writeFileSync('public/app/atencao.webp', ico);
 }
 
+// Logos VEJA / BlockTrends em PNG rasterizado para o PDF do certificado
+// (html2canvas nao renderiza <img src=".svg"> nem o filtro brightness(0)).
+// VEJA colorida; BlockTrends invertida (branco -> preto, como o filtro na tela).
+for (const [uuid, neg] of [['730df0c2-a863-41bb-a324-2761feacb44d', false], ['86f67e34-cae4-4c8a-b9eb-8a5073249b89', true]]) {
+  const svgPath = `public/app/${uuid}.svg`;
+  if (!fs.existsSync(svgPath)) continue;
+  let img = sharp(svgPath, { density: 300 }).resize({ width: 520 });
+  if (neg) img = img.negate({ alpha: false });
+  fs.writeFileSync(`public/app/${uuid}.png`, await img.png().toBuffer());
+}
+
 // 2) CSS (todos os <style> do helmet) + corpo (apos </helmet>)
 let styles = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map(m=>m[1]).join('\n');
 let body = html;
@@ -183,6 +194,7 @@ const CHROME = { firstName: 'Pedro', initial: 'P' };
 // (id="account-menu" hidden) e marcamos o avatar (data-account-toggle) para o JS.
 let topRaw = extractScreen(body, 'showChrome')
   .replace(/onclick="\{\{ toggleAccount \}\}"/, 'data-account-toggle="1"')
+  .replace(/onclick="\{\{ goHome \}\}"/g, 'data-home="1"')   // wordmark + "Início"
   .replace(/<sc-if value="\{\{ accountOpen \}\}"[^>]*>/, '')
   .replace('<div style="position:absolute;top:46px', '<div id="account-menu" hidden style="position:absolute;top:46px')
   .replace('</sc-if>', '');
@@ -199,7 +211,7 @@ const V = {
   // header da questao (valores iniciais; o QuizClient atualiza ao vivo)
   timerColor: '#A98E4E', timerDisplay: '120:00', qNumber: '1', qTotal: '20', answeredCount: '0', qPct: '5%',
   // certificado / conta
-  fullName: 'Pedro Metal', accessUntil: '20/07/2027',
+  fullName: 'Pedro Teixeira', accessUntil: '20/07/2027',
 };
 // Login e suas variantes de estado. Cada estado é um sc-if do template; aqui
 // viramos o hint do estado desejado para true (e o "regular" para false no 1º acesso).
@@ -215,7 +227,15 @@ const screens = {
   'login-first':    prep(                                                            // 1º acesso: defina sua senha
                       flip(flip(loginRaw, 'loginFirst', 'false', 'true'), 'loginRegular', 'true', 'false'),
                       { ...V, loginBtn: 'DEFINIR SENHA' }),
-  home:       prep(extractScreen(body, 'isHome'),       V),
+  // home: troca a estrela do card "Prova Final" pelo selo do curso (anel + olho)
+  home:       prep(extractScreen(body, 'isHome'), V)
+                .replace(
+                  /<div style="width:52px;height:52px;border-radius:13px;background:linear-gradient\(160deg,#D9BE85,#A98E4E\);[^"]*">\s*<svg[\s\S]*?<\/svg>\s*<\/div>/,
+                  '<div style="position:relative;width:52px;height:52px;flex:0 0 auto">' +
+                  '<img src="/app/dec6993b-f88c-4b38-a7bb-33d730441044.svg" alt="Selo do curso" style="width:52px;height:52px;display:block;transform:rotate(-38deg)">' +
+                  '<img src="/app/280505b4-fa9f-4519-b1d2-064fbb4ecad1.webp" alt="" style="position:absolute;top:49%;left:50%;transform:translate(-50%,-50%);width:26px;height:auto;display:block">' +
+                  '</div>'
+                ),
   // player: bloco full-width com o video centralizado (letterbox preto). O design
   // vinha com aspect-ratio:16/6.4 + max-height, que encolhia a largura via altura.
   aula:       prep(extractScreen(body, 'isAula'), V)
@@ -249,6 +269,9 @@ const screens = {
                 .replace(/<svg width="28" height="28"[^>]*stroke="#b0413e"[\s\S]*?<\/svg>/,
                   '<span style="width:30px;height:30px;display:block;background:#b0413e;-webkit-mask:url(/app/atencao.webp) center/contain no-repeat;mask:url(/app/atencao.webp) center/contain no-repeat"></span>'),
   certificado:expandNps(prep(extractScreen(body, 'isCert'), V))
+                // id no preview (para o "Baixar PDF" isolar via print)
+                .replace('<div style="background:#F7F5F2;border-radius:8px;box-shadow:0 34px 80px',
+                         '<div id="cert-preview" style="background:#F7F5F2;border-radius:8px;box-shadow:0 34px 80px')
                 // ano de emissao no canto inferior esquerdo do certificado
                 .replace(/(<div style="position:relative;border:2px solid #A98E4E;[^"]*">)/,
                   '$1<span style="position:absolute;right:26px;bottom:18px;font-size:10px;letter-spacing:.16em;color:#A98E4E;font-weight:600">2026</span>')

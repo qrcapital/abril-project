@@ -8,6 +8,33 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **Autenticação Supabase (email + senha)** — 2026-07-20
+  - Login (`signInWithPassword`) e **primeiro acesso = signup** (cria a conta já
+    confirmada via server action com service role, sem e-mail de confirmação;
+    espelha o webhook do Guru). Guarda de sessão em `proxy.ts` protege `/app/*`.
+    "Sair" faz `signOut`. Erros inline. `.env.local` com as chaves (fora do git).
+
+- **Área do aluno funcional (dados reais)** — 2026-07-20
+  - **Modelo de dados do curso** (`lib/curso.ts`): 5 módulos, 17 aulas, docentes,
+    descrições. Página de aula **data-driven** (`lib/aula-template.ts`): título,
+    breadcrumb, descrição, materiais e sidebar por aula; navegação real prev/próxima;
+    sidebar com estados concluída/atual/futura, clicável.
+  - **Home dinâmica** (`lib/home-template.ts`): hero "Continue de onde parou" e os
+    cards de módulo vindos dos dados.
+  - **Progresso real, por usuário**: botão "Concluir aula" persistido em cookie
+    escopado pelo `user.id` (conta nova começa do zero); sidebar, %, home, "Continuar"
+    e o gate da prova reagem. Popup de bloqueio da Prova Final até 16/16.
+  - **Player** tocando (clipe de exemplo local, sem download) e **materiais** baixáveis
+    (PDF de exemplo). "Comprar" na LP → primeiro acesso (homolog, sem Guru).
+
+- **Certificado + verificação** — 2026-07-20
+  - **Baixar PDF**: captura o preview (`html2canvas`) e monta um PDF do tamanho exato
+    (`jsPDF`), sem corte, ~190 KB; logos VEJA/BlockTrends rasterizadas para o PDF.
+  - **Compartilhar no LinkedIn** (add-to-profile oficial) e **"Validar"** → `/verificar`.
+  - **`/verificar/:codigo`** — página pública (válido/inválido), on-brand.
+  - **`og:image`** da LP (1200×630 branded) + twitter card.
+
+### Adicionado
 - **Área do aluno: estados de login e atalhos de teste (homolog)** — 2026-07-20
   - Estados da tela de login por query param: **senha errada** (`?s=erro`), **pagamento
     em processamento** (`?s=pendente`) e **1º acesso / defina sua senha** (`?s=primeiro`),

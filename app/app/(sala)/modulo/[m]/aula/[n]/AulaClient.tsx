@@ -2,23 +2,16 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { alternarConcluida } from "@/lib/progresso";
 
 /**
- * Página de aula (design portado). O conteúdo é o mockup do design (Módulo II ·
- * Aula 7) — os dados reais por aula entram com o Supabase. Interatividade de
- * homolog: os botões "← Aula N" / "Próxima aula →" navegam entre as aulas.
- * Os acordeões da sidebar são <details> nativos. Materiais ficam pendentes até
- * os arquivos reais existirem.
+ * Página de aula (design portado, conteúdo de lib/curso). Delegação de evento no
+ * container (sobrevive a router.refresh):
+ * - Anterior/Próxima (data-nav) e aulas da sidebar (data-href) navegam;
+ * - "Concluir aula" (data-concluir) marca/desmarca no cookie e atualiza a tela
+ *   (sidebar, %, gate da prova) via router.refresh().
  */
-export default function AulaClient({
-  html,
-  m,
-  n,
-}: {
-  html: string;
-  m: number;
-  n: number;
-}) {
+export default function AulaClient({ html, userId }: { html: string; userId: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -26,19 +19,26 @@ export default function AulaClient({
     const root = ref.current;
     if (!root) return;
 
-    root.querySelectorAll("button").forEach((b) => {
-      const t = (b.textContent || "").trim();
-      if (t.startsWith("←")) {
-        b.addEventListener("click", () =>
-          router.push(`/app/modulo/${m}/aula/${Math.max(1, n - 1)}`)
-        );
-      } else if (/Próxima|→/.test(t)) {
-        b.addEventListener("click", () =>
-          router.push(`/app/modulo/${m}/aula/${n + 1}`)
-        );
+    const onClick = (e: Event) => {
+      const target = e.target as Element;
+
+      const concluir = target.closest<HTMLElement>("[data-concluir]");
+      if (concluir) {
+        alternarConcluida(userId, Number(concluir.getAttribute("data-concluir")));
+        router.refresh();
+        return;
       }
-    });
-  }, [router, m, n]);
+
+      const nav = target.closest<HTMLElement>("[data-nav],[data-href]");
+      if (nav) {
+        const to = nav.getAttribute("data-nav") ?? nav.getAttribute("data-href");
+        if (to) router.push(to);
+      }
+    };
+
+    root.addEventListener("click", onClick);
+    return () => root.removeEventListener("click", onClick);
+  }, [router, userId]);
 
   return <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />;
 }

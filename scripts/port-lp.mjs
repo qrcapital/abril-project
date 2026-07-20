@@ -69,6 +69,15 @@ const DPO_EMAIL = 'dpo@qr.capital';
   if (body === before) console.warn('AVISO: botao "Entrar" da topbar nao encontrado — revisar seletor.');
 }
 
+// 7c) CTA de compra "GARANTIR MINHA VAGA" (title="checkout (D2)") -> em homolog,
+//     sem Guru, leva ao primeiro acesso (simula a compra). Trocar pela URL do Guru
+//     quando o checkout entrar.
+{
+  const before = body;
+  body = body.replace(/(<a href=")#(" title="checkout \(D2\)")/, '$1/app/login?s=primeiro$2');
+  if (body === before) console.warn('AVISO: CTA de checkout (D2) nao encontrado — revisar seletor.');
+}
+
 // 8) pluga o WhatsApp no botao flutuante (vem como href="#" no bundle).
 {
   const before = body;
