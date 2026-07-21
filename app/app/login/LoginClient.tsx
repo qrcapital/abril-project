@@ -7,6 +7,11 @@ import { criarConta } from "./actions";
 
 const WHATSAPP = "https://wa.me/message/W2USYZZK75FMC1";
 
+// Em homolog não há webhook do Guru para trazer o nome do comprador, então o
+// primeiro acesso pede o "Nome completo" (para o certificado). Em produção o nome
+// vem do Guru e o campo não aparece.
+const PEDIR_NOME = process.env.NEXT_PUBLIC_APP_ENV !== "production";
+
 const TEST_STATES: { label: string; s?: string }[] = [
   { label: "Normal" },
   { label: "Senha errada", s: "erro" },
@@ -37,6 +42,22 @@ export default function LoginClient({ html, mode }: { html: string; mode: "login
     const passwords = () => inputs.filter((i) => i.type === "password").map((i) => i.value);
     const btn = root.querySelector<HTMLButtonElement>("button");
 
+    // Campo "Nome completo" no 1º acesso (só homolog): clona o par label+input do
+    // e-mail para herdar o estilo do design e o insere antes dele.
+    let nomeInput: HTMLInputElement | null = null;
+    if (mode === "primeiro" && PEDIR_NOME && emailInput) {
+      const emailLabel = emailInput.previousElementSibling;
+      if (emailLabel?.tagName === "LABEL") {
+        const nomeLabel = emailLabel.cloneNode(true) as HTMLElement;
+        nomeLabel.textContent = "Nome completo";
+        nomeInput = emailInput.cloneNode(true) as HTMLInputElement;
+        nomeInput.type = "text";
+        nomeInput.value = "";
+        nomeInput.setAttribute("autocomplete", "name");
+        emailLabel.before(nomeLabel, nomeInput);
+      }
+    }
+
     // elemento de erro, inserido antes do botão
     let errBox: HTMLDivElement | null = null;
     const showError = (msg: string) => {
@@ -64,10 +85,12 @@ export default function LoginClient({ html, mode }: { html: string; mode: "login
       }
       try {
         if (mode === "primeiro") {
+          const nome = (nomeInput?.value || "").trim();
+          if (nomeInput && !nome) return showError("Informe o nome completo.");
           if (p1.length < 6) return showError("A senha precisa de ao menos 6 caracteres.");
           if (p1 !== p2) return showError("As senhas não conferem.");
           // cria a conta no servidor (já confirmada) e loga
-          const res = await criarConta(email, p1);
+          const res = await criarConta(email, p1, nome);
           if (res.error) return showError(res.error);
           const { error } = await supabase.auth.signInWithPassword({ email, password: p1 });
           if (error) return showError("Conta criada, mas falhou ao entrar. Tente o login.");
@@ -88,7 +111,7 @@ export default function LoginClient({ html, mode }: { html: string; mode: "login
     };
 
     btn?.addEventListener("click", submit, opts);
-    inputs.forEach((i) =>
+    [nomeInput, ...inputs].filter((i): i is HTMLInputElement => !!i).forEach((i) =>
       i.addEventListener(
         "keydown",
         (e) => {

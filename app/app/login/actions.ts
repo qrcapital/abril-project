@@ -10,15 +10,20 @@ import { createAdminClient } from "@/lib/supabase/admin";
  */
 export async function criarConta(
   email: string,
-  password: string
+  password: string,
+  nome?: string
 ): Promise<{ ok?: true; error?: string }> {
   if (!email || password.length < 6) return { error: "Dados inválidos." };
 
+  const nomeLimpo = nome?.trim();
   const admin = createAdminClient();
   const { data, error } = await admin.auth.admin.createUser({
     email,
     password,
     email_confirm: true,
+    // Mesma chave que o webhook do Guru grava em produção. Em homolog, vem do
+    // campo "Nome completo" do primeiro acesso, para o nome sair certo no certificado.
+    ...(nomeLimpo ? { user_metadata: { nome: nomeLimpo } } : {}),
   });
 
   if (error) {

@@ -9,7 +9,7 @@ import { lerConcluidas } from "@/lib/progresso";
  * Home da área (vitrine). Navegação de lib/curso; progresso do cookie (lib/progresso):
  * - cards de módulo → primeira aula do módulo;
  * - card da Prova Final → /app/prova SE liberada (16/16); senão abre um aviso;
- * - "Continuar" → aula atual; "Ver a formação" rola até a prateleira.
+ * - "Continuar" → aula atual.
  * Delegação de evento (sobrevive à re-render ao abrir/fechar o modal).
  */
 export default function HomeClient({ html, userId }: { html: string; userId: string }) {
@@ -38,8 +38,6 @@ export default function HomeClient({ html, userId }: { html: string; userId: str
       if (btn) {
         const t = btn.textContent || "";
         if (/Continuar/i.test(t)) return router.push(href(aulaAtual(lerConcluidas(userId))));
-        if (/Ver a formação/i.test(t))
-          root.querySelector("h2")?.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     };
 

@@ -186,8 +186,11 @@ styles += `\n/* placeholder de arte de modulo (x-import image-slot pendente) */
 @keyframes vsGlow{0%,100%{box-shadow:0 12px 30px rgba(11,45,32,.18),0 0 0 1px rgba(217,190,133,.35)}50%{box-shadow:0 22px 66px rgba(217,190,133,.55),0 0 0 3px rgba(217,190,133,.8)}}`;
 fs.writeFileSync(`${outDir}/styles.css`, styles.trim());
 
-// chrome compartilhado (autenticado): topbar + footer
-const CHROME = { firstName: 'Pedro', initial: 'P' };
+// chrome compartilhado (autenticado): topbar + footer.
+// Os nomes saem envoltos em <span data-u="..."> para o AreaChrome (client) injetar
+// o nome do aluno logado em runtime (data-u: full | first | initial). Sem isso, o
+// nome ficaria "assado" no HTML e todos veriam o mesmo. Ver AreaChrome.tsx.
+const CHROME = { firstName: '<span data-u="first">Pedro</span>', initial: '<span data-u="initial">P</span>' };
 
 // topbar (1a ocorrencia de showChrome). O menu de conta (accountOpen) some no
 // resolveScIf por ser hint-false; aqui desembrulhamos mantendo o dropdown oculto
@@ -207,11 +210,12 @@ fs.writeFileSync(`${outDir}/chrome-foot.html`, buildFooter());
 
 // telas
 const V = {
-  firstName: 'Pedro', initial: 'P', loginBtn: 'ENTRAR', passMark: '70%', examMinutes: '120',
+  // nomes envoltos em <span data-u="..."> (ver comentário do CHROME acima)
+  firstName: '<span data-u="first">Pedro</span>', initial: '<span data-u="initial">P</span>', loginBtn: 'ENTRAR', passMark: '70%', examMinutes: '120',
   // header da questao (valores iniciais; o QuizClient atualiza ao vivo)
   timerColor: '#A98E4E', timerDisplay: '120:00', qNumber: '1', qTotal: '20', answeredCount: '0', qPct: '5%',
   // certificado / conta
-  fullName: 'Pedro Teixeira', accessUntil: '20/07/2027',
+  fullName: '<span data-u="full">Pedro Teixeira</span>', accessUntil: '<span data-acesso>20/07/2027</span>',
 };
 // Login e suas variantes de estado. Cada estado é um sc-if do template; aqui
 // viramos o hint do estado desejado para true (e o "regular" para false no 1º acesso).
@@ -229,6 +233,8 @@ const screens = {
                       { ...V, loginBtn: 'DEFINIR SENHA' }),
   // home: troca a estrela do card "Prova Final" pelo selo do curso (anel + olho)
   home:       prep(extractScreen(body, 'isHome'), V)
+                // botão "Ver a formação" do hero removido (redundante com os cards da prateleira)
+                .replace(/\s*<button[^>]*>Ver a formação<\/button>/, '')
                 .replace(
                   /<div style="width:52px;height:52px;border-radius:13px;background:linear-gradient\(160deg,#D9BE85,#A98E4E\);[^"]*">\s*<svg[\s\S]*?<\/svg>\s*<\/div>/,
                   '<div style="position:relative;width:52px;height:52px;flex:0 0 auto">' +
@@ -278,7 +284,9 @@ const screens = {
                 // icone oficial do LinkedIn (marca "in", azul #0A66C2)
                 .replace(/<svg width="15" height="15" viewBox="0 0 24 24" fill="#565049">[\s\S]*?<\/svg>/,
                   '<svg width="15" height="15" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"></path></svg>'),
-  conta:      prep(extractScreen(body, 'isConta'),      V),
+  conta:      prep(extractScreen(body, 'isConta'), V)
+                // e-mail vira dinâmico (preenchido pelo AreaChrome com o e-mail logado)
+                .replace('pedro@email.com', '<span data-email>pedro@email.com</span>'),
 };
 for (const [name, out] of Object.entries(screens)) fs.writeFileSync(`${outDir}/screens/${name}.html`, out);
 

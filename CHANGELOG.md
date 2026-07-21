@@ -8,6 +8,29 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **Nome, e-mail e prazo de acesso dinâmicos na área** — 2026-07-21
+  - As telas da área (topbar, home, conta, resultado e **certificado**) deixam de
+    exibir dados fixos e passam a mostrar os do aluno logado. O `AreaChrome` preenche
+    marcadores `data-u` (nome completo / primeiro nome / inicial), `data-email` e
+    `data-acesso` a partir da sessão; o certificado em PDF sai com o nome correto.
+  - **Prazo de acesso** calculado (compra + 1 ano) em vez de data fixa. Em homolog usa
+    a data de criação da conta como proxy; em produção a fonte é `enrollments.expires_at`.
+  - **Primeiro acesso** pede **"Nome completo"** (só em homolog, onde não há webhook do
+    Guru para trazê-lo); a conta é criada com `user_metadata.nome` (mesma chave do Guru).
+
+- **Deploy homolog: variáveis de ambiente no Netlify** — 2026-07-21
+  - Chaves do Supabase (URL, anon, service role como *secret*), `NEXT_PUBLIC_SITE_URL`
+    e WhatsApp configuradas no site `abril-project`, destravando o auth no deploy.
+
+### Alterado
+- **WhatsApp: link unificado em `wa.me`** — 2026-07-21
+  - Padronizado `https://wa.me/message/W2USYZZK75FMC1` no código, `.env.example` e Netlify.
+
+### Removido
+- **Home: botão "Ver a formação" do hero** — 2026-07-21
+  - Redundante com os cards da prateleira "A Formação" logo abaixo.
+
+### Adicionado
 - **Autenticação Supabase (email + senha)** — 2026-07-20
   - Login (`signInWithPassword`) e **primeiro acesso = signup** (cria a conta já
     confirmada via server action com service role, sem e-mail de confirmação;

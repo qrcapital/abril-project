@@ -1,10 +1,50 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 const WHATSAPP = "https://wa.me/message/W2USYZZK75FMC1";
+
+/**
+ * Preenche os marcadores de nome (`[data-u]`) das telas com o nome do aluno logado
+ * (`user_metadata.nome`, mesma chave que o webhook do Guru grava). Sem nome, mantém
+ * o texto do design. `full` = nome completo; `first` = primeiro nome; `initial` = inicial.
+ */
+function aplicarNome(root: HTMLElement, nome?: string | null) {
+  const full = (nome || "").trim();
+  if (!full) return;
+  const first = full.split(/\s+/)[0];
+  const initial = (first[0] || "").toUpperCase();
+  root.querySelectorAll<HTMLElement>("[data-u]").forEach((el) => {
+    const k = el.getAttribute("data-u");
+    el.textContent = k === "full" ? full : k === "initial" ? initial : first;
+  });
+}
+
+// Anos de acesso a partir da compra — espelha ACCESS_YEARS do webhook do Guru.
+const ANOS_ACESSO = 1;
+
+/**
+ * Preenche a data de fim de acesso em "Minha conta" (`[data-acesso]`). Em produção
+ * a fonte de verdade é `enrollments.expires_at` (compra + 1 ano); em homolog não há
+ * matrícula, então usamos a data de criação da conta como proxy da data de compra.
+ */
+function aplicarAcesso(root: HTMLElement, criadoEm?: string) {
+  const el = root.querySelector<HTMLElement>("[data-acesso]");
+  if (!el || !criadoEm) return;
+  const d = new Date(criadoEm);
+  if (isNaN(d.getTime())) return;
+  d.setFullYear(d.getFullYear() + ANOS_ACESSO);
+  el.textContent = d.toLocaleDateString("pt-BR");
+}
+
+/** Preenche o e-mail da conta em "Minha conta" (`[data-email]`). */
+function aplicarEmail(root: HTMLElement, email?: string) {
+  if (!email) return;
+  const el = root.querySelector<HTMLElement>("[data-email]");
+  if (el) el.textContent = email;
+}
 
 /**
  * Chrome das telas autenticadas da área (topbar + footer, design portado).
@@ -25,6 +65,27 @@ export default function AreaChrome({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Injeta o nome do aluno nas telas (topbar + tela + rodapé). Re-roda a cada
+  // navegação client, pois o AreaChrome não remonta ao trocar de tela.
+  useEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+    let cancel = false;
+    createClient()
+      .auth.getSession()
+      .then(({ data }) => {
+        if (cancel) return;
+        const user = data.session?.user;
+        aplicarNome(root, user?.user_metadata?.nome as string | undefined);
+        aplicarAcesso(root, user?.created_at);
+        aplicarEmail(root, user?.email);
+      });
+    return () => {
+      cancel = true;
+    };
+  }, [pathname]);
 
   useEffect(() => {
     const root = ref.current;
