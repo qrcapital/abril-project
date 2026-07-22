@@ -8,6 +8,46 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **LP · Nova seção "Ferramentas" (entregáveis)** — 2026-07-21
+  - Seção nova após "A Formação": à esquerda, os entregáveis (apostilas, e-book,
+    calculadora) numa lista editorial com ornamento (estrela dourada) e réguas
+    internas; à direita, um mockup de dispositivos (monitor com a área do aluno,
+    laptop com a calculadora, tablet/celular com e-book e apostila), a partir da
+    imagem final fornecida (PNG com fundo transparente).
+- **LP · "Quem assina" refeita como 2 cards** — 2026-07-21
+  - Cards paralelos: BlockTrends (**chancela técnica** — conteúdo e método) e VEJA
+    Negócios (**chancela institucional** — credibilidade, com as marcas do Grupo
+    Abril). Fim do termo "editorial". Selo circular re-gravado (`public/lp/selo-veja.svg`).
+    Termo da chancela da VEJA e logos de VEJA/Super Interessante pendentes — ver
+    `docs/BACKLOG.md`.
+
+### Alterado
+- **LP · Rodapé alinhado ao da VEJA Negócios** — 2026-07-21
+  - Estrutura em 3 faixas espelhando `veja.abril.com.br/veja-negocios`: faixa superior
+    no verde do KV (logo + "SIGA" + redes sociais), faixas Grupo Abril/institucional
+    em preto, com a logo do Grupo Abril e razão social **"Abril Comunicações S.A. ·
+    CNPJ 44.597.052/0001-62"** (LP irá para subdomínio da Abril). Links sociais reais
+    pendentes.
+- **LP · Corpo docente** — 2026-07-21
+  - Fotos em **P&B no repouso, revelando cor no hover** (antes era duotone verde que se
+    confundia com o fundo); **badges de trajetória** por professor (empresas pesquisadas
+    e verificadas); **cargo em uma linha**; numeral romano removido de cima das fotos.
+- **LP · Ajustes de design** — 2026-07-21
+  - Comparativo neutralizado e depois **removido** (substituído por "Ferramentas");
+    seta "→" no preço da ficha técnica (afordância); contraste AA dos captions
+    (`#8F887E`→`#6D6D6D` nos textos pequenos); botões da topbar padronizados;
+    algarismos com `lining-nums`; correção de contraste do copyright blindada no porte.
+- **DX · Leitura da LP em runtime** — 2026-07-21
+  - `app/page.tsx` passou a ler `body.html`/`styles.css` **dentro** do componente (roda
+    no build para o SSG; em dev, a cada request), para edições aparecerem sem reiniciar
+    o dev server. Todas as mudanças de LP acima vivem em `scripts/port-lp.mjs` (etapas
+    7d–7k), à prova de re-porte.
+
+### Removido
+- **LP · Seção "A Diferença" (comparativo)** — 2026-07-21
+  - Substituída pela nova seção "Ferramentas", que ocupou o lugar dela.
+
+### Adicionado
 - **Nome, e-mail e prazo de acesso dinâmicos na área** — 2026-07-21
   - As telas da área (topbar, home, conta, resultado e **certificado**) deixam de
     exibir dados fixos e passam a mostrar os do aluno logado. O `AreaChrome` preenche

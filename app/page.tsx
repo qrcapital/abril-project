@@ -21,15 +21,21 @@ export const metadata: Metadata = {
 
 // Design real da LP (bundle do Claude Design), portado por scripts/port-lp:
 // markup e CSS reais + assets em /public/lp. Renderizado como página estática.
-const dir = join(process.cwd(), "app", "_lp");
-const lpCss = readFileSync(join(dir, "styles.css"), "utf8");
-const lpBody = readFileSync(join(dir, "body.html"), "utf8");
-
+// A leitura fica DENTRO do componente (roda no build p/ o SSG; em dev, a cada
+// request) para que edições no body.html/styles.css apareçam sem reiniciar o
+// dev server — o readFileSync em escopo de módulo era cacheado pelo Next.
 export default function Home() {
+  const dir = join(process.cwd(), "app", "_lp");
+  const lpCss = readFileSync(join(dir, "styles.css"), "utf8");
+  const lpBody = readFileSync(join(dir, "body.html"), "utf8");
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: lpCss }} />
-      <div dangerouslySetInnerHTML={{ __html: lpBody }} />
+      {/* lining-nums: o Playfair vinha com algarismos oldstyle (3,4,5,7,9 descem
+          abaixo da baseline; só 0/1/2 alinham). Força figuras lining para os
+          números ficarem todos na mesma linha. Herda p/ toda a LP (não há
+          shorthand `font:` que resete a propriedade). */}
+      <div style={{ fontVariantNumeric: "lining-nums" }} dangerouslySetInnerHTML={{ __html: lpBody }} />
       <HoverRuntime />
     </>
   );
