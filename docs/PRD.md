@@ -40,12 +40,12 @@ Ordem aprovada no design final (`referencias/htmls/LP-Estrategia-Internacional.h
 
 | Âncora | Seção | Conteúdo |
 |---|---|---|
-| topbar | Topbar fixa | Olho + wordmark, navegação (O Diagnóstico · Corpo Docente · A Formação · Quem Assina · FAQ), Entrar, Inscreva-se. Hambúrguer no mobile |
-| `#hero` | Hero | Kicker de marcas (ver nota de escopo), headline "Sua liberdade financeira começa pela geografia", lide, CTA "QUERO DOLARIZAR MEU PATRIMÔNIO", trigger "Acesso imediato após a compra · garantia de 7 dias", VSL 16:9 configurável |
+| topbar | Topbar fixa | Olho + wordmark, navegação (Professores · Formação · Ferramentas · Idealizadores · FAQ), ENTRAR, INSCREVA-SE (caixa alta). Hambúrguer no mobile |
+| `#hero` | Hero | Fundo com globo 3D + parallax, headline "Seu patrimônio não devia depender de um só país", subtítulo com o peso dos 4 especialistas ("...método de dolarização de quem operou por dentro do Banco Central, da XP, da Caixa e do Bradesco"), CTA "DOLARIZE COMO OS GRANDES", trigger "Acesso imediato após a compra · garantia de 7 dias", VSL 16:9 configurável |
 | `#ficha` | Ficha técnica | Faixa contínua: 30h+ · 4 especialistas · On-demand · Certificado com chancela editorial VEJA Negócios (célula invertida, ver §8 sobre a redação) · {{ preco }} |
 | `#diagnostico` | O Diagnóstico | 3 atos interativos: O problema (A corrosão) · A urgência (O custo de esperar) · A resposta (A saída tem método). O ato ativo/hover inverte para verde |
-| `#docentes` | Corpo Docente | 4 cards com chip de módulo, foto duotone que colore no hover. Carrossel com snap no mobile |
-| `#formacao` | A Formação | 4 acordeões (I a IV), 16 aulas numeradas 01 a 16 com descrição de uma linha. Linha de fechamento consolida apostila, e-book e certificação |
+| `#docentes` | Corpo Docente | 4 cards com chip de módulo, foto P&B que colore no hover, rodapé com as logos mono off-white das casas onde o professor atuou (balão flutuante com o nome no hover). Carrossel com snap no mobile |
+| `#formacao` | A Formação | 4 acordeões (I a IV), 16 aulas numeradas 01 a 16, cada uma com descrição completa dos assuntos abordados. Linha de fechamento consolida apostila, e-book e certificação |
 | `#diferenca` | A Diferença | Coluna "Por conta própria" (✗) × "Com a Estratégia Internacional" (✓) |
 | `#quem-assina` | Quem Assina | VEJA Negócios (assinatura editorial, Grupo Abril) × BlockTrends (autoridade de conteúdo: 31,5 mil estudantes, +1.000 CCA®, 415h+) |
 | `#oferta` | Oferta | Card com glow dourado animado, lista "você recebe", {{ preco }} / {{ parcelas }}, CTA "GARANTIR MINHA VAGA", selos (compra segura, 7 dias, acesso imediato) |
@@ -61,7 +61,7 @@ Ordem aprovada no design final (`referencias/htmls/LP-Estrategia-Internacional.h
 | I · Macro e Estratégia Global | Rodolfo Bastos | Ex-CEO XP Investimentos EUA | 01 Por que a dolarização · 02 Dólar como reserva de valor · 03 Conta internacional na prática · 04 Carteira global e perfil |
 | II · Renda Fixa e Ações nos EUA | Tony Volpon | Ex-diretor Banco Central | 05 Tesouro americano · 06 Crédito privado internacional · 07 Comprando ações nos EUA · 08 Dividendos vs. growth |
 | III · Como Acessar o Mercado Americano | Luiz Fernando Roxo | Especialista em Opções, 25 anos | 09 ETFs · 10 REITs · 11 BDRs · 12 Tributação e sucessão internacional |
-| IV · Criptoativos em Dólar | Alexandre Ywata | PhD Northwestern, CRO QR Asset | 13 Bitcoin e Ethereum · 14 Tokens, RWA e ecossistema · 15 ETFs de cripto e análise on-chain · 16 Tributação de criptoativos |
+| IV · Criptoativos em Dólar | Alexandre Ywata | Ex-VP Caixa, CRO QR Asset | 13 Bitcoin e Ethereum · 14 Tokens, RWA e ecossistema · 15 ETFs de cripto e análise on-chain · 16 Tributação de criptoativos |
 
 **FAQ (8 perguntas):** iniciante sem experiência · precisa de conta no exterior · tempo de acesso (1 ano) · como funciona o certificado · e se reprovar (2ª chamada WhatsApp) · garantia (7 dias CDC) · aulas ao vivo (não, gravadas) · suporte (WhatsApp).
 

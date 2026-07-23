@@ -8,6 +8,18 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **LP · Corpo docente: logos das casas + balão no hover** — 2026-07-23
+  - No rodapé de cada card, as **logos reais** das empresas onde o professor atuou
+    (XP, Oyster, GAP Asset; Banco Central, UBS, Nomura; Bradesco, Safra, ZenEconomics;
+    Caixa, QR Asset, IPEA), no lugar das pílulas de texto. Tratamento **mono off-white**
+    uniforme com os fundos removidos de verdade: XP virou a caixa off-white com o "XP"
+    vazado (a marca real), Bradesco limpo do xadrez assado no JPG, IPEA invertido de
+    branco-sobre-teal. Alturas calibradas por proporção (wordmarks largos menores,
+    marcas empilhadas maiores). Logos processadas com `sharp` (recolor por luminância,
+    key de fundo), assets finais em `public/lp/dl-*.png`; montagem no `port-lp.mjs` (7h).
+  - **Balão flutuante** com o nome da empresa ao passar o mouse em cada logo (CSS puro,
+    funciona com o body injetado; desativado no touch). O card ganhou `overflow:visible`
+    para o balão não ser cortado, com os cantos do topo arredondados na foto.
 - **LP · Hero: fundo com globo 3D girando + parallax no hover** — 2026-07-23
   - Fundo do hero ganhou um **globo 3D em CSS puro** (sem JS de animação, sem libs):
     ~1.400 pontos de litoral do Natural Earth (`ne_50m_land`, domínio público) projetados
@@ -36,6 +48,24 @@ e é validado no ambiente de **homolog** (branch `homolog`).
     `docs/BACKLOG.md`.
 
 ### Alterado
+- **LP · Hero: copy refocado em dolarização + risco Brasil** — 2026-07-23
+  - Headline **"Seu patrimônio não devia depender de um só país"** (risco Brasil sem
+    citar eleição). Subtítulo imprime o peso dos 4 especialistas ancorando no produto:
+    **"Aprenda o método de dolarização de quem operou por dentro do Banco Central, da XP,
+    da Caixa e do Bradesco."** CTA trocado para **"DOLARIZE COMO OS GRANDES"**. A tira de
+    especialistas foi removida (o peso migrou para o subtítulo). `port-lp.mjs` (7m).
+- **LP · Topbar renomeada** — 2026-07-23
+  - Nav: **Professores · Formação · Ferramentas · Idealizadores · FAQ**; botões **ENTRAR**
+    e **INSCREVA-SE** em caixa alta. `port-lp.mjs` (7n).
+- **LP · Corpo docente: cargo do Ywata** — 2026-07-23
+  - "PhD Northwestern · CRO QR Asset" → **"Ex-VP Caixa · CRO QR Asset"** (o cargo executivo
+    na Caixa no lugar da credencial acadêmica, junto do CRO QR Asset).
+- **LP · Currículo: descrições completas das 16 aulas** — 2026-07-23
+  - Cada aula ganhou um **parágrafo** explicando os assuntos abordados, elaborado em cima
+    dos tópicos que já existiam (T-Bills/Notes/Bonds/TIPS/FRNs, FFO/P-FFO, investment grade
+    vs. high yield, RWAs, ETFs spot, on-chain etc.), no lugar da linha curta. Guia anti-slop
+    do `COPY.md` (sem travessão, sem regra de três, voz ativa, frases de tamanho variado).
+    `line-height:1.55` nas descrições. `port-lp.mjs` (7h-bis), com guard que confere as 16.
 - **LP · Cards "Quem assina": copy reescrito + logos reais** — 2026-07-23
   - **Card VEJA:** kicker **"A credibilidade de"** + logo VEJA Negócios (a frase completa na
     lockup); parágrafo novo com foco em confiança/autoridade ("publicação de economia da

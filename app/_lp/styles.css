@@ -521,6 +521,17 @@ html,body{overflow-x:hidden}
   .quote-flourish{top:-30px !important}
 }
 
+/* Corpo docente — balao flutuante com o nome da empresa no hover da logo */
+.prof{overflow:visible!important}
+.prof .ph{border-radius:12px 12px 0 0}
+.dl-tip{position:relative;display:inline-flex;align-items:center;flex:0 0 auto}
+.dl-tip::after{content:attr(data-nome);position:absolute;left:50%;bottom:calc(100% + 9px);transform:translateX(-50%) translateY(4px);background:#F7F5F2;color:#0B2D20;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.03em;white-space:nowrap;padding:4px 9px;border-radius:6px;box-shadow:0 8px 22px rgba(0,0,0,.32);opacity:0;pointer-events:none;transition:opacity .16s ease,transform .16s ease;z-index:6}
+.dl-tip::before{content:"";position:absolute;left:50%;bottom:calc(100% + 4px);transform:translateX(-50%);border:5px solid transparent;border-top-color:#F7F5F2;opacity:0;transition:opacity .16s ease;z-index:6}
+.dl-tip:hover{z-index:7}
+.dl-tip:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
+.dl-tip:hover::before{opacity:1}
+@media(hover:none){.dl-tip::after,.dl-tip::before{display:none}}
+
 /* Secao Ferramentas (H5b) — mockup pronto (imagem final com as telas ja aplicadas). */
 .entreg-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
 .entreg-list li{border-top:1px solid rgba(169,142,78,.22)}

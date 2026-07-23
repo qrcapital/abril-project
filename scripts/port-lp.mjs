@@ -165,8 +165,18 @@ const DPO_EMAIL = 'dpo@qr.capital';
     'font-size:10px;letter-spacing:.16em;color:#D9BE85;font-weight:700;text-transform:uppercase',
     'font-size:10px;letter-spacing:.1em;color:#D9BE85;font-weight:700;text-transform:uppercase'
   );
-  const chip = (t) => `<span style="font-size:9.5px;font-weight:700;letter-spacing:.02em;color:#D9BE85;background:rgba(217,190,133,.08);border:1px solid rgba(217,190,133,.32);border-radius:100px;padding:3px 9px;white-space:nowrap">${t}</span>`;
-  const badges = (arr) => `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:12px">${arr.map(chip).join('')}</div>`;
+  // no rodape de cada card, as logos mono off-white das casas onde o docente atuou (no lugar
+  // das pilulas de texto). tratamento mono uniforme via scripts/gen-logos-mono.mjs (fundos
+  // removidos por luminancia). altura por logo p/ equalizar peso visual: wordmarks largos
+  // (Nomura, ZenEconomics) menores; marcas empilhadas (Bradesco, IPEA) maiores.
+  const LOGO = {
+    'XP': ['dl-xp.png', 20], 'Oyster': ['dl-oyster.png', 17], 'GAP Asset': ['dl-gapasset.png', 15],
+    'Banco Central': ['dl-bcb.png', 22], 'UBS': ['dl-ubs.png', 18], 'Nomura': ['dl-nomura.png', 12],
+    'Bradesco': ['dl-bradesco.png', 27], 'Safra': ['dl-safra.png', 18], 'ZenEconomics': ['dl-economics.png', 26],
+    'Caixa Econômica': ['dl-caixa.png', 22], 'QR Asset': ['dl-qrasset.png', 20], 'IPEA': ['dl-ipea.png', 23],
+  };
+  const chip = (t) => { const [f, h] = LOGO[t]; return `<span class="dl-tip" data-nome="${t}"><img decoding="async" loading="lazy" src="/lp/${f}" alt="${t}" style="height:${h}px;width:auto;opacity:.82;display:block"></span>`; };
+  const badges = (arr) => `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:17px;margin-top:auto;padding-top:15px;border-top:1px solid rgba(217,190,133,.14)">${arr.map(chip).join('')}</div>`;
   const porDocente = [
     ['distribuição para o investidor brasileiro.</p>', ['XP', 'Oyster', 'GAP Asset']],
     ['ampla experiência em instituições nacionais e internacionais.</p>', ['Banco Central', 'UBS', 'Nomura']],
@@ -180,6 +190,75 @@ const DPO_EMAIL = 'dpo@qr.capital';
     if (body !== before) inseridos++;
   }
   if (inseridos !== 4) console.warn(`AVISO: badges de docente inseridas em ${inseridos}/4 cards — revisar ancoras.`);
+
+  // cargo do Ywata: no lugar da credencial academica, o cargo executivo na Caixa (junto do CRO QR Asset).
+  const antesCargo = body;
+  body = body.replace('PhD Northwestern · CRO QR Asset', 'Ex-VP Caixa · CRO QR Asset');
+  if (body === antesCargo) console.warn('AVISO: cargo do Ywata (PhD Northwestern) nao encontrado para trocar.');
+
+  // tooltip flutuante no hover de cada logo (pura CSS; funciona com o body injetado). o card
+  // ganha overflow:visible p/ o balao nao ser cortado, com os cantos do topo arredondados na foto.
+  styles += `
+/* Corpo docente — balao flutuante com o nome da empresa no hover da logo */
+.prof{overflow:visible!important}
+.prof .ph{border-radius:12px 12px 0 0}
+.dl-tip{position:relative;display:inline-flex;align-items:center;flex:0 0 auto}
+.dl-tip::after{content:attr(data-nome);position:absolute;left:50%;bottom:calc(100% + 9px);transform:translateX(-50%) translateY(4px);background:#F7F5F2;color:#0B2D20;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.03em;white-space:nowrap;padding:4px 9px;border-radius:6px;box-shadow:0 8px 22px rgba(0,0,0,.32);opacity:0;pointer-events:none;transition:opacity .16s ease,transform .16s ease;z-index:6}
+.dl-tip::before{content:"";position:absolute;left:50%;bottom:calc(100% + 4px);transform:translateX(-50%);border:5px solid transparent;border-top-color:#F7F5F2;opacity:0;transition:opacity .16s ease;z-index:6}
+.dl-tip:hover{z-index:7}
+.dl-tip:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
+.dl-tip:hover::before{opacity:1}
+@media(hover:none){.dl-tip::after,.dl-tip::before{display:none}}
+`;
+}
+
+// 7h-bis) Curriculo (H5) — descricoes completas de cada aula. O bundle traz so uma linha
+//   curta por aula; aqui trocamos por um paragrafo que explica os assuntos abordados. Regras
+//   anti-slop do COPY.md: sem travessao, sem regra de tres, voz ativa, frases de tamanho
+//   variado, concreto. line-height:1.55 nos spans p/ leitura em multiplas linhas.
+{
+  body = body.replaceAll('font-size:12.5px;color:#6D6D6D">', 'font-size:12.5px;color:#6D6D6D;line-height:1.55">');
+  const aulas = [
+    ['Risco fiscal, inflação crônica e perda do valor real.',
+      'Concentrar tudo em real deixou de ser neutro; virou aposta na moeda de um país só. Você vê o histórico fiscal do Brasil e a inflação que come o poder de compra ano após ano, e entende o que a moeda forte preserva quando o ciclo aperta.'],
+    ['Comparativo histórico BRL × USD e hedge cambial.',
+      'O real perde valor nas janelas longas onde o dólar preserva. Comparamos as duas moedas do Plano Real até hoje e você aprende em que momento o hedge cambial sai da teoria e começa a fazer diferença no seu bolso.'],
+    ['Abertura nos EUA, remessa e câmbio no dia a dia.',
+      'O passo a passo para abrir sua conta nos Estados Unidos sem depender de intermediário. Você envia remessa e escolhe o câmbio certo para operar essa conta no dia a dia, com os cuidados que evitam taxa à toa e problema no imposto.'],
+    ['Perfil offshore e montagem de carteira.',
+      'Antes de comprar qualquer ativo lá fora, você descobre que tipo de investidor offshore você é. Definimos seu perfil de risco no exterior e montamos a estrutura de carteira global que vira base para todos os módulos seguintes.'],
+    ['T-Bills, Notes, Bonds, TIPS e FRNs.',
+      'A renda fixa mais segura do mundo, destrinchada por dentro. Você entende o que separa T-Bills, Notes, Bonds, TIPS e FRNs, quando cada um rende mais e como usar o Tesouro americano para ancorar a parte conservadora da carteira em dólar.'],
+    ['Investment grade vs. high yield, risco-retorno.',
+      'É aqui que a renda fixa lá fora paga mais, e cobra o risco por isso. Você entende a linha que separa o investment grade do high yield e aprende a medir se o prêmio oferecido compensa o risco de crédito de quem emite.'],
+    ['Como encontrar, analisar e selecionar stocks.',
+      'O método para escolher ações no maior mercado do planeta sem depender de palpite. Você vai encontrar empresas e ler o que os números dizem sobre elas, para selecionar papéis com critério em vez de comprar pela manchete do dia.'],
+    ['Setores, múltiplos e quando preferir cada um.',
+      'Duas formas de ganhar com ações, cada uma com sua hora. Comparamos as empresas que distribuem dividendos com as que reinvestem para crescer, e você define o peso de cada uma olhando o setor e o momento do seu patrimônio.'],
+    ['Gestão ativa vs. passiva na carteira offshore.',
+      'Como comprar centenas de empresas americanas de uma vez pagando pouco por isso. Você entende quando a gestão passiva de um ETF supera a ativa e como usar esses fundos para diversificar a carteira offshore sem virar trabalho de tempo integral.'],
+    ['FFO, P/FFO e comparação com FIIs.',
+      'Renda de imóveis nos Estados Unidos sem precisar comprar um prédio. Você lê um REIT pelos indicadores que realmente importam, como FFO e P/FFO, e compara com os FIIs que já conhece aqui.'],
+    ['Tipos e principais fundos internacionais.',
+      'A ponte para o mercado americano sem sair da B3 nem abrir conta fora. Você vê os tipos de BDR e como funcionam na prática, com os principais fundos internacionais à disposição de quem quer dólar pela corretora que já usa.'],
+    ['Declaração de ativos e proteção patrimonial.',
+      'A parte que quase ninguém explica, e que decide quanto do seu patrimônio sobra no fim. Você declara ativos no exterior sem erro e organiza a sucessão para proteger o que construiu do imposto e de briga lá na frente.'],
+    ['Reserva de valor vs. contratos inteligentes.',
+      'Os dois criptoativos que sustentam o mercado, sem hype e sem promessa de enriquecer rápido. Você entende o Bitcoin como reserva de valor escassa e o Ethereum como a rede dos contratos inteligentes, e onde cada um cabe numa carteira séria em dólar.'],
+    ['Tokenização de ativos e regulação.',
+      'O que existe além do Bitcoin, e o que é só barulho. Você conhece a tokenização de ativos reais, os RWAs, e vê como a regulação vem desenhando o que sobra de verdade quando a euforia passa.'],
+    ['ETFs spot nos EUA e métricas on-chain.',
+      'A forma regulada de ter cripto e os dados que o gráfico de preço não mostra. Você usa os ETFs spot já aprovados nos Estados Unidos e lê métricas on-chain para enxergar o que acontece dentro da rede.'],
+    ['Regras BR e EUA, ganho de capital, compliance.',
+      'O compliance que mantém você longe de problema com a Receita. Você aprende as regras de Brasil e Estados Unidos e como calcular o ganho de capital em cripto, além do que precisa declarar para operar tranquilo.'],
+  ];
+  let trocadas = 0;
+  for (const [de, para] of aulas) {
+    const before = body;
+    body = body.replace('>' + de + '<', '>' + para + '<');
+    if (body !== before) trocadas++;
+  }
+  if (trocadas !== 16) console.warn(`AVISO: descricoes de aula trocadas em ${trocadas}/16 — revisar textos-ancora do curriculo.`);
 }
 
 // 7i) NOVA secao "Material de apoio": os entregaveis (apostilas, ebook, calculadora)
@@ -404,6 +483,55 @@ ${item('Calculadora de dolarização', 'Simule cenários e decida com números, 
 .cn-globo{transform:translate(calc(var(--mx,0)*-7px),calc(var(--my,0)*-7px))}
 @media(prefers-reduced-motion:reduce){.cn-esfera{animation:none}.cn-estrela{animation:none;opacity:.42}.cn-stars,.cn-dots,.cn-globo{transition:none;transform:none}}
 `;
+}
+
+// 7m) Hero: novo copy. Headline puxa o "risco Brasil" (sem tocar em politica), subtitulo
+//      foca na dolarizacao e ja carrega as 4 casas do corpo docente (Banco Central, XP,
+//      Caixa, Bradesco) — o peso entra no proprio texto, sem tira nem fotos. CTA trocado
+//      por um mais marketavel. Marca (credibilidade/tecnica) vive no lockup VEJA x BlockTrends.
+{
+  const before = body;
+  body = body.replace(
+    'Sua liberdade financeira começa pela <em style="font-style:italic;color:#D9BE85">geografia</em>.',
+    'Seu patrimônio não devia depender de um <em style="font-style:italic;color:#D9BE85">só país</em>.'
+  );
+  if (body === before) console.warn('AVISO: headline do hero nao encontrada.');
+
+  const b2 = body;
+  body = body.replace(
+    'O método de dolarização que faltava ao investidor brasileiro, ensinado por quem operou esse mercado por dentro.',
+    'Aprenda o método de dolarização de quem operou por dentro do Banco Central, da XP, da Caixa e do Bradesco.'
+  );
+  if (body === b2) console.warn('AVISO: subtitulo do hero nao encontrado.');
+
+  // CTA do hero: mais marketavel e "temente ao risco Brasil". .replace (string) troca so a
+  // PRIMEIRA ocorrencia = o botao do hero; o CTA da oferta (H8) fica intacto por ora.
+  const b3 = body;
+  body = body.replace('QUERO DOLARIZAR MEU PATRIMÔNIO', 'DOLARIZE COMO OS GRANDES');
+  if (body === b3) console.warn('AVISO: CTA do hero nao encontrado.');
+}
+
+// 7n) Topbar: renomeia a navegacao (Professores/Formacao/Ferramentas/Idealizadores/FAQ,
+//      apontando para as secoes certas; "O Diagnostico"/#tese sai) e coloca os dois botoes
+//      (Entrar / Inscreva-se) em CAIXA ALTA.
+{
+  const navLink = (href, txt) =>
+    `<a href="${href}" style="color:#B9C4BC;font-size:13px;font-weight:600;letter-spacing:.02em" style-hover="color:#D9BE85">${txt}</a>`;
+  const novaNav = [
+    navLink('#docentes', 'Professores'),
+    navLink('#curriculo', 'Formação'),
+    navLink('#entregaveis', 'Ferramentas'),
+    navLink('#chancela', 'Idealizadores'),
+    navLink('#faq', 'FAQ'),
+  ].join('\n      ');
+  const bn = body;
+  body = body.replace(/(<nav class="topbar-nav"[^>]*>)[\s\S]*?(<\/nav>)/, `$1\n      ${novaNav}\n    $2`);
+  if (body === bn) console.warn('AVISO: nav da topbar nao encontrada.');
+
+  const be = body;
+  body = body.replace('>Entrar</a>', '>ENTRAR</a>');
+  body = body.replace('>Inscreva-se</a>', '>INSCREVA-SE</a>');
+  if (body === be) console.warn('AVISO: botoes Entrar/Inscreva-se da topbar nao encontrados.');
 }
 
 // 8) pluga o WhatsApp no botao flutuante (vem como href="#" no bundle).
