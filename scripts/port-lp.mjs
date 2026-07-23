@@ -233,12 +233,13 @@ ${item('Calculadora de dolarização', 'Simule cenários e decida com números, 
 // 7k) refaz "Quem assina" como 2 cards: BlockTrends (chancela TECNICA — conteudo e
 //      metodo) e VEJA Negocios (chancela INSTITUCIONAL — credibilidade da marca, com
 //      as outras marcas do Grupo Abril). Some o termo "editorial" e o selo circular.
-//      Nomenclatura ("institucional") e logos VEJA/Super Interessante = a confirmar.
+//      Nomenclatura travada: VEJA = "Chancela de credibilidade", BlockTrends = "Chancela
+//      tecnica". Selo = SVG inline (faixa verde + nomes Playfair off-white + miolo areia),
+//      olho reto sobreposto na proporcao real. Card VEJA: kicker "A credibilidade de" +
+//      logo VEJA Negocios, copy de confianca/autoridade, e as 3 marcas reais em sequencia
+//      (Grupo Abril colorido, VEJA, Super Interessante) sob "As marcas que informam o Brasil".
 {
   const kick = 'font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#7E6836;font-weight:700';
-  const bignum = (v, l) => `<div style="display:flex;align-items:center;gap:13px"><span style="width:7px;height:7px;background:#A98E4E;flex:0 0 auto;transform:rotate(45deg)"></span><div style="display:flex;align-items:baseline;gap:11px"><b style="font-family:'Playfair Display',serif;font-size:26px;color:#0B2D20;font-weight:600;line-height:1;min-width:86px">${v}</b><span style="font-size:12px;color:#6D6D6D">${l}</span></div></div>`;
-  // PLACEHOLDER: trocar por <img> quando as logos de VEJA e Super Interessante chegarem
-  const marcaPh = (nome) => `<span style="font-family:'Playfair Display',serif;font-size:15px;color:#0B2D20;font-weight:600;letter-spacing:.01em;opacity:.85">${nome}</span>`;
   const novaChancela = `<section id="chancela" data-screen-label="H7 Quem assina" style="padding:104px 0 0;scroll-margin-top:76px">
 <div style="max-width:1180px;margin:0 auto;padding:0 28px">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:40px;flex-wrap:wrap;margin-bottom:46px">
@@ -247,29 +248,50 @@ ${item('Calculadora de dolarização', 'Simule cenários e decida com números, 
 <h2 style="font-family:'Playfair Display',serif;margin:0 0 16px;font-weight:600;font-size:clamp(28px,3.6vw,44px);color:#0B2D20;letter-spacing:-.01em;line-height:1.12;text-wrap:balance">Duas instituições, uma responsabilidade.</h2>
 <p style="font-size:15px;color:#6D6D6D;margin:0;max-width:560px;text-wrap:pretty">A técnica de quem operou o mercado por dentro, com a credibilidade de uma marca que o Brasil lê há mais de 70 anos.</p>
 </div>
-<div style="position:relative;width:122px;height:122px;flex:0 0 auto">
-<img decoding="async" loading="lazy" src="/lp/selo-veja.svg" alt="Selo institucional VEJA Negócios · Grupo Abril" style="width:122px;height:122px;display:block;transform:rotate(-38deg)">
-<img decoding="async" loading="lazy" src="/lp/f2070b29-906c-48d8-92c7-0948fe19573b.webp" alt="" style="position:absolute;top:49%;left:50%;transform:translate(-50%,-50%);width:60px;height:auto;display:block">
+<div style="position:relative;width:180px;height:180px;flex:0 0 auto;margin-right:72px">
+<svg width="180" height="180" viewBox="0 0 240 240" fill="none" style="display:block;transform:rotate(-32deg)" role="img" aria-label="Selo de chancela — VEJA Negócios e BlockTrends">
+<defs><path id="selArcT" d="M 18 120 A 102 102 0 0 1 222 120"></path><path id="selArcB" d="M 18 120 A 102 102 0 0 0 222 120"></path></defs>
+<circle cx="120" cy="120" r="88" fill="#F7F5F2"></circle>
+<circle cx="120" cy="120" r="102" stroke="#0B2D20" stroke-width="28"></circle>
+<circle cx="120" cy="120" r="116" stroke="#D9BE85" stroke-width="1"></circle>
+<circle cx="120" cy="120" r="88" stroke="#D9BE85" stroke-width="1"></circle>
+<line x1="4" y1="120" x2="32" y2="120" stroke="#D9BE85" stroke-width="1"></line>
+<line x1="208" y1="120" x2="236" y2="120" stroke="#D9BE85" stroke-width="1"></line>
+<rect x="13.5" y="115.5" width="9" height="9" transform="rotate(45 18 120)" fill="#D9BE85"></rect>
+<rect x="217.5" y="115.5" width="9" height="9" transform="rotate(45 222 120)" fill="#D9BE85"></rect>
+<text fill="#F7F5F2" font-family="'Playfair Display',serif" font-size="14.5" font-weight="600" letter-spacing="2.2"><textPath href="#selArcT" startOffset="50%" text-anchor="middle" dominant-baseline="central">VEJA NEGÓCIOS</textPath></text>
+<text fill="#F7F5F2" font-family="'Playfair Display',serif" font-size="14.5" font-weight="600" letter-spacing="2.2"><textPath href="#selArcB" startOffset="50%" text-anchor="middle" dominant-baseline="central">BLOCKTRENDS</textPath></text>
+<circle cx="120" cy="120" r="74" fill="#F0E9D8"></circle>
+<circle cx="120" cy="120" r="74" stroke="#A98E4E" stroke-width="1.2"></circle>
+<circle cx="120" cy="120" r="60" stroke="#A98E4E" stroke-width="0.7" opacity="0.7"></circle>
+</svg>
+<img decoding="async" loading="lazy" src="/lp/f2070b29-906c-48d8-92c7-0948fe19573b.webp" alt="" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:92px;height:auto;display:block">
 </div>
 </div>
 <div class="qa-grid">
 <div class="qa-card">
-<span style="${kick}">Chancela institucional</span>
-<img decoding="async" loading="lazy" src="/lp/9d082a49-3451-447b-b123-55d3fa363e04.svg" alt="VEJA Negócios" style="width:162px;height:auto;display:block;margin:20px 0 18px">
-<p style="font-size:13.5px;color:#6D6D6D;line-height:1.6;margin:0 0 26px;text-wrap:pretty">Mais de 70 anos de jornalismo de credibilidade avalizando a formação. O nome que o investidor brasileiro já conhece, assinando junto.</p>
-<div style="margin-top:auto;padding-top:24px;border-top:1px solid rgba(169,142,78,.18)">
-<div style="font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;margin-bottom:16px">Faz parte do Grupo Abril</div>
-<div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">${marcaPh('VEJA')}${marcaPh('Super Interessante')}<img decoding="async" loading="lazy" src="/lp/grupo_abril.svg" alt="Grupo Abril" width="86" style="display:block;opacity:.7"></div>
+<span style="${kick}">A credibilidade de</span>
+<img decoding="async" loading="lazy" src="/lp/9d082a49-3451-447b-b123-55d3fa363e04.svg" alt="VEJA Negócios" style="width:154px;height:auto;display:block;margin:16px 0 18px">
+<p style="font-size:13.5px;color:#6D6D6D;line-height:1.6;margin:0 0 30px;text-wrap:pretty">Quando a publicação de economia da VEJA assina uma formação sobre dinheiro, não é detalhe: é o rigor de quem cobre o mercado, com o peso de um grupo que o Brasil lê desde 1950.</p>
+<div style="margin-top:auto">
+<div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#7E6836;font-weight:700;margin-bottom:18px">As marcas que informam o Brasil</div>
+<div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap">
+<img decoding="async" loading="lazy" src="/lp/grupo-abril-color.webp" alt="Grupo Abril" style="height:25px;width:auto;display:block">
+<img decoding="async" loading="lazy" src="/lp/veja.webp" alt="VEJA" style="height:23px;width:auto;display:block">
+<img decoding="async" loading="lazy" src="/lp/super.webp" alt="Super Interessante" style="height:24px;width:auto;display:block">
+</div>
 </div>
 </div>
 <div class="qa-card">
-<span style="${kick}">Chancela técnica</span>
-<img decoding="async" loading="lazy" src="/lp/3e33dbd4-b8c5-4b0d-a960-befd5dc2704a.svg" alt="BlockTrends" style="width:210px;max-width:100%;height:auto;display:block;margin:18px 0 18px">
-<p style="font-size:13.5px;color:#6D6D6D;line-height:1.6;margin:0 0 26px;text-wrap:pretty">Edtech de referência em criptoativos, tecnologia e finanças, responsável pelo conteúdo e pelo método da formação.</p>
-<div style="margin-top:auto;padding-top:24px;border-top:1px solid rgba(169,142,78,.18);display:flex;flex-direction:column;gap:14px">
-${bignum('31,5 mil', 'estudantes')}
-${bignum('+1.000', 'certificados CCA®')}
-${bignum('415h+', 'de conteúdo educacional')}
+<span style="${kick}">A técnica de</span>
+<img decoding="async" loading="lazy" src="/lp/3e33dbd4-b8c5-4b0d-a960-befd5dc2704a.svg" alt="BlockTrends" style="width:282px;max-width:100%;height:auto;display:block;margin:16px 0 30px">
+<p style="font-size:13.5px;color:#6D6D6D;line-height:1.6;margin:0 0 30px;text-wrap:pretty">A BlockTrends criou a primeira certificação profissional reconhecida pela ANCORD, a entidade que credencia o mercado de capitais. Esse rigor assina o conteúdo e o método da formação.</p>
+<div style="margin-top:auto">
+<div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#7E6836;font-weight:700;margin-bottom:18px">Pioneira em certificação profissional</div>
+<div style="display:flex;align-items:center;gap:30px;flex-wrap:wrap">
+<img decoding="async" loading="lazy" src="/lp/cca-ancord.svg" alt="Certificação de Criptoativos ANCORD (CCA)" style="height:30px;width:auto;display:block">
+<img decoding="async" loading="lazy" src="/lp/pos-blockchain.png" alt="Pós Desenvolvedor Blockchain" style="height:32px;width:auto;display:block">
+</div>
 </div>
 </div>
 </div>
@@ -283,6 +305,104 @@ ${bignum('415h+', 'de conteúdo educacional')}
 .qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:stretch}
 .qa-card{background:#fff;border:1px solid rgba(169,142,78,.22);border-radius:14px;padding:36px 34px;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(11,45,32,.05)}
 @media(max-width:760px){.qa-grid{grid-template-columns:1fr}}
+`;
+}
+
+// 7l) fundo do hero: camada de "carta nautica" (linhas de rumo cruzando a partir de uma
+//     rosa dos ventos) por cima da trama de pontos. Puxa rota, travessia e mundo da tese
+//     "sua liberdade financeira comeca pela geografia". Estatico (sem motion, respeita o
+//     dial baixo do DESIGN.md), so ouro sobre verde, opacidade baixa para nao competir
+//     com o conteudo. Os pontos existentes caem de .08 para .06 para abrir espaco.
+{
+  const R = 380, OURO = '#A98E4E', RG = 520;   // R: exclusao das estrelas; RG: raio do globo (px)
+  // A perspectiva escala junto com o raio: manter a razao RG/PERSP constante preserva a
+  // distorcao. Se so o raio crescesse, a esfera viraria olho de peixe.
+  const PERSP = Math.round(RG / 0.226);
+  // TILT negativo inclina o polo norte NA DIRECAO do observador. Com o +14 anterior o
+  // norte ia para tras e o globo era visto por baixo, o que destacava Brasil/Africa.
+  // Aqui o eixo do curso e o Atlantico Norte, entao o hemisferio norte vem para a frente.
+  const TILT = -20;
+  // FASE gira a longitude de partida: um ponto de longitude L fica de frente quando a
+  // esfera esta em -L. Com 45, a face inicial e o Atlantico Norte, com EUA (~-100) de um
+  // lado e Europa (~10) do outro, que sao os polos de investimento do curso.
+  const FASE = 45;
+  // O aro NAO usa RG: com perspectiva, a silhueta aparente da esfera e maior que o raio
+  // geometrico. Sem isso o aro fica apertado por dentro dos pontos.
+  const ARO = (RG * PERSP / Math.sqrt(PERSP * PERSP - RG * RG)).toFixed(1);
+  // CONTORNO das costas do Natural Earth (ne_50m_land, DOMINIO PUBLICO). A 110m tinha so
+  // 5.143 vertices no mundo e saia facetada; a 50m tem 60.638, entao o litoral fica fiel.
+  // Preencher o
+  // interior dos continentes gastava pontos onde nao ha informacao: a forma de um
+  // continente mora na linha de costa. Aqui a costa e reamostrada por comprimento de arco
+  // (espacamento uniforme, via slerp, para nao adensar perto dos polos) e ilhas com
+  // perimetro < 8 graus sao descartadas, o que corta ~10% da costa e muito ponto.
+  // A esfera gira no eixo Y, entao o mundo TODO passa, nao so um hemisferio.
+  const terra = fs.readFileSync(new URL('./globo-costa.txt', import.meta.url), 'utf8').trim()
+    .split(',').map(p => { const [lo, la] = p.split(' ');
+      return `<i style="transform:rotateY(${lo}deg) rotateX(${la}deg) translateZ(${RG}px)"></i>`; }).join('');
+  // O aro fica FORA do .cn-eixo de proposito: dentro dele o preserve-3d faria o aro ser
+  // inclinado pelo rotateX junto com a esfera, virando elipse. A silhueta de uma esfera e
+  // sempre um circulo, entao o aro tem que ficar plano na tela para casar com os pontos.
+  const globo = `<div class="cn-globo" aria-hidden="true"><div class="cn-aro"></div><div class="cn-eixo"><div class="cn-esfera">${terra}</div></div></div>`;
+  // Estrelas FORA do globo. PRNG determinístico (LCG com seed fixa) para as posicoes
+  // ficarem identicas a cada re-porte; cada uma pisca com duracao e defasagem propria
+  // para nunca piscarem em coro.
+  let seed = 20260723;
+  const rnd = () => (seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296;
+  let estrelas = '', postas = 0, tent = 0;
+  while (postas < 38 && tent < 8000) {
+    tent++;
+    const x = -620 + rnd() * 1240, y = -420 + rnd() * 840;
+    if (Math.hypot(x, y) < R + 34) continue;              // so fora do circulo da carta
+    const k = (0.30 + rnd() * 0.45).toFixed(3);   // estrela de 4 pontas: raio 3 a 7.5
+    estrelas += `<use class="cn-estrela" href="#cnStar" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${k})" style="animation-duration:${(2.8 + rnd() * 3.6).toFixed(2)}s;animation-delay:-${(rnd() * 7).toFixed(2)}s"></use>`;
+    postas++;
+  }
+  // 3 estrelas fixas no canto superior esquerdo: o sorteio deixou esse canto vazio.
+  // Coordenadas medidas na area REALMENTE visivel do viewBox depois do slice
+  // (x >= -452) e abaixo da topbar (y >= -368), todas fora do circulo da carta.
+  for (const [x, y, k, dur, del] of [[-415, -332, .62, 3.9, -.7], [-348, -278, .42, 5.1, -2.6], [-437, -232, .34, 4.4, -4.1]]) {
+    estrelas += `<use class="cn-estrela" href="#cnStar" transform="translate(${x} ${y}) scale(${k})" style="animation-duration:${dur}s;animation-delay:${del}s"></use>`;
+  }
+  const fadeEstrelas = 'linear-gradient(to bottom,black,black 68%,transparent 96%)';
+  // trama de pontos rebaixada a grao de fundo: na mesma intensidade ela competia com os
+  // pontos do mapa-mundi (escala visual parecida) e sujava a leitura dos continentes.
+  const pontos = `<div class="cn-dots" style="position:absolute;inset:0;background-image:radial-gradient(rgba(247,245,242,.035) 1.3px, transparent 1.3px);background-size:32px 32px;-webkit-mask-image:linear-gradient(to bottom,black,transparent 92%);mask-image:linear-gradient(to bottom,black,transparent 92%);pointer-events:none"></div>`;
+  // SVG proprio para as estrelas (o globo agora e HTML/3D). A mascara so esmaece o rodape.
+  const campoEstrelas = `<svg class="cn-stars" viewBox="-620 -420 1240 840" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false" style="position:absolute;inset:0;width:100%;height:100%;-webkit-mask-image:${fadeEstrelas};mask-image:${fadeEstrelas};pointer-events:none"><defs><path id="cnStar" d="M0 -10L1.9 -1.9L10 0L1.9 1.9L0 10L-1.9 1.9L-10 0L-1.9 -1.9Z"></path></defs><g fill="${OURO}">${estrelas}</g></svg>`;
+  const antes = body;
+  body = body.replace(
+    /<div style="position:absolute;inset:0;background-image:radial-gradient\(rgba\(247,245,242,\.08\) 1\.3px, transparent 1\.3px\);[^"]*"><\/div>/,
+    pontos + globo + campoEstrelas
+  );
+  if (body === antes) console.warn('AVISO: camada de pontos do hero nao encontrada — globo nao aplicado.');
+  // Deriva lenta das linhas de rumo. A malha de 16 pontos se repete a cada 360/16 = 22.5
+  // graus, entao animar exatamente esse arco fecha um loop PERFEITO (sem salto na emenda).
+  // Em SVG o transform-origin inicial e 0 0, que aqui e o centro do desenho. Excecao
+  // deliberada ao "so a oferta pulsa" do DESIGN.md; desligada em prefers-reduced-motion.
+  styles += `
+/* Hero — globo 3D pontilhado (mapa-mundi) girando no eixo Y. So a esfera anima; os
+   pontos sao estaticos no espaco 3D, entao o custo e de UMA transform composta. */
+/* contain isola a subarvore do globo do layout do documento: sem isso, qualquer
+   recalculo no body descia nos ~1200 filhos e triplicava o custo de layout. */
+.cn-globo{position:absolute;left:50%;top:42%;width:0;height:0;perspective:${PERSP}px;pointer-events:none;contain:layout style}
+.cn-eixo{position:absolute;left:0;top:0;transform:rotateX(${TILT}deg);transform-style:preserve-3d}
+.cn-aro{position:absolute;left:0;top:0;width:${ARO * 2}px;height:${ARO * 2}px;margin:-${ARO}px;border:1px solid rgba(169,142,78,.20);border-radius:50%}
+.cn-esfera{position:absolute;left:0;top:0;transform-style:preserve-3d;animation:cnGiro 72s linear infinite;will-change:transform}
+.cn-esfera i{position:absolute;left:0;top:0;width:3px;height:3px;margin:-1.5px;border-radius:50%;background:${OURO};opacity:.72;backface-visibility:hidden}
+@keyframes cnGiro{from{transform:rotateY(${FASE}deg)}to{transform:rotateY(${FASE - 360}deg)}}
+/* Hero — estrelas fora do globo: piscam dessincronizadas (duracao/atraso por elemento) */
+@keyframes cnPisca{0%,100%{opacity:.10}50%{opacity:.85}}
+.cn-estrela{animation-name:cnPisca;animation-timing-function:ease-in-out;animation-iteration-count:infinite;will-change:opacity}
+/* Hero — parallax de camadas no hover: as 3 camadas do fundo deslizam em intensidades
+   diferentes conforme --mx/--my (o HoverRuntime seta na #hero ao mover o mouse), criando
+   profundidade. Estrelas na frente movem mais, globo ao fundo move menos. So transform,
+   composited. Em reduced-motion o HoverRuntime nem seta as vars, mas zeramos por garantia. */
+.cn-stars,.cn-dots,.cn-globo{transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.cn-stars{transform:translate(calc(var(--mx,0)*-30px),calc(var(--my,0)*-30px))}
+.cn-dots{transform:translate(calc(var(--mx,0)*-14px),calc(var(--my,0)*-14px))}
+.cn-globo{transform:translate(calc(var(--mx,0)*-7px),calc(var(--my,0)*-7px))}
+@media(prefers-reduced-motion:reduce){.cn-esfera{animation:none}.cn-estrela{animation:none;opacity:.42}.cn-stars,.cn-dots,.cn-globo{transition:none;transform:none}}
 `;
 }
 

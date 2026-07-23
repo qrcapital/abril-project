@@ -95,9 +95,21 @@ Disciplina de forma: dentro de uma tela, não misturar cantos muito redondos com
 | Card docente hover | `transform 0.35s ease` | `translateY(-6px)` + borda dourada + sombra |
 | Ato do diagnóstico | `0.4s ease` | Inverte fundo para verde no hover/ativo |
 | Acordeão (toggle) | `transform 0.3s ease` | Ícone `+` gira 45° ao abrir |
-| Glow da oferta | `vsGlow 2.6s ease-in-out infinite` | Único elemento pulsante do produto |
+| Glow da oferta | `vsGlow 2.6s ease-in-out infinite` | Elemento pulsante da oferta |
+| Globo do hero | `cnGiro 72s linear infinite` | Esfera 3D girando no eixo Y (mapa-múndi) |
+| Estrelas do hero | `cnPisca` (2,8–6,4s, dessincronizado) | Pontos de 4 pontas piscando fora do globo |
+| Parallax do hero | `transform 0.3s ease-out` | Camadas do fundo seguem o cursor (`--mx/--my`) |
 
-Respeitar `prefers-reduced-motion`: desligar o `vsGlow` e as animações de entrada, manter só transições de cor curtas.
+**Exceção de motion do hero (deliberada, 23/jul/2026):** o dial de motion do sistema é
+baixo e o glow da oferta era o único elemento animado. O fundo do hero abre uma exceção
+consciente — globo girando + estrelas piscando + parallax no hover — por ser o momento de
+maior impacto da LP e reforçar a tese "a liberdade começa pela geografia". Tudo é
+composited (`transform`/`opacity`), o globo usa `contain`, e nada disso se espalha para o
+resto da LP: as demais seções seguem o dial baixo. Fora do hero, o glow da oferta continua
+sendo o único elemento pulsante.
+
+Respeitar `prefers-reduced-motion`: desligar o `vsGlow`, o giro/piscar/parallax do hero e as
+animações de entrada, mantendo só transições de cor curtas.
 
 ### Sombras e texturas
 

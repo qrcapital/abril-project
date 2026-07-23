@@ -8,6 +8,20 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **LP · Hero: fundo com globo 3D girando + parallax no hover** — 2026-07-23
+  - Fundo do hero ganhou um **globo 3D em CSS puro** (sem JS de animação, sem libs):
+    ~1.400 pontos de litoral do Natural Earth (`ne_50m_land`, domínio público) projetados
+    na superfície de uma esfera que gira no eixo Y, então o **mundo inteiro passa** (não só
+    um hemisfério). Tilt (−20°) e fase (45°) calibrados para destacar **América do Norte e
+    Europa** (polos do curso) no primeiro quadro. Pontos pré-computados em
+    `scripts/globo-costa.txt`. Somam-se um campo de **estrelas de 4 pontas** piscando fora
+    do globo e a trama de pontos rebaixada a grão de fundo.
+  - **Parallax de camadas no hover:** estrelas, trama e globo deslizam em intensidades
+    diferentes seguindo o cursor (profundidade). O `HoverRuntime` (client component) põe um
+    listener no `window` que re-busca o hero e seta `--mx/--my`; o CSS faz o resto.
+  - Tudo composited (só `transform`/`opacity`), `contain:layout style` no globo para isolar
+    ~1.400 filhos do layout, e **`prefers-reduced-motion`** desliga giro, piscar e parallax.
+    Exceção de motion registrada no `DESIGN.md`.
 - **LP · Nova seção "Ferramentas" (entregáveis)** — 2026-07-21
   - Seção nova após "A Formação": à esquerda, os entregáveis (apostilas, e-book,
     calculadora) numa lista editorial com ornamento (estrela dourada) e réguas
@@ -22,6 +36,32 @@ e é validado no ambiente de **homolog** (branch `homolog`).
     `docs/BACKLOG.md`.
 
 ### Alterado
+- **LP · Cards "Quem assina": copy reescrito + logos reais** — 2026-07-23
+  - **Card VEJA:** kicker **"A credibilidade de"** + logo VEJA Negócios (a frase completa na
+    lockup); parágrafo novo com foco em confiança/autoridade ("publicação de economia da
+    VEJA... um grupo que o Brasil lê desde 1950"); rodapé **"As marcas que informam o
+    Brasil"** com as 3 marcas reais em sequência — **Grupo Abril** (verde), **VEJA**,
+    **Super Interessante** — nas cores originais. Fecha a pendência das logos VEJA/Super.
+  - **Card BlockTrends:** kicker **"A técnica de"**; parágrafo de pioneirismo ancorado em
+    fato ("criou a primeira certificação profissional reconhecida pela **ANCORD**, a
+    entidade que credencia o mercado de capitais", sem citar cripto — o curso é finanças
+    amplas); rodapé **"Pioneira em certificação profissional"** com as logos do **CCA
+    (Programa Certificação Criptoativos ANCORD)** e da pós **Desenvolvedor Blockchain**,
+    ambas recoloridas para fundo claro (vinham em branco, p/ fundo escuro). Big numbers
+    removidos.
+  - Logos-título (VEJA Negócios × BLOCKTRENDS) equalizadas em cap-height e na linha de base.
+    Copy seguiu o guia anti-slop (`referencias/cowork/COPY.md`): sem travessão, voz ativa,
+    números concretos.
+- **LP · Selo "Quem assina" refeito + nomenclatura travada** — 2026-07-22
+  - Selo circular agora **une as duas marcas**: faixa verde profunda com **VEJA NEGÓCIOS**
+    (arco superior) e **BLOCKTRENDS** (arco inferior) em Playfair off-white, olho reto no
+    centro na proporção real (328×238, sem esticar), miolo cor de areia (`#F0E9D8`) com
+    aros dourados e losangos nas laterais. Passou de `<img>` para **SVG inline** no card
+    (`scripts/port-lp.mjs`, 7k) para herdar a fonte Playfair da página; `public/lp/selo-veja.svg`
+    mantido em sincronia como referência.
+  - **Nomenclatura da chancela da VEJA travada:** "institucional" → **"Chancela de
+    credibilidade"** (BlockTrends segue "Chancela técnica"). Resolve a pendência aberta no
+    `docs/BACKLOG.md`. Logos de VEJA/Super Interessante seguem como placeholder de texto.
 - **LP · Rodapé alinhado ao da VEJA Negócios** — 2026-07-21
   - Estrutura em 3 faixas espelhando `veja.abril.com.br/veja-negocios`: faixa superior
     no verde do KV (logo + "SIGA" + redes sociais), faixas Grupo Abril/institucional
