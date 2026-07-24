@@ -567,3 +567,5 @@ html,body{overflow-x:hidden}
 .cn-dots{transform:translate(calc(var(--mx,0)*-14px),calc(var(--my,0)*-14px))}
 .cn-globo{transform:translate(calc(var(--mx,0)*-7px),calc(var(--my,0)*-7px))}
 @media(prefers-reduced-motion:reduce){.cn-esfera{animation:none}.cn-estrela{animation:none;opacity:.42}.cn-stars,.cn-dots,.cn-globo{transition:none;transform:none}}
+
+#faq details:last-of-type{margin-bottom:0}

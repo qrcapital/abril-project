@@ -206,6 +206,7 @@ Peça de marca, quebra o padrão de propósito: wordmark, olho em gravura, ilust
 
 - **LP:** rolagem longa, largura máxima ~1280px, faixas full-bleed alternando off-white e verde profundo. Topbar fixa com blur. Hero e oferta em verde; conteúdo em claro. Textura de pontos nas faixas verdes.
 - **Plataforma:** shell escuro persistente. Header com wordmark + olho, navegação enxuta e menu de conta. Home em prateleiras horizontais (vitrine). Aula em duas colunas (player + sidebar de progresso), colapsa para uma no mobile.
+- **Ritmo vertical da LP (24/jul/2026):** o respiro entre duas seções é **200px**, medido do fim do conteúdo de uma ao começo do conteúdo da seguinte. Ele se forma de dois jeitos: seção clara sobre clara usa `padding:104px 0 96px`; seção de fundo escuro usa `padding:96px 0` mais `margin-top:104px`. Ao criar seção nova, garantir os dois lados da conta: uma clara com `padding-bottom:0` seguida de outra clara entrega metade do respiro (foi o caso de Ferramentas → Quem assina e FAQ → CTA final, corrigidos na etapa 7q do porte). Exceção: hero → ficha técnica, que se sobrepõe de propósito (`margin-top:-44px`). Container de 1180px com 28px laterais em todas as seções.
 - **Sticky:** topbar da LP (fixa) e header da plataforma. O antigo sticky CTA de rodapé da LP foi removido; a topbar assume o CTA persistente (botão "Inscreva-se").
 - **Mobile:** grades viram carrossel com scroll-snap (docentes 78%, chancela 88%); navegação vira hambúrguer; o botão "Inscreva-se" compacto assume o CTA persistente.
 

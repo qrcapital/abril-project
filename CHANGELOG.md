@@ -7,6 +7,46 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 
 ## Não lançado
 
+### Alterado
+- **LP · Revisão de copy (Ferramentas e Oferta) e revisão geral da página** — 2026-07-24
+  - **Ferramentas**: H2 passou a "O que fica com você depois da última aula" (o anterior,
+    "Você sai com mais do que aulas. Sai com ferramentas.", repetia o kicker e usava a
+    fórmula "não é X, é Y"). Linha de apoio reescrita sem antítese e sem prender por prazo.
+    Apostilas viraram "Apostilas dos 4 módulos", com a descrição falando do que se faz com
+    elas. E-book e calculadora mantidos por decisão do Pedro (o e-book ainda é placeholder).
+  - **Oferta**: H2 "Um pagamento, um ano para aplicar" ancora a inscrição no **tempo**;
+    o subtítulo do bundle **saiu** (parafraseava o H2 e afirmava "sem turma", o que é falso:
+    o curso tem turmas). Parcelamento corrigido para "10x de R$ 39,70 sem juros". A régua ao
+    lado do rótulo "Você recebe" saiu (sangrava até a borda sem separar nada). Lista refeita
+    em 6 itens, com "materiais complementares" (vago) trocado pelas ferramentas de apoio.
+  - **CTA final**: botão passou de "QUERO ME INSCREVER" para **"DOLARIZE COMO OS GRANDES"**,
+    o mesmo comando do hero. A página tinha três textos de CTA diferentes; agora tem dois,
+    com "GARANTIR MINHA VAGA" reservado ao botão que leva ao checkout.
+  - **Módulo IV**: tema aberto de "Criptoativos" para **"Ativos Digitais"** (card do docente,
+    título no currículo e bio do Ywata). A aula 15 virou "ETFs e análise on-chain" e sua
+    descrição passou a caber ETFs temáticos de qualquer setor, sem nomear nenhum.
+  - **Coerência entre seções** (revisão geral): rodapé passou a dizer "chancela
+    **institucional**" (contradizia a decisão de 23/jul); copyright voltou ao separador
+    "·" da página; card do Módulo III passou a "Mercado Americano" (anunciava "ETFs, REITs
+    & BDRs" enquanto o currículo chamava de outra coisa); resumo do currículo passou a
+    espelhar a seção Ferramentas; grafia unificada em "e-book"; nav do rodapé espelha a
+    topbar e ganhou link para Ferramentas; os três links duplicados na faixa preta de base
+    foram cortados; prazo de acesso unificado em "1 ano".
+  - **Bio do Ywata corrigida**: "vice-presidente de riscos da Caixa e secretário especial de
+    Produtividade no Ministério da Economia" (o texto dizia só "secretário da Economia").
+    Conferido em Agência Brasil e gov.br: SEPEC, nomeação em julho de 2022.
+
+### Corrigido
+- **LP · Ritmo vertical uniforme entre seções** — 2026-07-24
+  - O respiro entre seções é de **200px** em quase toda a página (padding 104 da seguinte
+    + 96 da anterior, ou `margin-top:104px` nas seções de fundo escuro). Duas transições
+    entre seções **claras consecutivas** ficavam com metade disso, porque nenhuma das duas
+    contribuía com padding de baixo: **Ferramentas → Quem assina (104px)** e
+    **FAQ → CTA final (114px)**. Ambas ganharam `padding-bottom:96px`, e o último
+    `<details>` do FAQ teve a margem de 10px zerada para não vazar da seção (etapa 7q).
+  - Medido no browser via `getBoundingClientRect` antes e depois; hero → tese segue em
+    259px de propósito, porque a ficha técnica flutua sobre a virada com `margin-top:-44px`.
+
 ### Adicionado
 - **LP · Corpo docente: logos das casas + balão no hover** — 2026-07-23
   - No rodapé de cada card, as **logos reais** das empresas onde o professor atuou

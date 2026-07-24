@@ -248,7 +248,7 @@ const DPO_EMAIL = 'dpo@qr.capital';
     ['Tokenização de ativos e regulação.',
       'O que existe além do Bitcoin, e o que é só barulho. Você conhece a tokenização de ativos reais, os RWAs, e vê como a regulação vem desenhando o que sobra de verdade quando a euforia passa.'],
     ['ETFs spot nos EUA e métricas on-chain.',
-      'A forma regulada de ter cripto e os dados que o gráfico de preço não mostra. Você usa os ETFs spot já aprovados nos Estados Unidos e lê métricas on-chain para enxergar o que acontece dentro da rede.'],
+      'A forma regulada de ter exposição a esses ativos sem comprá-los diretamente. Você aprende a ler um ETF temático, seja de ativos digitais ou de um setor específico da economia global, e usa métricas on-chain para enxergar o que o gráfico de preço não mostra.'],
     ['Regras BR e EUA, ganho de capital, compliance.',
       'O compliance que mantém você longe de problema com a Receita. Você aprende as regras de Brasil e Estados Unidos e como calcular o ganho de capital em cripto, além do que precisa declarar para operar tranquilo.'],
   ];
@@ -268,15 +268,15 @@ const DPO_EMAIL = 'dpo@qr.capital';
   const orn = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L13.9 10.1 L22 12 L13.9 13.9 L12 22 L10.1 13.9 L2 12 L10.1 10.1 Z"></path></svg>';
   const item = (titulo, desc) => `<li style="display:flex;gap:15px;align-items:flex-start;padding:20px 0"><span style="flex:0 0 auto;color:#A98E4E;margin-top:3px;line-height:0">${orn}</span><span style="display:block"><b style="display:block;font-family:'Playfair Display',serif;font-size:19px;color:#0B2D20;font-weight:600;margin-bottom:4px;line-height:1.2">${titulo}</b><span style="display:block;font-size:13px;line-height:1.55;color:#6D6D6D">${desc}</span></span></li>`;
   const secao = `<!-- ============ H5b · ENTREGÁVEIS ============ -->
-<section id="entregaveis" data-screen-label="H5b Ferramentas" style="background:#F7F5F2;color:#333333;padding:104px 0 0;position:relative;overflow:hidden;scroll-margin-top:76px">
+<section id="entregaveis" data-screen-label="H5b Ferramentas" style="background:#F7F5F2;color:#333333;padding:104px 0 96px;position:relative;overflow:hidden;scroll-margin-top:76px">
 <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(11,45,32,.05) 1.3px, transparent 1.3px);background-size:30px 30px;pointer-events:none"></div>
 <div class="entreg-grid" style="max-width:1180px;margin:0 auto;padding:0 28px;position:relative;z-index:1">
 <div>
 <p style="display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#7E6836;font-weight:700;margin:0 0 14px"><i style="width:34px;height:1px;background:#A98E4E;display:inline-block"></i>Ferramentas</p>
-<h2 style="font-family:'Playfair Display',serif;margin:0 0 20px;font-weight:600;font-size:clamp(28px,3.4vw,42px);color:#0B2D20;letter-spacing:-.01em;line-height:1.12;text-wrap:balance">Você sai com mais do que aulas. Sai com ferramentas.</h2>
-<p style="font-size:15px;color:#6D6D6D;margin:0 0 34px;max-width:440px;text-wrap:pretty">Tudo que você precisa para aplicar o método continua com você depois do curso, no computador, no tablet ou no celular.</p>
+<h2 style="font-family:'Playfair Display',serif;margin:0 0 20px;font-weight:600;font-size:clamp(28px,3.4vw,42px);color:#0B2D20;letter-spacing:-.01em;line-height:1.12;text-wrap:balance">O que fica com você depois da última aula.</h2>
+<p style="font-size:15px;color:#6D6D6D;margin:0 0 34px;max-width:440px;text-wrap:pretty">O material de trabalho da formação, na sua mão para a hora de decidir.</p>
 <ul class="entreg-list" style="list-style:none;margin:0;padding:0">
-${item('Apostilas dos módulos', 'O método por escrito, para consultar sempre que for aplicar.')}
+${item('Apostilas dos 4 módulos', 'Cada aula vira texto, com os passos na ordem em que você vai executar.')}
 ${item('Ebook exclusivo', 'Dolarização de patrimônio destrinchada para o investidor brasileiro.')}
 ${item('Calculadora de dolarização', 'Simule cenários e decida com números, não com achismo.')}
 </ul>
@@ -534,6 +534,131 @@ ${item('Calculadora de dolarização', 'Simule cenários e decida com números, 
   if (body === be) console.warn('AVISO: botoes Entrar/Inscreva-se da topbar nao encontrados.');
 }
 
+// 7o) Oferta (H8): copy. O H2 do bundle ("Tudo que voce precisa...") era generico e
+//      nao dizia o que se compra; a revisao ancora a oferta no TEMPO (1 ano para
+//      aplicar) e nomeia os itens da lista em vez de rotula-los ("bonus exclusivo").
+{
+  const troca = (de, para, rotulo) => {
+    const antes = body;
+    body = body.replace(de, para);
+    if (body === antes) console.warn(`AVISO: oferta — ${rotulo} nao encontrado.`);
+  };
+  // H2 novo + margem inferior, porque o subtitulo abaixo dele sai (ver troca seguinte).
+  troca(
+    /margin:0;(font-size:clamp\(27px,3\.4vw,42px\);font-weight:600;line-height:1\.12">)Tudo que você precisa para dolarizar com método\./,
+    'margin:0 0 34px;$1Um pagamento, um ano para aplicar.',
+    'H2',
+  );
+  // o subtitulo do bundle so parafraseava o H2 (pagamento unico + prazo): sai inteiro.
+  troca(
+    /\s*<p style="color:#A9B8AE;[^"]*">Você paga uma vez e estuda por um ano inteiro[^<]*<\/p>/,
+    '',
+    'subtitulo (remocao)',
+  );
+  troca('10x sem juros de R$ 39,70', '10x de R$ 39,70 sem juros', 'parcelamento do card');
+
+  // a regua ao lado do rotulo "Voce recebe" sangrava ate a borda sem separar nada.
+  troca('<i style="flex:1;height:1px;background:rgba(217,190,133,.28)"></i>', '', 'regua do rotulo');
+
+  // lista "Voce recebe": 7 itens (definidos pelo Pedro em 24/jul). Os dois primeiros
+  // sao os de peso (raio dourado + negrito); os demais entram como check discreto.
+  {
+    const raio = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#D9BE85" style="flex:0 0 auto"><path d="M13 2 4 14h6l-1 8 9-12h-6z"></path></svg>';
+    const check = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D9BE85" stroke-width="2.4" style="flex:0 0 auto"><path d="M20 6 9 17l-5-5"></path></svg>';
+    const borda = 'border-bottom:1px solid rgba(217,190,133,.14);';
+    const li = (txt, { peso = false, ultimo = false } = {}) =>
+      `        <li style="display:flex;align-items:center;gap:14px;padding:13px 0;${ultimo ? '' : borda}` +
+      (peso ? 'font-size:14.5px;color:#F1F4F1;font-weight:700"' : 'font-size:14px;color:#B7C4BB"') +
+      `>${peso ? raio : check}${txt}</li>`;
+    const lista = [
+      li('Formação completa: 4 módulos, 16 aulas', { peso: true }),
+      li('Certificado de 30h, com prova e código de verificação', { peso: true }),
+      li('Apostila de cada um dos módulos'),
+      li('Ferramentas de apoio: calculadora de dolarização e e-book exclusivo'),
+      li('12 meses de acesso, contados da compra'),
+      li('Suporte humanizado', { ultimo: true }),
+    ].join('\n');
+    troca(
+      /<ul style="list-style:none;margin:0;padding:0">[\s\S]*?Formação completa[\s\S]*?<\/ul>/,
+      () => `<ul style="list-style:none;margin:0;padding:0">\n${lista}\n      </ul>`,
+      'lista Você recebe',
+    );
+  }
+}
+
+// 7r) coerencia de nomes e grafias entre secoes (revisao geral de 24/jul):
+//      (a) o card do docente do Modulo III anunciava "ETFs, REITs & BDRs" enquanto o
+//          curriculo chama o mesmo modulo de "Como Acessar o Mercado Americano";
+//      (b) o resumo do curriculo prometia "materiais complementares", nome que nao
+//          existe em nenhum outro lugar — passa a listar o que a secao Ferramentas
+//          entrega de fato (apostila, calculadora e e-book);
+//      (c) "Ebook"/"ebook" -> "E-book" (grafia dicionarizada) em toda a pagina;
+//      (d) prazo de acesso unificado em "1 ano" (o bullet dizia "12 meses");
+//      (e) cargo do Ywata conferido: secretario ESPECIAL de Produtividade e
+//          Competitividade do Ministerio da Economia (2022), VP de riscos na Caixa.
+{
+  const troca = (de, para, rotulo) => {
+    const antes = body;
+    body = body.replace(de, para);
+    if (body === antes) console.warn(`AVISO: revisao geral — ${rotulo} nao encontrado.`);
+  };
+  troca('Módulo III · ETFs, REITs &amp; BDRs', 'Módulo III · Mercado Americano', 'rotulo do modulo III');
+  // Modulo IV: tema aberto de "Criptoativos" para "Ativos Digitais", para caber mais
+  // que cripto (ETFs tematicos, tokenizacao de ativos reais etc.).
+  troca('Módulo IV · Criptoativos', 'Módulo IV · Ativos Digitais', 'rotulo do modulo IV');
+  troca(
+    'Criptoativos: Exposição Alternativa em Dólar',
+    'Ativos Digitais: Exposição Alternativa em Dólar',
+    'titulo do modulo IV no curriculo',
+  );
+  troca('ETFs de cripto e análise on-chain', 'ETFs e análise on-chain', 'aula 15 (3a do modulo IV)');
+  troca(
+    'conduz criptoativos com o rigor de quem mede antes de afirmar',
+    'conduz os ativos digitais com o rigor de quem mede antes de afirmar',
+    'bio do Ywata (tema)',
+  );
+  troca('apostila completa + materiais complementares', 'apostila completa', 'resumo do curriculo (apostila)');
+  troca(
+    '>Bônus:</em> e-book exclusivo',
+    '>Ferramentas:</em> calculadora de dolarização e e-book exclusivo',
+    'resumo do curriculo (ferramentas)',
+  );
+  troca(
+    'Foi vice-presidente da Caixa e secretário da Economia.',
+    'Foi vice-presidente de riscos da Caixa e secretário especial de Produtividade no Ministério da Economia.',
+    'bio do Ywata',
+  );
+  troca('12 meses de acesso, contados da compra', '1 ano de acesso, contado da compra', 'bullet de acesso');
+  // grafia do e-book (aparece no curriculo, na secao Ferramentas e na Oferta).
+  body = body.replace(/\bEbook\b/g, 'E-book').replace(/(?<![-\w])ebook\b/g, 'e-book');
+}
+
+// 7p) CTA final (pre-rodape): o botao repete o comando do hero em vez do generico
+//      "QUERO ME INSCREVER", que era o terceiro texto diferente de CTA da pagina.
+{
+  const antes = body;
+  body = body.replace('>QUERO ME INSCREVER</a>', '>DOLARIZE COMO OS GRANDES</a>');
+  if (body === antes) console.warn('AVISO: botao do CTA final nao encontrado.');
+}
+
+// 7q) ritmo vertical: o respiro entre secoes e de 200px em quase toda a pagina
+//      (padding 104 da seguinte + 96 da anterior, ou margin-top 104 nas secoes de
+//      fundo escuro). Duas transicoes entre secoes CLARAS consecutivas ficavam com
+//      metade disso, porque nenhuma das duas contribuia com o padding de baixo:
+//      Ferramentas -> Quem assina (104px) e FAQ -> CTA final (114px).
+{
+  const antes = body;
+  body = body.replace(
+    '<section id="faq" data-screen-label="H9 FAQ" style="padding:104px 0 0;',
+    '<section id="faq" data-screen-label="H9 FAQ" style="padding:104px 0 96px;',
+  );
+  if (body === antes) console.warn('AVISO: padding do FAQ nao encontrado.');
+  // o ultimo <details> carregava 10px de margem para fora da secao.
+  styles += `
+#faq details:last-of-type{margin-bottom:0}
+`;
+}
+
 // 8) pluga o WhatsApp no botao flutuante (vem como href="#" no bundle).
 {
   const before = body;
@@ -580,19 +705,18 @@ ${item('Calculadora de dolarização', 'Simule cenários e decida com números, 
 <div style="max-width:1180px;margin:0 auto;padding:0 28px;display:flex;justify-content:space-between;gap:48px;flex-wrap:wrap">
 <div style="flex:0 1 300px;min-width:240px">
 <img src="/lp/grupo_abril.svg" alt="Grupo Abril" width="150" style="display:block">
-<p style="font-size:12px;line-height:1.7;margin:20px 0 0;max-width:300px;color:#8a8a8a">Formação em dolarização de patrimônio e investimento internacional. BlockTrends, com chancela editorial da VEJA Negócios.</p>
+<p style="font-size:12px;line-height:1.7;margin:20px 0 0;max-width:300px;color:#8a8a8a">Formação em dolarização de patrimônio e investimento internacional. BlockTrends, com chancela institucional da VEJA Negócios.</p>
 </div>
 <div style="display:flex;gap:56px;flex-wrap:wrap">
-${col('Institucional', `<a href="#tese" ${lnk}>O Diagnóstico</a><a href="#docentes" ${lnk}>Corpo Docente</a><a href="#curriculo" ${lnk}>A Formação</a><a href="#chancela" ${lnk}>Quem Assina</a><a href="#faq" ${lnk}>FAQ</a>`)}
+${col('Institucional', `<a href="#docentes" ${lnk}>Professores</a><a href="#curriculo" ${lnk}>Formação</a><a href="#entregaveis" ${lnk}>Ferramentas</a><a href="#chancela" ${lnk}>Idealizadores</a><a href="#faq" ${lnk}>FAQ</a>`)}
 ${col('Políticas', `<a href="#" ${lnk}>Termos de uso</a><a href="#" ${lnk}>Privacidade · LGPD</a>`)}
 ${col('Contato', `<a href="${WHATSAPP}" target="_blank" rel="noopener" ${lnk}>Suporte no WhatsApp</a><a href="mailto:${DPO_EMAIL}" ${lnk}>DPO · ${DPO_EMAIL}</a>`)}
 </div>
 </div>
 </div>
 <div style="background:#000;padding:0 0 26px">
-<div style="max-width:1180px;margin:0 auto;padding:22px 28px 0;border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
-<span style="display:flex;gap:18px;flex-wrap:wrap"><a href="#" ${low}>Termos de uso</a><a href="#" ${low}>Privacidade · LGPD</a><a href="#faq" ${low}>FAQ</a></span>
-<span style="font-size:11.5px;color:#6f6f6f">Abril Comunicações S.A., CNPJ 44.597.052/0001-62 - Todos os direitos reservados.</span>
+<div style="max-width:1180px;margin:0 auto;padding:22px 28px 0;border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap">
+<span style="font-size:11.5px;color:#6f6f6f">Abril Comunicações S.A. · CNPJ 44.597.052/0001-62 · Todos os direitos reservados.</span>
 </div>
 </div>
 </footer>`;

@@ -5,7 +5,7 @@
 
 ## 1. Visão geral
 
-**Estratégia Internacional** é uma formação on-demand em dolarização de patrimônio e investimento internacional, produzida pela **BlockTrends** com chancela editorial da **VEJA Negócios (Grupo Abril)**. O público é o investidor bancarizado brasileiro, sem experiência no mercado internacional, do zero ao avançado. O objetivo primário é **receita** (venda direta do curso), com a área do aluno servindo à entrega, à conclusão e à certificação.
+**Estratégia Internacional** é uma formação on-demand em dolarização de patrimônio e investimento internacional, produzida pela **BlockTrends** com chancela institucional da **VEJA Negócios (Grupo Abril)**. O público é o investidor bancarizado brasileiro, sem experiência no mercado internacional, do zero ao avançado. O objetivo primário é **receita** (venda direta do curso), com a área do aluno servindo à entrega, à conclusão e à certificação.
 
 O produto tem dois entregáveis num mesmo projeto Next.js: uma **LP de vendas pública** (rota `/`, SSG, tema claro) e uma **plataforma/área do aluno autenticada** (rotas `/app/*`, tema dark). Quatro pilares o sustentam:
 
@@ -42,17 +42,19 @@ Ordem aprovada no design final (`referencias/htmls/LP-Estrategia-Internacional.h
 |---|---|---|
 | topbar | Topbar fixa | Olho + wordmark, navegação (Professores · Formação · Ferramentas · Idealizadores · FAQ), ENTRAR, INSCREVA-SE (caixa alta). Hambúrguer no mobile |
 | `#hero` | Hero | Fundo com globo 3D + parallax, headline "Seu patrimônio não devia depender de um só país", subtítulo com o peso dos 4 especialistas ("...método de dolarização de quem operou por dentro do Banco Central, da XP, da Caixa e do Bradesco"), CTA "DOLARIZE COMO OS GRANDES", trigger "Acesso imediato após a compra · garantia de 7 dias", VSL 16:9 configurável |
-| `#ficha` | Ficha técnica | Faixa contínua: 30h+ · 4 especialistas · On-demand · Certificado com chancela editorial VEJA Negócios (célula invertida, ver §8 sobre a redação) · {{ preco }} |
+| `#ficha` | Ficha técnica | Faixa contínua: 30h+ · 4 especialistas · On-demand · Certificado com chancela institucional VEJA Negócios (célula invertida, ver §8 sobre a redação) · {{ preco }} |
 | `#diagnostico` | O Diagnóstico | 3 atos interativos: O problema (A corrosão) · A urgência (O custo de esperar) · A resposta (A saída tem método). O ato ativo/hover inverte para verde |
 | `#docentes` | Corpo Docente | 4 cards com chip de módulo, foto P&B que colore no hover, rodapé com as logos mono off-white das casas onde o professor atuou (balão flutuante com o nome no hover). Carrossel com snap no mobile |
-| `#formacao` | A Formação | 4 acordeões (I a IV), 16 aulas numeradas 01 a 16, cada uma com descrição completa dos assuntos abordados. Linha de fechamento consolida apostila, e-book e certificação |
-| `#diferenca` | A Diferença | Coluna "Por conta própria" (✗) × "Com a Estratégia Internacional" (✓) |
-| `#quem-assina` | Quem Assina | VEJA Negócios (assinatura editorial, Grupo Abril) × BlockTrends (autoridade de conteúdo: 31,5 mil estudantes, +1.000 CCA®, 415h+) |
-| `#oferta` | Oferta | Card com glow dourado animado, lista "você recebe", {{ preco }} / {{ parcelas }}, CTA "GARANTIR MINHA VAGA", selos (compra segura, 7 dias, acesso imediato) |
+| `#formacao` | A Formação | 4 acordeões (I a IV), 16 aulas numeradas 01 a 16, cada uma com descrição completa dos assuntos abordados. Linha de fechamento consolida apostila, ferramentas (calculadora e e-book) e certificação |
+| `#entregaveis` | Ferramentas | "O que fica com você depois da última aula": lista editorial (apostilas, e-book, calculadora de dolarização) à esquerda, mockup de dispositivos à direita. Substituiu a seção "A Diferença" (removida em 21/jul) |
+| `#chancela` | Quem Assina | Selo Meridiano + 2 cards: BlockTrends (chancela técnica, pioneirismo ancorado na ANCORD) × VEJA Negócios (chancela institucional, Grupo Abril desde 1950, logos de VEJA/Super/Grupo Abril) |
+| `#oferta` | Oferta | Card com glow dourado animado, H2 "Um pagamento, um ano para aplicar", lista "você recebe" (6 itens), {{ preco }} / {{ parcelas }}, CTA "GARANTIR MINHA VAGA", selos (compra segura, 7 dias, acesso imediato) |
 | `#faq` | FAQ | 8 perguntas (ver abaixo) |
-| `#cta-final` | CTA final + footer | Wordmark, "Investir no mundo é proteger o que você constrói", CTA "QUERO ME INSCREVER", footer (BlockTrends × VEJA Negócios, Termos, LGPD, Suporte no WhatsApp) |
+| `#cta-final` | CTA final + footer | Wordmark, "Investir no mundo é proteger o que você constrói", CTA "DOLARIZE COMO OS GRANDES" (mesmo comando do hero, âncora para `#oferta`), footer alinhado à VEJA Negócios (nav espelhando a topbar, Termos, LGPD, Suporte no WhatsApp, razão social Abril Comunicações S.A.) |
 
-**Persistentes e configuráveis** (variáveis de template, injetáveis sem deploy): `{{ preco }}` (default R$ 397), `{{ parcelas }}` (default "10x sem juros de R$ 39,70"), `showVsl` (VSL no hero, fallback imagem), `showWhatsapp` (botão flutuante).
+**Persistentes e configuráveis** (variáveis de template, injetáveis sem deploy): `{{ preco }}` (default R$ 397), `{{ parcelas }}` (default "10x de R$ 39,70 sem juros"), `showVsl` (VSL no hero, fallback imagem), `showWhatsapp` (botão flutuante).
+
+**Lista "você recebe" (Oferta):** formação completa (4 módulos, 16 aulas) · certificado de 30h, com prova e código de verificação · apostila de cada um dos módulos · ferramentas de apoio (calculadora de dolarização e e-book exclusivo) · 1 ano de acesso, contado da compra · suporte humanizado.
 
 **Corpo docente e currículo** (fechados no design):
 
@@ -61,7 +63,9 @@ Ordem aprovada no design final (`referencias/htmls/LP-Estrategia-Internacional.h
 | I · Macro e Estratégia Global | Rodolfo Bastos | Ex-CEO XP Investimentos EUA | 01 Por que a dolarização · 02 Dólar como reserva de valor · 03 Conta internacional na prática · 04 Carteira global e perfil |
 | II · Renda Fixa e Ações nos EUA | Tony Volpon | Ex-diretor Banco Central | 05 Tesouro americano · 06 Crédito privado internacional · 07 Comprando ações nos EUA · 08 Dividendos vs. growth |
 | III · Como Acessar o Mercado Americano | Luiz Fernando Roxo | Especialista em Opções, 25 anos | 09 ETFs · 10 REITs · 11 BDRs · 12 Tributação e sucessão internacional |
-| IV · Criptoativos em Dólar | Alexandre Ywata | Ex-VP Caixa, CRO QR Asset | 13 Bitcoin e Ethereum · 14 Tokens, RWA e ecossistema · 15 ETFs de cripto e análise on-chain · 16 Tributação de criptoativos |
+| IV · Ativos Digitais: Exposição Alternativa em Dólar | Alexandre Ywata | Ex-VP Caixa, CRO QR Asset | 13 Bitcoin e Ethereum · 14 Tokens, RWA e ecossistema · 15 ETFs e análise on-chain · 16 Tributação de criptoativos |
+
+> **Módulo IV — tema aberto (24/jul/2026):** o módulo deixou de se chamar "Criptoativos" e passou a "Ativos Digitais", para caber mais que cripto (ETFs temáticos de setores da economia real, tokenização). A aula 15 virou "ETFs e análise on-chain" e a descrição fala em "ETF temático, seja de ativos digitais ou de um setor específico da economia global", sem nomear setor. **As quatro aulas listadas continuam sendo de cripto**: quando o conteúdo real do módulo abrir para outros temas, o currículo precisa acompanhar o nome.
 
 **FAQ (8 perguntas):** iniciante sem experiência · precisa de conta no exterior · tempo de acesso (1 ano) · como funciona o certificado · e se reprovar (2ª chamada WhatsApp) · garantia (7 dias CDC) · aulas ao vivo (não, gravadas) · suporte (WhatsApp).
 
@@ -97,7 +101,8 @@ Ordem aprovada no design final (`referencias/htmls/LP-Estrategia-Internacional.h
 
 - Título do e-book bônus (hoje "Título A Definir" no design).
 - Confirmação do domínio de produção (o certificado referencia `estrategiainternacional.com/verificar`).
-- Redação final da chancela editorial da VEJA Negócios (ver §8): direção recomendada definida, aval do jurídico/Grupo Abril pendente.
+- Redação final da chancela institucional da VEJA Negócios (ver §8): direção recomendada definida, aval do jurídico/Grupo Abril pendente.
+- Links reais das redes sociais do rodapé (Instagram, YouTube, LinkedIn seguem `href="#"`).
 
 > **Nota de escopo (17/jul/2026):** o **kicker de marcas no hero** (chancela VEJA Negócios × BlockTrends na primeira dobra) foi **aprovado para inclusão**, alterando o design final atual, que trazia a chancela apenas em Quem Assina e no footer. Racional: reforçar autoridade logo na primeira dobra.
 
@@ -288,12 +293,14 @@ Peça de marca gerada em PDF na aprovação, com código único e página públi
 
 ### Estrutura
 
-- **Preview** na tela: wordmark, olho, gravuras, nome do aluno, carga de 30h, assinaturas (BlockTrends como emissora, VEJA Negócios como chancela editorial cossignatária).
+- **Preview** na tela: wordmark, olho, gravuras, nome do aluno, carga de 30h, assinaturas (BlockTrends como emissora, VEJA Negócios como chancela institucional cossignatária).
 - **Ações**: baixar PDF, compartilhar no LinkedIn, avaliar a formação (NPS).
 - **Código**: formato `EI-2026-XXXX`.
 - **Verificação pública**: `/verificar/:codigo`.
 
-> **Chancela da VEJA Negócios (direção recomendada, 20/jul/2026):** VEJA Negócios é marca editorial, não entidade certificadora (diferente da ANCORD no CCA, que dá nome à "Certificação de Criptoativos ANCORD"). Portanto **não usar "Certificação VEJA Negócios"**. O certificado é **emitido pela BlockTrends**, com a VEJA Negócios como **assinatura/chancela editorial** cossignatária (marca presente, sem se amarrar ao nome da certificação). Na LP, trocar "Certificação VEJA Negócios" por formulações como "certificado de 30h com chancela editorial VEJA Negócios" ou "assinado por BlockTrends e VEJA Negócios". A redação final depende do aval do jurídico/Grupo Abril.
+> **Chancela da VEJA Negócios (direção recomendada, 20/jul/2026):** VEJA Negócios é marca editorial, não entidade certificadora (diferente da ANCORD no CCA, que dá nome à "Certificação de Criptoativos ANCORD"). Portanto **não usar "Certificação VEJA Negócios"**. O certificado é **emitido pela BlockTrends**, com a VEJA Negócios como **assinatura/chancela editorial** cossignatária (marca presente, sem se amarrar ao nome da certificação). Na LP, trocar "Certificação VEJA Negócios" por formulações como "certificado de 30h com chancela institucional VEJA Negócios" ou "assinado por BlockTrends e VEJA Negócios". A redação final depende do aval do jurídico/Grupo Abril.
+>
+> **Ajuste de nomenclatura (23/jul/2026):** "chancela **editorial**" passou a "chancela **institucional**" em toda a página, para separar melhor os dois papéis da seção Quem Assina: a BlockTrends assina a **técnica** e a VEJA Negócios, a **instituição**. O racional jurídico acima não muda (a VEJA continua não sendo certificadora). O rodapé só foi alinhado em 24/jul, quando a revisão geral pegou o "editorial" que tinha ficado para trás.
 
 ### Regras
 
