@@ -176,7 +176,11 @@ const DPO_EMAIL = 'dpo@qr.capital';
     'Caixa Econômica': ['dl-caixa.png', 22], 'QR Asset': ['dl-qrasset.png', 20], 'IPEA': ['dl-ipea.png', 23],
   };
   const chip = (t) => { const [f, h] = LOGO[t]; return `<span class="dl-tip" data-nome="${t}"><img decoding="async" loading="lazy" src="/lp/${f}" alt="${t}" style="height:${h}px;width:auto;opacity:.82;display:block"></span>`; };
-  const badges = (arr) => `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:17px;margin-top:auto;padding-top:15px;border-top:1px solid rgba(217,190,133,.14)">${arr.map(chip).join('')}</div>`;
+  // min-height na faixa: as logos tem alturas diferentes (a mais alta bate 27px), e como
+  // a faixa fica ancorada na base do card (margin-top:auto), a altura variavel fazia a
+  // DIVISORIA subir e descer de um card para o outro. Com 28px de area util, os quatro
+  // cards fecham a faixa em 43px e a linha nasce sempre na mesma altura.
+  const badges = (arr) => `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:17px;min-height:28px;margin-top:auto;padding-top:15px;border-top:1px solid rgba(217,190,133,.14)">${arr.map(chip).join('')}</div>`;
   const porDocente = [
     ['distribuição para o investidor brasileiro.</p>', ['XP', 'Oyster', 'GAP Asset']],
     ['ampla experiência em instituições nacionais e internacionais.</p>', ['Banco Central', 'UBS', 'Nomura']],
@@ -268,7 +272,7 @@ const DPO_EMAIL = 'dpo@qr.capital';
   const orn = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L13.9 10.1 L22 12 L13.9 13.9 L12 22 L10.1 13.9 L2 12 L10.1 10.1 Z"></path></svg>';
   const item = (titulo, desc) => `<li style="display:flex;gap:15px;align-items:flex-start;padding:20px 0"><span style="flex:0 0 auto;color:#A98E4E;margin-top:3px;line-height:0">${orn}</span><span style="display:block"><b style="display:block;font-family:'Playfair Display',serif;font-size:19px;color:#0B2D20;font-weight:600;margin-bottom:4px;line-height:1.2">${titulo}</b><span style="display:block;font-size:13px;line-height:1.55;color:#6D6D6D">${desc}</span></span></li>`;
   const secao = `<!-- ============ H5b · ENTREGÁVEIS ============ -->
-<section id="entregaveis" data-screen-label="H5b Ferramentas" style="background:#F7F5F2;color:#333333;padding:104px 0 96px;position:relative;overflow:hidden;scroll-margin-top:76px">
+<section id="entregaveis" data-screen-label="H5b Ferramentas" style="background:#F7F5F2;color:#333333;padding:104px 0 24px;position:relative;overflow:hidden;scroll-margin-top:76px">
 <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(11,45,32,.05) 1.3px, transparent 1.3px);background-size:30px 30px;pointer-events:none"></div>
 <div class="entreg-grid" style="max-width:1180px;margin:0 auto;padding:0 28px;position:relative;z-index:1">
 <div>
@@ -602,7 +606,9 @@ ${item('Calculadora de dolarização', 'Simule cenários e decida com números, 
     body = body.replace(de, para);
     if (body === antes) console.warn(`AVISO: revisao geral — ${rotulo} nao encontrado.`);
   };
-  troca('Módulo III · ETFs, REITs &amp; BDRs', 'Módulo III · Mercado Americano', 'rotulo do modulo III');
+  // "Mercado Americano" pedia 241px no chip e so havia 236: quebrava em 2 linhas.
+  // "Mercado dos EUA" ocupa 220px e o nowrap abaixo garante a linha unica nos 4 cards.
+  troca('Módulo III · ETFs, REITs &amp; BDRs', 'Módulo III · Mercado dos EUA', 'rotulo do modulo III');
   // Modulo IV: tema aberto de "Criptoativos" para "Ativos Digitais", para caber mais
   // que cripto (ETFs tematicos, tokenizacao de ativos reais etc.).
   troca('Módulo IV · Criptoativos', 'Módulo IV · Ativos Digitais', 'rotulo do modulo IV');
@@ -612,23 +618,37 @@ ${item('Calculadora de dolarização', 'Simule cenários e decida com números, 
     'titulo do modulo IV no curriculo',
   );
   troca('ETFs de cripto e análise on-chain', 'ETFs e análise on-chain', 'aula 15 (3a do modulo IV)');
-  troca(
-    'conduz criptoativos com o rigor de quem mede antes de afirmar',
-    'conduz os ativos digitais com o rigor de quem mede antes de afirmar',
-    'bio do Ywata (tema)',
-  );
   troca('apostila completa + materiais complementares', 'apostila completa', 'resumo do curriculo (apostila)');
   troca(
     '>Bônus:</em> e-book exclusivo',
     '>Ferramentas:</em> calculadora de dolarização e e-book exclusivo',
     'resumo do curriculo (ferramentas)',
   );
+  // bio do Ywata: era a unica das quatro com 221 caracteres (as outras ficam entre 136 e
+  // 148), o que empurrava o texto para uma quarta linha e quebrava a unidade dos cards.
   troca(
-    'Foi vice-presidente da Caixa e secretário da Economia.',
-    'Foi vice-presidente de riscos da Caixa e secretário especial de Produtividade no Ministério da Economia.',
+    'Foi vice-presidente da Caixa e secretário da Economia. Especialista em econometria e análise de risco, conduz criptoativos com o rigor de quem mede antes de afirmar.',
+    'Vice-presidente de riscos da Caixa e secretário especial no Ministério da Economia, conduz os ativos digitais com o rigor de quem mede antes de afirmar.',
     'bio do Ywata',
   );
   troca('12 meses de acesso, contados da compra', '1 ano de acesso, contado da compra', 'bullet de acesso');
+  // o chip de modulo do card de docente tem que caber sempre em UMA linha. No desktop
+  // sobram 236px uteis (card de 280 menos 22px de padding de cada lado); no mobile o
+  // card cai para 78% da faixa e sobram ~193px, entao o chip encolhe por media query
+  // em vez de estourar para fora do card (que tem overflow:visible por causa do balao).
+  {
+    const antes = body;
+    body = body.replace(
+      /<span style="font-size:9\.5px;letter-spacing:\.2em;color:#8FA398/g,
+      '<span class="chip-modulo" style="font-size:9.5px;letter-spacing:.2em;color:#8FA398',
+    );
+    if (body === antes) console.warn('AVISO: chip de modulo do card de docente nao encontrado.');
+    styles += `
+.chip-modulo{white-space:nowrap}
+@media (max-width:760px){.chip-modulo{font-size:8.5px;letter-spacing:.12em}}
+`;
+  }
+
   // grafia do e-book (aparece no curriculo, na secao Ferramentas e na Oferta).
   body = body.replace(/\bEbook\b/g, 'E-book').replace(/(?<![-\w])ebook\b/g, 'e-book');
 }
@@ -648,9 +668,12 @@ ${item('Calculadora de dolarização', 'Simule cenários e decida com números, 
 //      Ferramentas -> Quem assina (104px) e FAQ -> CTA final (114px).
 {
   const antes = body;
+  // Excecao ao ritmo de 200px: o CTA final e fechamento, nao mais uma secao de conteudo.
+  // Com 200px ele descolava do FAQ e ficava boiando no fim da pagina; 128px o mantem
+  // preso ao corpo da pagina (24 do FAQ + 104 do proprio CTA).
   body = body.replace(
     '<section id="faq" data-screen-label="H9 FAQ" style="padding:104px 0 0;',
-    '<section id="faq" data-screen-label="H9 FAQ" style="padding:104px 0 96px;',
+    '<section id="faq" data-screen-label="H9 FAQ" style="padding:104px 0 24px;',
   );
   if (body === antes) console.warn('AVISO: padding do FAQ nao encontrado.');
   // o ultimo <details> carregava 10px de margem para fora da secao.

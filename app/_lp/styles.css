@@ -568,4 +568,7 @@ html,body{overflow-x:hidden}
 .cn-globo{transform:translate(calc(var(--mx,0)*-7px),calc(var(--my,0)*-7px))}
 @media(prefers-reduced-motion:reduce){.cn-esfera{animation:none}.cn-estrela{animation:none;opacity:.42}.cn-stars,.cn-dots,.cn-globo{transition:none;transform:none}}
 
+.chip-modulo{white-space:nowrap}
+@media (max-width:760px){.chip-modulo{font-size:8.5px;letter-spacing:.12em}}
+
 #faq details:last-of-type{margin-bottom:0}

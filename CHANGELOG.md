@@ -37,15 +37,34 @@ e é validado no ambiente de **homolog** (branch `homolog`).
     Conferido em Agência Brasil e gov.br: SEPEC, nomeação em julho de 2022.
 
 ### Corrigido
-- **LP · Ritmo vertical uniforme entre seções** — 2026-07-24
-  - O respiro entre seções é de **200px** em quase toda a página (padding 104 da seguinte
-    + 96 da anterior, ou `margin-top:104px` nas seções de fundo escuro). Duas transições
-    entre seções **claras consecutivas** ficavam com metade disso, porque nenhuma das duas
-    contribuía com padding de baixo: **Ferramentas → Quem assina (104px)** e
-    **FAQ → CTA final (114px)**. Ambas ganharam `padding-bottom:96px`, e o último
-    `<details>` do FAQ teve a margem de 10px zerada para não vazar da seção (etapa 7q).
-  - Medido no browser via `getBoundingClientRect` antes e depois; hero → tese segue em
-    259px de propósito, porque a ficha técnica flutua sobre a virada com `margin-top:-44px`.
+- **LP · Cards de docente: chip de módulo em uma linha, bio equalizada e divisória alinhada** — 2026-07-24
+  - O chip "Módulo III · Mercado Americano" pedia 241px e o card só oferece 236px úteis
+    (280 menos 22px de padding de cada lado), então quebrava em duas linhas. Virou
+    **"Mercado dos EUA"** (220px) e os quatro chips ganharam `white-space:nowrap` via
+    `.chip-modulo`. No mobile o card cai para 78% da faixa (~193px úteis), onde o nowrap
+    faria o texto vazar para fora do card (que tem `overflow:visible` por causa do balão
+    das logos): media query reduz para `font-size:8.5px` / `letter-spacing:.12em`, e os
+    quatro passam a medir 184, 184, 178 e 162px.
+  - **Bio do Ywata** tinha 221 caracteres contra 136, 148 e 136 das outras, o que abria uma
+    quarta linha só nesse card. Reduzida para 152, mantendo os dois cargos conferidos.
+  - **Divisória acima das logos** subia e descia de card para card: a faixa fica ancorada na
+    base (`margin-top:auto`) e sua altura seguia a maior logo de cada card (20, 22, 27 e
+    23px), então no card do Roxo a linha nascia 7px mais alta. `min-height:28px` na faixa
+    fecha os quatro em 44px. Com a bio menor, os cards caíram de 623px para 588px.
+- **LP · Ritmo vertical entre seções** — 2026-07-24
+  - O respiro passou a depender de **haver ou não virada de fundo**: **200px** quando o
+    fundo muda (claro ↔ verde, onde a faixa colorida sustenta o espaço maior) e **128px**
+    quando não muda. Antes, as duas transições entre seções **claras consecutivas** caíam
+    para pouco mais de 100px porque nenhuma das duas contribuía com padding de baixo:
+    Ferramentas → Quem assina (104px) e FAQ → CTA final (114px). As duas foram para 200px
+    e depois ajustadas para **128px** (`padding-bottom:24px` na de cima + 104 na de baixo),
+    que é onde as seções voltam a se ler como um bloco só e o fechamento para de boiar no
+    fim da página. O último `<details>` do FAQ teve a margem de 10px zerada para não vazar
+    da seção (etapa 7q).
+  - Medido no browser via `getBoundingClientRect` a cada passo. Duas exceções ficam de pé:
+    hero → tese segue em 259px porque a ficha técnica flutua sobre a virada
+    (`margin-top:-44px`), e currículo → Ferramentas tem o divisor decorativo do olho no
+    meio (96px de margem + 102px de ornamento + 104px da seção).
 
 ### Adicionado
 - **LP · Corpo docente: logos das casas + balão no hover** — 2026-07-23

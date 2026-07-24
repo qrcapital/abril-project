@@ -62,7 +62,7 @@ Ordem aprovada no design final (`referencias/htmls/LP-Estrategia-Internacional.h
 |---|---|---|---|
 | I · Macro e Estratégia Global | Rodolfo Bastos | Ex-CEO XP Investimentos EUA | 01 Por que a dolarização · 02 Dólar como reserva de valor · 03 Conta internacional na prática · 04 Carteira global e perfil |
 | II · Renda Fixa e Ações nos EUA | Tony Volpon | Ex-diretor Banco Central | 05 Tesouro americano · 06 Crédito privado internacional · 07 Comprando ações nos EUA · 08 Dividendos vs. growth |
-| III · Como Acessar o Mercado Americano | Luiz Fernando Roxo | Especialista em Opções, 25 anos | 09 ETFs · 10 REITs · 11 BDRs · 12 Tributação e sucessão internacional |
+| III · Como Acessar o Mercado Americano (chip do card: "Mercado dos EUA") | Luiz Fernando Roxo | Especialista em Opções, 25 anos | 09 ETFs · 10 REITs · 11 BDRs · 12 Tributação e sucessão internacional |
 | IV · Ativos Digitais: Exposição Alternativa em Dólar | Alexandre Ywata | Ex-VP Caixa, CRO QR Asset | 13 Bitcoin e Ethereum · 14 Tokens, RWA e ecossistema · 15 ETFs e análise on-chain · 16 Tributação de criptoativos |
 
 > **Módulo IV — tema aberto (24/jul/2026):** o módulo deixou de se chamar "Criptoativos" e passou a "Ativos Digitais", para caber mais que cripto (ETFs temáticos de setores da economia real, tokenização). A aula 15 virou "ETFs e análise on-chain" e a descrição fala em "ETF temático, seja de ativos digitais ou de um setor específico da economia global", sem nomear setor. **As quatro aulas listadas continuam sendo de cripto**: quando o conteúdo real do módulo abrir para outros temas, o currículo precisa acompanhar o nome.
