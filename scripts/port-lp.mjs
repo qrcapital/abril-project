@@ -391,104 +391,119 @@ ${item('Calculadora de dolarização', 'Simule cenários e decida com números, 
 `;
 }
 
-// 7l) fundo do hero: camada de "carta nautica" (linhas de rumo cruzando a partir de uma
-//     rosa dos ventos) por cima da trama de pontos. Puxa rota, travessia e mundo da tese
-//     "sua liberdade financeira comeca pela geografia". Estatico (sem motion, respeita o
-//     dial baixo do DESIGN.md), so ouro sobre verde, opacidade baixa para nao competir
-//     com o conteudo. Os pontos existentes caem de .08 para .06 para abrir espaco.
+// 7l) fundo do hero: globo 3D pontilhado girando (mapa-mundi), praças financeiras com
+//     halo pulsante e rotas ligando algumas delas. Desenhado em CANVAS 2D.
+//
+//     Por que canvas e nao mais DOM (migrado em 24/jul/2026): a versao anterior punha um
+//     elemento por ponto dentro de um `preserve-3d`, e o navegador reordena por
+//     profundidade TODOS os filhos a cada quadro. Com ~1.400 pontos passava; ao adensar o
+//     litoral e somar cidades e rotas (3.697 elementos) a pagina travou. Em canvas o custo
+//     e proporcional ao que se PINTA, nao ao que existe na arvore, entao 3 mil pontos
+//     saem em um punhado de operacoes e sobra folga para halo e pulso.
+//
+//     Este bloco so escreve os DADOS (app/_lp/globo-dados.ts) e injeta o <canvas>; quem
+//     desenha e o app/_lp/GloboCanvas.tsx, no mesmo padrao do HoverRuntime (o componente
+//     acha o elemento no HTML injetado e liga o runtime por cima).
 {
-  const R = 380, OURO = '#A98E4E', RG = 520;   // R: exclusao das estrelas; RG: raio do globo (px)
+  const RG = 520, OURO = '#A98E4E';            // RG: raio do globo, em px CSS
   // A perspectiva escala junto com o raio: manter a razao RG/PERSP constante preserva a
   // distorcao. Se so o raio crescesse, a esfera viraria olho de peixe.
   const PERSP = Math.round(RG / 0.226);
-  // TILT negativo inclina o polo norte NA DIRECAO do observador. Com o +14 anterior o
-  // norte ia para tras e o globo era visto por baixo, o que destacava Brasil/Africa.
-  // Aqui o eixo do curso e o Atlantico Norte, entao o hemisferio norte vem para a frente.
-  const TILT = -20;
-  // FASE gira a longitude de partida: um ponto de longitude L fica de frente quando a
-  // esfera esta em -L. Com 45, a face inicial e o Atlantico Norte, com EUA (~-100) de um
-  // lado e Europa (~10) do outro, que sao os polos de investimento do curso.
-  const FASE = 45;
+  // TILT negativo inclina o polo norte NA DIRECAO do observador, trazendo o hemisferio
+  // norte (eixo do curso) para a frente. FASE gira a longitude de partida: com 45 a face
+  // inicial e o Atlantico Norte, com EUA (~-100) de um lado e Europa (~10) do outro.
+  const TILT = -20, FASE = 45, GIRO_MS = 72000;
   // O aro NAO usa RG: com perspectiva, a silhueta aparente da esfera e maior que o raio
   // geometrico. Sem isso o aro fica apertado por dentro dos pontos.
-  const ARO = (RG * PERSP / Math.sqrt(PERSP * PERSP - RG * RG)).toFixed(1);
-  // CONTORNO das costas do Natural Earth (ne_50m_land, DOMINIO PUBLICO). A 110m tinha so
-  // 5.143 vertices no mundo e saia facetada; a 50m tem 60.638, entao o litoral fica fiel.
-  // Preencher o
-  // interior dos continentes gastava pontos onde nao ha informacao: a forma de um
-  // continente mora na linha de costa. Aqui a costa e reamostrada por comprimento de arco
-  // (espacamento uniforme, via slerp, para nao adensar perto dos polos) e ilhas com
-  // perimetro < 8 graus sao descartadas, o que corta ~10% da costa e muito ponto.
-  // A esfera gira no eixo Y, entao o mundo TODO passa, nao so um hemisferio.
-  const terra = fs.readFileSync(new URL('./globo-costa.txt', import.meta.url), 'utf8').trim()
-    .split(',').map(p => { const [lo, la] = p.split(' ');
-      return `<i style="transform:rotateY(${lo}deg) rotateX(${la}deg) translateZ(${RG}px)"></i>`; }).join('');
-  // O aro fica FORA do .cn-eixo de proposito: dentro dele o preserve-3d faria o aro ser
-  // inclinado pelo rotateX junto com a esfera, virando elipse. A silhueta de uma esfera e
-  // sempre um circulo, entao o aro tem que ficar plano na tela para casar com os pontos.
-  const globo = `<div class="cn-globo" aria-hidden="true"><div class="cn-aro"></div><div class="cn-eixo"><div class="cn-esfera">${terra}</div></div></div>`;
-  // Estrelas FORA do globo. PRNG determinístico (LCG com seed fixa) para as posicoes
-  // ficarem identicas a cada re-porte; cada uma pisca com duracao e defasagem propria
-  // para nunca piscarem em coro.
-  let seed = 20260723;
-  const rnd = () => (seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296;
-  let estrelas = '', postas = 0, tent = 0;
-  while (postas < 38 && tent < 8000) {
-    tent++;
-    const x = -620 + rnd() * 1240, y = -420 + rnd() * 840;
-    if (Math.hypot(x, y) < R + 34) continue;              // so fora do circulo da carta
-    const k = (0.30 + rnd() * 0.45).toFixed(3);   // estrela de 4 pontas: raio 3 a 7.5
-    estrelas += `<use class="cn-estrela" href="#cnStar" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${k})" style="animation-duration:${(2.8 + rnd() * 3.6).toFixed(2)}s;animation-delay:-${(rnd() * 7).toFixed(2)}s"></use>`;
-    postas++;
-  }
-  // 3 estrelas fixas no canto superior esquerdo: o sorteio deixou esse canto vazio.
-  // Coordenadas medidas na area REALMENTE visivel do viewBox depois do slice
-  // (x >= -452) e abaixo da topbar (y >= -368), todas fora do circulo da carta.
-  for (const [x, y, k, dur, del] of [[-415, -332, .62, 3.9, -.7], [-348, -278, .42, 5.1, -2.6], [-437, -232, .34, 4.4, -4.1]]) {
-    estrelas += `<use class="cn-estrela" href="#cnStar" transform="translate(${x} ${y}) scale(${k})" style="animation-duration:${dur}s;animation-delay:${del}s"></use>`;
-  }
-  const fadeEstrelas = 'linear-gradient(to bottom,black,black 68%,transparent 96%)';
+  const ARO = +(RG * PERSP / Math.sqrt(PERSP * PERSP - RG * RG)).toFixed(1);
+
+  // CIDADES: praças financeiras e capitais do circuito do curso. Viram halo + nucleo no
+  // canvas, cada uma com seu proprio ritmo de brilho (ver GloboCanvas).
+  // Cada praça carrega [lon, lat, codigo de cidade IATA, pais ISO-2]. O codigo IATA de
+  // CIDADE (nao de aeroporto) e o vocabulario que o mercado ja usa em mesa de operacao:
+  // LON, NYC, TYO. Vira rotulo no canvas, ao lado do halo.
+  const CIDADES = [
+    [-0.13, 51.51, 'LON', 'GB'], [2.35, 48.86, 'PAR', 'FR'], [13.40, 52.52, 'BER', 'DE'],
+    [4.90, 52.37, 'AMS', 'NL'], [8.54, 47.37, 'ZRH', 'CH'], [-3.70, 40.42, 'MAD', 'ES'],
+    [12.50, 41.90, 'ROM', 'IT'], [28.98, 41.01, 'IST', 'TR'], [37.62, 55.75, 'MOW', 'RU'],
+    [31.24, 30.04, 'CAI', 'EG'], [-7.99, 31.63, 'RAK', 'MA'], [55.27, 25.20, 'DXB', 'AE'],
+    [77.21, 28.61, 'DEL', 'IN'], [121.47, 31.23, 'SHA', 'CN'], [139.69, 35.69, 'TYO', 'JP'],
+    [114.17, 22.32, 'HKG', 'HK'], [103.82, 1.35, 'SIN', 'SG'], [-74.01, 40.71, 'NYC', 'US'],
+    [-87.63, 41.88, 'CHI', 'US'], [-79.38, 43.65, 'YTO', 'CA'], [-118.24, 34.05, 'LAX', 'US'],
+    [-80.19, 25.76, 'MIA', 'US'], [-82.38, 23.11, 'HAV', 'CU'], [-99.13, 19.43, 'MEX', 'MX'],
+    [-38.54, -3.73, 'FOR', 'BR'], [-46.63, -23.55, 'SAO', 'BR'],
+  ];
+  // ROTAS: pares ligados por arco de grande circulo (viram linha continua no canvas). O
+  // CERNE do curso e dolarizar saindo do Brasil, entao Sao Paulo (25) e o no de origem,
+  // irradiando para EUA e Europa; Fortaleza (24) e a ponte do Nordeste com a Europa. A
+  // malha global ao redor so contextualiza o mundo conectado, mais discreta.
+  const ROTAS = [
+    // Brasil -> EUA e Europa (o leque que conta a tese)
+    [25, 17], // São Paulo · Nova York
+    [25, 21], // São Paulo · Miami
+    [25, 0],  // São Paulo · Londres
+    [25, 5],  // São Paulo · Madri
+    [24, 0],  // Fortaleza · Londres
+    // malha global de contexto
+    [0, 17],  // Londres · Nova York
+    [0, 11],  // Londres · Dubai
+    [11, 13], // Dubai · Xangai
+    [20, 14], // Los Angeles · Tóquio
+    [13, 16], // Xangai · Cingapura
+    [1, 7],   // Paris · Istambul
+  ];
+
+  const costaCrua = fs.readFileSync(new URL('./globo-costa.txt', import.meta.url), 'utf8').trim();
+  // TERRA: pontos de interior dos continentes (distribuicao Fibonacci uniforme + teste
+  // point-in-polygon contra o ne_50m_land), para a massa de terra "acender" levemente
+  // sobre o oceano escuro sem virar preenchimento solido — que destoaria de um globo todo
+  // pontilhado e ainda esbarraria no recorte de poligono no limbo.
+  const terraCrua = fs.readFileSync(new URL('./globo-terra.txt', import.meta.url), 'utf8').trim();
+
+  const dados = `// GERADO por scripts/port-lp.mjs (etapa 7l). Nao editar a mao.
+// Geometria e dados do globo do hero; quem desenha e ./GloboCanvas.tsx.
+export const RG = ${RG};
+export const PERSP = ${PERSP};
+export const TILT = ${TILT};
+export const FASE = ${FASE};
+export const GIRO_MS = ${GIRO_MS};
+export const ARO = ${ARO};
+export const OURO = '${OURO}';
+/** Litoral do Natural Earth (ne_50m_land, dominio publico), "lon lat" separados por virgula. */
+export const COSTA = '${costaCrua}';
+/** Interior das massas de terra (stipple Fibonacci), "lon lat" separados por virgula. */
+export const TERRA = '${terraCrua}';
+/** Praças financeiras: [lon, lat, codigo IATA de cidade, pais ISO-2]. */
+export const CIDADES: [number, number, string, string][] = ${JSON.stringify(CIDADES)};
+/** Rotas como pares de indices em CIDADES. */
+export const ROTAS: [number, number][] = ${JSON.stringify(ROTAS)};
+`;
+  fs.writeFileSync(new URL('../app/_lp/globo-dados.ts', import.meta.url), dados);
+
   // trama de pontos rebaixada a grao de fundo: na mesma intensidade ela competia com os
   // pontos do mapa-mundi (escala visual parecida) e sujava a leitura dos continentes.
   const pontos = `<div class="cn-dots" style="position:absolute;inset:0;background-image:radial-gradient(rgba(247,245,242,.035) 1.3px, transparent 1.3px);background-size:32px 32px;-webkit-mask-image:linear-gradient(to bottom,black,transparent 92%);mask-image:linear-gradient(to bottom,black,transparent 92%);pointer-events:none"></div>`;
-  // SVG proprio para as estrelas (o globo agora e HTML/3D). A mascara so esmaece o rodape.
-  const campoEstrelas = `<svg class="cn-stars" viewBox="-620 -420 1240 840" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false" style="position:absolute;inset:0;width:100%;height:100%;-webkit-mask-image:${fadeEstrelas};mask-image:${fadeEstrelas};pointer-events:none"><defs><path id="cnStar" d="M0 -10L1.9 -1.9L10 0L1.9 1.9L0 10L-1.9 1.9L-10 0L-1.9 -1.9Z"></path></defs><g fill="${OURO}">${estrelas}</g></svg>`;
+  const globo = `<canvas class="cn-canvas" aria-hidden="true"></canvas>`;
   const antes = body;
   body = body.replace(
     /<div style="position:absolute;inset:0;background-image:radial-gradient\(rgba\(247,245,242,\.08\) 1\.3px, transparent 1\.3px\);[^"]*"><\/div>/,
-    pontos + globo + campoEstrelas
+    pontos + globo
   );
   if (body === antes) console.warn('AVISO: camada de pontos do hero nao encontrada — globo nao aplicado.');
-  // Deriva lenta das linhas de rumo. A malha de 16 pontos se repete a cada 360/16 = 22.5
-  // graus, entao animar exatamente esse arco fecha um loop PERFEITO (sem salto na emenda).
-  // Em SVG o transform-origin inicial e 0 0, que aqui e o centro do desenho. Excecao
-  // deliberada ao "so a oferta pulsa" do DESIGN.md; desligada em prefers-reduced-motion.
   styles += `
-/* Hero — globo 3D pontilhado (mapa-mundi) girando no eixo Y. So a esfera anima; os
-   pontos sao estaticos no espaco 3D, entao o custo e de UMA transform composta. */
-/* contain isola a subarvore do globo do layout do documento: sem isso, qualquer
-   recalculo no body descia nos ~1200 filhos e triplicava o custo de layout. */
-.cn-globo{position:absolute;left:50%;top:42%;width:0;height:0;perspective:${PERSP}px;pointer-events:none;contain:layout style}
-.cn-eixo{position:absolute;left:0;top:0;transform:rotateX(${TILT}deg);transform-style:preserve-3d}
-.cn-aro{position:absolute;left:0;top:0;width:${ARO * 2}px;height:${ARO * 2}px;margin:-${ARO}px;border:1px solid rgba(169,142,78,.20);border-radius:50%}
-.cn-esfera{position:absolute;left:0;top:0;transform-style:preserve-3d;animation:cnGiro 72s linear infinite;will-change:transform}
-.cn-esfera i{position:absolute;left:0;top:0;width:3px;height:3px;margin:-1.5px;border-radius:50%;background:${OURO};opacity:.72;backface-visibility:hidden}
-@keyframes cnGiro{from{transform:rotateY(${FASE}deg)}to{transform:rotateY(${FASE - 360}deg)}}
-/* Hero — estrelas fora do globo: piscam dessincronizadas (duracao/atraso por elemento) */
-@keyframes cnPisca{0%,100%{opacity:.10}50%{opacity:.85}}
-.cn-estrela{animation-name:cnPisca;animation-timing-function:ease-in-out;animation-iteration-count:infinite;will-change:opacity}
-/* Hero — parallax de camadas no hover: as 3 camadas do fundo deslizam em intensidades
-   diferentes conforme --mx/--my (o HoverRuntime seta na #hero ao mover o mouse), criando
-   profundidade. Estrelas na frente movem mais, globo ao fundo move menos. So transform,
-   composited. Em reduced-motion o HoverRuntime nem seta as vars, mas zeramos por garantia. */
-.cn-stars,.cn-dots,.cn-globo{transition:transform .3s cubic-bezier(.16,1,.3,1)}
-.cn-stars{transform:translate(calc(var(--mx,0)*-30px),calc(var(--my,0)*-30px))}
-.cn-dots{transform:translate(calc(var(--mx,0)*-14px),calc(var(--my,0)*-14px))}
-.cn-globo{transform:translate(calc(var(--mx,0)*-7px),calc(var(--my,0)*-7px))}
-@media(prefers-reduced-motion:reduce){.cn-esfera{animation:none}.cn-estrela{animation:none;opacity:.42}.cn-stars,.cn-dots,.cn-globo{transition:none;transform:none}}
+/* Hero — globo em canvas (desenho em app/_lp/GloboCanvas.tsx). O elemento cobre o hero
+   inteiro; o centro do globo fica em 50%/42% da area, como na versao em DOM. */
+.cn-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity .6s ease}
+.cn-canvas.pronto{opacity:1}
+/* Hero — resposta ao mouse: o GLOBO gira e inclina conforme o cursor (feito no canvas,
+   ver GloboCanvas.tsx), então o canvas em si NÃO translada — só a trama de fundo desliza
+   de leve, para dar a camada distante. O parallax de translação do canvas foi removido
+   quando as estrelas saíram: sem elas, deslizar o globo chapado não lia como profundidade.
+   Em reduced-motion o HoverRuntime nem seta as vars, mas zeramos por garantia. */
+.cn-dots{transition:transform .3s cubic-bezier(.16,1,.3,1);transform:translate(calc(var(--mx,0)*-11px),calc(var(--my,0)*-11px))}
+@media(prefers-reduced-motion:reduce){.cn-dots{transition:none;transform:none}}
 `;
 }
-
 // 7m) Hero: novo copy. Headline puxa o "risco Brasil" (sem tocar em politica), subtitulo
 //      foca na dolarizacao e ja carrega as 4 casas do corpo docente (Banco Central, XP,
 //      Caixa, Bradesco) — o peso entra no proprio texto, sem tira nem fotos. CTA trocado

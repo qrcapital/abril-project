@@ -8,6 +8,41 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Alterado
+- **LP · Globo do hero reescrito em canvas 2D, mais detalhe e vida** — 2026-07-24
+  - **Migração DOM → canvas** (`app/_lp/GloboCanvas.tsx`). A versão anterior punha um
+    elemento por ponto dentro de um `preserve-3d`; ao adensar o mapa e somar cidades e
+    rotas (3.697 elementos) a página travava, porque o navegador reordena todos os filhos
+    por profundidade a cada quadro. Em canvas o custo é proporcional ao que se pinta: o
+    `body.html` caiu de 180 KB para 69 KB, os nós da página de ~2.000 para ~600, e sobra
+    folga para os efeitos abaixo. O globo virou **um** `<canvas>`; os dados de geometria
+    são gerados no porte (`app/_lp/globo-dados.ts`).
+  - **Mapa muito mais detalhado**: litoral do Natural Earth (`ne_50m_land`, domínio
+    público) decimado a ~0,6°, de 1.389 vértices e ~142 ilhas para **5.155 pontos em 297
+    anéis** — Golfo do México, Caribe, Mediterrâneo e ilhas médias que antes sumiam.
+  - **Massa de terra realçada**: 2.884 pontos de interior (distribuição Fibonacci +
+    point-in-polygon), bem apagados por baixo do litoral, para o continente "acender"
+    sobre o oceano escuro sem virar preenchimento sólido (que destoaria do globo
+    pontilhado e esbarraria no recorte de polígono no limbo).
+  - **Praças em anel sonar**: o halo difuso virou núcleo nítido + anéis que expandem
+    sumindo, cada praça com ciclo próprio. Cada uma leva sigla IATA de cidade + país
+    (LON GB, NYC US…), que somem antes do limbo. Destaca por movimento, não por brilho.
+  - **Rotas com corcova de luz**: um relevo estreito percorre cada rota, erguendo-se um
+    tico da superfície e brilhando — "rebarba passeando", não um ponto viajando. As rotas
+    passaram a **nascer no Brasil** (o cerne do curso): São Paulo irradia para Nova York,
+    Miami, Londres e Madri, e Fortaleza faz a ponte com Londres; a malha global ao redor
+    só contextualiza.
+  - **Globo segue o mouse**: o cursor gira (±26°) e inclina (±12°) a esfera, com lerp
+    suave e retorno ao centro. Substituiu o parallax de translação das camadas, que
+    perdeu sentido quando as **estrelas foram removidas** (eram a camada que dava a
+    profundidade).
+  - **Correção de recorte**: o teste de visibilidade passou de `pz > 0` para `pz > RG²/PERSP`
+    (o horizonte aparente da perspectiva, não o equador geométrico). Antes, uma faixa da
+    casca traseira era desenhada sobre a frente e piscava na borda em vez de contornar a
+    curvatura; os pontos que surgem no limbo entram com raio crescente (respiro), não com
+    tamanho cheio.
+  - O loop **para fora da viewport** (`IntersectionObserver`) e `prefers-reduced-motion`
+    desenha um quadro estático. Geradores de dados (parser de shapefile, stipple de terra)
+    ficaram no scratchpad; os dados-fonte estáticos entraram em `scripts/globo-*.txt`.
 - **LP · Revisão de copy (Ferramentas e Oferta) e revisão geral da página** — 2026-07-24
   - **Ferramentas**: H2 passou a "O que fica com você depois da última aula" (o anterior,
     "Você sai com mais do que aulas. Sai com ferramentas.", repetia o kicker e usava a

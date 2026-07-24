@@ -545,28 +545,17 @@ html,body{overflow-x:hidden}
 .qa-card{background:#fff;border:1px solid rgba(169,142,78,.22);border-radius:14px;padding:36px 34px;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(11,45,32,.05)}
 @media(max-width:760px){.qa-grid{grid-template-columns:1fr}}
 
-/* Hero — globo 3D pontilhado (mapa-mundi) girando no eixo Y. So a esfera anima; os
-   pontos sao estaticos no espaco 3D, entao o custo e de UMA transform composta. */
-/* contain isola a subarvore do globo do layout do documento: sem isso, qualquer
-   recalculo no body descia nos ~1200 filhos e triplicava o custo de layout. */
-.cn-globo{position:absolute;left:50%;top:42%;width:0;height:0;perspective:2301px;pointer-events:none;contain:layout style}
-.cn-eixo{position:absolute;left:0;top:0;transform:rotateX(-20deg);transform-style:preserve-3d}
-.cn-aro{position:absolute;left:0;top:0;width:1067.6px;height:1067.6px;margin:-533.8px;border:1px solid rgba(169,142,78,.20);border-radius:50%}
-.cn-esfera{position:absolute;left:0;top:0;transform-style:preserve-3d;animation:cnGiro 72s linear infinite;will-change:transform}
-.cn-esfera i{position:absolute;left:0;top:0;width:3px;height:3px;margin:-1.5px;border-radius:50%;background:#A98E4E;opacity:.72;backface-visibility:hidden}
-@keyframes cnGiro{from{transform:rotateY(45deg)}to{transform:rotateY(-315deg)}}
-/* Hero — estrelas fora do globo: piscam dessincronizadas (duracao/atraso por elemento) */
-@keyframes cnPisca{0%,100%{opacity:.10}50%{opacity:.85}}
-.cn-estrela{animation-name:cnPisca;animation-timing-function:ease-in-out;animation-iteration-count:infinite;will-change:opacity}
-/* Hero — parallax de camadas no hover: as 3 camadas do fundo deslizam em intensidades
-   diferentes conforme --mx/--my (o HoverRuntime seta na #hero ao mover o mouse), criando
-   profundidade. Estrelas na frente movem mais, globo ao fundo move menos. So transform,
-   composited. Em reduced-motion o HoverRuntime nem seta as vars, mas zeramos por garantia. */
-.cn-stars,.cn-dots,.cn-globo{transition:transform .3s cubic-bezier(.16,1,.3,1)}
-.cn-stars{transform:translate(calc(var(--mx,0)*-30px),calc(var(--my,0)*-30px))}
-.cn-dots{transform:translate(calc(var(--mx,0)*-14px),calc(var(--my,0)*-14px))}
-.cn-globo{transform:translate(calc(var(--mx,0)*-7px),calc(var(--my,0)*-7px))}
-@media(prefers-reduced-motion:reduce){.cn-esfera{animation:none}.cn-estrela{animation:none;opacity:.42}.cn-stars,.cn-dots,.cn-globo{transition:none;transform:none}}
+/* Hero — globo em canvas (desenho em app/_lp/GloboCanvas.tsx). O elemento cobre o hero
+   inteiro; o centro do globo fica em 50%/42% da area, como na versao em DOM. */
+.cn-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity .6s ease}
+.cn-canvas.pronto{opacity:1}
+/* Hero — resposta ao mouse: o GLOBO gira e inclina conforme o cursor (feito no canvas,
+   ver GloboCanvas.tsx), então o canvas em si NÃO translada — só a trama de fundo desliza
+   de leve, para dar a camada distante. O parallax de translação do canvas foi removido
+   quando as estrelas saíram: sem elas, deslizar o globo chapado não lia como profundidade.
+   Em reduced-motion o HoverRuntime nem seta as vars, mas zeramos por garantia. */
+.cn-dots{transition:transform .3s cubic-bezier(.16,1,.3,1);transform:translate(calc(var(--mx,0)*-11px),calc(var(--my,0)*-11px))}
+@media(prefers-reduced-motion:reduce){.cn-dots{transition:none;transform:none}}
 
 .chip-modulo{white-space:nowrap}
 @media (max-width:760px){.chip-modulo{font-size:8.5px;letter-spacing:.12em}}

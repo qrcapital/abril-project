@@ -96,20 +96,27 @@ Disciplina de forma: dentro de uma tela, não misturar cantos muito redondos com
 | Ato do diagnóstico | `0.4s ease` | Inverte fundo para verde no hover/ativo |
 | Acordeão (toggle) | `transform 0.3s ease` | Ícone `+` gira 45° ao abrir |
 | Glow da oferta | `vsGlow 2.6s ease-in-out infinite` | Elemento pulsante da oferta |
-| Globo do hero | `cnGiro 72s linear infinite` | Esfera 3D girando no eixo Y (mapa-múndi) |
-| Estrelas do hero | `cnPisca` (2,8–6,4s, dessincronizado) | Pontos de 4 pontas piscando fora do globo |
-| Parallax do hero | `transform 0.3s ease-out` | Camadas do fundo seguem o cursor (`--mx/--my`) |
+| Globo do hero | `requestAnimationFrame` (giro 72s no eixo Y) | Esfera 3D pontilhada em **canvas** (`GloboCanvas.tsx`) |
+| Praças (sonar) | anéis expandindo, ciclo próprio por cidade | Marcador de "hub ativo" em cada praça financeira |
+| Corcova das rotas | janela de luz percorrendo o arco | Relevo que passeia de uma praça a outra (fluxo de capital) |
+| Globo segue o mouse | lerp em `--mx/--my` | O cursor gira (±26°) e inclina (±12°) a esfera |
 
-**Exceção de motion do hero (deliberada, 23/jul/2026):** o dial de motion do sistema é
-baixo e o glow da oferta era o único elemento animado. O fundo do hero abre uma exceção
-consciente — globo girando + estrelas piscando + parallax no hover — por ser o momento de
-maior impacto da LP e reforçar a tese "a liberdade começa pela geografia". Tudo é
-composited (`transform`/`opacity`), o globo usa `contain`, e nada disso se espalha para o
-resto da LP: as demais seções seguem o dial baixo. Fora do hero, o glow da oferta continua
-sendo o único elemento pulsante.
+**Exceção de motion do hero (deliberada, 23/jul/2026; globo migrado para canvas em
+24/jul/2026):** o dial de motion do sistema é baixo e o glow da oferta era o único elemento
+animado. O fundo do hero abre uma exceção consciente por ser o momento de maior impacto da
+LP e reforçar a tese "a liberdade começa pela geografia". O globo é um **canvas 2D**
+(`app/_lp/GloboCanvas.tsx`), não DOM: um `<canvas>` no lugar dos ~3.700 elementos da versão
+anterior, que travava ao adensar o mapa (o `preserve-3d` reordenava todos os filhos por
+profundidade a cada quadro). Em canvas o custo é proporcional ao que se pinta. O que anima:
+a esfera gira no eixo Y; as praças pulsam em anel sonar (ciclo próprio por cidade); uma
+corcova de luz percorre as rotas; e o globo gira/inclina seguindo o mouse (o `HoverRuntime`
+escreve `--mx/--my` no `#hero`, o canvas lê e persegue com lerp). As **estrelas foram
+removidas** — com elas saiu o parallax de translação das camadas, que sem elas não lia como
+profundidade. Nada disso se espalha para o resto da LP: as demais seções seguem o dial baixo.
 
-Respeitar `prefers-reduced-motion`: desligar o `vsGlow`, o giro/piscar/parallax do hero e as
-animações de entrada, mantendo só transições de cor curtas.
+O loop **para quando o hero sai da viewport** (`IntersectionObserver`) e respeita
+`prefers-reduced-motion` (desenha um único quadro estático, sem giro nem interação). Fora do
+hero, o glow da oferta continua sendo o único elemento pulsante.
 
 ### Sombras e texturas
 

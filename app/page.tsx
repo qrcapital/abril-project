@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import HoverRuntime from "./_lp/HoverRuntime";
+import GloboCanvas from "./_lp/GloboCanvas";
 
 const SITE_URL = process.env.URL ?? "https://abril-project.netlify.app";
 const OG = {
@@ -37,6 +38,7 @@ export default function Home() {
           shorthand `font:` que resete a propriedade). */}
       <div style={{ fontVariantNumeric: "lining-nums" }} dangerouslySetInnerHTML={{ __html: lpBody }} />
       <HoverRuntime />
+      <GloboCanvas />
     </>
   );
 }
