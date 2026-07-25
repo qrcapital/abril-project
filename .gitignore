@@ -44,3 +44,21 @@ next-env.d.ts
 
 # Snapshots locais do impeccable (review artifacts)
 .impeccable/
+
+# Config local do Claude Code: hooks do impeccable e permissões desta máquina.
+# É pessoal e específico de quem trabalha aqui, e o repositório é público.
+.claude/settings.local.json
+
+# Skills instaladas no nível do projeto (`npx skills add` sem `-g`). As nossas
+# ficam no perfil (~/.agents/skills), para valer em todos os projetos; aqui elas
+# só entrariam no repo por acidente. Ver docs/HANDOFF.md sobre o que não viaja.
+.claude/skills/
+/.agents/
+/skills-lock.json
+
+# Insumos brutos do cowork (logos originais, mockups, PDF do certificado).
+# Ficam fora do git de propósito: um dos mockups tem marca d'água da Dreamstime
+# e o repositório é público. As versões tratadas vivem em public/lp/, versionado.
+# Os 7 arquivos já rastreados aqui continuam rastreados; a regra vale para novos.
+# Para adicionar um arquivo daqui de propósito: git add -f <caminho>
+/referencias/cowork/
