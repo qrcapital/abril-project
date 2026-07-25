@@ -126,6 +126,10 @@ e é validado no ambiente de **homolog** (branch `homolog`).
     valia para a área (o rodapé da LP já tinha sido alinhado na etapa 9 do `port-lp`).
   - Tudo em **etapa 3c** do `port-area.mjs` e no `buildFooter()`, para sobreviver ao próximo
     porte.
+  - Fecha também o item **"Nomenclatura da certificação"** do `BACKLOG.md`, que previa esse
+    ajuste para a rodada de copy antes do launch. O termo do card fica como está por ora e
+    volta à mesa nessa rodada, junto com os nomes que assinam o certificado; o racional está
+    no `PRD.md` §8.
 - **LP · Chancela "editorial" e headline antiga nos metadados** — 2026-07-25
   - A `description` da LP ainda dizia "Chancela **editorial** da VEJA Negócios", termo
     substituído por "institucional" em 23/jul em toda a página (a VEJA assina a instituição,
