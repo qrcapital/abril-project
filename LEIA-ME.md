@@ -4,6 +4,11 @@ Projeto: **Landing Page + Área de Membros** do curso.
 
 Base: projeto do cowork (fluxos) + design já montado em HTML.
 
+> **Retomando o projeto, ou abrindo em outra máquina?** Leia
+> [`docs/HANDOFF.md`](docs/HANDOFF.md) primeiro. Ele tem o estado atual, o que precisa ser
+> transferido por fora do git (segredos e insumos brutos), o setup no macOS e as
+> armadilhas conhecidas.
+
 ## Onde colocar os docs
 
 Cole os arquivos de entrada nas pastas abaixo.
@@ -31,6 +36,15 @@ Assim que os docs estiverem no lugar, me avisa que eu leio tudo e a gente segue 
 | `docs/BACKLOG.md` | Itens fora do v1 para reavaliar pós-launch (modo claro, exit-intent, WhatsApp API, gamificação). |
 | `docs/AMBIENTES.md` | Estratégia de ambientes (local, homolog, produção), deploy Netlify e checklist de provisionamento. |
 | `docs/apresentacao-stack.html` | Apresentação do arcabouço ferramental para o time (também publicada como artifact). |
+
+## Continuidade (25/jul/2026)
+
+| Doc | Conteúdo |
+|---|---|
+| `docs/HANDOFF.md` | **Documento de continuidade.** Estado real, o que não vem no clone, setup no macOS, armadilhas e decisões fechadas. |
+| `docs/memoria-claude/` | Cópia de transporte da memória do Claude Code deste projeto, com o procedimento para reinstalar em outra máquina. |
+| `docs/COPY.md` | Diretriz anti-slop de escrita. Obrigatória em qualquer copy, rodada sobre o texto final. |
+| `docs/PENDENCIAS-LP.md` | Checklist vivo do que falta antes do "pronto para produção". |
 
 ## Histórico de mudanças
 

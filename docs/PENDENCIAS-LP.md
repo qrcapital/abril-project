@@ -4,7 +4,7 @@ Checklist vivo do que falta antes do "pronto para produção" (V1/homolog). Atua
 conforme os insumos chegam. Quando o Pedro perguntar "quais as pendências?", este é o
 documento a puxar. (O admin é V2 — ver `PLANO-ADMIN.md`.)
 
-_Última atualização: 2026-07-20._
+_Última atualização: 2026-07-25 (ressincronizado junto com o `HANDOFF.md`)._
 
 > Legenda: 🟢 dá para fazer agora (sem insumo externo) · 🔒 bloqueado por insumo/decisão.
 
@@ -17,12 +17,26 @@ _Última atualização: 2026-07-20._
 
 ## 🟢 Dá para fazer agora (sem insumo)
 
+- [ ] **Copy do FAQ e do CTA final** — última etapa da varredura de copy seção a seção da
+      LP. Já revisadas: hero, corpo docente, currículo, Ferramentas e Oferta.
 - [ ] **Prova funcional** — banco de questões real + correção; resultado da nota;
       destrava com 16/16.
+- [ ] **Recuperação de senha** — `/app/recuperar-senha` e `/app/redefinir-senha`; hoje o
+      link "Esqueci minha senha" dá 404.
+- [ ] **Nav do rodapé** — alinhar aos nomes novos da topbar (Professores, Formação,
+      Ferramentas, Idealizadores, FAQ).
 - [ ] **`{{ preco }}` / `{{ parcelas }}`** configuráveis (hoje hardcoded no porte).
-- [ ] **Telas secundárias** — `/obrigado`, `/app/recuperar-senha`, `/app/redefinir-senha`, `/app/acesso`.
+- [ ] **Telas secundárias** — `/obrigado`, `/app/acesso`.
 - [ ] **Remover atalhos de teste** (login e prova) antes do go-live.
 - [ ] **Pixels de tracking** (`fbq`/`gtag`) — estrutura pronta; precisa dos IDs.
+- [ ] **Migrar o curso para o banco** — hoje vive em `lib/curso.ts`, a tabela `lessons`
+      está vazia e o progresso é cookie.
+
+## 🔒 Bloqueado por insumo
+
+- [ ] **Links das redes sociais do rodapé** — hoje `href="#"`. _Insumo:_ URLs reais dos
+      perfis.
+- [ ] **`banned-words.md`** — o `docs/COPY.md` referencia esse arquivo, que nunca existiu.
 
 ## 🚫 Fora do homolog (decisão 2026-07-20)
 
@@ -42,7 +56,12 @@ Não entram no homolog; ficam para produção com o conteúdo real:
 
 ## ✅ Já resolvido
 
-- [x] **Dados jurídicos do rodapé confirmados** — razão social "1971 Comunicações e Sistemas LTDA." + DPO `dpo@qr.capital` (2026-07-20).
+- [x] **Dados jurídicos do rodapé** — a razão social passou a ser **"Abril Comunicações
+      S.A. · CNPJ 44.597.052/0001-62"**, porque a LP vai para um subdomínio da Abril
+      (2026-07-22). Substitui "1971 Comunicações e Sistemas LTDA.", registrada em
+      2026-07-20 e superada. DPO segue `dpo@qr.capital`.
+- [x] **`COPY.md` promovido para `docs/`** — a diretriz anti-slop saiu de
+      `referencias/cowork/` (fora do git) e virou `docs/COPY.md`, versionado (2026-07-25).
 
 - [x] **Progresso real** — marcar aula concluída (cookie); sidebar/%/home/"Continuar"/gate da prova reagem (2026-07-20).
 - [x] **Certificado — Baixar PDF** (imprime o preview, fiel ao design) + **Compartilhar no LinkedIn** (add-to-profile oficial) + "Validar" → `/verificar` (2026-07-20).

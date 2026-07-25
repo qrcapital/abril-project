@@ -7,6 +7,29 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 
 ## Não lançado
 
+### Adicionado
+- **Pacote de continuidade para transferir o desenvolvimento de máquina** — 2026-07-25
+  - **`docs/HANDOFF.md`**: documento de continuidade do projeto, escrito para migrar o
+    trabalho da máquina Windows para um MacBook. Reúne o que os outros documentos não
+    tinham: o estado real do repositório, o que viaja no git e o que precisa ser
+    transferido na mão (segredos, insumos brutos de `referencias/cowork/`, memória do
+    Claude Code), o setup passo a passo no macOS, as armadilhas que já custaram tempo
+    (o porte que sobrescreve edição manual, o cache do dev server, a medição de animação
+    em aba oculta) e as decisões já fechadas que não devem voltar à mesa.
+  - **`docs/memoria-claude/`**: cópia de transporte das seis memórias do Claude Code
+    referentes a este projeto, que viviam apenas no perfil da máquina de origem e não
+    acompanham um `git clone`. O `README.md` da pasta traz o procedimento de reinstalação
+    e o índice `MEMORY.md` pronto para colar.
+  - **`docs/COPY.md`**: a diretriz anti-slop de escrita saiu de `referencias/cowork/`,
+    que está fora do git, e passou a ser versionada. Ela é obrigatória em qualquer copy
+    do projeto, então não podia depender de transferência manual. Fecha uma pendência
+    apontada no PRD.
+  - **`docs/PENDENCIAS-LP.md` ressincronizado**: estava parado em 2026-07-20 e ainda
+    registrava a razão social antiga do rodapé ("1971 Comunicações e Sistemas LTDA.",
+    superada por "Abril Comunicações S.A."). Ganhou também os itens abertos que só
+    existiam na conversa: copy do FAQ e do CTA final, recuperação de senha, nav do
+    rodapé, migração do curso para o banco e os dois itens bloqueados por insumo.
+
 ### Alterado
 - **LP · Globo do hero reescrito em canvas 2D, mais detalhe e vida** — 2026-07-24
   - **Migração DOM → canvas** (`app/_lp/GloboCanvas.tsx`). A versão anterior punha um

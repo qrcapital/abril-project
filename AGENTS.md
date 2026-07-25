@@ -8,14 +8,28 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 Formação on-demand em dolarização de patrimônio (BlockTrends × VEJA Negócios). Um projeto Next.js com **LP de vendas pública** (`/`, SSG, tema claro) e **área do aluno autenticada** (`/app/*`, tema dark).
 
+## Primeira sessão nesta máquina? Comece pelo handoff
+
+**`docs/HANDOFF.md`** é o documento de continuidade: estado real do repositório, o que não
+vem no `git clone` (segredos, insumos brutos, e a memória do Claude Code em
+`docs/memoria-claude/`), setup, armadilhas conhecidas e as decisões já fechadas pelo Pedro.
+Leia antes de editar qualquer arquivo.
+
+Duas dele que quebram trabalho quando ignoradas: a LP é **gerada** por
+`scripts/port-lp.mjs`, então editar só o `app/_lp/body.html` perde a mudança no próximo
+porte; e o checklist de `docs/COPY.md` roda no texto **final** de qualquer copy, não no rascunho.
+
 ## Fundação (leia antes de construir)
 
 A planta do projeto está em `docs/`. É a fonte de verdade:
 
+- `docs/HANDOFF.md` — continuidade, estado atual e armadilhas de operação.
 - `docs/PRD.md` — especificação completa (features, regras, edge cases, modelo de dados, e-mails, admin, QA).
 - `docs/ROUTES.md` — mapa de telas e navegação.
 - `docs/DESIGN.md` — design system **Meridiano** (tokens, patterns, guarda-corpos anti-slop).
 - `docs/BACKLOG.md` — o que ficou fora do v1.
+- `docs/COPY.md` — diretriz anti-slop de escrita, obrigatória em todo copy.
+- `docs/PENDENCIAS-LP.md` — checklist vivo do que falta para o "pronto para produção".
 - `referencias/` — handoff (`cowork/IMPLEMENTACAO.md`), designs finais (`htmls/`, bundles do Claude Design) e fluxos.
 
 ## Stack
