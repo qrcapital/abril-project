@@ -59,6 +59,43 @@ for (const [uuid, p] of Object.entries(paths)) {
   styles = styles.split(uuid).join(p);
 }
 
+// 3b) coerencia de nomes com a LP e o PRD: o modulo IV deixou de se chamar
+//     "Criptoativos" e passou a "Ativos Digitais" (24/jul/2026, PRD §2), porque o tema
+//     abriu para alem de cripto. O bundle da area e anterior a decisao. Roda aqui, no
+//     `body`, para valer em TODAS as telas (card da home, sidebar da aula, desempenho
+//     por modulo do resultado). O titulo curto espelha o de lib/curso.ts, que e quem
+//     manda nas telas data-driven; o resultado ainda e estatico e le daqui.
+{
+  const nomes = [
+    ['Criptoativos em Dólar', 'Ativos Digitais em Dólar'],
+    ['ETFs de cripto e análise on-chain', 'ETFs e análise on-chain'],
+  ];
+  for (const [de, para] of nomes) {
+    const antes = body;
+    body = body.split(de).join(para);
+    if (body === antes) console.warn(`AVISO: modulo IV — "${de}" nao encontrado para renomear.`);
+  }
+}
+
+// 3c) nomenclatura da chancela (PRD §8): a VEJA Negocios e marca editorial, nao
+//     entidade certificadora, entao **"Certificação VEJA Negócios" nao se usa** — quem
+//     emite o certificado e a BlockTrends, com a VEJA como cossignataria. O card da
+//     prova na home vinha com esse nome; passa a anunciar o que o aluno recebe de fato
+//     (o selo do proprio card ja traz as duas marcas). E "chancela editorial" virou
+//     "institucional" em 23/jul, quando os dois papeis foram separados: a BlockTrends
+//     assina a tecnica e a VEJA a instituicao. O bundle da area e anterior aos dois.
+{
+  const termos = [
+    ['Certificação VEJA Negócios', 'Certificado de 30 horas'],
+    ['Chancela editorial VEJA Negócios', 'Chancela institucional VEJA Negócios'],
+  ];
+  for (const [de, para] of termos) {
+    const antes = body;
+    body = body.split(de).join(para);
+    if (body === antes) console.warn(`AVISO: chancela — "${de}" nao encontrado para corrigir.`);
+  }
+}
+
 // --- helpers -------------------------------------------------------------
 // extrai o bloco <sc-if value="{{ key }}"> ... </sc-if> (balanceado) pela key
 function extractScreen(src, key) {
@@ -134,6 +171,8 @@ const DPO_EMAIL = 'dpo@qr.capital';
 // Rodape estruturado, igual ao da LP (Institucional / Politicas / Contato +
 // copyright + voltar ao topo). Ancoras da coluna Institucional -> absolutas para
 // a LP; "Voltar ao topo" recebe data-scrolltop (rolagem tratada no AreaChrome).
+// A coluna Institucional espelha a nav da LP (topbar e rodape, etapas 7n e 9 do
+// port-lp): os nomes antigos das secoes ficaram para tras quando a LP renomeou.
 function buildFooter() {
   const kicker = "font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:#D9BE85;margin-bottom:4px";
   const lnk = 'style="color:#8FA398;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#F7F5F2"';
@@ -144,14 +183,14 @@ function buildFooter() {
 <b style="display:block;font-family:'Playfair Display',serif;font-size:20px;letter-spacing:.26em;font-weight:500;color:#F7F5F2;line-height:1;white-space:nowrap">ESTRATÉGIA</b>
 <span style="display:flex;align-items:center;gap:10px;font-size:8px;letter-spacing:.44em;color:#EDE6DD;font-weight:600;margin-top:5px;white-space:nowrap"><i style="flex:1;height:1px;background:#A98E4E;min-width:16px"></i>INTERNACIONAL<i style="flex:1;height:1px;background:#A98E4E;min-width:16px"></i></span>
 </a>
-<p style="font-size:12.5px;line-height:1.7;margin:18px 0 0;max-width:300px;color:#8FA398">Formação em dolarização de patrimônio e investimento internacional. BlockTrends, com chancela editorial da VEJA Negócios.</p>
+<p style="font-size:12.5px;line-height:1.7;margin:18px 0 0;max-width:300px;color:#8FA398">Formação em dolarização de patrimônio e investimento internacional. BlockTrends, com chancela institucional da VEJA Negócios.</p>
 </div>
 <nav style="display:flex;flex-direction:column;gap:12px;flex:0 0 auto">
 <div style="${kicker}">Institucional</div>
-<a href="/#tese" ${lnk}>O Diagnóstico</a>
-<a href="/#docentes" ${lnk}>Corpo Docente</a>
-<a href="/#curriculo" ${lnk}>A Formação</a>
-<a href="/#chancela" ${lnk}>Quem Assina</a>
+<a href="/#docentes" ${lnk}>Professores</a>
+<a href="/#curriculo" ${lnk}>Formação</a>
+<a href="/#entregaveis" ${lnk}>Ferramentas</a>
+<a href="/#chancela" ${lnk}>Idealizadores</a>
 <a href="/#faq" ${lnk}>FAQ</a>
 </nav>
 <div style="display:flex;flex-direction:column;gap:12px;flex:0 0 auto">
@@ -166,7 +205,7 @@ function buildFooter() {
 </div>
 </div>
 <div style="max-width:1180px;margin:34px auto 0;padding:22px 28px 0;border-top:1px solid rgba(217,190,133,.14);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
-<span style="font-size:11.5px;color:#5F7469">© 2026 Estratégia Internacional · 1971 Comunicações e Sistemas LTDA. Todos os direitos reservados.</span>
+<span style="font-size:11.5px;color:#5F7469">Abril Comunicações S.A. · CNPJ 44.597.052/0001-62 · Todos os direitos reservados.</span>
 <a href="#" data-scrolltop="1" style="color:#8FA398;font-size:11.5px;text-decoration:none;transition:color .2s ease" style-hover="color:#D9BE85">Voltar ao topo ↑</a>
 </div>
 </footer>`;
@@ -251,7 +290,7 @@ const screens = {
   'prova':    prep(extractScreen(body, 'isProvaInstr'), V)
                 .replace(/<div style="width:58px;height:58px;[\s\S]*?<\/svg>\s*<\/div>/,
                   '<div style="position:relative;width:92px;height:92px;margin:0 auto 18px">' +
-                  '<img src="/app/dec6993b-f88c-4b38-a7bb-33d730441044.svg" alt="Chancela editorial VEJA Negócios · Grupo Abril" style="width:92px;height:92px;display:block;transform:rotate(-38deg)">' +
+                  '<img src="/app/dec6993b-f88c-4b38-a7bb-33d730441044.svg" alt="Chancela institucional VEJA Negócios · Grupo Abril" style="width:92px;height:92px;display:block;transform:rotate(-38deg)">' +
                   '<img src="/app/280505b4-fa9f-4519-b1d2-064fbb4ecad1.webp" alt="" style="position:absolute;top:49%;left:50%;transform:translate(-50%,-50%);width:44px;height:auto;display:block">' +
                   '</div>'),
   'prova-questao': expandAlternatives(prep(extractScreen(body, 'isProvaQ'), V)),

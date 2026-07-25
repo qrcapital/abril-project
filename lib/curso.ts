@@ -18,12 +18,15 @@ export type Aula = {
   descricao: string;
 };
 
+// Os títulos acompanham o PRD §2 e a LP. O do módulo IV encurta "Ativos Digitais:
+// Exposição Alternativa em Dólar" para caber no card da vitrine, no mesmo registro
+// dos outros ("<tema> em Dólar", "<tema> nos EUA").
 export const MODULOS: Modulo[] = [
   { idx: 0, label: "Módulo 0", titulo: "Bem-vindo" },
   { idx: 1, label: "Módulo I", titulo: "Macro e Estratégia Global", docente: "Rodolfo Bastos" },
-  { idx: 2, label: "Módulo II", titulo: "Renda Fixa e Ações", docente: "Tony Volpon" },
-  { idx: 3, label: "Módulo III", titulo: "Acesso ao Mercado Americano", docente: "Luiz Fernando Roxo" },
-  { idx: 4, label: "Módulo IV", titulo: "Criptoativos em Dólar", docente: "Alexandre Ywata" },
+  { idx: 2, label: "Módulo II", titulo: "Renda Fixa e Ações nos EUA", docente: "Tony Volpon" },
+  { idx: 3, label: "Módulo III", titulo: "Como Acessar o Mercado Americano", docente: "Luiz Fernando Roxo" },
+  { idx: 4, label: "Módulo IV", titulo: "Ativos Digitais em Dólar", docente: "Alexandre Ywata" },
 ];
 
 export const AULAS: Aula[] = [
@@ -46,7 +49,7 @@ export const AULAS: Aula[] = [
 
   { n: 13, modulo: 4, numero: "13", titulo: "Bitcoin e Ethereum", descricao: "Os fundamentos dos dois principais criptoativos e o papel de cada um numa carteira dolarizada." },
   { n: 14, modulo: 4, numero: "14", titulo: "Tokens, RWA e o ecossistema", descricao: "Além do Bitcoin: tokens, ativos do mundo real (RWA) e como ler o ecossistema cripto." },
-  { n: 15, modulo: 4, numero: "15", titulo: "ETFs de cripto e análise on-chain", descricao: "Exposição a cripto via ETFs regulados e uma introdução à leitura de dados on-chain." },
+  { n: 15, modulo: 4, numero: "15", titulo: "ETFs e análise on-chain", descricao: "Exposição por ETF regulado, seja de ativos digitais ou de um setor específico da economia global, com métricas on-chain para ler o que o preço não mostra." },
   { n: 16, modulo: 4, numero: "16", titulo: "Tributação de criptoativos", descricao: "Como declarar e pagar impostos sobre ganhos com criptoativos no Brasil." },
 ];
 

@@ -68,7 +68,8 @@ Em ordem do que eu atacaria primeiro:
 1. **Copy do FAQ e do CTA final.** É o que resta da varredura de copy seção a seção da LP.
 2. **Prova funcional.** Hoje o card só abre um popup de "bloqueada". Precisa do banco de
    ~100 questões (construção nossa, conteúdo incluído), sorteio de 20 pela função
-   `sortear_prova()`, correção e gate de 16/16 acertos.
+   `sortear_prova()` e correção com aprovação em 70%, ou seja 14 dos 20 acertos. O
+   16/16 é o gate de **aulas** que libera a prova, não a nota.
 3. **Recuperação de senha.** `/app/recuperar-senha` e `/app/redefinir-senha` não existem;
    o link "Esqueci minha senha" dá 404.
 4. **Pendências pequenas da LP.** Nav do rodapé ainda usa os nomes antigos das seções

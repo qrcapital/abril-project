@@ -7,7 +7,7 @@ import GloboCanvas from "./_lp/GloboCanvas";
 const SITE_URL = process.env.URL ?? "https://abril-project.netlify.app";
 const OG = {
   title: "Estratégia Internacional",
-  description: "Sua liberdade financeira começa pela geografia.",
+  description: "Seu patrimônio não devia depender de um só país.",
   images: [{ url: "/og-lp.png", width: 1200, height: 630, alt: "Estratégia Internacional" }],
 };
 
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "Estratégia Internacional | Dolarização de patrimônio com método",
   description:
-    "Formação em dolarização de patrimônio e investimento internacional, com quatro especialistas que operaram esse mercado por dentro. Chancela editorial da VEJA Negócios, conteúdo BlockTrends.",
+    "Formação em dolarização de patrimônio e investimento internacional, com quatro especialistas que operaram esse mercado por dentro. Chancela institucional da VEJA Negócios, conteúdo BlockTrends.",
   openGraph: { ...OG, type: "website" },
   twitter: { card: "summary_large_image", ...OG },
 };

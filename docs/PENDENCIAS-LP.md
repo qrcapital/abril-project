@@ -23,8 +23,6 @@ _Última atualização: 2026-07-25 (ressincronizado junto com o `HANDOFF.md`)._
       destrava com 16/16.
 - [ ] **Recuperação de senha** — `/app/recuperar-senha` e `/app/redefinir-senha`; hoje o
       link "Esqueci minha senha" dá 404.
-- [ ] **Nav do rodapé** — alinhar aos nomes novos da topbar (Professores, Formação,
-      Ferramentas, Idealizadores, FAQ).
 - [ ] **`{{ preco }}` / `{{ parcelas }}`** configuráveis (hoje hardcoded no porte).
 - [ ] **Telas secundárias** — `/obrigado`, `/app/acesso`.
 - [ ] **Remover atalhos de teste** (login e prova) antes do go-live.
@@ -60,6 +58,11 @@ Não entram no homolog; ficam para produção com o conteúdo real:
       S.A. · CNPJ 44.597.052/0001-62"**, porque a LP vai para um subdomínio da Abril
       (2026-07-22). Substitui "1971 Comunicações e Sistemas LTDA.", registrada em
       2026-07-20 e superada. DPO segue `dpo@qr.capital`.
+- [x] **Nav do rodapé** — o da LP já saíra alinhado à topbar (Professores, Formação,
+      Ferramentas, Idealizadores, FAQ) na etapa 9 do `port-lp`; faltava o **rodapé da
+      área**, que ainda listava O Diagnóstico, Corpo Docente, A Formação e Quem Assina.
+      Alinhado no `buildFooter()` do `port-area`, junto com a razão social superada e a
+      troca de "chancela editorial" por "institucional" (2026-07-25).
 - [x] **`COPY.md` promovido para `docs/`** — a diretriz anti-slop saiu de
       `referencias/cowork/` (fora do git) e virou `docs/COPY.md`, versionado (2026-07-25).
 

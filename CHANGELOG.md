@@ -95,6 +95,47 @@ e é validado no ambiente de **homolog** (branch `homolog`).
     Conferido em Agência Brasil e gov.br: SEPEC, nomeação em julho de 2022.
 
 ### Corrigido
+- **Área do aluno · Nomes de módulo alinhados à LP e ao PRD** — 2026-07-25
+  - O currículo da área (`lib/curso.ts`) ainda chamava o módulo IV de **"Criptoativos em
+    Dólar"** e a aula 15 de "ETFs de cripto e análise on-chain", nomes que a LP abandonou em
+    24/jul (etapa 7r do porte) quando o módulo abriu para além de cripto. Passaram a
+    **"Ativos Digitais em Dólar"** e **"ETFs e análise on-chain"**, com a descrição da aula
+    15 falando em ETF de ativos digitais **ou** de um setor da economia global, sem nomear
+    setor, como no currículo da LP. As quatro aulas do módulo continuam sendo de cripto (ver
+    a nota do `PRD.md` §2).
+  - Os módulos II e III tinham título encurtado ("Renda Fixa e Ações", "Acesso ao Mercado
+    Americano") em relação ao PRD e ao próprio design da área, que já traz "Renda Fixa e
+    Ações nos EUA" e "Como Acessar o Mercado Americano" nos cards da vitrine. Alinhados.
+  - As telas geradas por `port-area.mjs` traziam o nome antigo em quatro pontos, e o
+    desempenho por módulo da tela de resultado ainda é estático, então ele aparecia para o
+    aluno. **Etapa 3b** nova no porte renomeia no `body`, valendo para todas as telas de uma
+    vez; `home.html` e `aula.html` são regerados em runtime a partir de `lib/curso.ts` e já
+    seguiam o nome novo por tabela.
+- **Área do aluno · Chancela, razão social e nav do rodapé** — 2026-07-25
+  - O card da Prova Final na home anunciava **"Certificação VEJA Negócios"**, formulação
+    proibida no `PRD.md` §8: a VEJA é marca editorial cossignatária, não entidade
+    certificadora, e quem emite é a BlockTrends. O card passou a anunciar o que o aluno
+    recebe, **"Certificado de 30 horas"**; o selo do próprio card já traz as duas marcas.
+  - **"Chancela editorial"** virou "institucional" no rodapé da área e no `alt` do selo das
+    telas de prova e resultado, acompanhando a separação de papéis feita em 23/jul na LP.
+  - O rodapé da área ainda trazia a razão social **"1971 Comunicações e Sistemas LTDA."**,
+    superada em 22/jul por **Abril Comunicações S.A. · CNPJ 44.597.052/0001-62**, e a coluna
+    Institucional com os nomes antigos das seções (O Diagnóstico, Corpo Docente, A Formação,
+    Quem Assina). Agora espelha a nav da LP: Professores, Formação, Ferramentas,
+    Idealizadores, FAQ. Com isso fecha o item "nav do rodapé" de `PENDENCIAS-LP.md`, que
+    valia para a área (o rodapé da LP já tinha sido alinhado na etapa 9 do `port-lp`).
+  - Tudo em **etapa 3c** do `port-area.mjs` e no `buildFooter()`, para sobreviver ao próximo
+    porte.
+- **LP · Chancela "editorial" e headline antiga nos metadados** — 2026-07-25
+  - A `description` da LP ainda dizia "Chancela **editorial** da VEJA Negócios", termo
+    substituído por "institucional" em 23/jul em toda a página (a VEJA assina a instituição,
+    a BlockTrends a técnica). O `og:description` seguia com a headline antiga ("Sua liberdade
+    financeira começa pela geografia"), aposentada quando o hero virou "Seu patrimônio não
+    devia depender de um só país", que é o que o link agora mostra ao ser compartilhado.
+- **`HANDOFF.md` · Nota de aprovação da prova** — 2026-07-25
+  - A lista do que falta descrevia a prova com "gate de 16/16 acertos". A aprovação é de
+    **70%, ou seja 14 dos 20 acertos** (`PRD.md` §7); 16/16 é o gate de **aulas** concluídas
+    que libera a prova. Corrigido para não induzir a implementação ao erro.
 - **LP · Cards de docente: chip de módulo em uma linha, bio equalizada e divisória alinhada** — 2026-07-24
   - O chip "Módulo III · Mercado Americano" pedia 241px e o card só oferece 236px úteis
     (280 menos 22px de padding de cada lado), então quebrava em duas linhas. Virou
