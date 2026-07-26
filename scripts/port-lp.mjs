@@ -570,12 +570,17 @@ export const ROTAS: [number, number][] = ${JSON.stringify(ROTAS)};
 {
   const navLink = (href, txt) =>
     `<a href="${href}" style="color:#B9C4BC;font-size:13px;font-weight:600;letter-spacing:.02em" style-hover="color:#D9BE85">${txt}</a>`;
+  // "Entrar" tambem dentro do menu hamburguer: no mobile o botao ENTRAR da topbar some
+  // (regra do bundle) e o acesso a area do aluno ficava sem porta. Dourado e em caixa
+  // alta para ler como acao, separado das ancoras por uma hairline; display:none no
+  // desktop (la o botao proprio continua). CSS logo abaixo da nav.
   const novaNav = [
     navLink('#docentes', 'Professores'),
     navLink('#curriculo', 'Formação'),
     navLink('#entregaveis', 'Ferramentas'),
     navLink('#chancela', 'Idealizadores'),
     navLink('#faq', 'FAQ'),
+    `<a class="nav-entrar" href="/app/login" title="Entrar na área do aluno" style="color:#D9BE85;font-size:13px;font-weight:700;letter-spacing:.06em" style-hover="color:#F7F5F2">ENTRAR</a>`,
   ].join('\n      ');
   const bn = body;
   body = body.replace(/(<nav class="topbar-nav"[^>]*>)[\s\S]*?(<\/nav>)/, `$1\n      ${novaNav}\n    $2`);
@@ -585,6 +590,15 @@ export const ROTAS: [number, number][] = ${JSON.stringify(ROTAS)};
   body = body.replace('>Entrar</a>', '>ENTRAR</a>');
   body = body.replace('>Inscreva-se</a>', '>INSCREVA-SE</a>');
   if (body === be) console.warn('AVISO: botoes Entrar/Inscreva-se da topbar nao encontrados.');
+
+  styles += `
+/* Entrar dentro do menu hamburguer (o botao da topbar some no mobile pela regra do
+   bundle). No desktop este link nao existe visualmente. */
+.nav-entrar{display:none !important}
+@media (max-width:1024px){
+.topbar-nav .nav-entrar{display:block !important;width:100%;margin-top:4px;padding-top:16px;border-top:1px solid rgba(217,190,133,.18)}
+}
+`;
 }
 
 // 7o) Oferta (H8): copy. O H2 do bundle ("Tudo que voce precisa...") era generico e
@@ -775,6 +789,44 @@ export const ROTAS: [number, number][] = ${JSON.stringify(ROTAS)};
 .carr-dots button::after{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.38;transition:opacity .25s ease,transform .25s ease,background .25s ease}
 .carr-dots button[aria-current="true"]::after{background:var(--dot-on,currentColor);opacity:1;transform:scale(1.25)}
 @media(max-width:760px){.carr-dots{display:flex}}
+`;
+}
+
+// 7t) wordmark da topbar no mobile: o lockup saia torto por tres somas pequenas.
+//     (a) letter-spacing poe espaco tambem DEPOIS da ultima letra, entao a caixa do
+//         ESTRATEGIA e mais larga que os glifos e a hairline direita da linha de baixo
+//         passava do "A" (~3px), pendendo o conjunto para a direita;
+//     (b) o INTERNACIONAL carrega o mesmo espaco final dentro do flex e ficava ~1,5px
+//         fora do centro;
+//     (c) o override mobile do bundle trocava as PROPORCOES do lockup (tracking .16em
+//         no ESTRATEGIA, .34em embaixo) em vez de so escalar a aplicacao padrao
+//         (.26em / .44em, DESIGN.md "Wordmark").
+//     Correcao: margem negativa igual ao tracking compensa o espaco final (a e b, em
+//     todos os tamanhos), e o mobile volta as proporcoes padrao em escala menor (c).
+{
+  // (b) envolve o INTERNACIONAL da TOPBAR para receber a compensacao; .replace troca
+  // so a primeira ocorrencia = topbar (o rodape, com o mesmo padrao, vem depois).
+  const antes = body;
+  body = body.replace(
+    '></i>INTERNACIONAL<i style=',
+    '></i><span class="wm-int">INTERNACIONAL</span><i style=',
+  );
+  if (body === antes) console.warn('AVISO: INTERNACIONAL da topbar nao encontrado para o wrap.');
+
+  styles += `
+/* Wordmark da topbar: compensacao do letter-spacing final (o espaco depois da ultima
+   letra entortava o lockup) e, no mobile, a aplicacao padrao em escala menor. */
+.tb-logo b{margin-right:-.26em}
+.tb-logo .wm-int{margin-right:-.44em}
+@media (max-width:430px){
+.tb-logo b{font-size:16px !important;letter-spacing:.26em !important}
+.tb-logo span{font-size:6.5px !important;letter-spacing:.44em !important;gap:8px !important}
+.tb-logo span i{min-width:12px}
+}
+@media (max-width:380px){
+.tb-logo b{font-size:14.5px !important}
+.tb-logo span{font-size:6px !important}
+}
 `;
 }
 

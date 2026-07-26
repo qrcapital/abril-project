@@ -571,6 +571,13 @@ html,body{overflow-x:hidden}
 .cn-dots{transition:transform .3s cubic-bezier(.16,1,.3,1);transform:translate(calc(var(--mx,0)*-11px),calc(var(--my,0)*-11px))}
 @media(prefers-reduced-motion:reduce){.cn-dots{transition:none;transform:none}}
 
+/* Entrar dentro do menu hamburguer (o botao da topbar some no mobile pela regra do
+   bundle). No desktop este link nao existe visualmente. */
+.nav-entrar{display:none !important}
+@media (max-width:1024px){
+.topbar-nav .nav-entrar{display:block !important;width:100%;margin-top:4px;padding-top:16px;border-top:1px solid rgba(217,190,133,.18)}
+}
+
 .chip-modulo{white-space:nowrap}
 @media (max-width:760px){.chip-modulo{font-size:8.5px;letter-spacing:.12em}}
 
@@ -583,11 +590,26 @@ html,body{overflow-x:hidden}
 .carr-dots button[aria-current="true"]::after{background:var(--dot-on,currentColor);opacity:1;transform:scale(1.25)}
 @media(max-width:760px){.carr-dots{display:flex}}
 
+/* Wordmark da topbar: compensacao do letter-spacing final (o espaco depois da ultima
+   letra entortava o lockup) e, no mobile, a aplicacao padrao em escala menor. */
+.tb-logo b{margin-right:-.26em}
+.tb-logo .wm-int{margin-right:-.44em}
+@media (max-width:430px){
+.tb-logo b{font-size:16px !important;letter-spacing:.26em !important}
+.tb-logo span{font-size:6.5px !important;letter-spacing:.44em !important;gap:8px !important}
+.tb-logo span i{min-width:12px}
+}
+@media (max-width:380px){
+.tb-logo b{font-size:14.5px !important}
+.tb-logo span{font-size:6px !important}
+}
+
 /* Hover e foco do bundle (atributos style-hover/style-focus) como CSS nativo.
    Ver scripts/comum.mjs: uma regra por valor distinto, !important por causa do
    style inline, hover restrito a ponteiro fino. */
 @media (hover:hover){
 [style-hover="color:#D9BE85"]:hover{color:#D9BE85!important}
+[style-hover="color:#F7F5F2"]:hover{color:#F7F5F2!important}
 [style-hover="transform:translateY(-1px);box-shadow:0 12px 28px rgba(169,142,78,.45)"]:hover{transform:translateY(-1px)!important;box-shadow:0 12px 28px rgba(169,142,78,.45)!important}
 [style-hover="transform:translateY(-1px);box-shadow:0 16px 38px rgba(169,142,78,.5)"]:hover{transform:translateY(-1px)!important;box-shadow:0 16px 38px rgba(169,142,78,.5)!important}
 [style-hover="transform:scale(1.06)"]:hover{transform:scale(1.06)!important}

@@ -31,6 +31,19 @@ e é validado no ambiente de **homolog** (branch `homolog`).
     rodapé, migração do curso para o banco e os dois itens bloqueados por insumo.
 
 ### Alterado
+- **LP · Mobile: wordmark da topbar alinhado e Entrar no hambúrguer** — 2026-07-25
+  - **Wordmark torto no mobile** (feedback do Pedro): três somas pequenas. O letter-spacing
+    põe espaço também depois da última letra, então a hairline direita passava ~3px do "A"
+    e o INTERNACIONAL ficava ~1,5px fora do centro; e o override mobile do bundle trocava as
+    proporções do lockup (tracking .16em/.34em) em vez de escalar a aplicação padrão.
+    Correção (etapa **7t**): margem negativa igual ao tracking compensa o espaço final (em
+    todos os tamanhos) e o mobile volta às proporções do `DESIGN.md` (.26em/.44em) em fonte
+    menor (16px/6.5px em ≤430, 14.5px/6px em ≤380). Medido após o ajuste: hairline
+    terminando na borda visual do "A" e palavra a 0,6px do centro.
+  - **Entrar no hambúrguer**: o botão ENTRAR da topbar some no mobile (regra do bundle) e o
+    acesso à área do aluno ficava sem porta. O menu ganhou um **ENTRAR** dourado ao fim,
+    separado das âncoras por hairline (etapa 7n); `display:none` no desktop, onde o botão
+    próprio continua.
 - **LP · Mobile: bolinhas de posição nos carrosseis** — 2026-07-25
   - Os dois sliders da LP (docentes e Quem Assina) ganharam indicadores de posição
     abaixo da faixa, prática de mercado para o usuário saber que o bloco desliza. Markup
