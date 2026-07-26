@@ -54,11 +54,8 @@ export const AULAS: Aula[] = [
 ];
 
 // Total de aulas contadas no progresso (módulos I–IV; boas-vindas fica à parte).
-export const TOTAL_AULAS = 16;
-
-export function moduloDe(idx: number): Modulo {
-  return MODULOS[idx] ?? MODULOS[0];
-}
+// Derivado da lista para não virar um 16 que envelhece sozinho.
+export const TOTAL_AULAS = AULAS.filter((a) => a.n >= 1).length;
 
 // Primeira aula de um módulo (destino do card da Home).
 export function primeiraAulaDoModulo(idx: number): Aula {
@@ -87,14 +84,7 @@ export function href(a: Aula): string {
   return `/app/modulo/${a.modulo}/aula/${a.n}`;
 }
 
-export function vizinhas(pos: number): { anterior?: Aula; proxima?: Aula } {
-  return { anterior: AULAS[pos - 1], proxima: AULAS[pos + 1] };
-}
-
-// Contagem e % de progresso — mesma base (como no design: "7 de 16").
-export function concluidasContagem(concluidas: Set<number>): number {
-  return concluidas.size;
-}
+// % de progresso sobre a mesma base da contagem exibida (no design: "7 de 16").
 export function progressoPct(concluidas: Set<number>): number {
   return Math.round((concluidas.size / TOTAL_AULAS) * 100);
 }

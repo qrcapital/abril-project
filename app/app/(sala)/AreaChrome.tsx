@@ -4,7 +4,9 @@ import { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-const WHATSAPP = "https://wa.me/message/W2USYZZK75FMC1";
+import contato from "@/lib/contato.json";
+
+const WHATSAPP = contato.whatsapp;
 
 /**
  * Preenche os marcadores de nome (`[data-u]`) das telas com o nome do aluno logado

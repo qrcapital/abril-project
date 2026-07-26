@@ -2,17 +2,7 @@
 // e regenera a sidebar de progresso com os estados reais (concluída/atual/futura).
 // Mantém os estilos exatos do design; só troca o conteúdo dinâmico.
 
-import {
-  AULAS,
-  MODULOS,
-  TOTAL_AULAS,
-  moduloDe,
-  href,
-  vizinhas,
-  progressoPct,
-  concluidasContagem,
-  type Aula,
-} from "./curso";
+import { AULAS, MODULOS, TOTAL_AULAS, href, progressoPct, type Aula } from "./curso";
 
 const CHEV =
   '<svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#A98E4E" stroke-width="2" style="flex:0 0 auto"><path d="M6 9l6 6 6-6"></path></svg>';
@@ -96,11 +86,12 @@ export function fillAula(
   pos: number,
   concluidas: Set<number>
 ): string {
-  const mod = moduloDe(aula.modulo);
-  const { anterior, proxima } = vizinhas(pos);
+  const mod = MODULOS[aula.modulo];
+  const anterior = AULAS[pos - 1];
+  const proxima = AULAS[pos + 1];
   const breadLabel = aula.numero ? `Aula ${aula.n}` : "Boas-vindas";
   const pct = progressoPct(concluidas);
-  const count = concluidasContagem(concluidas);
+  const count = concluidas.size;
 
   return html
     // player: troca o placeholder por um vídeo de exemplo

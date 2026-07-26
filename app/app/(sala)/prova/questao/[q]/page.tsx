@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { tela } from "@/lib/telas";
 import QuizClient from "./QuizClient";
 
 export const metadata: Metadata = { title: "Prova" };
 
-const html = readFileSync(
-  join(process.cwd(), "app", "app", "_ui", "screens", "prova-questao.html"),
-  "utf8"
-);
+const html = tela("prova-questao");
 
 export default async function QuestaoPage({
   params,

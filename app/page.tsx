@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import HoverRuntime from "./_lp/HoverRuntime";
+import HeroPointer from "./_lp/HeroPointer";
 import GloboCanvas from "./_lp/GloboCanvas";
 
 const SITE_URL = process.env.URL ?? "https://abril-project.netlify.app";
@@ -37,7 +37,7 @@ export default function Home() {
           números ficarem todos na mesma linha. Herda p/ toda a LP (não há
           shorthand `font:` que resete a propriedade). */}
       <div style={{ fontVariantNumeric: "lining-nums" }} dangerouslySetInnerHTML={{ __html: lpBody }} />
-      <HoverRuntime />
+      <HeroPointer />
       <GloboCanvas />
     </>
   );

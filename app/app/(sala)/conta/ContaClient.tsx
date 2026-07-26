@@ -2,7 +2,9 @@
 
 import { useEffect, useRef } from "react";
 
-const WHATSAPP = "https://wa.me/message/W2USYZZK75FMC1";
+import contato from "@/lib/contato.json";
+
+const WHATSAPP = contato.whatsapp;
 
 /**
  * Minha conta (design portado). "Falar no WhatsApp" → canal de suporte.

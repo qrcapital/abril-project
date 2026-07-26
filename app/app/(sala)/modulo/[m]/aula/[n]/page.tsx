@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import AulaClient from "./AulaClient";
@@ -8,13 +6,11 @@ import { acharAula } from "@/lib/curso";
 import { fillAula } from "@/lib/aula-template";
 import { parseConcluidas, nomeCookie } from "@/lib/progresso";
 import { createClient } from "@/lib/supabase/server";
+import { tela } from "@/lib/telas";
 
 export const metadata: Metadata = { title: "Aula" };
 
-const template = readFileSync(
-  join(process.cwd(), "app", "app", "_ui", "screens", "aula.html"),
-  "utf8"
-);
+const template = tela("aula");
 
 export default async function AulaPage({
   params,

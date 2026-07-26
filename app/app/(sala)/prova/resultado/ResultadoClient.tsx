@@ -3,7 +3,9 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
-const WHATSAPP = "https://wa.me/message/W2USYZZK75FMC1";
+import contato from "@/lib/contato.json";
+
+const WHATSAPP = contato.whatsapp;
 
 /**
  * Resultado da prova (design portado). Serve as duas variantes:

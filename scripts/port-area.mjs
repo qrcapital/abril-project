@@ -1,4 +1,5 @@
 import fs from 'node:fs'; import zlib from 'node:zlib'; import sharp from 'sharp';
+import { WHATSAPP, DPO_EMAIL, regrasDeEstado } from './comum.mjs';
 
 // Porta o design da area do aluno (bundle Area-do-Aluno.html) tela por tela.
 // Mesma filosofia do port-lp.mjs: markup+CSS reais do bundle, assets em /public/app,
@@ -164,10 +165,6 @@ function expandNps(s) {
   });
 }
 
-// Config de contato (mesma da LP).
-const WHATSAPP = 'https://wa.me/message/W2USYZZK75FMC1';
-const DPO_EMAIL = 'dpo@qr.capital';
-
 // Rodape estruturado, igual ao da LP (Institucional / Politicas / Contato +
 // copyright + voltar ao topo). Ancoras da coluna Institucional -> absolutas para
 // a LP; "Voltar ao topo" recebe data-scrolltop (rolagem tratada no AreaChrome).
@@ -223,7 +220,8 @@ styles += `\n/* placeholder de arte de modulo (x-import image-slot pendente) */
 /* glow pulsante (mesmo da LP: card de preco / secao A Diferenca) */
 .vs-hl{animation:vsGlow 2.6s ease-in-out infinite;will-change:box-shadow}
 @keyframes vsGlow{0%,100%{box-shadow:0 12px 30px rgba(11,45,32,.18),0 0 0 1px rgba(217,190,133,.35)}50%{box-shadow:0 22px 66px rgba(217,190,133,.55),0 0 0 3px rgba(217,190,133,.8)}}`;
-fs.writeFileSync(`${outDir}/styles.css`, styles.trim());
+// O styles.css e escrito no FIM do arquivo: as regras de hover/foco saem do markup
+// ja gerado (chrome + telas), que so existe depois desta secao.
 
 // chrome compartilhado (autenticado): topbar + footer.
 // Os nomes saem envoltos em <span data-u="..."> para o AreaChrome (client) injetar
@@ -328,6 +326,11 @@ const screens = {
                 .replace('pedro@email.com', '<span data-email>pedro@email.com</span>'),
 };
 for (const [name, out] of Object.entries(screens)) fs.writeFileSync(`${outDir}/screens/${name}.html`, out);
+
+// 5) hover/foco de TODO o markup gerado (chrome + telas) como CSS, e so entao o
+//    styles.css vai para o disco. Ver scripts/comum.mjs.
+styles += regrasDeEstado([topbar, buildFooter(), ...Object.values(screens)].join('\n'));
+fs.writeFileSync(`${outDir}/styles.css`, styles.trim());
 
 // relatorio de placeholders remanescentes (para os proximos passos)
 for (const [name, out] of [['topbar', topbar], ['footer', buildFooter()], ...Object.entries(screens)]) {

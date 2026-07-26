@@ -11,7 +11,7 @@ import { RG, PERSP, TILT, FASE, GIRO_MS, ARO, COSTA, TERRA, CIDADES, ROTAS } fro
  * a árvore por profundidade e a página trava. Aqui o custo é proporcional ao que se pinta,
  * então cabem os ~3.300 pontos de litoral, as 26 praças com halo e as rotas, com folga.
  *
- * Segue o padrão do HoverRuntime: o `<canvas>` já vem no HTML injetado (etapa 7l do porte),
+ * Segue o padrão do HeroPointer: o `<canvas>` já vem no HTML injetado (etapa 7l do porte),
  * o componente só acha o elemento e liga o desenho por cima (progressive enhancement — sem
  * JS o hero fica com o gradiente e a trama de pontos, que continuam em CSS).
  */
@@ -112,7 +112,7 @@ export default function GloboCanvas() {
     // ---- interação: o mouse move o próprio globo -------------------------
     // Antes o hover deslizava as camadas (parallax de translação), efeito que dependia das
     // estrelas — removidas. Agora o cursor gira e inclina a esfera: mais coerente, é a
-    // esfera 3D respondendo. Lê --mx/--my que o HoverRuntime já escreve no #hero (−0.5..0.5)
+    // esfera 3D respondendo. Lê --mx/--my que o HeroPointer já escreve no #hero (−0.5..0.5)
     // e persegue o alvo com lerp, para o movimento nascer suave e voltar sozinho ao centro.
     const AMP_GIRO = 26;   // graus de rotação extra no eixo Y, no fim de curso do mouse
     const AMP_TILT = 12;   // graus de inclinação extra no eixo X

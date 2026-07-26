@@ -2,7 +2,7 @@
 // parou" e os cards de módulo (contador, %, estado). Fonte única de verdade —
 // muda o progresso, muda a Home. Mantém os estilos exatos do design.
 
-import { AULAS, MODULOS, moduloDe, aulaAtual } from "./curso";
+import { AULAS, MODULOS, aulaAtual } from "./curso";
 
 const BADGE_BASE =
   "position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:800;letter-spacing:.14em;border-radius:4px;padding:3px 7px";
@@ -50,7 +50,7 @@ function innerOfDiv(html: string, openIdx: number): { start: number; end: number
 
 export function fillHome(html: string, concluidas: Set<number>): string {
   const atual = aulaAtual(concluidas);
-  const mod = moduloDe(atual.modulo);
+  const mod = MODULOS[atual.modulo];
   const linha = atual.numero
     ? `${mod.label} · Aula ${atual.n} · ${atual.titulo}`
     : `${mod.label} · ${atual.titulo}`;

@@ -518,3 +518,17 @@ summary::-webkit-details-marker{display:none}
 /* glow pulsante (mesmo da LP: card de preco / secao A Diferenca) */
 .vs-hl{animation:vsGlow 2.6s ease-in-out infinite;will-change:box-shadow}
 @keyframes vsGlow{0%,100%{box-shadow:0 12px 30px rgba(11,45,32,.18),0 0 0 1px rgba(217,190,133,.35)}50%{box-shadow:0 22px 66px rgba(217,190,133,.55),0 0 0 3px rgba(217,190,133,.8)}}
+/* Hover e foco do bundle (atributos style-hover/style-focus) como CSS nativo.
+   Ver scripts/comum.mjs: uma regra por valor distinto, !important por causa do
+   style inline, hover restrito a ponteiro fino. */
+@media (hover:hover){
+[style-hover="color:#D9BE85"]:hover{color:#D9BE85!important}
+[style-hover="background:rgba(217,190,133,.12)"]:hover{background:rgba(217,190,133,.12)!important}
+[style-hover="color:#F7F5F2"]:hover{color:#F7F5F2!important}
+[style-hover="transform:translateY(-1px)"]:hover{transform:translateY(-1px)!important}
+[style-hover="border-color:#A98E4E;color:#7E6836"]:hover{border-color:#A98E4E!important;color:#7E6836!important}
+[style-hover="color:#7E6836"]:hover{color:#7E6836!important}
+[style-hover="background:#FAF7F1"]:hover{background:#FAF7F1!important}
+[style-hover="background:#A98E4E;color:#fff;border-color:#A98E4E"]:hover{background:#A98E4E!important;color:#fff!important;border-color:#A98E4E!important}
+}
+[style-focus="border-color:#A98E4E"]:focus{border-color:#A98E4E!important}

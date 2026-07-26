@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import AreaInteractions from "./_ui/AreaInteractions";
 
 // Área do aluno (/app/*). Design portado do bundle Area-do-Aluno.html via
 // scripts/port-area.mjs: CSS real em app/app/_ui/styles.css (injetado aqui) e o
@@ -27,7 +26,6 @@ export default function AreaLayout({
     <>
       <style dangerouslySetInnerHTML={{ __html: areaCss }} />
       {children}
-      <AreaInteractions />
     </>
   );
 }

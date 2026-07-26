@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { criarConta } from "./actions";
 
-const WHATSAPP = "https://wa.me/message/W2USYZZK75FMC1";
+import contato from "@/lib/contato.json";
+
+const WHATSAPP = contato.whatsapp;
 
 // Em homolog não há webhook do Guru para trazer o nome do comprador, então o
 // primeiro acesso pede o "Nome completo" (para o certificado). Em produção o nome

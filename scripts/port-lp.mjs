@@ -1,4 +1,5 @@
 import fs from 'node:fs'; import zlib from 'node:zlib'; import sharp from 'sharp';
+import { WHATSAPP, DPO_EMAIL, regrasDeEstado } from './comum.mjs';
 const raw = fs.readFileSync('referencias/htmls/LP-Estrategia-Internacional.html','utf8');
 const grab = (tag) => { const o=raw.indexOf(tag); const s=raw.indexOf('>',o)+1; const e=raw.indexOf('</script>',s); return raw.slice(s,e).trim(); };
 const mani = JSON.parse(grab('<script type="__bundler/manifest">'));
@@ -73,10 +74,6 @@ body = body.replace(/<img\b(?![^>]*\bdecoding=)/gi, '<img decoding="async"');
   );
   if (body === before) console.warn('AVISO: card de preco nao encontrado para o glow (.vs-hl) — revisar seletor.');
 }
-
-// Config de contato (trocar aqui caso mude o canal / DPO).
-const WHATSAPP = 'https://wa.me/message/W2USYZZK75FMC1';
-const DPO_EMAIL = 'dpo@qr.capital';
 
 // 7b) "Entrar" da topbar -> rota de login da area do aluno (vem como
 //     href="Area-do-Aluno.html" no bundle).
@@ -402,7 +399,7 @@ ${item('Calculadora de dolarização', 'Simule cenários e decida com números, 
 //     saem em um punhado de operacoes e sobra folga para halo e pulso.
 //
 //     Este bloco so escreve os DADOS (app/_lp/globo-dados.ts) e injeta o <canvas>; quem
-//     desenha e o app/_lp/GloboCanvas.tsx, no mesmo padrao do HoverRuntime (o componente
+//     desenha e o app/_lp/GloboCanvas.tsx, no mesmo padrao do HeroPointer (o componente
 //     acha o elemento no HTML injetado e liga o runtime por cima).
 {
   const RG = 520, OURO = '#A98E4E';            // RG: raio do globo, em px CSS
@@ -499,7 +496,7 @@ export const ROTAS: [number, number][] = ${JSON.stringify(ROTAS)};
    ver GloboCanvas.tsx), então o canvas em si NÃO translada — só a trama de fundo desliza
    de leve, para dar a camada distante. O parallax de translação do canvas foi removido
    quando as estrelas saíram: sem elas, deslizar o globo chapado não lia como profundidade.
-   Em reduced-motion o HoverRuntime nem seta as vars, mas zeramos por garantia. */
+   Em reduced-motion o HeroPointer nem seta as vars, mas zeramos por garantia. */
 .cn-dots{transition:transform .3s cubic-bezier(.16,1,.3,1);transform:translate(calc(var(--mx,0)*-11px),calc(var(--my,0)*-11px))}
 @media(prefers-reduced-motion:reduce){.cn-dots{transition:none;transform:none}}
 `;
@@ -717,7 +714,6 @@ export const ROTAS: [number, number][] = ${JSON.stringify(ROTAS)};
   // estilo espelhando a VEJA: monocromatico branco/cinza sobre grafite/preto, sans-serif.
   const kicker = "font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:#cfcfcf;margin-bottom:8px";
   const lnk = 'style="color:#9a9a9a;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#ffffff"';
-  const low = 'style="color:#8a8a8a;font-size:12px;text-decoration:none;transition:color .2s ease" style-hover="color:#ffffff"';
   const soc = 'style="color:#8FA398;display:inline-flex;transition:color .2s ease" style-hover="color:#D9BE85"';
   // icones sociais inline (sem lib externa), herdam cor via currentColor. href="#" = PLACEHOLDER.
   const ig = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="2.5" width="19" height="19" rx="5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle></svg>';
@@ -762,6 +758,10 @@ ${col('Contato', `<a href="${WHATSAPP}" target="_blank" rel="noopener" ${lnk}>Su
   body = body.replace(/<footer[\s\S]*?<\/footer>/i, newFooter);
   if (body === before) console.warn('AVISO: rodape do bundle nao encontrado para substituir.');
 }
+
+// 10) hover/foco: os atributos do bundle viram CSS (ver scripts/comum.mjs). Roda por
+//     último, depois de todas as etapas que inserem markup novo (a nav da 7n, o rodapé).
+styles += regrasDeEstado(body);
 
 fs.writeFileSync('app/_lp/styles.css', styles.trim());
 fs.writeFileSync('app/_lp/body.html', body.trim());

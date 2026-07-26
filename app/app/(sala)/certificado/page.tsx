@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { tela } from "@/lib/telas";
 import CertificadoClient from "./CertificadoClient";
 
 export const metadata: Metadata = { title: "Certificado" };
 
-const html = readFileSync(
-  join(process.cwd(), "app", "app", "_ui", "screens", "certificado.html"),
-  "utf8"
-);
+const html = tela("certificado");
 
 export default function CertificadoPage() {
   return <CertificadoClient html={html} />;
