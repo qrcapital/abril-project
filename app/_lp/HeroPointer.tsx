@@ -21,6 +21,9 @@ import { useEffect } from "react";
 export default function HeroPointer() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Só com ponteiro fino (mouse/trackpad): no toque, o arrastar do scroll dispara
+    // pointermove e o globo giraria aos trancos junto com a rolagem.
+    if (!window.matchMedia("(pointer: fine)").matches) return;
 
     let raf = 0;
     let mx = 0;

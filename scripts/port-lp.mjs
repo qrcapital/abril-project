@@ -298,7 +298,17 @@ ${item('Calculadora de dolarização', 'Simule cenários e decida com números, 
 .entreg-list li:first-child{border-top:none}
 .entreg-stage{position:relative;width:100%;max-width:620px;margin:0 auto}
 .mk-img{width:100%;height:auto;display:block}
-@media(max-width:900px){.entreg-grid{grid-template-columns:1fr;gap:36px}}
+/* mobile: a imagem dos dispositivos entra ANTES dos bullets (decisao 25/jul) — titulo e
+   lead apresentam a secao, o mockup mostra os entregaveis, a lista detalha. O wrapper de
+   texto vira display:contents para kicker/h2/lead/lista virarem itens do grid, e a lista
+   ganha order:1: o palco (order 0, ordem do documento) entra entre o lead e os bullets
+   sem mexer no markup. gap zerado porque os proprios elementos ja carregam as margens. */
+@media(max-width:900px){
+.entreg-grid{grid-template-columns:1fr;gap:0}
+.entreg-grid>div:first-child{display:contents}
+.entreg-list{order:1}
+.entreg-stage{margin-bottom:34px}
+}
 `;
 }
 
@@ -328,7 +338,7 @@ ${item('Calculadora de dolarização', 'Simule cenários e decida com números, 
 <h2 style="font-family:'Playfair Display',serif;margin:0 0 16px;font-weight:600;font-size:clamp(28px,3.6vw,44px);color:#0B2D20;letter-spacing:-.01em;line-height:1.12;text-wrap:balance">Duas instituições, uma responsabilidade.</h2>
 <p style="font-size:15px;color:#6D6D6D;margin:0;max-width:560px;text-wrap:pretty">A técnica de quem operou o mercado por dentro, com a credibilidade de uma marca que o Brasil lê há mais de 70 anos.</p>
 </div>
-<div style="position:relative;width:180px;height:180px;flex:0 0 auto;margin-right:72px">
+<div class="qa-selo" style="position:relative;width:180px;height:180px;flex:0 0 auto;margin-right:72px">
 <svg width="180" height="180" viewBox="0 0 240 240" fill="none" style="display:block;transform:rotate(-32deg)" role="img" aria-label="Selo de chancela — VEJA Negócios e BlockTrends">
 <defs><path id="selArcT" d="M 18 120 A 102 102 0 0 1 222 120"></path><path id="selArcB" d="M 18 120 A 102 102 0 0 0 222 120"></path></defs>
 <circle cx="120" cy="120" r="88" fill="#F7F5F2"></circle>
@@ -384,8 +394,35 @@ ${item('Calculadora de dolarização', 'Simule cenários e decida com números, 
 /* Secao Quem Assina (H7) — 2 cards */
 .qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:stretch}
 .qa-card{background:#fff;border:1px solid rgba(169,142,78,.22);border-radius:14px;padding:36px 34px;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(11,45,32,.05)}
-@media(max-width:760px){.qa-grid{grid-template-columns:1fr}}
+/* mobile (25/jul): o selo de 180px nao se aplica bem no viewport estreito — sai; e os
+   2 cards viram carrossel com snap a 88%, mesma receita dos docentes. Restaura o
+   comportamento que o DESIGN.md §5 ja previa ("chancela 88%") e que se perdeu quando
+   esta etapa trocou a secao do bundle (.chancela-grid) pelos cards novos (.qa-grid). */
+@media(max-width:760px){
+.qa-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:18px;-webkit-overflow-scrolling:touch;padding-bottom:10px;scrollbar-width:none}
+.qa-grid::-webkit-scrollbar{display:none}
+.qa-grid>.qa-card{flex:0 0 88%;scroll-snap-align:center}
+.qa-selo{display:none}
+}
 `;
+
+  // CSS orfao do bundle: o carrossel da secao antiga (.chancela-grid/.chancela-veja/
+  // .chancela-bt) ficou no styles sem nenhum markup correspondente desde que esta etapa
+  // substituiu a secao. Remove as 3 regras; o resto do bloco @media (docentes) fica.
+  {
+    const mortas = [
+      /\s*\.chancela-grid\{[^}]*\}/,
+      /\s*\.chancela-grid::-webkit-scrollbar\{[^}]*\}/,
+      /\s*\.chancela-grid>\.chancela-veja,\.chancela-grid>\.chancela-bt\{[^}]*\}/,
+      /\s*\.chancela-vdiv\{[^}]*\}/,
+      /\s*\.quote-flourish\{[^}]*\}/,
+    ];
+    for (const re of mortas) {
+      const antes = styles;
+      styles = styles.replace(re, '');
+      if (styles === antes) console.warn(`AVISO: regra orfa da chancela nao encontrada para remover: ${re}`);
+    }
+  }
 }
 
 // 7l) fundo do hero: globo 3D pontilhado girando (mapa-mundi), praças financeiras com

@@ -31,6 +31,23 @@ e é validado no ambiente de **homolog** (branch `homolog`).
     rodapé, migração do curso para o banco e os dois itens bloqueados por insumo.
 
 ### Alterado
+- **LP · Mobile: Ferramentas e Quem Assina** — 2026-07-25
+  - **Ferramentas**: no mobile o mockup de dispositivos entra **entre o lead e os bullets**
+    (título e lead apresentam a seção, a imagem mostra, a lista detalha). Sem mexer no
+    markup: o wrapper de texto vira `display:contents` na media query e a lista ganha
+    `order:1`, então o palco entra na posição pela ordem do documento (etapa 7i).
+  - **Quem Assina**: o selo Meridiano de 180px **sai no mobile** (`.qa-selo`) e os 2 cards
+    viram **carrossel com snap a 88%**, mesma receita dos docentes. Restaura o comportamento
+    que o `DESIGN.md` §5 já previa ("chancela 88%") e que se perdeu quando a etapa 7k trocou
+    a seção do bundle (`.chancela-grid`) pelos cards novos (`.qa-grid`): a regra antiga ficou
+    órfã no CSS, sem markup. As 5 regras mortas do carrossel antigo foram removidas na 7k.
+  - **Hero**: a resposta do globo ao mouse agora só liga com ponteiro fino
+    (`pointer: fine` no `HeroPointer`). No toque, o arrastar do scroll dispara `pointermove`
+    e o globo girava aos trancos junto com a rolagem.
+  - Verificado em viewport real de 390px (iframe de teste): ordem título → imagem → bullets,
+    selo oculto, slider com snap funcionando nos 2 cards; desktop a 1440px inalterado.
+  - O globo do hero **fica como está no mobile** (decisão do Pedro em 25/jul, avaliada com
+    mock das alternativas): a composição atual, com as rotas emoldurando o texto, funcionou.
 - **LP · Globo do hero reescrito em canvas 2D, mais detalhe e vida** — 2026-07-24
   - **Migração DOM → canvas** (`app/_lp/GloboCanvas.tsx`). A versão anterior punha um
     elemento por ponto dentro de um `preserve-3d`; ao adensar o mapa e somar cidades e

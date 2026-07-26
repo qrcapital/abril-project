@@ -219,7 +219,7 @@ Peça de marca, quebra o padrão de propósito: wordmark, olho em gravura, ilust
   - **Exceções:** hero → ficha técnica se sobrepõe de propósito (`margin-top:-44px`); currículo → Ferramentas tem o divisor decorativo do olho no meio (96px de margem + ornamento + 104px da seção).
   - Ao criar seção nova, garantir os **dois lados** da conta: uma clara com `padding-bottom:0` seguida de outra clara entrega só os 104px da de baixo. Container de 1180px com 28px laterais em todas as seções.
 - **Sticky:** topbar da LP (fixa) e header da plataforma. O antigo sticky CTA de rodapé da LP foi removido; a topbar assume o CTA persistente (botão "Inscreva-se").
-- **Mobile:** grades viram carrossel com scroll-snap (docentes 78%, chancela 88%); navegação vira hambúrguer; o botão "Inscreva-se" compacto assume o CTA persistente.
+- **Mobile:** grades viram carrossel com scroll-snap (docentes 78%, os 2 cards de Quem Assina 88%); navegação vira hambúrguer; o botão "Inscreva-se" compacto assume o CTA persistente. O selo Meridiano de Quem Assina **sai no mobile** (`.qa-selo`, 180px não se aplica bem no viewport estreito). Na Ferramentas, a ordem de leitura muda para título/lead → mockup → bullets (25/jul/2026).
 
 ## 6. Anti-slop checklist (validar antes de commitar uma tela)
 

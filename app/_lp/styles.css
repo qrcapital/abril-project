@@ -514,11 +514,6 @@ html,body{overflow-x:hidden}
   .prof-grid{display:flex !important;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px !important;-webkit-overflow-scrolling:touch;padding-bottom:10px;scrollbar-width:none}
   .prof-grid::-webkit-scrollbar{display:none}
   .prof-grid>.prof{flex:0 0 78% !important;scroll-snap-align:center}
-  .chancela-grid{display:flex !important;grid-template-columns:none !important;align-items:stretch;overflow-x:auto;scroll-snap-type:x mandatory;gap:18px !important;-webkit-overflow-scrolling:touch;padding:46px 0 10px;scrollbar-width:none}
-  .chancela-grid::-webkit-scrollbar{display:none}
-  .chancela-grid>.chancela-veja,.chancela-grid>.chancela-bt{flex:0 0 88% !important;scroll-snap-align:center}
-  .chancela-vdiv{display:none !important}
-  .quote-flourish{top:-30px !important}
 }
 
 /* Corpo docente — balao flutuante com o nome da empresa no hover da logo */
@@ -538,12 +533,31 @@ html,body{overflow-x:hidden}
 .entreg-list li:first-child{border-top:none}
 .entreg-stage{position:relative;width:100%;max-width:620px;margin:0 auto}
 .mk-img{width:100%;height:auto;display:block}
-@media(max-width:900px){.entreg-grid{grid-template-columns:1fr;gap:36px}}
+/* mobile: a imagem dos dispositivos entra ANTES dos bullets (decisao 25/jul) — titulo e
+   lead apresentam a secao, o mockup mostra os entregaveis, a lista detalha. O wrapper de
+   texto vira display:contents para kicker/h2/lead/lista virarem itens do grid, e a lista
+   ganha order:1: o palco (order 0, ordem do documento) entra entre o lead e os bullets
+   sem mexer no markup. gap zerado porque os proprios elementos ja carregam as margens. */
+@media(max-width:900px){
+.entreg-grid{grid-template-columns:1fr;gap:0}
+.entreg-grid>div:first-child{display:contents}
+.entreg-list{order:1}
+.entreg-stage{margin-bottom:34px}
+}
 
 /* Secao Quem Assina (H7) — 2 cards */
 .qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:stretch}
 .qa-card{background:#fff;border:1px solid rgba(169,142,78,.22);border-radius:14px;padding:36px 34px;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(11,45,32,.05)}
-@media(max-width:760px){.qa-grid{grid-template-columns:1fr}}
+/* mobile (25/jul): o selo de 180px nao se aplica bem no viewport estreito — sai; e os
+   2 cards viram carrossel com snap a 88%, mesma receita dos docentes. Restaura o
+   comportamento que o DESIGN.md §5 ja previa ("chancela 88%") e que se perdeu quando
+   esta etapa trocou a secao do bundle (.chancela-grid) pelos cards novos (.qa-grid). */
+@media(max-width:760px){
+.qa-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:18px;-webkit-overflow-scrolling:touch;padding-bottom:10px;scrollbar-width:none}
+.qa-grid::-webkit-scrollbar{display:none}
+.qa-grid>.qa-card{flex:0 0 88%;scroll-snap-align:center}
+.qa-selo{display:none}
+}
 
 /* Hero — globo em canvas (desenho em app/_lp/GloboCanvas.tsx). O elemento cobre o hero
    inteiro; o centro do globo fica em 50%/42% da area, como na versao em DOM. */
