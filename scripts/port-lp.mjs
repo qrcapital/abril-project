@@ -731,6 +731,50 @@ export const ROTAS: [number, number][] = ${JSON.stringify(ROTAS)};
 `;
 }
 
+// 7s) bolinhas dos carrosseis mobile: os dois sliders da LP (docentes e Quem Assina)
+//     ganham indicadores de posicao logo abaixo, pratica de mercado para o usuario
+//     saber que a faixa desliza. Markup estatico aqui (SSG, sem layout shift); quem
+//     marca a bolinha ativa e trata o toque e o app/_lp/CarrosselDots.tsx, que acha
+//     cada .carr-dots e emparelha com o carrossel via previousElementSibling — por
+//     isso as bolinhas entram SEMPRE logo apos o fechamento do container do slider.
+//     So aparecem em <=760px (breakpoint dos dois carrosseis); a cor segue o fundo
+//     da secao: gold-lit no verde (docentes), gold no claro (Quem Assina).
+{
+  const dots = (n, cor, rotulo) =>
+    `<div class="carr-dots" style="color:${cor}" aria-label="Posição no carrossel de ${rotulo}">` +
+    Array.from({ length: n }, (_, i) =>
+      `<button type="button" aria-label="Ir para o item ${i + 1}"${i === 0 ? ' aria-current="true"' : ''}></button>`
+    ).join('') +
+    `</div>`;
+
+  // docentes: 4 cards, secao verde. Ancora = fechamento do prof-grid imediatamente
+  // antes do comentario do H5 (unico na pagina).
+  const antesProf = body;
+  body = body.replace(
+    '  </div>\n</section>\n\n<!-- ============ H5',
+    `  ${dots(4, '#D9BE85', 'professores')}\n  </div>\n</section>\n\n<!-- ============ H5`
+  );
+  if (body === antesProf) console.warn('AVISO: fechamento do prof-grid nao encontrado para as bolinhas.');
+
+  // Quem Assina: 2 cards, secao clara. Ancora = fim do segundo qa-card (logo da Pos
+  // Blockchain, unica na pagina) + os fechamentos ate o qa-grid.
+  const antesQa = body;
+  body = body.replace(
+    'alt="Pós Desenvolvedor Blockchain" style="height:32px;width:auto;display:block">\n</div>\n</div>\n</div>\n</div>\n</div>\n</section>',
+    `alt="Pós Desenvolvedor Blockchain" style="height:32px;width:auto;display:block">\n</div>\n</div>\n</div>\n</div>\n${dots(2, '#A98E4E', 'idealizadores')}\n</div>\n</section>`
+  );
+  if (body === antesQa) console.warn('AVISO: fechamento do qa-grid nao encontrado para as bolinhas.');
+
+  styles += `
+/* Bolinhas dos carrosseis (so mobile; a ativa e marcada pelo CarrosselDots) */
+.carr-dots{display:none;justify-content:center;gap:4px;margin-top:16px}
+.carr-dots button{width:20px;height:20px;padding:0;border:0;background:none;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.carr-dots button::after{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.28;transition:opacity .25s ease,transform .25s ease}
+.carr-dots button[aria-current="true"]::after{opacity:1;transform:scale(1.25)}
+@media(max-width:760px){.carr-dots{display:flex}}
+`;
+}
+
 // 8) pluga o WhatsApp no botao flutuante (vem como href="#" no bundle).
 {
   const before = body;

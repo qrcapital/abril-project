@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import HeroPointer from "./_lp/HeroPointer";
 import GloboCanvas from "./_lp/GloboCanvas";
+import CarrosselDots from "./_lp/CarrosselDots";
 
 const SITE_URL = process.env.URL ?? "https://abril-project.netlify.app";
 const OG = {
@@ -39,6 +40,7 @@ export default function Home() {
       <div style={{ fontVariantNumeric: "lining-nums" }} dangerouslySetInnerHTML={{ __html: lpBody }} />
       <HeroPointer />
       <GloboCanvas />
+      <CarrosselDots />
     </>
   );
 }

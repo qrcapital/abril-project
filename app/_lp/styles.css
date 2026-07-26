@@ -576,6 +576,13 @@ html,body{overflow-x:hidden}
 
 #faq details:last-of-type{margin-bottom:0}
 
+/* Bolinhas dos carrosseis (so mobile; a ativa e marcada pelo CarrosselDots) */
+.carr-dots{display:none;justify-content:center;gap:4px;margin-top:16px}
+.carr-dots button{width:20px;height:20px;padding:0;border:0;background:none;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.carr-dots button::after{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.28;transition:opacity .25s ease,transform .25s ease}
+.carr-dots button[aria-current="true"]::after{opacity:1;transform:scale(1.25)}
+@media(max-width:760px){.carr-dots{display:flex}}
+
 /* Hover e foco do bundle (atributos style-hover/style-focus) como CSS nativo.
    Ver scripts/comum.mjs: uma regra por valor distinto, !important por causa do
    style inline, hover restrito a ponteiro fino. */

@@ -31,6 +31,18 @@ e é validado no ambiente de **homolog** (branch `homolog`).
     rodapé, migração do curso para o banco e os dois itens bloqueados por insumo.
 
 ### Alterado
+- **LP · Mobile: bolinhas de posição nos carrosseis** — 2026-07-25
+  - Os dois sliders da LP (docentes e Quem Assina) ganharam indicadores de posição
+    abaixo da faixa, prática de mercado para o usuário saber que o bloco desliza. Markup
+    estático no porte (etapa **7s**, sem layout shift no SSG): dots dourados seguindo o
+    fundo da seção (gold-lit no verde, gold no claro), só em ≤760px. O comportamento
+    (bolinha ativa acompanha o card mais centrado; toque na bolinha rola até o card,
+    respeitando `prefers-reduced-motion`) vive em `app/_lp/CarrosselDots.tsx`, que
+    emparelha cada `.carr-dots` com o slider anterior. Sem JS, os dots ficam estáticos e
+    o slider segue funcionando: é reforço de affordance, não mecanismo.
+  - Verificação: markup, CSS e pareamento conferidos em viewport de 390px; a lógica do
+    dot ativo validada com evento sintético (aba de automação roda oculta e congela
+    scroll/rAF, a armadilha do HANDOFF §6). Comportamento ao vivo: validar no celular.
 - **LP · Mobile: Ferramentas e Quem Assina** — 2026-07-25
   - **Ferramentas**: no mobile o mockup de dispositivos entra **entre o lead e os bullets**
     (título e lead apresentam a seção, a imagem mostra, a lista detalha). Sem mexer no
