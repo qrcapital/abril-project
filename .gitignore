@@ -42,8 +42,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Snapshots locais do impeccable (review artifacts)
-.impeccable/
+# Impeccable: os artefatos de review são locais, mas o config.json não. Ele guarda
+# as exceções do detector (ex.: Montserrat é a face travada do Meridiano, não um
+# deslize), e essa decisão vale para quem clonar, não só para esta máquina.
+.impeccable/*
+!.impeccable/config.json
 
 # Config local do Claude Code: hooks do impeccable e permissões desta máquina.
 # É pessoal e específico de quem trabalha aqui, e o repositório é público.

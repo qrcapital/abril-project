@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "montserrat",
+        "createdAt": "2026-07-26T00:27:12.532Z",
+        "reason": "Montserrat é a face de UI travada no DESIGN.md (Meridiano)"
+      }
+    ]
+  }
+}
