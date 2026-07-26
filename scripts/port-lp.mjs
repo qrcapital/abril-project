@@ -740,19 +740,22 @@ export const ROTAS: [number, number][] = ${JSON.stringify(ROTAS)};
 //     So aparecem em <=760px (breakpoint dos dois carrosseis); a cor segue o fundo
 //     da secao: gold-lit no verde (docentes), gold no claro (Quem Assina).
 {
-  const dots = (n, cor, rotulo) =>
-    `<div class="carr-dots" style="color:${cor}" aria-label="Posição no carrossel de ${rotulo}">` +
+  // `cor` pinta as bolinhas INATIVAS (translucidas, seguem a regra de texto do fundo);
+  // `corAtiva` pinta a acesa — o dourado como acento, nos dois fundos.
+  const dots = (n, cor, corAtiva, rotulo) =>
+    `<div class="carr-dots" style="color:${cor};--dot-on:${corAtiva}" aria-label="Posição no carrossel de ${rotulo}">` +
     Array.from({ length: n }, (_, i) =>
       `<button type="button" aria-label="Ir para o item ${i + 1}"${i === 0 ? ' aria-current="true"' : ''}></button>`
     ).join('') +
     `</div>`;
 
-  // docentes: 4 cards, secao verde. Ancora = fechamento do prof-grid imediatamente
-  // antes do comentario do H5 (unico na pagina).
+  // docentes: 4 cards, secao verde. Inativas em offwhite (dourado translucido somia no
+  // verde — regra do DESIGN.md: secundario sobre verde e offwhite/muted); ativa gold-lit.
+  // Ancora = fechamento do prof-grid imediatamente antes do comentario do H5 (unico).
   const antesProf = body;
   body = body.replace(
     '  </div>\n</section>\n\n<!-- ============ H5',
-    `  ${dots(4, '#D9BE85', 'professores')}\n  </div>\n</section>\n\n<!-- ============ H5`
+    `  ${dots(4, '#F7F5F2', '#D9BE85', 'professores')}\n  </div>\n</section>\n\n<!-- ============ H5`
   );
   if (body === antesProf) console.warn('AVISO: fechamento do prof-grid nao encontrado para as bolinhas.');
 
@@ -761,7 +764,7 @@ export const ROTAS: [number, number][] = ${JSON.stringify(ROTAS)};
   const antesQa = body;
   body = body.replace(
     'alt="Pós Desenvolvedor Blockchain" style="height:32px;width:auto;display:block">\n</div>\n</div>\n</div>\n</div>\n</div>\n</section>',
-    `alt="Pós Desenvolvedor Blockchain" style="height:32px;width:auto;display:block">\n</div>\n</div>\n</div>\n</div>\n${dots(2, '#A98E4E', 'idealizadores')}\n</div>\n</section>`
+    `alt="Pós Desenvolvedor Blockchain" style="height:32px;width:auto;display:block">\n</div>\n</div>\n</div>\n</div>\n${dots(2, '#A98E4E', '#A98E4E', 'idealizadores')}\n</div>\n</section>`
   );
   if (body === antesQa) console.warn('AVISO: fechamento do qa-grid nao encontrado para as bolinhas.');
 
@@ -769,8 +772,8 @@ export const ROTAS: [number, number][] = ${JSON.stringify(ROTAS)};
 /* Bolinhas dos carrosseis (so mobile; a ativa e marcada pelo CarrosselDots) */
 .carr-dots{display:none;justify-content:center;gap:4px;margin-top:16px}
 .carr-dots button{width:20px;height:20px;padding:0;border:0;background:none;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.carr-dots button::after{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.28;transition:opacity .25s ease,transform .25s ease}
-.carr-dots button[aria-current="true"]::after{opacity:1;transform:scale(1.25)}
+.carr-dots button::after{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.38;transition:opacity .25s ease,transform .25s ease,background .25s ease}
+.carr-dots button[aria-current="true"]::after{background:var(--dot-on,currentColor);opacity:1;transform:scale(1.25)}
 @media(max-width:760px){.carr-dots{display:flex}}
 `;
 }

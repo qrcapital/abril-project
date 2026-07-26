@@ -40,6 +40,11 @@ e é validado no ambiente de **homolog** (branch `homolog`).
     respeitando `prefers-reduced-motion`) vive em `app/_lp/CarrosselDots.tsx`, que
     emparelha cada `.carr-dots` com o slider anterior. Sem JS, os dots ficam estáticos e
     o slider segue funcionando: é reforço de affordance, não mecanismo.
+  - **Cor revisada após o Pedro ver no ar**: no verde dos docentes, a inativa em dourado
+    translúcido sumia. As inativas passaram a **off-white a 38%** (regra do `DESIGN.md`:
+    secundário sobre verde usa off-white/muted) e a **ativa segue dourada**, via CSS var
+    `--dot-on` que separa as duas cores por carrossel. No Quem Assina (fundo claro) tudo
+    dourado como estava, só com a inativa em 38% (era 28%, ajuste global).
   - Verificação: markup, CSS e pareamento conferidos em viewport de 390px; a lógica do
     dot ativo validada com evento sintético (aba de automação roda oculta e congela
     scroll/rAF, a armadilha do HANDOFF §6). Comportamento ao vivo: validar no celular.
