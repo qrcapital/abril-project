@@ -158,6 +158,7 @@ Não há cadastro aberto: a conta nasce da compra. O aluno recebe o acesso por e
 |---|---|
 | Origem da conta | Somente via webhook de compra aprovada |
 | Primeiro acesso | Link do e-mail de boas-vindas leva a definir senha |
+| Política de senha | Mínimo de 6 caracteres, com ao menos uma letra maiúscula, uma minúscula e um número (decidido em 28/jul/2026). Vale igual nas duas portas que criam senha: primeiro acesso e redefinição. Validador único em `lib/senha.ts`, aplicado no cliente e no servidor |
 | Validade | `expires_at` = `purchased_at` + 1 ano |
 | Aviso de expiração | E-mail 30 dias antes do vencimento |
 | Pós-expiração | Tela de renovação (contato via suporte) |
@@ -445,6 +446,17 @@ Postgres gerenciado (Supabase). Acesso a dado sensível protegido por RLS. Leitu
 ## 14. E-mails transacionais
 
 14 templates via Amazon SES (a configurar, iniciar warm-up do domínio com SPF/DKIM/DMARC imediatamente). Template base no brand (logo clara, fundo claro, CTA dourado). Copy segue o guia de estilo. Spec detalhada de cada e-mail está no `FLUXO-v1.md` (documento referenciado, ainda não trazido ao repo, ver pendências).
+
+> **Correção de rota de envio (28/jul/2026): dois caminhos, não um.** Os e-mails **3** e **4**
+> desta tabela não saem pelo nosso código: eles são emitidos pelo **Supabase Auth**, com o
+> template configurado no painel do projeto, e viajam pelo SMTP do Supabase. O link do 3 é o
+> convite (`type=invite`) e o do 4 é a recuperação (`type=recovery`); os dois caem no route
+> handler `/auth/confirm`, que troca o `token_hash` por sessão. Ver a nota de implementação do
+> `ROUTES.md`.
+>
+> Em homolog esse SMTP é o **Resend**, configurado em 28/jul e validado com entrega real, para
+> não depender da decisão do domínio de produção. O SES segue previsto para os outros doze, que
+> são disparados por nós, e para o remetente definitivo. Detalhe por ambiente no `AMBIENTES.md`.
 
 | # | E-mail | Gatilho |
 |---|---|---|

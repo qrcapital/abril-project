@@ -17,12 +17,21 @@ _Última atualização: 2026-07-25 (ressincronizado junto com o `HANDOFF.md`)._
 
 ## 🟢 Dá para fazer agora (sem insumo)
 
-- [ ] **Copy do FAQ e do CTA final** — última etapa da varredura de copy seção a seção da
-      LP. Já revisadas: hero, corpo docente, currículo, Ferramentas e Oferta.
-- [ ] **Prova funcional** — banco de questões real + correção; resultado da nota;
-      destrava com 16/16.
-- [ ] **Recuperação de senha** — `/app/recuperar-senha` e `/app/redefinir-senha`; hoje o
-      link "Esqueci minha senha" dá 404.
+- [ ] **Prova funcional** — **motor pronto (28/jul)**, falta o **conteúdo**. Sorteio
+      balanceado, snapshot, respostas e correção em 14/20 gravando em `exams`, cronômetro no
+      `exams.deadline` (reentrada não reinicia), resultado com nota e desempenho por módulo
+      reais. Pendente: escrever as **~100 questões**, 25 por módulo. O motor roda hoje sobre
+      as 24 `[EXEMPLO]` do seed.
+- [ ] **Definir como funcionará o acesso de admin** — o `PLANO-ADMIN.md` §2 já cobre o
+      mecanismo (guarda no proxy + `is_admin()` + service role só no servidor), mas
+      falta a operação: como o papel é concedido e o primeiro admin criado (bootstrap),
+      se entra pela mesma `/app/login` ou por tela própria, e o que o não-admin vê em
+      `/admin`. É decisão de spec, sem insumo externo; os pontos estão listados no
+      `PLANO-ADMIN.md` §8. (O build do admin em si segue V2.)
+- [ ] **Política de senha no painel do Supabase** — a regra do produto (6 caracteres, com
+      maiúscula, minúscula e número) está em `lib/senha.ts` e vale nas duas portas que criam
+      senha, nos dois lados. Falta espelhá-la em **Authentication** no painel, que é quem
+      recusa também quem chame a API por fora do nosso código. _Insumo:_ ajuste no dashboard.
 - [ ] **`{{ preco }}` / `{{ parcelas }}`** configuráveis (hoje hardcoded no porte).
 - [ ] **Telas secundárias** — `/obrigado`, `/app/acesso`.
 - [ ] **Remover atalhos de teste** (login e prova) antes do go-live.
@@ -32,6 +41,11 @@ _Última atualização: 2026-07-25 (ressincronizado junto com o `HANDOFF.md`)._
 
 ## 🔒 Bloqueado por insumo
 
+- [ ] **Template de e-mail do convite (primeiro acesso)** — o `/auth/confirm` já aceita
+      `type=invite`, e o webhook do Guru já gera esse link, mas o template **Invite user** no
+      painel segue no padrão. Mesma edição do Reset Password, trocando o tipo:
+      `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=invite`. Não urge, porque o primeiro
+      acesso do homolog usa o atalho `?s=primeiro` até o Guru entrar.
 - [ ] **Links das redes sociais do rodapé** — hoje `href="#"`. _Insumo:_ URLs reais dos
       perfis.
 - [ ] **`banned-words.md`** — o `docs/COPY.md` referencia esse arquivo, que nunca existiu.
@@ -58,11 +72,29 @@ Não entram no homolog; ficam para produção com o conteúdo real:
       S.A. · CNPJ 44.597.052/0001-62"**, porque a LP vai para um subdomínio da Abril
       (2026-07-22). Substitui "1971 Comunicações e Sistemas LTDA.", registrada em
       2026-07-20 e superada. DPO segue `dpo@qr.capital`.
+- [x] **Copy do FAQ e do CTA final** — dado como **finalizado por ora** pelo Pedro
+      (2026-07-25): o texto atual fica como está, sem nova varredura. Era a última etapa
+      da revisão seção a seção (hero, docentes, currículo, Ferramentas e Oferta já tinham
+      passado). Reabrir só se a rodada de copy pré-launch pedir; o H2 do CTA final e a
+      pergunta de conta no exterior do FAQ são decisões travadas (`HANDOFF.md` §7).
 - [x] **Nav do rodapé** — o da LP já saíra alinhado à topbar (Professores, Formação,
       Ferramentas, Idealizadores, FAQ) na etapa 9 do `port-lp`; faltava o **rodapé da
       área**, que ainda listava O Diagnóstico, Corpo Docente, A Formação e Quem Assina.
       Alinhado no `buildFooter()` do `port-area`, junto com a razão social superada e a
       troca de "chancela editorial" por "institucional" (2026-07-25).
+- [x] **Recuperação de senha** — `/app/recuperar-senha`, `/auth/confirm` e
+      `/app/redefinir-senha` construídos e **validados com e-mail real** (2026-07-28): o Pedro
+      pediu a redefinição pela tela, recebeu na caixa dele, clicou e trocou a senha. O
+      "Esqueci minha senha" do login deixou de dar 404. O mesmo handler serve o **primeiro
+      acesso** com `type=invite`.
+- [x] **SMTP do Supabase** — **Resend** configurado em 2026-07-28, remetente de teste
+      `onboarding@resend.dev`, credencial de SMTP sendo a API key (usuário literal `resend`,
+      host `smtp.resend.com`, porta 587). O template de Reset Password aponta para
+      `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=recovery`, e `localhost:3000` mais o
+      domínio do Netlify estão na allowlist de Redirect URLs. Usar `{{ .RedirectTo }}` em vez
+      de `{{ .SiteURL }}` faz o link seguir o ambiente que pediu o reset, então dá para testar
+      local sem mexer no Site URL do projeto. Escolhido para destravar o homolog; o remetente
+      definitivo depende da decisão do domínio de produção.
 - [x] **`COPY.md` promovido para `docs/`** — a diretriz anti-slop saiu de
       `referencias/cowork/` (fora do git) e virou `docs/COPY.md`, versionado (2026-07-25).
 

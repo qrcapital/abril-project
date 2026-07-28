@@ -8,6 +8,86 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **Regra de senha: 6 caracteres, com maiúscula, minúscula e número** — 2026-07-28
+  - Decisão do Pedro. Antes era só o comprimento mínimo de 6, herdado do padrão do Supabase.
+  - Um validador único em `lib/senha.ts` (`validarSenha`), usado nas **duas portas** que criam
+    senha e nos **dois lados** de cada uma: primeiro acesso (`criarConta` no servidor e o
+    `LoginClient` no navegador) e redefinição (a server action e o `RedefinirClient`). Antes a
+    regra aparecia escrita por extenso em três lugares, com o risco de divergirem.
+  - A mensagem de erro diz qual exigência faltou, em vez de repetir a lista inteira. E a regra
+    aparece **antes** de o aluno tentar: na tela de redefinição pelo texto de apoio, e no
+    primeiro acesso por uma linha inserida sob o campo de senha (só nesse modo; no login
+    normal o aluno digita a senha que já tem).
+  - `\p{Lu}`/`\p{Ll}` em vez de `[A-Z]`/`[a-z]`, para acento contar: "Ástrid1x" tem maiúscula
+    de verdade e seria recusada por faixa ASCII sem o aluno entender o motivo.
+  - Novo `npm run check:senha`, e `npm run check` roda os dois checks. Cobre o limite exato de
+    6, cada classe faltando, senha só de símbolos, acento, e a precedência do comprimento
+    sobre as classes.
+  - **Falta espelhar no painel do Supabase**: validação de aplicação é conveniência; a recusa
+    que vale para quem chama a API por fora é a política do projeto em Authentication.
+- **Recuperação de senha, e o caminho real do primeiro acesso junto** — 2026-07-28
+  - `/app/recuperar-senha` pede o e-mail e dispara o link; `/auth/confirm` troca o
+    `token_hash` por sessão em cookie; `/app/redefinir-senha` grava a senha nova e leva para
+    `/app` já logado. O link "Esqueci minha senha" do login deixou de dar 404.
+  - **`verifyOtp` com `token_hash`, não a troca de `code` do PKCE.** O `@supabase/ssr` fixa
+    `flowType: "pkce"`, e o PKCE guarda um `code_verifier` no cookie do dispositivo que
+    **pediu** o reset: quem pede no celular e abre o e-mail no desktop não conclui. O
+    `token_hash` atravessa dispositivo. De brinde, o token morre no handler e nunca chega à
+    URL da tela onde a senha é digitada, então não fica no histórico nem escapa por `Referer`.
+  - **O mesmo handler serve o primeiro acesso**, com `type=invite`, que é o link que o webhook
+    do Guru já gera (`generateLink({ type: "invite" })`). Quando o Guru entrar, a porta real
+    do primeiro acesso já existe; o atalho `?s=primeiro` do homolog segue valendo até lá.
+  - `ROUTES.md` atualizado: o token **não** passa mais pelas telas, então
+    `/app/redefinir-senha/:token` e `/app/primeiro-acesso/:token` deixaram de existir como
+    especificados. A nota de implementação lá explica o porquê e registra que, depois do
+    `verifyOtp`, a sessão é completa e não apenas permissão de trocar senha.
+  - Guarda de redirect aberto no `next`, e mensagem idêntica para hash inválido, link
+    expirado e link já usado, para não virar oráculo de token válido. A confirmação de envio
+    também é sempre a mesma, exista o e-mail ou não, inclusive sob rate limit do Supabase.
+  - Visual: as duas telas reaproveitam o `login.html` portado, trocando só o miolo da coluna
+    do formulário, então a coluna de marca e a moldura seguem idênticas ao login sem markup
+    duplicado. O helper de fatiar div balanceada saiu do `home-template.ts` para
+    `lib/html-slice.ts`, agora com três consumidores.
+  - **Validado com e-mail real no mesmo dia.** O SMTP do Supabase passou a ser o **Resend**
+    (remetente de teste `onboarding@resend.dev`, usuário literal `resend`, senha sendo a API
+    key, `smtp.resend.com:587`), escolhido para destravar o homolog sem depender da decisão do
+    domínio de produção. O Pedro pediu a redefinição pela tela, recebeu na caixa dele, clicou
+    e trocou a senha; conferido no banco pelo `last_sign_in_at` e o `updated_at` da conta
+    andando no mesmo minuto.
+  - O template usa **`{{ .RedirectTo }}`**, não `{{ .SiteURL }}`, então o link segue o
+    ambiente que pediu o reset: pedido no `localhost:3000` chega apontando para o localhost, e
+    dá para testar local sem trocar o Site URL do projeto. Por isso o `resetPasswordForEmail`
+    passa `redirectTo` **sem** query string, e o template monta
+    `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=recovery`. É seguro porque o Supabase
+    valida o `redirectTo` contra a allowlist de Redirect URLs, onde entraram o localhost e o
+    domínio do Netlify.
+  - Segue pendente, sem urgência, o template **Invite user** para o primeiro acesso: o handler
+    já aceita `type=invite`, mas o e-mail do convite ainda usa o padrão do painel.
+- **Prova final: motor funcional (sem o banco de questões real)** — 2026-07-28
+  - A prova deixou de ser fachada de cliente e passou a ter estado no banco. `lib/prova.ts`
+    abre a tentativa (sorteio balanceado por `sortear_prova()`, snapshot das 20 com
+    gabarito, `deadline` = início + 120 min), grava resposta a resposta, e corrige com a
+    aprovação em 14 de 20. Tudo com service role, porque `exams` só tem policy de SELECT do
+    dono e o `sortear_prova()` não é exposto ao cliente.
+  - **O cronômetro saiu do `sessionStorage` para o `exams.deadline`.** Antes o tempo vivia na
+    aba: fechar o navegador ou abrir em outro devolvia 120 minutos limpos. Agora a reentrada
+    não reinicia, que é o que o `PRD.md` §7 exige.
+  - `lib/prova-correcao.ts` guarda a regra de nota sem nenhum IO, e é o que o
+    `npm run check:prova` exercita. A aprovação compara inteiros (`acertos * 100 >=
+    70 * total`) em vez do score arredondado, para que um total diferente de 20 não promova
+    69,5% a 70.
+  - Server actions em `app/app/(sala)/prova/actions.ts` resolvem o aluno pela **sessão**,
+    nunca por id vindo do cliente: com service role, aceitar id do navegador entregaria a
+    prova de um aluno a outro. O gate de 16/16 passou a ser checado no servidor também.
+  - `lib/prova-template.ts` injeta enunciado, alternativas, contadores, cronômetro e o
+    desempenho por módulo nas telas portadas, escapando o que vem do banco. Se um porte
+    futuro mudar o markup, estoura em vez de servir o placeholder do design como se fosse
+    conteúdo real.
+  - Saíram os atalhos "Simular aprovação/reprovação" da tela de questão e o `?r=reprovado`
+    do resultado: a variante agora vem da correção.
+  - **Ainda falta o conteúdo**: as ~100 questões (25 por módulo) continuam a escrever. O
+    motor roda sobre as 24 `[EXEMPLO]` do seed.
+  - Novo: `npm run check:prova`. Cobre a regra de nota e as âncoras de HTML.
 - **Pacote de continuidade para transferir o desenvolvimento de máquina** — 2026-07-25
   - **`docs/HANDOFF.md`**: documento de continuidade do projeto, escrito para migrar o
     trabalho da máquina Windows para um MacBook. Reúne o que os outros documentos não
@@ -31,6 +111,15 @@ e é validado no ambiente de **homolog** (branch `homolog`).
     rodapé, migração do curso para o banco e os dois itens bloqueados por insumo.
 
 ### Alterado
+- **Pendência nova: definir o acesso de admin** — 2026-07-25
+  - Registrada em `PENDENCIAS-LP.md` e detalhada no `PLANO-ADMIN.md` §8: o mecanismo
+    (proxy + `is_admin()`) já está na planta, mas falta a operação — bootstrap do
+    primeiro admin, onde o papel vive, porta de entrada (mesma `/app/login` ou tela
+    própria) e o que o não-admin vê. Decisão de spec antes da Fase 1 do admin.
+- **Copy do FAQ e do CTA final: finalizado por ora** — 2026-07-25
+  - Decisão do Pedro: o texto atual das duas seções fica como está, sem a varredura que
+    era a última etapa da revisão seção a seção. `PENDENCIAS-LP.md` e `HANDOFF.md`
+    atualizados; reabrir só se a rodada de copy pré-launch pedir.
 - **LP · Mobile: wordmark da topbar alinhado e Entrar no hambúrguer** — 2026-07-25
   - **Wordmark torto no mobile** (feedback do Pedro): três somas pequenas. O letter-spacing
     põe espaço também depois da última letra, então a hairline direita passava ~3px do "A"
@@ -142,6 +231,76 @@ e é validado no ambiente de **homolog** (branch `homolog`).
     Conferido em Agência Brasil e gov.br: SEPEC, nomeação em julho de 2022.
 
 ### Corrigido
+- **Segurança: o aluno leria o gabarito da própria prova em `exams.questions_snapshot`** — 2026-07-28
+  - O snapshot guarda a `correta` das 20 questões, por desenho (`PRD.md` §7: corrigir e
+    auditar contra o que o aluno viu). A policy `exams_self_select` libera a própria linha,
+    então um `GET /rest/v1/exams?select=questions_snapshot` com a chave anon devolveria o
+    gabarito. RLS é por linha e não alcança coluna.
+  - Fechado com privilégio de coluna. **E o jeito óbvio não funciona**: `revoke select
+    (questions_snapshot) ...` sozinho não surte efeito, porque o Supabase concede SELECT no
+    nível da tabela e um grant de tabela cobre todas as colunas. Foi preciso revogar a
+    tabela e reconceder a lista sem o snapshot. Verificado: `authenticated` e `anon` em
+    false, `service_role` em true.
+  - Efeito colateral a lembrar: coluna nova em `exams` não fica legível para o aluno até
+    entrar naquela lista de grant.
+  - Era vazamento latente, não explorado: não existia nenhuma linha em `exams` até agora.
+    Foi corrigido antes de o motor gravar o primeiro snapshot.
+- **Segurança: `sortear_prova()` estava chamável pela chave anon** — 2026-07-28
+  - O `revoke execute ... from anon, authenticated` da migration **não fechava a função**. O
+    Postgres concede `EXECUTE` a **PUBLIC** por padrão ao criar função, e os dois papéis
+    herdam desse grant, então remover as entradas nomeadas não altera o resultado. No ACL
+    aparece como `=X/postgres`, sem role à esquerda.
+  - Efeito: pela chave anon, via `POST /rest/v1/rpc/sortear_prova`, dava para **enumerar o
+    banco de questões**, 5 por módulo a cada chamada, repetindo à vontade. A resposta
+    `correta` não vazava, porque a função não a seleciona, mas enunciados e alternativas sim.
+    Inofensivo hoje, com 24 questões `[EXEMPLO]`; comprometeria a integridade da prova assim
+    que o banco real entrasse. Contraria o `AGENTS.md`, que define o sorteio como server-side.
+  - Corrigido com `revoke execute on function sortear_prova() from public`, aplicado no
+    homolog e **na migration**, para o `ei-prod` não herdar o mesmo buraco. Verificado:
+    `anon` false, `authenticated` false, `service_role` true, e a chamada anon devolve `42501`.
+  - Lição de método registrada no `HANDOFF.md` §6: conferir privilégio de função com
+    `has_function_privilege('anon', oid, 'EXECUTE')`. A consulta em
+    `information_schema.role_routine_grants` filtrada por nome de role **não** revela a
+    herança de PUBLIC, e foi ela que deu o falso "seguro" na primeira verificação.
+- **Schema do Supabase homolog aplicado, com backfill de `profiles`** — 2026-07-28
+  - Migration e seed aplicados por `psql`. Verificado: 10 tabelas, todas com RLS ligada e 12
+    policies; as 5 funções; 5 módulos, 17 aulas (16 no gate) e 24 questões; `sortear_prova()`
+    devolvendo 20 questões em 5 por módulo. O PostgREST voltou a enxergar o schema sozinho.
+  - **Backfill**: havia 8 contas em `auth.users` e zero linhas em `profiles`, porque o trigger
+    só dispara em criação nova e todas as contas antecedem o schema. Preenchidas com a mesma
+    lógica do `handle_new_user`. Nenhuma é admin, o que confirma na prática a pendência do
+    acesso de admin.
+  - Nota de qualidade do sorteio: dois sorteios seguidos repetiram 19 das 20 questões, que é o
+    esperado com 6 questões por módulo (sortear 5 de 6 duas vezes). Não é defeito do motor, é
+    o tamanho do banco de exemplo, e é exatamente o argumento psicométrico do `PRD.md` §7.
+    Com os ~25 por módulo da meta, a sobreposição esperada cai para cerca de 4 em 20.
+- **Schema do Supabase homolog nunca foi aplicado (diagnóstico)** — 2026-07-28
+  - Conferido com a service role, que ignora RLS: `public` tem **zero tabelas e zero
+    funções** no projeto homolog. Toda leitura devolve `PGRST205` e toda RPC devolve
+    `PGRST202`. A migration `0001_init.sql` nunca rodou; o item 5 do checklist de
+    provisionamento do `AMBIENTES.md` era o único que nenhum documento registrava como
+    concluído.
+  - Passou meses invisível porque a área do aluno não lê nada de `public`: currículo
+    estático em `lib/curso.ts`, progresso em cookie, certificado gerado no cliente e Auth
+    no schema `auth`, que funciona. O único toque em `public` é o `upsert` em `profiles`
+    do `app/app/login/actions.ts`, cujo retorno é descartado, então a falha era engolida.
+  - Reinterpreta a nota do `HANDOFF.md` §6 que atribuía a ausência do profile a uma INSERT
+    policy faltando no trigger `handle_new_user`: sem migration não há trigger nem tabela.
+    Mesmo sintoma, causa diferente. O signup usar a service role segue correto, por
+    espelhar o webhook do Guru, mas não pela razão registrada antes.
+  - Bloqueia a prova funcional, que depende de `questions`, `exams` e `sortear_prova()`.
+    Registrado como item 2 do `HANDOFF.md` §2 e como armadilha na §6.
+- **`supabase/seed.sql` alinhado ao `lib/curso.ts`** — 2026-07-28
+  - O seed ficou na versão de 20/jul e teria levado o conteúdo velho para o banco na hora
+    de aplicar a migration. Corrigidos: o módulo IV (**"Criptoativos em Dólar"** →
+    "Ativos Digitais em Dólar"), a aula 15 ("ETFs de cripto e análise on-chain" → "ETFs e
+    análise on-chain"), os títulos longos do módulo III ("ETFs: a forma mais barata de
+    investir nos EUA", "REITs: o imóvel americano na carteira", "BDRs: comprando EUA pela
+    bolsa brasileira" → **ETFs**, **REITs**, **BDRs**) e as **17 descrições**, que eram as
+    linhas curtas anteriores à revisão de 23/jul.
+  - Completa a correção de 25/jul abaixo, que alinhou o `lib/curso.ts` e não pegou o seed.
+    A duplicação entre o SQL e o TS ficou marcada com comentário no topo do arquivo e morre
+    quando o curso migrar para o banco.
 - **Área do aluno · Nomes de módulo alinhados à LP e ao PRD** — 2026-07-25
   - O currículo da área (`lib/curso.ts`) ainda chamava o módulo IV de **"Criptoativos em
     Dólar"** e a aula 15 de "ETFs de cripto e análise on-chain", nomes que a LP abandonou em

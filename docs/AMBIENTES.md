@@ -37,7 +37,8 @@ Estratégia homolog-first: antes de produção, um ambiente de homologação na 
 |---|---|---|
 | Checkout Guru | sandbox / produto de teste | real |
 | Panda Video | vídeos de teste | reais |
-| Amazon SES | modo sandbox ou remetente verificado com destinatários de teste | produção, domínio com reputação |
+| SMTP do Supabase Auth (reset de senha, convite) | **Resend** configurado em 28/jul/2026, remetente de teste `onboarding@resend.dev`, entrega validada de ponta a ponta | a decidir junto com o domínio: pode continuar Resend com domínio verificado, ou passar para o SES |
+| Amazon SES (os 14 transacionais do `PRD.md` §14) | ainda não configurado; nada depende dele hoje | produção, domínio com reputação, SPF/DKIM/DMARC |
 | WhatsApp | mesmo link de suporte | mesmo link de suporte |
 
 ## Variáveis de ambiente
@@ -54,6 +55,11 @@ Pendências que dependem das contas do time. Assim que existirem, aplico migrati
 2. **Site no Netlify**: conectar o repositório, apontar o contexto `homolog` para a branch `homolog`.
 3. **Projeto Supabase `ei-homolog`**: criar e fornecer `URL`, `anon key` e `service role key` (a service role é segredo).
 4. **Variáveis no Netlify** (contexto homolog): preencher conforme `.env.example`.
-5. Aplicar `supabase/migrations/0001_init.sql` e `supabase/seed.sql` no `ei-homolog`.
+5. ~~Aplicar `supabase/migrations/0001_init.sql` e `supabase/seed.sql` no `ei-homolog`.~~
+   **FEITO em 28/jul/2026.** Era o único item deste checklist que nenhum documento
+   registrava como concluído, e de fato nunca tinha sido: o schema `public` estava vazio.
+   Ver `HANDOFF.md` §6, que traz também o backfill de `profiles` e a correção do `revoke`
+   do `sortear_prova()`. Ao provisionar o `ei-prod`, aplicar a migration **já corrigida**
+   e **não** aplicar o seed, pela regra desta seção.
 
 Milestone inicial sugerido: subir o homolog com o que já existe (shell da LP e da área do aluno) só para estabelecer o pipeline e dar a URL aos stakeholders cedo, e ir ligando as integrações em seguida.

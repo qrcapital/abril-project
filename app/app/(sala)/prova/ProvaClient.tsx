@@ -1,18 +1,25 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+
+import { iniciarProva } from "./actions";
 
 const GOLD =
   "background:linear-gradient(160deg,#D9BE85,#A98E4E);color:#0A2B1E;cursor:pointer;box-shadow:0 6px 16px rgba(169,142,78,.26)";
 
 /**
  * Prova — instruções (design portado). O botão "INICIAR PROVA" vem desabilitado;
- * só habilita quando o aluno marca o checkbox "Estou ciente…". Iniciar → questão 1.
+ * só habilita quando o aluno marca o checkbox "Estou ciente…".
+ *
+ * Iniciar chama a server action, que é quem abre a tentativa no banco e grava o
+ * `deadline`. Só navega depois do ok: se a abertura falhar, o aluno não pode cair numa
+ * tela de questão sem tentativa por trás.
  */
 export default function ProvaClient({ html }: { html: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const [erro, setErro] = useState<string | null>(null);
 
   useEffect(() => {
     const root = ref.current;
@@ -59,8 +66,19 @@ export default function ProvaClient({ html }: { html: string }) {
       checked = !checked;
       render();
     });
-    btn.addEventListener("click", () => {
-      if (checked) router.push("/app/prova/questao/1");
+    let abrindo = false;
+    btn.addEventListener("click", async () => {
+      if (!checked || abrindo) return;
+      abrindo = true;
+      btn.textContent = "ABRINDO PROVA...";
+      const r = await iniciarProva();
+      if (r.ok) {
+        router.push("/app/prova/questao/1");
+      } else {
+        abrindo = false;
+        btn.textContent = "INICIAR PROVA";
+        setErro(r.erro);
+      }
     });
     // hover estilo LP (lift), só quando habilitado
     btn.addEventListener("mouseenter", () => {
@@ -79,5 +97,28 @@ export default function ProvaClient({ html }: { html: string }) {
     });
   }, [router]);
 
-  return <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />;
+  return (
+    <>
+      <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />
+      {erro && (
+        <p
+          role="alert"
+          style={{
+            maxWidth: 660,
+            margin: "0 auto 40px",
+            padding: "12px 16px",
+            borderRadius: 8,
+            border: "1px solid rgba(176,65,62,.35)",
+            background: "rgba(176,65,62,.06)",
+            color: "#b0413e",
+            fontFamily: "'Montserrat',system-ui,sans-serif",
+            fontSize: 13,
+            textAlign: "center",
+          }}
+        >
+          {erro}
+        </p>
+      )}
+    </>
+  );
 }

@@ -96,6 +96,17 @@ Funções úteis: `is_admin`, `has_active_access`, `sortear_prova`, `verify_cert
 
 ## 8. Pontos a definir
 
+**Acesso de admin (pendência registrada em 25/jul/2026 — decidir antes da Fase 1):**
+
+- **Bootstrap do papel**: como nasce o primeiro admin e como se concede/revoga o papel
+  depois (à mão no dashboard do Supabase? seed? tela dentro do próprio admin?). Hoje
+  `is_admin()` existe no banco, mas nada atribui o papel.
+- **Onde o papel vive**: coluna em `profiles`, `app_metadata` do Supabase Auth, ou
+  tabela própria. Precisa ser algo que o aluno não consiga se atribuir (RLS).
+- **Porta de entrada**: mesma `/app/login` (e o redirect pós-login decide por papel) ou
+  tela própria em `/admin/login`, fora do tema da área do aluno.
+- **Proteção extra**: e-mail corporativo obrigatório? 2FA? Ou sessão Supabase comum
+  basta para o v1?
 - Não-admin em `/admin`: redireciona para `/app` ou mostra 404?
 - Precisamos de auditoria (quem fez cada ação) já na Fase 1 ou só depois?
 - O NPS entra no Painel agora (mock) ou espera a pesquisa real?

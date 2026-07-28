@@ -1,6 +1,7 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
+import { validarSenha } from "@/lib/senha";
 
 /**
  * Cria a conta do aluno no primeiro acesso (homolog simula a compra do Guru).
@@ -13,7 +14,11 @@ export async function criarConta(
   password: string,
   nome?: string
 ): Promise<{ ok?: true; error?: string }> {
-  if (!email || password.length < 6) return { error: "Dados inválidos." };
+  if (!email) return { error: "Informe o e-mail." };
+  // Mesma regra da tela de redefinição: as duas portas que criam senha usam o mesmo
+  // validador, senão o produto passa a ter duas exigências diferentes.
+  const problema = validarSenha(password);
+  if (problema) return { error: problema };
 
   const nomeLimpo = nome?.trim();
   const admin = createAdminClient();

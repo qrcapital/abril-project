@@ -251,6 +251,22 @@ create policy questions_admin_only on questions for select using (is_admin());
 -- exams: dono lê o próprio; admin lê todos. Escrita (criar tentativa, corrigir) só service role.
 create policy exams_self_select on exams for select using (user_id = auth.uid() or is_admin());
 
+-- ...MAS o snapshot guarda a `correta` de cada uma das 20 questões (é o que permite
+-- corrigir e auditar contra o que o aluno viu). Com a policy acima, o aluno lê a PRÓPRIA
+-- linha, então sem o que vem abaixo ele baixaria o gabarito da própria prova com a chave
+-- anon: `GET /rest/v1/exams?select=questions_snapshot`. RLS é por LINHA e não resolve
+-- coluna. A correção roda com service role, que não é afetada por nada disto.
+--
+-- ATENÇÃO ao jeito de fazer: `revoke select (questions_snapshot) ...` sozinho NÃO
+-- funciona. O Supabase concede SELECT no nível da TABELA para anon/authenticated, e um
+-- grant de tabela cobre todas as colunas, presentes e futuras; não se subtrai uma coluna
+-- de dentro dele. É preciso revogar a tabela e reconceder a lista de colunas permitidas.
+-- Consequência: coluna nova em `exams` NÃO fica legível para o aluno até ser adicionada
+-- nesta lista, o que é o padrão seguro, mas surpreende quem esquecer.
+revoke select on exams from anon, authenticated;
+grant select (id, user_id, attempt, status, score, started_at, deadline, submitted_at, answers, created_at)
+  on exams to anon, authenticated;
+
 -- certificates: dono lê o próprio; admin lê todos. (Verificação pública usa verify_certificate.)
 create policy certificates_self_select on certificates for select using (user_id = auth.uid() or is_admin());
 
@@ -264,4 +280,16 @@ grant execute on function verify_certificate(text) to anon, authenticated;
 grant execute on function has_active_access() to authenticated;
 grant execute on function is_admin() to authenticated;
 -- sortear_prova NÃO é exposta a anon/authenticated: chamada só pela service role no server.
+--
+-- ATENÇÃO (corrigido em 28/jul/2026): revogar só de `anon, authenticated` NÃO fecha a
+-- função. O Postgres concede EXECUTE a PUBLIC por padrão ao criar uma função, e os dois
+-- papéis herdam desse grant, então a função seguia chamável pela chave anon via PostgREST
+-- (verificado no homolog: `has_function_privilege('anon', ..., 'EXECUTE')` dava true e o
+-- ACL mostrava `=X/postgres`, que é o grant de PUBLIC). Um aluno conseguia enumerar o
+-- banco de questões repetindo a chamada, 5 por módulo a cada vez. A `correta` não vazava,
+-- porque a função não a retorna, mas os enunciados e as alternativas sim.
+--
+-- O revoke de PUBLIC é o que fecha de fato. Os outros dois são redundantes depois dele,
+-- e ficam como documentação da intenção.
+revoke execute on function sortear_prova() from public;
 revoke execute on function sortear_prova() from anon, authenticated;

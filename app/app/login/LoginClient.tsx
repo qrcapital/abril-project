@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { criarConta } from "./actions";
+import { REGRA_SENHA, validarSenha } from "@/lib/senha";
 
 import contato from "@/lib/contato.json";
 
@@ -41,8 +42,21 @@ export default function LoginClient({ html, mode }: { html: string; mode: "login
     const inputs = [...root.querySelectorAll<HTMLInputElement>("input")];
     inputs.forEach((i) => (i.value = "")); // limpa os valores de exemplo do design
     const emailInput = inputs.find((i) => i.type === "email");
-    const passwords = () => inputs.filter((i) => i.type === "password").map((i) => i.value);
+    const camposSenha = inputs.filter((i) => i.type === "password");
+    const passwords = () => camposSenha.map((i) => i.value);
     const btn = root.querySelector<HTMLButtonElement>("button");
+
+    // No 1º acesso o aluno ESCOLHE a senha, então a regra aparece antes de ele tentar, em
+    // vez de ser descoberta por rejeição. No login normal não entra: ali ele só digita a
+    // senha que já tem. O texto é inserido em runtime porque a tela vem do porte; se um dia
+    // virar permanente, o lugar é o `scripts/port-area.mjs`.
+    if (mode === "primeiro" && camposSenha.length > 0) {
+      const dica = document.createElement("p");
+      dica.style.cssText =
+        "font-size:11px;line-height:1.5;color:#8FA398;margin:-8px 0 16px";
+      dica.textContent = `Use ${REGRA_SENHA}.`;
+      camposSenha[camposSenha.length - 1].after(dica);
+    }
 
     // Campo "Nome completo" no 1º acesso (só homolog): clona o par label+input do
     // e-mail para herdar o estilo do design e o insere antes dele.
@@ -89,7 +103,8 @@ export default function LoginClient({ html, mode }: { html: string; mode: "login
         if (mode === "primeiro") {
           const nome = (nomeInput?.value || "").trim();
           if (nomeInput && !nome) return showError("Informe o nome completo.");
-          if (p1.length < 6) return showError("A senha precisa de ao menos 6 caracteres.");
+          const problema = validarSenha(p1);
+          if (problema) return showError(problema);
           if (p1 !== p2) return showError("As senhas não conferem.");
           // cria a conta no servidor (já confirmada) e loga
           const res = await criarConta(email, p1, nome);

@@ -34,7 +34,9 @@ Auth, RLS) · Netlify · Panda Video · Amazon SES · checkout Guru.
 
 ## 2. Estado exato em 25/jul/2026
 
-- Branch de trabalho: **`homolog`**. Último commit: **`79fa278`** (globo do hero em canvas).
+- Branch de trabalho: **`homolog`**. Último commit: **`59aed6c`** (wordmark da topbar no
+  mobile e Entrar no hambúrguer). O `79fa278` que este documento citava era o estado de
+  24/jul, antes da frente mobile da LP.
 - `main` existe como tronco de produção futuro e está atrás; ninguém trabalha nele hoje.
 - Remoto: `https://github.com/qrcapital/abril-project.git`.
 - Ambiente no ar: **https://abril-project.netlify.app** (auto-deploy a cada push em `homolog`).
@@ -65,19 +67,35 @@ vêm do usuário logado, não são mais fixos.
 
 Em ordem do que eu atacaria primeiro:
 
-1. **Copy do FAQ e do CTA final.** É o que resta da varredura de copy seção a seção da LP.
-2. **Prova funcional.** Hoje o card só abre um popup de "bloqueada". Precisa do banco de
-   ~100 questões (construção nossa, conteúdo incluído), sorteio de 20 pela função
-   `sortear_prova()` e correção com aprovação em 70%, ou seja 14 dos 20 acertos. O
-   16/16 é o gate de **aulas** que libera a prova, não a nota.
-3. **Recuperação de senha.** `/app/recuperar-senha` e `/app/redefinir-senha` não existem;
-   o link "Esqueci minha senha" dá 404.
-4. **Pendências pequenas da LP.** Nav do rodapé ainda usa os nomes antigos das seções
+1. ~~**Copy do FAQ e do CTA final.**~~ Dado como finalizado por ora (25/jul): o texto
+   atual fica, sem nova varredura; reabrir só se a rodada pré-launch pedir.
+2. ~~**Aplicar o schema no Supabase homolog.**~~ **FEITO em 28/jul/2026.** A migration nunca
+   tinha rodado e o schema `public` estava vazio, o que bloqueava a prova. Aplicado e
+   verificado, mais o backfill de `profiles` e a correção do `revoke` do `sortear_prova()`;
+   ver a seção 6.
+3. **Prova funcional.** **Motor FEITO em 28/jul/2026**, conteúdo pendente. O sorteio
+   balanceado, o snapshot, a persistência em `exams`, a correção em 14 de 20 e o cronômetro
+   ancorado no `exams.deadline` estão de pé (`lib/prova.ts`, `lib/prova-correcao.ts`,
+   `lib/prova-template.ts`, `app/app/(sala)/prova/actions.ts`; check em
+   `npm run check:prova`). O 16/16 é o gate de **aulas** que libera a prova, não a nota.
+   **Falta o banco de ~100 questões** (25 por módulo, construção nossa): o motor hoje roda
+   sobre as 24 `[EXEMPLO]` do seed, e com um banco desse tamanho dois sorteios repetem 19
+   das 20 questões.
+4. ~~**Recuperação de senha.**~~ **FEITO e validado com e-mail real em 28/jul/2026.**
+   `/app/recuperar-senha`, `/auth/confirm` e `/app/redefinir-senha` de pé; o "Esqueci minha
+   senha" do login funciona. O SMTP do Supabase passou a ser o **Resend** (ver
+   `AMBIENTES.md`), o template de Reset Password aponta para
+   `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=recovery`, e o fluxo foi percorrido de
+   ponta a ponta com entrega em caixa de verdade. O mesmo `/auth/confirm` serve o **primeiro
+   acesso** com `type=invite`, que é o link do webhook do Guru; falta só editar o template
+   **Invite user** no painel, o que não urge. O desenho e o porquê estão na nota de
+   implementação do `ROUTES.md`.
+5. **Pendências pequenas da LP.** Nav do rodapé ainda usa os nomes antigos das seções
    (a topbar já é Professores/Formação/Ferramentas/Idealizadores/FAQ) e os links de redes
    sociais são `href="#"` esperando as URLs reais.
-5. **Migrar o curso para o banco.** Hoje ele vive em `lib/curso.ts` e a tabela `lessons`
+6. **Migrar o curso para o banco.** Hoje ele vive em `lib/curso.ts` e a tabela `lessons`
    está vazia; o progresso é cookie, não linha de tabela.
-6. **Antes de produção:** remover os atalhos de teste da tela de login e trocar o CTA de
+7. **Antes de produção:** remover os atalhos de teste da tela de login e trocar o CTA de
    compra pela URL do checkout Guru.
 
 O `docs/PENDENCIAS-LP.md` é o checklist formal, mas estava congelado em 20/jul e já
@@ -174,9 +192,9 @@ interior), então isso só seria necessário para mudar a densidade ou a projeç
 brew install git node
 node -v          # 22 ou 24; o Netlify builda com 22 (netlify.toml), local roda 24 sem problema
 
-# 2. Clonar
-git clone https://github.com/qrcapital/abril-project.git abril-estrategia-internacional
-cd abril-estrategia-internacional
+# 2. Clonar (no Mac, o repo ficou em ~/projects/abril-project)
+git clone git@github.com:qrcapital/abril-project.git abril-project
+cd abril-project
 git checkout homolog
 
 # 3. Identidade do git (a mesma usada até aqui, o histórico foi reautorado para ela)
@@ -195,17 +213,36 @@ npm run dev      # http://localhost:3000
 npm run build    # tem que passar limpo antes de qualquer push
 ```
 
-**Autenticação no GitHub.** No Windows as credenciais viviam no Windows Credential
-Manager e `git push` funcionava direto. No Mac isso não existe. Escolha um caminho:
-`gh auth login` (instalando o GitHub CLI, que **não** existe hoje nesta máquina) ou uma
-chave SSH trocando o remoto para `git@github.com:qrcapital/abril-project.git`. Faça isso
-antes do primeiro push, não no meio de um.
+**Autenticação no GitHub. RESOLVIDO no Mac (28/jul/2026).** No Windows as credenciais
+viviam no Windows Credential Manager. No Mac isso não existe, e os dois caminhos que este
+documento mandava escolher já estão montados: chave SSH em `~/.ssh/id_ed25519`
+autenticando como `ophteixeira`, remoto já apontado para
+`git@github.com:qrcapital/abril-project.git`, e o **GitHub CLI instalado** em
+`/usr/local/bin/gh`, logado na mesma conta (scopes `gist`, `read:org`, `repo`). Nada a
+fazer aqui.
 
-**Sobre o `package-lock.json`.** Ele carrega os pacotes opcionais de plataforma
-(`@img/sharp-win32-x64`, `@next/swc-win32-*`, `lightningcss-win32-*`). Isso é normal e
-não quebra nada: o npm instala só o que casa com a plataforma atual. Depois do primeiro
-`npm install` no Mac o lock pode ganhar as entradas `darwin-arm64`; commitar essa
-mudança é esperado e correto.
+Atenção às **três identidades**, todas corretas e nenhuma para remover: os commits são
+assinados pela config **local do repo** (`Pedro Teixeira <pedrohfontei@gmail.com>`, autor
+de todo o histórico), a config **global da máquina** é outra (`ophteixeira`), e quem
+empurra para o GitHub é a conta `ophteixeira` da chave SSH.
+
+**Sobre o `package-lock.json`.** O conselho que estava aqui, de que o lock ganharia
+entradas `darwin-arm64` e que commitar isso "é esperado e correto", **está errado por
+duas razões**. Primeiro, o lock já continha todas as plataformas
+(`sharp-darwin-x64`, `swc-darwin-x64`, `oxide-darwin-*`), porque entrada de dependência
+opcional cobre todos os alvos e o npm instala apenas o que casa. Segundo, este MacBook é
+**Intel (x86_64)**, então o alvo é `-x64` e não `-arm64`.
+
+O que `npm install` faz de verdade aqui é **churn de versão de npm**: ele adiciona
+`"dev": true` em pacotes do `sharp` e **remove os campos `libc: ["glibc"]`**, que só
+existem a partir do npm 11. O npm que vem com o Node 22 é o 10.9.8 e apaga esse metadado
+escrito pela máquina Windows, o que é um downgrade do lock. Nenhum pacote entra ou sai.
+
+**Portanto: não commitar.** Depois de qualquer `npm install`, conferir o `git status`; se
+só o `package-lock.json` aparecer modificado, reverter com
+`git checkout package-lock.json`. O lock do `HEAD` é o que já vem buildando no Netlify com
+o site no ar, e o Netlify roda `NODE_VERSION = "22"`, o mesmo npm 10.9 do local, então
+ignora os campos `libc` do mesmo jeito.
 
 **Diferenças de shell.** Todo o histórico deste projeto foi tocado de um Windows com
 PowerShell e Git Bash. No Mac o shell é zsh, o que na prática **simplifica**: some a
@@ -245,11 +282,65 @@ o Pedro corrigiu. Duas exceções legítimas: o hero e a ficha técnica se sobre
 propósito (`margin-top:-44px`), e entre currículo e Ferramentas existe o divisor
 decorativo do olho, que soma 303px no total.
 
-**Supabase, particularidades do projeto homolog.** A confirmação de e-mail está ligada. O
-trigger `handle_new_user` não consegue criar o profile porque não há INSERT policy, e é
-por isso que o signup usa a service role com `email_confirm: true`, espelhando o que o
-webhook do Guru vai fazer. O PostgREST às vezes reclama de "schema cache" em leituras de
-`public.*`; recarregar o cache no dashboard resolve.
+**O schema do Supabase homolog está VAZIO (descoberto em 28/jul/2026).** A migration
+`supabase/migrations/0001_init.sql` **nunca foi aplicada** ao projeto homolog. Conferido
+com a service role, que ignora RLS: `zero` tabelas e `zero` funções em `public`
+(`PGRST205` em qualquer leitura, `PGRST202` em qualquer RPC, spec do PostgREST sem nenhuma
+rota). O item 5 do checklist de provisionamento do `AMBIENTES.md` é o único que nenhum
+documento registra como concluído.
+
+Por que passou meses sem ninguém notar: **a área do aluno não lê nada de `public`**. O
+currículo é `lib/curso.ts` estático, o progresso é cookie, o certificado é gerado no
+cliente, e o Auth vive no schema `auth`, que funciona normalmente. O único toque em
+`public` é o `admin.from("profiles").upsert(...)` do `app/app/login/actions.ts`, e o
+retorno dele é descartado, então a falha é engolida em silêncio.
+
+Isso **reinterpreta uma nota antiga deste documento**, que dizia que o trigger
+`handle_new_user` não conseguia criar o profile por falta de INSERT policy. Se a migration
+nunca rodou, não existe trigger nem tabela `profiles`: mesmo sintoma, causa diferente. O
+signup usar a service role continua certo, porque espelha o webhook do Guru, mas não é
+pela razão registrada antes.
+
+**RESOLVIDO no mesmo dia.** A migration e o seed foram aplicados por `psql` em 28/jul, e o
+estado foi verificado item por item: 10 tabelas, todas com RLS ligada e 12 policies no
+total; as 5 funções; seed com 5 módulos, 17 aulas (16 contando para o gate) e as 24
+questões `[EXEMPLO]`; `sortear_prova()` devolvendo 20 questões em 5 por módulo. O
+PostgREST voltou a enxergar o schema sem precisar recarregar cache.
+
+**Backfill de `profiles` (28/jul).** Havia 8 contas em `auth.users` e nenhuma linha em
+`profiles`, porque o trigger só dispara em criação nova e todas as contas nasceram antes do
+schema existir. Preenchidas com a mesma lógica do `handle_new_user`, lendo nome e telefone
+de `raw_user_meta_data`. Três tinham nome; nenhuma é admin, o que confirma de forma empírica
+a pendência do acesso de admin: `is_admin()` existe e nada atribui o papel. Se um dia o
+schema for recriado do zero, refazer o backfill, senão as contas antigas ficam sem perfil.
+
+O trigger **vai funcionar** nas próximas contas: é `security definer`, o dono é `postgres` e
+`profiles` também pertence a `postgres`, que não é submetido à RLS da própria tabela.
+
+**Supabase, outras particularidades do projeto homolog.** A confirmação de e-mail está
+ligada. O PostgREST às vezes reclama de "schema cache" em leituras de `public.*`;
+recarregar o cache no dashboard resolve. Não confundir esse aviso com schema realmente
+ausente: a diferença se tira com
+`select count(*) from pg_tables where schemaname = 'public'`.
+
+**Revogar de `anon`/`authenticated` NÃO fecha uma função (corrigido em 28/jul/2026).** O
+`revoke` original do `sortear_prova()` era ineficaz e a função estava chamável pela chave
+**anon** via PostgREST. O Postgres concede `EXECUTE` a **PUBLIC** por padrão ao criar
+função, e os dois papéis herdam desse grant, então tirar as entradas nomeadas não muda o
+resultado. No ACL isso aparece como `=X/postgres`, sem role à esquerda. Um aluno conseguia
+enumerar o banco de questões repetindo a chamada, 5 por módulo por vez; a `correta` não
+vazava, porque a função não a retorna, mas enunciado e alternativas sim.
+
+O que fecha é `revoke execute on function ... from public`. Já aplicado no homolog e
+corrigido na migration, para o `ei-prod` não herdar o buraco. Hoje: `anon` false,
+`authenticated` false, `service_role` true, e a chamada anon devolve `42501`.
+
+Ao conferir privilégio de função, usar **`has_function_privilege('anon', oid, 'EXECUTE')`**,
+não uma consulta em `information_schema.role_routine_grants` filtrando por nome de role: a
+herança de PUBLIC não aparece como linha de grantee, e essa foi exatamente a consulta que
+me fez dar o schema por seguro na primeira passada. O `handle_new_user` também é chamável
+em teoria, mas não é explorável: o próprio Postgres recusa com "trigger functions can only
+be called as triggers". Deixado como está.
 
 ---
 

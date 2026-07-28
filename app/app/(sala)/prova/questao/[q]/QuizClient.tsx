@@ -1,143 +1,146 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const TOTAL = 20;
-const DURATION_MS = 120 * 60 * 1000; // 120 min
-const KEY_DEADLINE = "ei_exam_deadline";
-const KEY_ANSWERS = "ei_exam_answers";
+import { enviarProva, responder } from "../../actions";
+import { formatarTempo } from "@/lib/prova-correcao";
 
-// Estilo base (não-selecionado) de cada elemento, capturado UMA vez. Precisa
-// sobreviver às re-execuções do efeito: como o DOM é reaproveitado entre questões,
-// reler o estilo direto do DOM pegaria a versão já pintada (selecionada) e a
-// seleção anterior "grudaria". WeakMap de módulo persiste enquanto o DOM viver.
-const baseStyle = new WeakMap<Element, string>();
-const getBase = (el: Element | null) => {
-  if (!el) return "";
-  if (!baseStyle.has(el)) baseStyle.set(el, el.getAttribute("style") || "");
-  return baseStyle.get(el)!;
-};
+// Estilos de alternativa selecionada/não. Os mesmos do `lib/prova-template.ts`, que
+// pinta o estado inicial no servidor; aqui só repintamos no clique.
+const ALT_BASE =
+  "display:flex;align-items:center;gap:14px;padding:15px 18px;border-radius:10px;cursor:pointer;margin-bottom:10px;transition:all .14s ease";
+const ALT_OFF = `${ALT_BASE};border:1.5px solid #E4DACC;background:#fff`;
+const ALT_ON = `${ALT_BASE};border:1.5px solid #A98E4E;background:#FBF6EC`;
+const BOLA_BASE =
+  "width:26px;height:26px;flex:0 0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700";
+const BOLA_OFF = `${BOLA_BASE};border:1.5px solid #C9BCA8;color:#7E6836`;
+const BOLA_ON = `${BOLA_BASE};border:1.5px solid #A98E4E;background:#A98E4E;color:#fff`;
 
 /**
- * Prova — questão (design portado). Demo de homolog do fluxo completo:
- * - alternativas selecionáveis (radio), respostas persistidas por questão;
- * - cronômetro regressivo com deadline em sessionStorage (sobrevive à navegação
- *   entre questões e a refresh — PRD: reentrada não reinicia);
- * - contador "X respondidas" + barra de progresso;
- * - Anterior / Próxima; na última questão vira "Enviar prova" → resultado.
- * O enunciado e as alternativas são placeholders; as questões reais vêm do Supabase.
+ * Prova — uma questão. O servidor já entrega a tela pintada (enunciado, alternativas,
+ * resposta anterior, contadores, cronômetro), então aqui fica só o comportamento:
+ *
+ * - clique numa alternativa: repinta na hora e grava pela server action. Se a gravação
+ *   falhar, desfaz a pintura, porque uma resposta que parece salva e não está é pior
+ *   que uma que visivelmente não entrou;
+ * - cronômetro regressivo a partir do `deadline` do banco, não de storage local: fechar
+ *   a aba, trocar de navegador ou dar refresh não devolve tempo;
+ * - zerado o tempo, envia sozinho, e o servidor corrige o que houver respondido;
+ * - "Enviar prova" na última questão, com confirmação, porque a tentativa é única.
  */
-export default function QuizClient({ html, q }: { html: string; q: number }) {
+export default function QuizClient({
+  html,
+  posicao,
+  total,
+  restanteMs,
+}: {
+  html: string;
+  posicao: number;
+  total: number;
+  restanteMs: number;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const [erro, setErro] = useState<string | null>(null);
+  const enviandoRef = useRef(false);
 
   useEffect(() => {
     const root = ref.current;
     if (!root) return;
-
-    // Todas as telas de questão compartilham o mesmo HTML: ao navegar entre elas o
-    // DOM é reaproveitado. Sem limpar os listeners, eles acumulam e causam seleção
-    // dupla. O AbortController remove os antigos a cada troca de questão.
     const ac = new AbortController();
-    const on = <K extends keyof HTMLElementEventMap>(
-      el: Element,
-      ev: K,
-      fn: (e: HTMLElementEventMap[K]) => void
-    ) => el.addEventListener(ev as string, fn as EventListener, { signal: ac.signal });
-
-    let deadline = Number(sessionStorage.getItem(KEY_DEADLINE));
-    if (!deadline) {
-      deadline = Date.now() + DURATION_MS;
-      sessionStorage.setItem(KEY_DEADLINE, String(deadline));
-    }
-    let answers: Record<string, string> = {};
-    try {
-      answers = JSON.parse(sessionStorage.getItem(KEY_ANSWERS) || "{}");
-    } catch {}
-    const saveAnswers = () =>
-      sessionStorage.setItem(KEY_ANSWERS, JSON.stringify(answers));
+    const on = (el: Element, ev: string, fn: (e: Event) => void) =>
+      el.addEventListener(ev, fn, { signal: ac.signal });
 
     const spans = [...root.querySelectorAll<HTMLElement>("span")];
-    const timerEl = spans.find((s) => /^\d+:\d+$/.test((s.textContent || "").trim()));
-    const headerQ = spans.find((s) => /^Questão \d+ de \d+$/.test((s.textContent || "").trim()));
+    const timerEl = spans.find((s) => /^\d+:\d{2}$/.test((s.textContent || "").trim()));
     const respEl = spans.find((s) => /respondidas$/.test((s.textContent || "").trim()));
-    const labelQ = spans.find((s) => /^Questão \d+$/.test((s.textContent || "").trim()));
-    const progress = root.querySelector<HTMLElement>('i[style*="linear-gradient"]');
     const alts = [...root.querySelectorAll<HTMLElement>("[data-alt]")];
 
-    const SELBOX = ";border:1.5px solid #A98E4E;background:#FBF6EC";
-    const SELDOT = ";background:#A98E4E;border-color:#A98E4E;color:#fff";
-    // captura o base limpo antes de qualquer pintura desta execução
-    alts.forEach((a) => {
-      getBase(a);
-      getBase(a.firstElementChild);
-    });
-
-    const answered = () => Object.keys(answers).length;
-
-    const paint = () => {
+    const pintar = (escolhida: string | null) => {
       alts.forEach((a) => {
-        const dot = a.firstElementChild;
-        const sel = answers[q] === a.dataset.alt;
-        a.setAttribute("style", getBase(a) + (sel ? SELBOX : ""));
-        dot?.setAttribute("style", getBase(dot) + (sel ? SELDOT : ""));
+        const sel = a.dataset.alt === escolhida;
+        const bola = a.firstElementChild as HTMLElement | null;
+        a.setAttribute("style", sel ? ALT_ON : ALT_OFF);
+        bola?.setAttribute("style", sel ? BOLA_ON : BOLA_OFF);
       });
-      if (headerQ) headerQ.textContent = `Questão ${q} de ${TOTAL}`;
-      if (labelQ) labelQ.textContent = `Questão ${q}`;
-      if (respEl) respEl.textContent = `${answered()} respondidas`;
     };
-    paint();
 
-    // barra de progresso = posição da questão (q/TOTAL). Como o DOM persiste entre
-    // questões, a mudança de largura anima (transition) crescendo/diminuindo.
-    if (progress) progress.style.width = `${Math.round((q / TOTAL) * 100)}%`;
+    const atual = () => alts.find((a) => a.getAttribute("style") === ALT_ON)?.dataset.alt ?? null;
 
     alts.forEach((a) =>
-      on(a, "click", () => {
-        answers[q] = a.dataset.alt!;
-        saveAnswers();
-        paint();
-      })
+      on(a, "click", async () => {
+        const letra = a.dataset.alt;
+        if (!letra) return;
+        const anterior = atual();
+        if (letra === anterior) return;
+
+        const eraPrimeira = anterior === null;
+        pintar(letra);
+        if (eraPrimeira && respEl) {
+          const n = Number((respEl.textContent || "").match(/\d+/)?.[0] ?? 0);
+          respEl.textContent = `${n + 1} respondidas`;
+        }
+
+        const r = await responder(posicao, letra);
+        if (!r.ok) {
+          pintar(anterior);
+          if (eraPrimeira && respEl) {
+            const n = Number((respEl.textContent || "").match(/\d+/)?.[0] ?? 1);
+            respEl.textContent = `${Math.max(0, n - 1)} respondidas`;
+          }
+          setErro(r.erro);
+        } else {
+          setErro(null);
+        }
+      }),
     );
 
-    const finish = () => {
-      sessionStorage.removeItem(KEY_DEADLINE);
-      sessionStorage.removeItem(KEY_ANSWERS);
-      router.push("/app/prova/resultado");
+    const enviar = async (automatico: boolean) => {
+      if (enviandoRef.current) return;
+      if (!automatico && !window.confirm(
+        "Enviar a prova agora? A tentativa é única e não dá para voltar depois do envio.",
+      ))
+        return;
+      enviandoRef.current = true;
+      const r = await enviarProva();
+      if (r.ok) router.push("/app/prova/resultado");
+      else {
+        enviandoRef.current = false;
+        setErro(r.erro);
+      }
     };
 
     const buttons = [...root.querySelectorAll("button")];
     const prev = buttons.find((b) => (b.textContent || "").trim().startsWith("←"));
-    const next = buttons.find((b) => /Próxima|→/.test(b.textContent || ""));
+    const next = buttons.find((b) => /Próxima|→|Enviar prova/.test(b.textContent || ""));
+
     if (prev) {
-      if (q <= 1) {
+      if (posicao <= 1) {
         prev.disabled = true;
         prev.style.opacity = "0.4";
         prev.style.cursor = "not-allowed";
       }
       on(prev, "click", () => {
-        if (q > 1) router.push(`/app/prova/questao/${q - 1}`);
+        if (posicao > 1) router.push(`/app/prova/questao/${posicao - 1}`);
       });
     }
     if (next) {
-      if (q >= TOTAL) next.textContent = "Enviar prova";
       on(next, "click", () => {
-        if (q < TOTAL) router.push(`/app/prova/questao/${q + 1}`);
-        else finish();
+        if (posicao < total) router.push(`/app/prova/questao/${posicao + 1}`);
+        else void enviar(false);
       });
     }
 
-    const fmt = (ms: number) => {
-      const t = Math.max(0, Math.floor(ms / 1000));
-      return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
-    };
+    // Cronômetro: conta a partir do instante em que a página foi servida, sempre
+    // ancorado no deadline do banco.
+    const fim = Date.now() + restanteMs;
     const tick = () => {
-      const rem = deadline - Date.now();
-      if (timerEl) timerEl.textContent = fmt(rem);
+      const rem = Math.max(0, fim - Date.now());
+      if (timerEl) timerEl.textContent = formatarTempo(rem);
       if (rem <= 0) {
         clearInterval(iv);
-        finish();
+        void enviar(true);
       }
     };
     tick();
@@ -147,65 +150,30 @@ export default function QuizClient({ html, q }: { html: string; q: number }) {
       clearInterval(iv);
       ac.abort();
     };
-  }, [router, q]);
+  }, [router, posicao, total, restanteMs]);
 
   return (
     <>
       <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />
-      {/* Atalhos só de homolog: pular para o resultado aprovado/reprovado. */}
-      <div
-        style={{
-          maxWidth: 820,
-          margin: "0 auto",
-          padding: "0 28px 48px",
-          display: "flex",
-          gap: 10,
-          alignItems: "center",
-          flexWrap: "wrap",
-        }}
-      >
-        <span
+      {erro && (
+        <p
+          role="alert"
           style={{
-            fontSize: 10,
-            letterSpacing: ".12em",
-            textTransform: "uppercase",
-            color: "#B4A98F",
-            fontWeight: 700,
+            maxWidth: 820,
+            margin: "0 auto 40px",
+            padding: "12px 16px",
+            borderRadius: 8,
+            border: "1px solid rgba(176,65,62,.35)",
+            background: "rgba(176,65,62,.06)",
+            color: "#b0413e",
+            fontFamily: "'Montserrat',system-ui,sans-serif",
+            fontSize: 13,
+            textAlign: "center",
           }}
         >
-          Atalhos de teste (homolog)
-        </span>
-        <button
-          onClick={() => router.push("/app/prova/resultado")}
-          style={{
-            border: "1px dashed #1F8A5B",
-            color: "#1F8A5B",
-            background: "transparent",
-            borderRadius: 7,
-            padding: "8px 14px",
-            fontSize: 12,
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          Simular aprovação →
-        </button>
-        <button
-          onClick={() => router.push("/app/prova/resultado?r=reprovado")}
-          style={{
-            border: "1px dashed #B0413E",
-            color: "#B0413E",
-            background: "transparent",
-            borderRadius: 7,
-            padding: "8px 14px",
-            fontSize: 12,
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          Simular reprovação →
-        </button>
-      </div>
+          {erro}
+        </p>
+      )}
     </>
   );
 }

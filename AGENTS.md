@@ -42,6 +42,9 @@ TypeScript · Next.js 16 (App Router, RSC) · Tailwind v4 · Supabase (Postgres,
 - **Copy:** livre no texto, mas com o guia de estilo: **sem travessão**, tom editorial sóbrio, sem hype, números concretos. Vale para UI, e-mails, erros.
 - **Supabase:** RLS ligada em tudo. No app, usar o cliente anon (`lib/supabase/server.ts` / `client.ts`) que respeita a RLS. Escritas confiáveis (webhook, correção de prova, certificado, admin) usam a service role (`lib/supabase/admin.ts`), só no servidor.
 - **Segurança:** a tabela `questions` guarda a resposta correta e nunca é lida pelo aluno; o sorteio da prova é a função `sortear_prova()` (server-side). Certificado tem verificação pública via `verify_certificate()`.
+- **Duas armadilhas de privilégio no Postgres, as duas já custaram um vazamento latente aqui** (28/jul/2026, detalhe no `HANDOFF.md` §6):
+  - `revoke execute ... from anon, authenticated` **não fecha uma função**. O Postgres concede `EXECUTE` a **PUBLIC** por padrão ao criar função, e os dois papéis herdam disso. O que fecha é `revoke execute ... from public`. Conferir sempre com `has_function_privilege('anon', oid, 'EXECUTE')`, nunca por consulta em `information_schema` filtrando nome de role: a herança de PUBLIC não aparece como linha de grantee.
+  - `revoke select (coluna) ...` **não subtrai uma coluna** de um grant de tabela, e o Supabase concede SELECT no nível da tabela. É preciso revogar a tabela e reconceder a lista de colunas permitidas, como está feito em `exams` para esconder o `questions_snapshot`, que carrega o gabarito. Coluna nova em `exams` não fica legível para o aluno até entrar nessa lista.
 
 ## Banco de dados
 
@@ -53,5 +56,13 @@ Migrations em `supabase/migrations/`, seed de dev em `supabase/seed.sql` (módul
 npm run dev      # dev server
 npm run build    # build de produção
 npm run lint
+npm run check    # self-checks de regra de negócio (prova + senha)
 ```
 Variáveis em `.env.local` (ver `.env.example`). Sem elas, o app sobe mas as integrações ficam inertes.
+
+O `npm run check` roda os scripts de `scripts/*-check.mts` em node puro, sem framework de teste.
+Cobrem as regras que doem quando quebram: a correção da prova (nota de corte, questão em
+branco, desempenho por módulo) e a política de senha. Rodam também as âncoras de HTML dos
+templates, para uma mudança no porte estourar ali em vez de servir placeholder do design como
+se fosse conteúdo real. **Ao mexer em nota, senha ou nos templates de tela, rode antes de
+commitar.**

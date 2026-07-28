@@ -9,6 +9,11 @@
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
+    // Permite `import ... from "./x.ts"`. Necessário porque o `lib/prova-correcao.ts` é
+    // importado tanto pelo Next quanto pelo `scripts/prova-check.mts`, que roda em node
+    // puro (`--experimental-strip-types`), e o ESM do node exige a extensão. Só é aceita
+    // junto com `noEmit`, que já está ligado abaixo.
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",

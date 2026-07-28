@@ -24,9 +24,35 @@ Tema dark. Portas de entrada da plataforma. Sem navegação principal. A conta n
 | Rota | Descrição |
 |---|---|
 | `/app/login` | Reentrada: e-mail + senha, "Esqueci minha senha", atalho de WhatsApp. Credencial incorreta: mensagem clara com atalho de redefinição. Sem sessão e conta com pagamento pendente: estado "seu pagamento está em processamento" (boleto/PIX até 1 dia útil), nunca erro genérico. Login válido → `/app` |
-| `/app/primeiro-acesso/:token` | Definição de senha no primeiro acesso, via link do e-mail de boas-vindas. Token válido: formulário de nova senha + confirmar. Token expirado/usado: orienta pedir novo acesso pelo suporte. Sucesso → `/app` |
-| `/app/recuperar-senha` | Solicita e-mail e dispara link de redefinição (Supabase). Sempre confirma envio, sem revelar se o e-mail existe |
-| `/app/redefinir-senha/:token` | Define nova senha a partir do link de redefinição. Token inválido: orienta refazer o pedido |
+| `/app/recuperar-senha` | Solicita e-mail e dispara o link de redefinição (Supabase). Confirma o envio sempre com a mesma mensagem, sem revelar se o e-mail tem conta, inclusive quando o Supabase barra por rate limit. Recebe também os avisos de link inválido (`?estado=invalido`) e expirado (`?estado=expirado`) |
+| `/app/redefinir-senha` | Define a senha nova. **Sem token na URL** (ver a nota abaixo): depende da sessão que o `/auth/confirm` criou. Sem sessão, redireciona para `/app/recuperar-senha?estado=expirado`. Sucesso → `/app`, já logado |
+
+> **Nota de implementação (28/jul/2026): o token não passa por essas telas.** A especificação
+> original previa `/app/primeiro-acesso/:token` e `/app/redefinir-senha/:token`, com o token
+> no caminho. Não é como o Supabase entrega, e não é o que a gente quer.
+>
+> O e-mail carrega um `token_hash` e aponta para **`/auth/confirm`**, um route handler que
+> chama `verifyOtp` e troca o hash por sessão em cookie; só então o aluno chega ao formulário
+> de senha. Duas razões. A primeira é técnica: o `@supabase/ssr` fixa `flowType: "pkce"`, e o
+> PKCE guarda um `code_verifier` no cookie do dispositivo que **pediu** o reset, então quem
+> pede no celular e abre o e-mail no desktop não consegue concluir. A segunda é de segurança:
+> o token morre no handler e nunca aparece na URL da tela onde a senha é digitada, logo não
+> fica no histórico nem escapa por `Referer`.
+>
+> Consequência a saber: depois do `verifyOtp` o aluno tem **sessão completa**, não só
+> permissão de trocar senha. É como o Supabase funciona, e o `updateUser` depende disso. Quem
+> tem o link entra na área. O contrapeso é o TTL do link, 1 hora por padrão, configurável no
+> painel.
+
+### `/auth/confirm` (fora de `/app`, sem tema)
+
+| Rota | Descrição |
+|---|---|
+| `/auth/confirm` | Route handler `GET`. Recebe `token_hash` e `type`, chama `verifyOtp` e grava a sessão em cookie. Aceita `type=recovery` (esqueci a senha) e `type=invite` (primeiro acesso, o link que o webhook do Guru gera). `next` opcional define o destino, restrito a caminho interno para não virar redirect aberto. Falha de hash, link expirado ou já usado caem todos em `/app/recuperar-senha?estado=expirado`, com a mesma mensagem, para não virar oráculo de token válido |
+
+**Primeiro acesso** deixou de ter rota própria: é o mesmo handler com `type=invite`, que termina
+no `/app/redefinir-senha`. Enquanto o Guru não entra, o homolog segue usando o atalho
+`/app/login?s=primeiro`, que cria a conta com service role.
 
 ## Área do aluno, pós-sessão (`/app/*`, autenticado)
 
@@ -70,8 +96,8 @@ Cada e-mail transacional (PRD seção 14) aponta para uma rota:
 
 | E-mail | Destino |
 |---|---|
-| Boas-vindas + acesso (3) | `/app/primeiro-acesso/:token` |
-| Reset de senha (4) | `/app/redefinir-senha/:token` |
+| Boas-vindas + acesso (3) | `/auth/confirm?token_hash={{ .TokenHash }}&type=invite` → `/app/redefinir-senha` |
+| Reset de senha (4) | `/auth/confirm?token_hash={{ .TokenHash }}&type=recovery` → `/app/redefinir-senha` |
 | D+3 sem login (5) / D+14 inativo (7) | `/app` |
 | Módulo concluído (6) | `/app` (ou próximo módulo) |
 | Prova liberada (8) | `/app/prova` |
