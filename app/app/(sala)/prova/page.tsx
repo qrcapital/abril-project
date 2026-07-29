@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { tela } from "@/lib/telas";
-import { createClient } from "@/lib/supabase/server";
+import { getUsuario } from "@/lib/usuario";
 import { nomeCookie, parseConcluidas } from "@/lib/progresso";
 import { provaLiberada } from "@/lib/curso";
 import { tentativaAtual } from "@/lib/prova";
@@ -18,10 +18,7 @@ const html = tela("prova");
  * reinicia). Sem o gate de 16/16, volta para a home.
  */
 export default async function ProvaPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUsuario();
   const userId = user?.id ?? "";
 
   const t = await tentativaAtual(userId);

@@ -4,7 +4,8 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { criarConta } from "./actions";
-import { REGRA_SENHA, validarSenha } from "@/lib/senha";
+import { validarSenha } from "@/lib/senha";
+import { emTrabalho, ligarExigencias, pintarCaixa } from "@/app/app/_ui/feedback";
 
 import contato from "@/lib/contato.json";
 
@@ -28,7 +29,15 @@ const TEST_STATES: { label: string; s?: string }[] = [
  * - modo "login": signInWithPassword.
  * Em sucesso → /app (a sessão é lida pela guarda no proxy). Erros mostrados inline.
  */
-export default function LoginClient({ html, mode }: { html: string; mode: "login" | "primeiro" }) {
+export default function LoginClient({
+  html,
+  mode,
+  aviso,
+}: {
+  html: string;
+  mode: "login" | "primeiro";
+  aviso?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -46,16 +55,13 @@ export default function LoginClient({ html, mode }: { html: string; mode: "login
     const passwords = () => camposSenha.map((i) => i.value);
     const btn = root.querySelector<HTMLButtonElement>("button");
 
-    // No 1º acesso o aluno ESCOLHE a senha, então a regra aparece antes de ele tentar, em
-    // vez de ser descoberta por rejeição. No login normal não entra: ali ele só digita a
-    // senha que já tem. O texto é inserido em runtime porque a tela vem do porte; se um dia
-    // virar permanente, o lugar é o `scripts/port-area.mjs`.
+    // No 1º acesso o aluno ESCOLHE a senha, então a regra aparece antes de ele tentar, em vez
+    // de ser descoberta por rejeição. No login normal não entra: ali ele só digita a senha que
+    // já tem. Era uma frase estática (`REGRA_SENHA`) e virou o indicador que marca conforme a
+    // pessoa digita, o padrão 4 do DESIGN.md §3. Vai depois do PRIMEIRO campo, que é onde a
+    // senha é escolhida, e não depois do "repita".
     if (mode === "primeiro" && camposSenha.length > 0) {
-      const dica = document.createElement("p");
-      dica.style.cssText =
-        "font-size:11px;line-height:1.5;color:#8FA398;margin:-8px 0 16px";
-      dica.textContent = `Use ${REGRA_SENHA}.`;
-      camposSenha[camposSenha.length - 1].after(dica);
+      camposSenha[0].after(ligarExigencias(camposSenha[0]));
     }
 
     // Campo "Nome completo" no 1º acesso (só homolog): clona o par label+input do
@@ -74,19 +80,24 @@ export default function LoginClient({ html, mode }: { html: string; mode: "login
       }
     }
 
-    // elemento de erro, inserido antes do botão
-    let errBox: HTMLDivElement | null = null;
-    const showError = (msg: string) => {
-      if (!errBox) {
-        errBox = document.createElement("div");
-        errBox.style.cssText =
-          "background:rgba(176,65,62,.14);border:1px solid rgba(176,65,62,.4);color:#E0736F;font-size:12.5px;line-height:1.5;border-radius:8px;padding:11px 14px;margin:0 0 14px";
-        btn?.parentElement?.insertBefore(errBox, btn);
+    // Caixa de mensagem, inserida antes do botão. A tela é HTML portado e não tem slot, então
+    // o elemento é criado aqui; a pintura sai do padrão único da área (`_ui/feedback.tsx`).
+    // Uma caixa só para aviso e erro de propósito: o erro do envio deve SUBSTITUIR o aviso de
+    // sessão expirada, que já não é mais a informação relevante.
+    let caixa: HTMLDivElement | null = null;
+    const mostrar = (tipo: "erro" | "aviso", msg: string | null) => {
+      if (!caixa) {
+        caixa = document.createElement("div");
+        btn?.parentElement?.insertBefore(caixa, btn);
       }
-      errBox.textContent = msg;
-      errBox.style.display = "block";
+      pintarCaixa(caixa, tipo, msg);
     };
-    const clearError = () => errBox && (errBox.style.display = "none");
+    const showError = (msg: string) => mostrar("erro", msg);
+    const clearError = () => caixa && (caixa.hidden = true);
+
+    // Por que o aluno caiu aqui sem pedir (sessão expirada). Sem isto era redirect mudo: ele
+    // estava na aula 7 e voltava para um "Bem-vindo de volta" sem entender o motivo.
+    if (aviso) mostrar("aviso", aviso);
 
     const submit = async () => {
       clearError();
@@ -95,10 +106,7 @@ export default function LoginClient({ html, mode }: { html: string; mode: "login
       if (!email) return showError("Informe o e-mail.");
       if (!p1) return showError("Informe a senha.");
 
-      if (btn) {
-        btn.disabled = true;
-        btn.style.opacity = "0.7";
-      }
+      const restaurar = emTrabalho(btn, mode === "primeiro" ? "Criando conta..." : "Entrando...");
       try {
         if (mode === "primeiro") {
           const nome = (nomeInput?.value || "").trim();
@@ -120,10 +128,7 @@ export default function LoginClient({ html, mode }: { html: string; mode: "login
           router.refresh();
         }
       } finally {
-        if (btn) {
-          btn.disabled = false;
-          btn.style.opacity = "";
-        }
+        restaurar();
       }
     };
 
@@ -162,7 +167,7 @@ export default function LoginClient({ html, mode }: { html: string; mode: "login
     });
 
     return () => ac.abort();
-  }, [mode, router]);
+  }, [mode, router, aviso]);
 
   return (
     <>

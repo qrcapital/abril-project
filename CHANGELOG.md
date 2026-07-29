@@ -7,6 +7,180 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 
 ## Não lançado
 
+### Adicionado
+- **O resto do mapa de feedback: concluir aula e sair** — 2026-07-29
+  - Metade desta pendência já tinha caído junto das outras tarefas do dia, e fica registrado
+    para ninguém procurar trabalho inexistente: o `role="alert"` passou a sair do `pintarCaixa`
+    em toda caixa de erro (com `aria-live` nas de aviso e sucesso), e o rótulo de botão em
+    trabalho do login saiu com os quatro padrões.
+  - **Marcação otimista do "Concluir aula".** O cookie muda na hora, mas a tela (sidebar, %,
+    gate da prova) só acompanha depois do `router.refresh`, que é ida ao servidor; nesse
+    intervalo o botão ficava idêntico e o clique parecia não ter pego. Agora ele repinta no
+    mesmo tick, e o refresh chega depois com o mesmo estado, sem troca visível.
+  - Os dois estados do botão viraram **`estadoConcluir()`** em `lib/aula-template.ts`,
+    exportado: servidor e cliente pintam do mesmo lugar, senão divergem no primeiro ajuste de
+    cor.
+  - **Feedback do "Sair".** `signOut` é ida à rede, e o menu ficava aberto e parado enquanto
+    isso. O rótulo vira "Saindo..." e o link para de aceitar clique. O `emTrabalho` passou a
+    aceitar **link** além de botão: link não tem `disabled`, então o segundo clique é barrado
+    pelo ponteiro e o estado é dito ao leitor de tela com `aria-disabled`.
+  - Verificado no browser lendo o DOM no mesmo tick do clique, que é o único jeito de provar
+    que a repintura é síncrona: rótulo, `aria-busy`, `aria-disabled` e ponteiro, todos já
+    trocados antes de qualquer ida ao servidor.
+- **A prova avisa quando o tempo está acabando** — 2026-07-29
+  - O cronômetro contava de 120:00 até zero sem nunca mudar de peso, e no zero enviava sozinho.
+    Tentativa única: quem está concentrado numa questão não olha para o relógio, e o envio
+    automático chegava sem preparo nenhum.
+  - Aviso a **10 e a 5 minutos**, no topo da questão, acima do enunciado (onde o olho já está,
+    e fora do cabeçalho, para não desarrumar a linha do cronômetro). O cronômetro vira **pill
+    âmbar**, o mesmo par do módulo deficitário do `DESIGN.md` §2: cor como informação, não
+    como decoração, com 5,71:1 de contraste.
+  - A frase diz o que **acontece** no zero, e não só quanto falta: saber que o respondido é
+    enviado tira o pânico de perder tudo. Sem piscar nada, que a disciplina de movimento do
+    sistema não permite.
+  - Um aviso por limiar, avaliados do menor para o maior: quem abre a questão já com 4 minutos
+    vê o de 5, não o de 10.
+  - Verificado de ponta a ponta: prova iniciada de verdade e `deadline` encurtado no banco para
+    cruzar os dois limiares, com a tentativa de teste apagada depois.
+  - **A outra metade desta pendência saiu**, por decisão do Pedro: a aula sem material com
+    "em breve" foi para a tarefa 15, junto da migração do curso para o banco. O estado é
+    inalcançável hoje, porque `lib/curso.ts` não tem campo de materiais e o `fillAula`
+    reescreve os três links do design para o mesmo PDF de exemplo. Fazer agora seria inventar
+    um modelo de dado provisório para reescrever depois.
+- **O download do certificado deixou de falhar em silêncio** — 2026-07-29
+  - "Baixar PDF" tinha `finally` e **não tinha `catch`**: qualquer falha devolvia o botão ao
+    normal, o arquivo não vinha e nada era dito. Para o aluno é indistinguível de "o clique não
+    pegou", então ele clica de novo. É a entrega final do curso.
+  - São quatro pontos que podem falhar e nenhum está sob nosso controle no instante do clique:
+    baixar `html2canvas` e `jspdf` por `import()` dinâmico (rede instável, ou chunk invalidado
+    por um deploy novo em quem está com a aba aberta), buscar os logos em PNG, rasterizar, e
+    salvar.
+  - Três consertos: **rótulo "Gerando PDF..."** pelo `emTrabalho()`, **`catch`** com caixa de
+    erro no tema claro apontando o suporte, e o fechamento de um **quinto caminho** que a
+    pendência não listava e apareceu na leitura do código: sem o `#cert-preview`, a função
+    fazia `return` na primeira linha, sem nem a opacidade piscar. Era o único caso em que o
+    clique de fato não fazia nada.
+  - O `pintarCaixa` ganhou **link opcional**, a pedido do Pedro, para o "WhatsApp" citado na
+    mensagem ser clicável. Montado com nós de texto e busca da palavra na frase, **nunca com
+    `innerHTML`**: mensagem de erro pode carregar texto vindo do servidor, e caminho de falha
+    não é lugar para abrir porta de injeção. Se a palavra não estiver na frase, o link vai para
+    o fim em vez de sumir.
+  - Verificado no browser forçando a falha **dentro do `try`**. A primeira tentativa de teste
+    não provocou falha nenhuma e o PDF foi gerado normalmente, o que de quebra confirmou que o
+    caminho feliz continua inteiro.
+- **Troca de senha na conta, e o indicador de exigências nas três telas** — 2026-07-29
+  - O "Trocar senha" da Minha conta era **link morto**: o comentário do `ContaClient` dizia
+    "pendente até o fluxo real", e o fluxo real passou a existir em 28/jul sem que ninguém
+    ligasse o link. Botão que não faz nada é o pior feedback que existe, porque a pessoa não
+    sabe se o sistema quebrou ou se ela errou o clique.
+  - Decisão do Pedro: **trocar ali mesmo, pedindo a senha atual**, em vez de mandar para o
+    e-mail. É decisão de segurança, não de conforto: por padrão o Supabase deixa a **sessão
+    sozinha** trocar a senha (a opção "Secure password change" vem desligada no painel), então
+    sem a senha atual um navegador destravado por dois minutos bastaria para tomar a conta do
+    aluno. A conferência usa `signInWithPassword`, único jeito de verificar a senha atual no
+    Supabase; errar ali não mexe na sessão de quem está logado.
+  - **Indicador progressivo das exigências** (padrão 4 do `DESIGN.md` §3) em `ligarExigencias`,
+    alimentado pela lista `EXIGENCIAS` de `lib/senha.ts`. Saiu em **três** telas, não nas duas
+    previstas: primeiro acesso, redefinição e o formulário novo da conta. No primeiro acesso
+    **substituiu a frase estática** da regra, que era o sintoma original. Vai sempre depois do
+    primeiro campo de senha, nunca depois do "repita".
+  - Regra de tom registrada junto: **nunca marcar em vermelho o que a pessoa ainda não terminou
+    de digitar**, que é transformar preenchimento em repreensão.
+  - O `usuario-check` ganhou a âncora do link "Trocar senha": se um porte novo mudar esse
+    texto, o formulário deixa de ser montado e o link volta a ser morto **sem erro nenhum**.
+  - Verificado no browser: indicador marcando item a item enquanto se digita, e a recusa da
+    senha atual errada, que não altera nada na conta.
+- **Sessão expirada passou a ser explicada no login** — 2026-07-29
+  - Antes era redirect mudo: o aluno estava na aula 7, era mandado para o login e lia
+    "Bem-vindo de volta" sem entender por quê.
+  - O proxy manda `?estado=expirou` e a tela mostra a caixa de aviso do `DESIGN.md` §3, no
+    mesmo padrão da recuperação de senha.
+  - **Só explica para quem tinha sessão**, e essa é a parte que fez a tarefa render mais que um
+    parâmetro. A presença do cookie `sb-*-auth-token` é lida **antes** do `getUser()`, porque o
+    cliente do Supabase apaga esses cookies quando o refresh token não vale mais, e a checagem
+    depois daria sempre falso. Quem digitou `/app` sem nunca ter entrado continua vendo a tela
+    limpa: dizer "sua sessão expirou" a essa pessoa é mandar procurar um problema inexistente.
+    Testados os quatro casos, incluindo o formato **chunked** do cookie (`.0`), que é o real
+    quando a sessão é grande.
+  - O redirect passou a **descartar a query** da tela de origem, que ia junto para a barra de
+    endereço do login sem servir para nada.
+  - O erro do envio **substitui** o aviso, na mesma caixa: depois do clique em Entrar, o motivo
+    da queda deixou de ser a informação relevante. O login passou a usar o `pintarCaixa` do
+    padrão comum em vez do estilo próprio.
+- **O nome do aluno passou a sair do servidor** — 2026-07-29
+  - O HTML entregue trazia **"Pedro"** escrito por extenso, e quem trocava pelo nome real era
+    um efeito de cliente no `AreaChrome`. Todo aluno lia o nome de outra pessoa na primeira
+    pintura, e o pior lugar era o certificado, que é a entrega final do curso, com o nome em
+    Playfair grande.
+  - `lib/usuario.ts` traz o `getUsuario()` com o **`cache()` do React**, e
+    `lib/usuario-template.ts` traz o `preencherUsuario()`, puro. A separação não é estética: o
+    módulo com Supabase puxa `next/headers` pela cadeia e não roda fora do Next, e o check
+    precisa exercitar o preenchimento em node puro.
+  - **Conta e certificado deixaram de ser estáticas.** Decisão do Pedro, tomada sobre custo
+    medido e não sobre princípio: a chamada de autenticação extra cai justamente nas **duas
+    telas menos visitadas do produto**, e é **zero** nas outras seis, porque o `cache()` faz
+    layout e tela dividirem a mesma chamada. O proxy já pagava uma chamada por requisição
+    antes disso.
+  - **As seis telas dinâmicas migraram para o helper**, e isso não era opcional: com o layout
+    lendo o usuário e as telas chamando `auth.getUser()` por conta própria, seriam três
+    chamadas por requisição em vez de duas.
+  - Sem nome no cadastro o marcador fica **vazio**, nunca com o texto do design: nome em branco
+    é problema de dado visível, nome de outra pessoa se disfarça de conteúdo real.
+  - `npm run check:usuario` novo, guardando os 9 marcadores em 6 arquivos. Existe por uma
+    armadilha específica: se um porte remover um marcador, a troca não acontece e a tela volta
+    a servir "Pedro" **sem erro nenhum**. Cobre também escape de HTML no nome.
+  - Saiu do `AreaChrome` o preenchimento no cliente, e com ele uma chamada de sessão por
+    navegação. O componente ficou só com o que depende de interação.
+  - Verificado com sessão real no HTML servido: zero ocorrências de "Pedro" em `/app`,
+    `/app/conta` e `/app/certificado`, e as telas conferidas no browser.
+- **Os quatro padrões de feedback, e as telas de estado da área** — 2026-07-29
+  - Frente aberta pelo Pedro em 28/jul. Os padrões vêm **antes** das telas de propósito: a
+    mesma caixa já existia escrita à mão em três clients, com três vermelhos e dois jeitos de
+    dizer "carregando", e cada conserto de tela inventaria a sua variante.
+  - **Caixa de erro, caixa de sucesso/aviso, botão em trabalho e lista de exigências**, no
+    `DESIGN.md` §3 e implementados em `app/app/_ui/feedback.tsx`. Login, recuperação e
+    redefinição passaram a consumir a mesma peça.
+  - **Dois temas, não um.** A área do aluno **não é escura**: o chrome é, e o miolo de toda
+    tela de `(sala)` é `#F7F5F2` com texto `#333333`. Cada padrão nasceu com os dois pares e
+    contraste medido, senão a primeira tela clara que precisasse de caixa inventaria a sua.
+  - Dois achados da medição de contraste: o `--gold-dark` `#7E6836` sobre tinta dourada a 10%
+    dá 4,49:1 e falha AA **por 0,01**, então o sucesso claro leva texto de corpo com o dourado
+    só na borda; e o vermelho `#E0736F` do login passa, mas por 0,03, margem que não sobrevive
+    a um ajuste de fundo, e por isso saiu.
+  - **`loading.tsx`, `error.tsx` e `not-found.tsx` no grupo `(sala)`**, que não existiam em
+    lugar nenhum do projeto. O `error.tsx` era necessidade concreta: o motor da prova estoura
+    de propósito em duas situações e nenhuma tinha tela. Saiu também um catch-all
+    `(sala)/[...resto]`, porque `not-found.tsx` aninhado só atende quem chama `notFound()` no
+    próprio ramo e a URL solta continuaria caindo no 404 global, no tema claro da LP.
+  - `lib/senha.ts`: as exigências viraram **dado** (`EXIGENCIAS`) em vez de prosa. A frase da
+    regra, a mensagem de recusa e o futuro indicador progressivo saem todos da mesma lista; o
+    `senha-check` passou a assertar essa amarração. O componente do indicador **não** foi
+    escrito: o consumidor é a tarefa 10, e componente sem consumidor nasce errado.
+  - Verificado **no browser**, com sessão real, e não só por build: os quatro estados foram
+    vistos na tela. Valeu a pena, porque pegou um defeito que build e lint não pegam: a caixa
+    de aviso nascia **no fim da página, 350px abaixo do formulário**, e não ao lado dele.
+    Causa: as telas injetam o login inteiro (duas colunas) com `dangerouslySetInnerHTML`, e
+    qualquer JSX irmão disso vira vizinho do layout todo. O defeito **antecedia esta leva**, a
+    estrutura antiga tinha o mesmo problema. Conserto: o `senha-template` passou a emitir um
+    slot `[data-feedback]` entre os campos e o botão, e a caixa é pintada nele.
+  - Duas tentativas antes de acertar, com o registro de por que a segunda ficou. A primeira
+    foi um componente com `createPortal`, que o lint recusou com razão (`setState` dentro de
+    efeito). A segunda é um helper de DOM, `pintarCaixa()`, que é o grão do projeto (o login
+    já fazia assim), custa um arquivo a menos e não tem estado nenhum para sincronizar.
+  - **Aprovados pelo Pedro em 29/jul**, as cinco decisões inteiras. Da ressalva dele saiu uma
+    regra nova no `DESIGN.md` §2: **o verde semântico tem um valor por fundo**. Medido, e não
+    há meio-termo, porque nenhum verde passa AA nos dois: o `#1B7A50` das telas de resultado dá
+    4,89:1 no claro e despenca para 2,80:1 no escuro, e os candidatos de fundo escuro fazem o
+    inverso. O par ficou **`#1B7A50` no claro e `#3FB07A` no escuro** (5,46:1): eu havia
+    proposto o `#5BC48F` pela margem maior, o Pedro preferiu o mais saturado, que fica mais
+    perto da família de verdes do produto, e os dois passam AA. A tentação de escrever
+    "verde de sucesso" como token único
+    reprovaria metade das telas em contraste sem ninguém perceber. Vale para qualquer cor
+    semântica. Não é dívida: hoje o verde semântico só aparece em fundo claro.
+  - Duas afirmações do `FEEDBACK-UX.md` foram corrigidas com medição: nem toda tela de
+    `/app/*` é dinâmica (`/app/conta` e `/app/certificado` saem estáticas, o que aumenta a
+    tarefa 5), e o 404 responde 200 por causa do streaming, antes e depois desta leva.
+
 ### Corrigido
 - **Signup não engole mais erro de banco, e não deixa conta pela metade** — 2026-07-29
   - `app/app/login/actions.ts` descartava o retorno do `upsert` em `profiles`. Foi esse silêncio

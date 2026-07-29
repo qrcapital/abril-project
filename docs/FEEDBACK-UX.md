@@ -33,7 +33,19 @@ que vale para todas elas. O Pedro apontou a falta em 28/jul. Esta seção é o c
 que estão os achados mais graves, porque um problema de camada aparece em todas as telas ao
 mesmo tempo.
 
-### 🔴 O aluno vê o nome "Pedro" antes de ver o próprio
+### ~~🔴 O aluno vê o nome "Pedro" antes de ver o próprio~~
+
+**RESOLVIDO em 29/jul.** Preenchido no servidor pelo `preencherUsuario()`, chamado no layout
+(chrome, cobre toda tela) e nas telas com marcador. Conta e certificado deixaram de ser
+estáticas para isso, decisão do Pedro com o custo medido: a chamada de autenticação extra cai
+nas duas telas menos visitadas do produto, e é zero nas outras seis, porque o `cache()` do
+React faz layout e tela dividirem a mesma chamada. Verificado no HTML servido, com sessão
+real: zero ocorrências de "Pedro" em `/app`, `/app/conta` e `/app/certificado`.
+
+Duas notas de manutenção: sem nome no cadastro o marcador fica **vazio**, nunca com o texto do
+design, porque nome em branco é um problema de dado visível e nome de outra pessoa se disfarça
+de conteúdo real; e o `npm run check:usuario` guarda os 9 marcadores, porque se um porte novo
+remover um deles a troca não acontece e a tela volta a servir "Pedro" **sem erro nenhum**.
 
 O markup portado traz **`Pedro` escrito literalmente** nos marcadores `[data-u]`, e quem troca
 pelo nome real é o `AreaChrome`, num efeito de cliente. Consequência medida no dev server, com
@@ -56,14 +68,29 @@ O conserto certo é preencher no **servidor**, onde a sessão já é conhecida, 
 depende de interação. Enquanto isso não acontece, o mínimo é o porte emitir marcador neutro em
 vez de "Pedro".
 
-### 🔴 Não existe `loading.tsx`, `error.tsx` nem `not-found.tsx` em nenhum lugar do projeto
+### ~~🔴 Não existe `loading.tsx`, `error.tsx` nem `not-found.tsx` em nenhum lugar do projeto~~
+
+**RESOLVIDO em 29/jul.** Os três existem no grupo `(sala)`, mais um catch-all `[...resto]`
+que traz as URLs soltas de `/app` para o 404 da área. Verificado no dev server com sessão
+real: `/app/naoexiste` e `/app/modulo/9/aula/99` renderizam o painel dentro do chrome. Duas
+correções ao que este texto afirmava, medidas na implementação, ficam registradas abaixo.
 
 Três consequências, todas na área logada:
 
-**Transição de rota sem sinal.** Toda tela de `/app/*` é dinâmica (o build marca todas com
-`ƒ`), e cada uma faz `getUser()` mais leitura de dado antes de responder. O aluno clica num
-card de módulo e, em conexão lenta, nada acontece por um tempo. Um `loading.tsx` no grupo
-`(sala)` resolve de uma vez para todas as telas, com o shell escuro já pintado.
+**Transição de rota sem sinal.** O aluno clica num card de módulo e, em conexão lenta, nada
+acontece por um tempo. Um `loading.tsx` no grupo `(sala)` resolve de uma vez para todas as
+telas.
+
+> **Correção (29/jul):** este parágrafo dizia que **toda** tela de `/app/*` é dinâmica. Não
+> é. `/app/conta` e `/app/certificado` saem **estáticas** (`○`) no build, e já saíam antes
+> desta leva: elas não leem nada no servidor, só entregam o HTML portado e deixam o
+> `AreaChrome` preencher no cliente. Isso não muda o `loading.tsx`, que serve as dinâmicas,
+> mas **muda a tarefa 5**: preencher o nome no servidor nessas duas exige torná-las
+> dinâmicas, o que é uma decisão a mais e não só uma mudança de lugar do preenchimento.
+
+> **Correção (29/jul):** o texto original falava em "shell escuro". O escuro é o **chrome**;
+> o miolo de toda tela de `(sala)` é claro (`#F7F5F2`, texto `#333333`). Os painéis novos
+> seguem o claro, e o padrão de caixa do `DESIGN.md` §3 precisou nascer com os dois temas.
 
 **Exceção de servidor vira a tela de erro cru do Next**, fora da marca, quebrando o shell
 escuro. Isso deixou de ser hipotético em 28/jul, porque o motor da prova **estoura de
@@ -76,7 +103,28 @@ aponte o WhatsApp.
 **URL inválida dá 404 padrão.** Medido: `/app/modulo/9/aula/99` e `/app/naoexiste` devolvem 404
 sem passar pelo shell da área. Um `not-found.tsx` resolve.
 
-### 🔴 Sessão que expira no meio do curso não explica nada
+> **Nota de medição (29/jul):** um `not-found.tsx` aninhado só atende quem chama
+> `notFound()` dentro do próprio ramo, então a URL sem rota nenhuma continuaria caindo no 404
+> global, que é do layout raiz e vem no tema claro da LP. Por isso o catch-all
+> `(sala)/[...resto]`, que chama `notFound()` e traz a URL solta para o painel da área. Rota
+> explícita vence catch-all, então `/app/login` e as demais seguem intactas.
+>
+> Fica registrado o que **não** foi resolvido: as duas rotas respondem com status **200**, e
+> não 404, porque o streaming já enviou o começo da resposta antes do `notFound()`. Medido
+> nos dois estados, antes e depois desta leva, então não é regressão. Não vale perseguir
+> agora: a área é autenticada, não há indexação, e ninguém monitora status ali ainda.
+
+### ~~🔴 Sessão que expira no meio do curso não explica nada~~
+
+**RESOLVIDO em 29/jul.** O proxy manda `?estado=expirou` e o login mostra a caixa de aviso do
+`DESIGN.md` §3. Duas decisões que ficam de regra para quem mexer:
+
+- **Só explica para quem tinha sessão.** A presença do cookie `sb-*-auth-token` é lida antes do
+  `getUser()`, porque o cliente do Supabase apaga esses cookies quando o token não vale mais.
+  Quem digitou `/app` sem nunca ter entrado continua vendo a tela limpa: dizer "sua sessão
+  expirou" a essa pessoa manda procurar um problema que não existe.
+- **O erro do envio substitui o aviso**, na mesma caixa. Depois que a pessoa clicou em Entrar,
+  o motivo de ela ter caído ali deixou de ser a informação relevante.
 
 A guarda do `proxy.ts` manda para `/app/login` sem contexto. O aluno estava na aula 7, volta
 para uma tela que diz "Bem-vindo de volta" e não entende por que foi expulso. Falta um
@@ -188,7 +236,7 @@ Candidatos medidos, para a decisão não ser por chute:
 
 | Interação | Hoje | Falta |
 |---|---|---|
-| "Sair" | Chama `signOut` e navega | 🟡 Sem feedback entre o clique e a saída |
+| "Sair" | ~~Chama `signOut` e navega~~ | ✅ **Resolvido em 29/jul:** rótulo vira "Saindo...", link para de aceitar clique (`aria-disabled`, porque link não tem `disabled`) e nada é restaurado, já que a navegação tira a tela do caminho |
 
 ### `/verificar/:codigo` (público)
 
@@ -230,10 +278,19 @@ conserta várias telas de uma vez, e é por isso que vêm antes dos itens de tel
 
 ## Antes de implementar
 
-Escolher os padrões **uma vez** e registrar no `DESIGN.md` §3, para não nascerem cinco jeitos
-de dizer "carregando". São quatro peças: caixa de erro, caixa de sucesso, botão em trabalho, e
-a lista de exigências que marca conforme cumpre. As duas primeiras já existem quase iguais em
-três clients diferentes; vale extrair.
+~~Escolher os padrões uma vez e registrar no `DESIGN.md` §3.~~ **FEITO em 29/jul.** Os quatro
+estão no `DESIGN.md` §3, com contraste medido nos dois temas, e implementados em
+`app/app/_ui/feedback.tsx`. As três caixas escritas à mão foram substituídas pela mesma peça
+nos clients de login, recuperação e redefinição.
+
+Duas notas de quem for consumir:
+
+- **A lista de exigências (padrão 4) ainda não tem componente**, e é de propósito: o consumo
+  é a tarefa 10, e componente sem consumidor nasce errado. O que existe é a fonte dele, a
+  lista `EXIGENCIAS` de `lib/senha.ts`, que passou a ser dado em vez de prosa e hoje gera a
+  frase da regra, a mensagem de recusa e, quando chegar a hora, o indicador.
+- **Confira o tema antes de copiar hex.** Login é escuro, o miolo de `(sala)` é claro, e cada
+  padrão tem os dois pares. Usar o par errado deixa a caixa ilegível.
 
 ---
 _Levantado em 28/jul/2026, a pedido do Pedro. Atualizar conforme os itens caírem._

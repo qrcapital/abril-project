@@ -4,9 +4,12 @@ Checklist vivo do que falta antes do "pronto para produção" (V1/homolog). Atua
 conforme os insumos chegam. Quando o Pedro perguntar "quais as pendências?", este é o
 documento a puxar. (O admin é V2 — ver `PLANO-ADMIN.md`.)
 
-_Última atualização: 2026-07-29. As tarefas 1 e 2 da fila abaixo saíram: os 12 arquivos que
-tinham ficado na árvore depois do `c76e196` foram commitados junto com a correção do `upsert`
-silencioso do signup. A fila válida começa agora na tarefa 3._
+_Última atualização: 2026-07-29, fim do dia. **A camada de feedback ao usuário está inteira.**
+Saíram as tarefas **1, 2, 3b, 4, 5, 6, 7, 8, 9, 10, 12** e metade da **11**. Do que sobra, nada
+é de feedback: são as frentes grandes (**14** matrículas e **15** curso no banco), as dívidas da
+prova (**16** cron e **17** modal e grade de questões) e as quatro do Pedro no painel, das quais
+só a **18** trava construção nova. A outra metade da 11, a aula sem material, foi movida para
+dentro da 15, porque o estado só existe quando os materiais tiverem fonte de verdade._
 
 > Legenda: 🟢 dá para fazer agora (sem insumo externo) · 🔒 bloqueado por insumo/decisão.
 
@@ -39,52 +42,122 @@ de feedback, no `docs/FEEDBACK-UX.md`.
    `/auth/confirm` já aceita `invite`. O que fica em aberto é vizinho e só importa no lançamento
    (corpo do e-mail e remetente) — ver "Antes de produção: o e-mail de boas-vindas" abaixo.
 
+### Primeiro do próximo lote (achado em 29/jul, dirigindo o browser)
+
+3b. **`<title>` da área repete o nome do produto.** Medido no browser: `/app/naoexiste` abre a
+    aba como **"Área do aluno | Estratégia Internacional | Estratégia Internacional"**. Causa:
+    o `app/app/layout.tsx` declara `title.default = "Área do aluno | Estratégia Internacional"`
+    e o layout raiz aplica por cima o `template` `"%s | Estratégia Internacional"`. Só aparece
+    em página **sem metadata própria**, e por isso passou despercebido: as telas com título
+    (`Entrar`, `Minha conta`, `Certificado`) saem certas. Ficou mais visível agora, porque o
+    `not-found`, o `error`, o `loading` e o catch-all novos não declaram título.
+    **Conserto de uma linha:** o `default` vira `"Área do aluno"` e o template da raiz completa
+    o resto. O Pedro pediu em 29/jul para começar o próximo lote por aqui.
+
+    _Registrado e descartado no mesmo dia:_ eu havia relatado que a barra de teste do homolog
+    cobria o rodapé do login. **Não cobre**, fica abaixo dos logos nos dois tamanhos medidos.
+    A remoção dela já está na lista de antes do go-live e não precisa de item novo.
+
 ### Feedback ao usuário: a camada que atravessa a área logada
 
 Levantada pelo Pedro em 28/jul. Auditoria completa e priorizada em `docs/FEEDBACK-UX.md`: 12
 achados graves, 11 médios, 13 pontos já cobertos. Estes quatro primeiros são de **camada**, cada
 um consertando várias telas de uma vez, e é por isso que vêm antes dos de tela.
 
-4. **Definir os quatro padrões de feedback e registrá-los no `DESIGN.md` §3**: caixa de erro,
-   caixa de sucesso, botão em trabalho, e lista de exigências que marca conforme cumpre. **Faça
-   antes das tarefas 8 a 12 e da 17**, senão nascem cinco jeitos de dizer "carregando". As duas
-   primeiras já existem quase iguais em três clients, com CSS inline duplicado; vale extrair.
+4. ~~**Definir os quatro padrões de feedback e registrá-los no `DESIGN.md` §3.**~~ **FEITO em
+   29/jul**, junto com a 6, como estava combinado. Os quatro estão no `DESIGN.md` §3 com
+   contraste medido **nos dois temas** (a área não é escura como o login: o chrome é, o miolo
+   das telas é claro), e implementados em `app/app/_ui/feedback.tsx`. As três caixas escritas à
+   mão nos clients de login, recuperação e redefinição foram substituídas pela mesma peça.
+   **APROVADO pelo Pedro em 29/jul**, as cinco decisões inteiras, com uma ressalva que virou
+   regra nova: o verde semântico precisa de **um valor por fundo**, porque nenhum passa AA nos
+   dois (`#1B7A50` no claro, `#3FB07A` no escuro, este escolhido por ele). Está no `DESIGN.md` §2. Não é dívida aberta:
+   hoje o verde semântico só aparece em fundo claro.
+   O padrão 4, a lista de exigências, ficou sem componente de propósito, porque o consumidor é
+   a tarefa 10; o que existe é a fonte dele, a lista `EXIGENCIAS` de `lib/senha.ts`, que virou
+   dado em vez de prosa.
+5. ~~**Preencher o nome do aluno no servidor.**~~ **FEITO em 29/jul.** O `getUsuario()` com
+   `cache()` do React + o `preencherUsuario()` puro, usados pelo layout (chrome) e por cada
+   tela com marcador. Conta e certificado **viraram dinâmicas**, que era a decisão embutida:
+   o Pedro aprovou depois de ver o custo medido, porque a chamada extra cai nas duas telas
+   menos visitadas do produto e some das dezenas de aberturas de aula. O preenchimento no
+   cliente saiu do `AreaChrome`, junto com uma chamada de sessão por navegação. Verificado no
+   HTML servido: zero ocorrências de "Pedro" nas três telas. Guarda em `npm run check:usuario`.
 
-   **TBD (28/jul):** o desenho ainda não existe. Não é decisão que dependa do Pedro, é proposta
-   nossa para ele aprovar. Caminho combinado: propor os quatro junto com a tarefa 6, porque o
-   `error.tsx` obriga a decidir a cara de erro de qualquer forma, e aí os outros três saem no
-   mesmo movimento em vez de virar reunião separada.
-5. **Preencher o nome do aluno no servidor.** Medido: o HTML servido a um aluno logado traz
+   _Texto original:_ Medido: o HTML servido a um aluno logado traz
    `>Pedro<` duas vezes e o nome real zero vezes, porque o `AreaChrome` preenche num efeito de
    cliente. Cai também no resultado da prova ("Você concluiu a formação, Pedro"). Fazer como o
    `fillHome` e o `fillQuestao` já fazem com outros dados. Vale para `[data-u]`, `[data-email]`
    e `[data-acesso]`.
-6. **`loading.tsx`, `error.tsx` e `not-found.tsx` no grupo `(sala)`.** Não existem em lugar
-   nenhum do projeto. Três arquivos pequenos: sinal de transição entre telas (todas são
-   dinâmicas e fazem `getUser()` antes de responder), tela de erro na marca, e 404 dentro do
-   shell escuro. O `error.tsx` virou necessidade concreta em 28/jul, porque o motor da prova
-   estoura de propósito em duas situações (`exigir` dos templates e banco de questões curto) e
-   nenhuma tem tela.
-7. **Sessão expirada explicada** na volta ao login. Hoje é redirect mudo: o aluno estava na aula
-   7 e cai num "Bem-vindo de volta" sem entender por quê. Um `?estado=expirou` no padrão que a
-   recuperação de senha já usa.
+
+   **Achado de 29/jul que muda o tamanho desta tarefa:** `/app/conta` e `/app/certificado` são
+   **estáticas** no build (`○`), não dinâmicas, e já eram antes. Elas não leem nada no
+   servidor, só servem o HTML portado. Preencher o nome no servidor nessas duas significa
+   torná-las dinâmicas, o que é decisão a mais e não só mudança de lugar. E são justamente as
+   duas onde o dado importa: "Minha conta" mostra e-mail e prazo, e o certificado leva o nome.
+6. ~~**`loading.tsx`, `error.tsx` e `not-found.tsx` no grupo `(sala)`.**~~ **FEITO em 29/jul.**
+   Saíram quatro arquivos, não três: o `not-found.tsx` aninhado só atende quem chama
+   `notFound()` no próprio ramo, então uma URL sem rota nenhuma continuaria caindo no 404
+   global, que vem no tema claro da LP. O catch-all `(sala)/[...resto]` traz essas URLs para o
+   painel da área. Verificado no dev server com sessão real, não só por build.
+7. ~~**Sessão expirada explicada** na volta ao login.~~ **FEITO em 29/jul**, no padrão que a
+   recuperação de senha já usa. O detalhe que fez a tarefa render mais que um parâmetro: o
+   proxy só manda o `?estado=expirou` para quem **de fato tinha sessão**, checado pela presença
+   do cookie `sb-*-auth-token` lido ANTES do `getUser()` (quando o token não vale mais, o
+   cliente do Supabase limpa esses cookies, e a checagem depois daria sempre falso). Sem isso,
+   quem só digitou `/app` sem nunca ter entrado leria que a sessão dele expirou, e sairia
+   procurando um problema que não existe. O redirect também passou a **descartar a query** da
+   tela de origem, que vazava contexto na barra de endereço.
 
 ### Feedback ao usuário: por tela
 
-8. **"Trocar senha" em Minha conta não faz nada.** O comentário do `ContaClient` diz "pendente
-   até o fluxo real"; o fluxo real existe desde 28/jul. Apontar para `/app/recuperar-senha`, ou
-   trocar ali mesmo pedindo a senha atual. Botão morto é o pior feedback que existe.
-9. **`catch` no download do certificado**, mais rótulo de trabalho. Tem `opacity .6` e
-   `pointer-events:none` num `finally`, mas **não tem `catch`**: se o `html2canvas` falhar, o
-   botão volta ao normal e nada é dito, o que é indistinguível de "o clique não funcionou". É a
-   entrega final do curso.
-10. **Indicador progressivo das exigências de senha**, nas duas telas que criam senha. É o caso
-    que o Pedro citou: hoje a regra é frase estática e o erro sai um por vez, no envio. Marcar
-    cada exigência conforme a pessoa digita.
-11. **Aula sem material** mostrando "em breve" em vez de seção vazia (`PRD.md` §6), e **aviso de
-    tempo acabando** na prova, a 10 e a 5 minutos.
-12. **O resto do mapa:** `role="alert"` onde falta, rótulo de botão em trabalho no login,
-    marcação otimista do "Concluir aula", feedback do "Sair".
+8. ~~**"Trocar senha" em Minha conta não faz nada.**~~ **FEITO em 29/jul, junto com a 10.**
+   Decisão do Pedro: trocar **ali mesmo, pedindo a senha atual**, em vez de mandar para o
+   e-mail. O motivo é de segurança e não de conforto: por padrão o Supabase deixa a **sessão
+   sozinha** trocar a senha (a opção "Secure password change" do painel vem desligada), então
+   sem a senha atual um navegador destravado por dois minutos bastaria para alguém tomar a
+   conta do aluno. A conferência usa `signInWithPassword`, único jeito de verificar a senha
+   atual no Supabase; errar ali não mexe na sessão de quem já está logado.
+9. ~~**`catch` no download do certificado**, mais rótulo de trabalho.~~ **FEITO em 29/jul.**
+   Saíram três consertos: rótulo "Gerando PDF..." pelo `emTrabalho()` (a operação leva
+   segundos, e opacidade sozinha é indistinguível de clique perdido), o `catch` com caixa de
+   erro no tema claro, e o fechamento de um **quinto caminho mudo** que a pendência não
+   listava: sem o `#cert-preview`, a função fazia `return` na primeira linha, sem nem a
+   opacidade piscar. O `pintarCaixa` ganhou link opcional, montado com nós de texto e nunca
+   com `innerHTML`, para o "WhatsApp" da mensagem ser clicável sem abrir porta de injeção
+   num caminho de erro. Verificado no browser forçando a falha dentro do `try`.
+10. ~~**Indicador progressivo das exigências de senha.**~~ **FEITO em 29/jul, junto com a 8.**
+    O `ligarExigencias()` do `_ui/feedback.tsx` (padrão 4 do `DESIGN.md` §3), alimentado pela
+    lista `EXIGENCIAS` de `lib/senha.ts`. Saiu em **três** telas, não duas: primeiro acesso,
+    redefinição e o formulário novo da conta. No primeiro acesso ele **substituiu** a frase
+    estática da regra, que era exatamente o sintoma que o Pedro tinha apontado. Vai sempre
+    depois do primeiro campo de senha, que é onde ela é escolhida, nunca depois do "repita".
+11. **Aviso de tempo acabando na prova.** ~~E aula sem material mostrando "em breve".~~
+    A metade do cronômetro está **FEITA em 29/jul**: aviso a 10 e a 5 minutos, com o
+    cronômetro virando pill âmbar (o mesmo par do módulo deficitário, `DESIGN.md` §2, cor como
+    informação). A frase diz o que **acontece** no zero, e não só quanto falta, porque saber
+    que o respondido é enviado tira o pânico de perder tudo. Verificado de ponta a ponta,
+    encurtando o `deadline` no banco para cruzar os dois limiares.
+
+    A metade do "em breve" **saiu daqui e foi para a tarefa 15**, por decisão do Pedro em
+    29/jul. Motivo: o estado "aula sem material" **não existe no sistema**. O `lib/curso.ts`
+    não tem campo de materiais, e o `fillAula` reescreve os três links do design para o mesmo
+    PDF de exemplo, então toda aula mostra três materiais. Construir a tela vazia agora seria
+    escrever um caminho que nada alcança, com um modelo de dado inventado que seria refeito
+    quando os materiais reais chegarem.
+12. ~~**O resto do mapa.**~~ **FEITO em 29/jul.** Metade dela já tinha caído junto das outras
+    tarefas do dia, e isso fica registrado para ninguém procurar trabalho que não existe mais:
+    o `role="alert"` passou a sair do `pintarCaixa` em toda caixa de erro (e o `aria-live` nas
+    de aviso e sucesso), e o rótulo de botão em trabalho do login saiu na tarefa 4.
+
+    O que sobrava e foi feito agora: **marcação otimista do "Concluir aula"**, porque o cookie
+    muda na hora mas a tela só acompanha depois do `router.refresh`, que é ida ao servidor, e
+    nesse intervalo o botão ficava idêntico e o clique parecia não ter pego. Os dois estados do
+    botão viraram `estadoConcluir()` em `lib/aula-template.ts`, exportado, para servidor e
+    cliente pintarem do mesmo lugar. E **feedback do "Sair"**: `signOut` é ida à rede, e o menu
+    ficava aberto e parado. O rótulo vira "Saindo..." e o link para de aceitar clique. O
+    `emTrabalho` passou a aceitar link, que não tem `disabled`: barra pelo ponteiro e diz
+    `aria-disabled` ao leitor de tela.
 
 ### Frentes grandes
 
@@ -104,6 +177,14 @@ um consertando várias telas de uma vez, e é por isso que vêm antes dos de tel
 15. **Migrar o curso para o banco** (depende da 14). Mata a duplicação entre `seed.sql` e
     `lib/curso.ts`, tira o progresso do cookie e transforma o gate de 16/16 em garantia de
     verdade, em vez de checagem sobre cookie editável pelo aluno.
+
+    **Entra aqui junto (movido da tarefa 11 em 29/jul):** a **aula sem material** mostrando
+    "em breve" em vez de seção vazia, que o `PRD.md` §6 exige. Ela veio parar nesta tarefa
+    porque hoje o estado é **inalcançável**: o `lib/curso.ts` não tem campo de materiais, e o
+    `fillAula` reescreve os três links do design para o mesmo PDF de exemplo, então toda aula
+    exibe três materiais. O estado vazio só passa a existir quando os materiais tiverem fonte
+    de verdade, que é a tabela `materials` desta migração. Fazer antes seria inventar um
+    modelo de dado provisório e reescrevê-lo depois.
 
 ### Dívidas da prova, marcadas de propósito
 

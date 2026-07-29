@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { alternarConcluida } from "@/lib/progresso";
+import { estadoConcluir } from "@/lib/aula-template";
 
 /**
  * Página de aula (design portado, conteúdo de lib/curso). Delegação de evento no
@@ -24,7 +25,14 @@ export default function AulaClient({ html, userId }: { html: string; userId: str
 
       const concluir = target.closest<HTMLElement>("[data-concluir]");
       if (concluir) {
-        alternarConcluida(userId, Number(concluir.getAttribute("data-concluir")));
+        const marcada = alternarConcluida(userId, Number(concluir.getAttribute("data-concluir")));
+        // Marcação otimista: o cookie muda na hora, mas a tela (sidebar, %, gate da prova)
+        // só acompanha depois do `router.refresh`, que é uma ida ao servidor. Sem repintar
+        // aqui, o botão fica idêntico por um instante e o clique parece não ter pego. O
+        // refresh chega depois com o mesmo estado, então não há troca visível.
+        const e = estadoConcluir(marcada);
+        concluir.setAttribute("style", e.style);
+        concluir.textContent = e.rotulo;
         router.refresh();
         return;
       }

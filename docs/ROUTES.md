@@ -81,11 +81,27 @@ Acesso role-based. Fora da navegação do aluno.
 | `/admin/questoes` | CRUD das questões da prova, por módulo (enunciado, 4 alternativas, correta, ativo) |
 | `/admin/emails` | Leitura do `email_log` (aluno, template, envio, status) |
 
+## Estados de rota do grupo `(sala)` (29/jul/2026)
+
+Três arquivos de convenção do App Router, mais um catch-all, valendo para **todas** as telas
+autenticadas de uma vez. Antes não existiam em lugar nenhum do projeto.
+
+| Arquivo | Quando aparece |
+|---|---|
+| `(sala)/loading.tsx` | Transição entre telas. Toda rota de `/app/*` lê o usuário no servidor antes de responder, então em conexão lenta o clique ficava sem resposta |
+| `(sala)/error.tsx` | Exceção de servidor na área. Deixou de ser hipótese quando o motor da prova passou a estourar de propósito em duas situações. Oferece recarregar, aponta o suporte e mostra o `digest`, que é o identificador do log |
+| `(sala)/not-found.tsx` | 404 dentro do chrome da área. Atende quem chama `notFound()` no ramo, como a aula inexistente |
+| `(sala)/[...resto]/page.tsx` | Catch-all que chama `notFound()`. Existe porque `not-found.tsx` aninhado **não** atende URL sem rota nenhuma: ela cairia no 404 global, que é do layout raiz e vem no tema claro da LP. Rota explícita sempre vence catch-all |
+
+Nota de medição: as duas rotas de 404 respondem **200**, e não 404, porque o streaming já enviou
+o começo da resposta antes do `notFound()`. Medido antes e depois desta leva, então não é
+regressão. Não vale perseguir: a área é autenticada e não há indexação.
+
 ## Estados que não viram rota própria
 
 Renderizados como variação da mesma tela (não têm URL distinta), listados para o design cobrir:
 
-- **Login**: normal, primeiro acesso, erro de credencial, pagamento pendente (variações de `/app/login` e `/app/primeiro-acesso/:token`).
+- **Login**: normal, primeiro acesso, erro de credencial, pagamento pendente (variações de `/app/login` e `/app/primeiro-acesso/:token`), e **sessão expirada** (`?estado=expirou`, mandado pelo proxy só para quem tinha sessão de fato).
 - **Card de módulo**: concluído (✓), em andamento, não iniciado (variações do card em `/app`).
 - **Prova**: aprovado, reprovado (variações de `/app/prova/resultado`).
 - **Prova, card na home**: bloqueada (até 16/16), desbloqueada, 2ª chamada liberada (variações do card em `/app`).

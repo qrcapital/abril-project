@@ -57,13 +57,34 @@ Migrations em `supabase/migrations/`, seed de dev em `supabase/seed.sql` (módul
 npm run dev      # dev server
 npm run build    # build de produção
 npm run lint
-npm run check    # self-checks de regra de negócio (prova + senha)
+npm run check    # self-checks de regra de negócio (prova + senha + usuário)
 ```
 Variáveis em `.env.local` (ver `.env.example`). Sem elas, o app sobe mas as integrações ficam inertes.
 
 O `npm run check` roda os scripts de `scripts/*-check.mts` em node puro, sem framework de teste.
 Cobrem as regras que doem quando quebram: a correção da prova (nota de corte, questão em
-branco, desempenho por módulo) e a política de senha. Rodam também as âncoras de HTML dos
-templates, para uma mudança no porte estourar ali em vez de servir placeholder do design como
-se fosse conteúdo real. **Ao mexer em nota, senha ou nos templates de tela, rode antes de
-commitar.**
+branco, desempenho por módulo), a política de senha, e os **marcadores de usuário** do markup
+portado. Rodam também as âncoras de HTML dos templates, para uma mudança no porte estourar ali
+em vez de servir placeholder do design como se fosse conteúdo real. **Ao mexer em nota, senha,
+nos dados do aluno ou nos templates de tela, rode antes de commitar.**
+
+O `check:usuario` existe por uma armadilha específica: o `preencherUsuario` troca o texto DENTRO
+de cada marcador, então um porte que remova um marcador faz a tela voltar a servir o texto do
+design ("Pedro Teixeira") como se fosse o nome do aluno, **sem erro nenhum**. Ele guarda os 9
+marcadores em 6 arquivos, o escape de HTML no nome, e a âncora do link "Trocar senha", que é
+onde o formulário de troca é montado.
+
+## Feedback ao usuário
+
+Os quatro padrões (caixa de erro, caixa de sucesso e aviso, botão em trabalho, lista de
+exigências de senha) estão no `DESIGN.md` §3 e implementados em `app/app/_ui/feedback.tsx`.
+**Estenda daqui, não invente variante.** Três coisas que economizam tempo:
+
+- **A área do aluno não é escura.** O chrome é; o miolo de toda tela de `(sala)` é claro
+  (`#F7F5F2`, texto `#333333`). Cada padrão tem os dois pares, e usar o do tema errado deixa a
+  caixa ilegível.
+- **A caixa se pinta no DOM** (`pintarCaixa`), não em JSX. As telas são HTML portado injetado
+  inteiro, então JSX irmão vira vizinho do layout e a caixa vai parar no fim da página, longe do
+  formulário. Tela nova que precise de caixa emite um slot `[data-feedback]` no próprio markup.
+- **Cor semântica tem um valor por fundo** (`DESIGN.md` §2): nenhum verde passa AA no claro e no
+  escuro ao mesmo tempo.

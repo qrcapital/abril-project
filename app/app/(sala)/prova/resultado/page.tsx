@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { tela } from "@/lib/telas";
-import { createClient } from "@/lib/supabase/server";
+import { getUsuario } from "@/lib/usuario";
+import { preencherUsuario } from "@/lib/usuario-template";
 import { tentativaAtual } from "@/lib/prova";
 import { corrigir } from "@/lib/prova-correcao";
 import { fillResultado } from "@/lib/prova-template";
@@ -21,10 +22,7 @@ const MODULOS_NO_DESIGN = [1, 2, 3, 4];
  * homolog e saiu junto com a correção real.
  */
 export default async function ResultadoPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUsuario();
   const userId = user?.id ?? "";
 
   const t = await tentativaAtual(userId);
@@ -32,7 +30,11 @@ export default async function ResultadoPage() {
   if (t.status !== "submitted") redirect("/app/prova/questao/1");
 
   const c = corrigir(t.questoes, t.respostas);
-  const html = fillResultado(c.aprovado ? aprovado : reprovado, c, MODULOS_NO_DESIGN);
+  // "Você concluiu a formação, <nome>" era a segunda pior ocorrência do nome trocado.
+  const html = preencherUsuario(
+    fillResultado(c.aprovado ? aprovado : reprovado, c, MODULOS_NO_DESIGN),
+    user,
+  );
 
   return <ResultadoClient html={html} />;
 }

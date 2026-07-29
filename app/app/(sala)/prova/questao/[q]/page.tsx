@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { tela } from "@/lib/telas";
-import { createClient } from "@/lib/supabase/server";
+import { getUsuario } from "@/lib/usuario";
 import { semGabarito, tentativaAtual } from "@/lib/prova";
 import { restanteMs } from "@/lib/prova-correcao";
 import { fillQuestao } from "@/lib/prova-template";
@@ -24,10 +24,7 @@ export default async function QuestaoPage({
 }) {
   const { q } = await params;
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUsuario();
   const userId = user?.id ?? "";
 
   const t = await tentativaAtual(userId);

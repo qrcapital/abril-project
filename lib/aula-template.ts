@@ -55,13 +55,29 @@ export function renderSidebar(currentN: number, concluidas: Set<number>): string
 }
 
 // Botão de marcar/desmarcar conclusão da aula (data-concluir tratado no AulaClient).
-function concluirBtn(aula: Aula, concluidas: Set<number>): string {
+/**
+ * Os dois estados do botão de concluir, exportados porque o **cliente** também precisa
+ * deles: ao clicar, o `AulaClient` repinta o botão na hora e só então pede o `router.refresh`
+ * (marcação otimista). Com as strings escritas nos dois lugares, os estados divergiriam no
+ * primeiro ajuste de cor.
+ */
+export function estadoConcluir(concluida: boolean): { style: string; rotulo: string } {
   const base =
     "margin:2px 0 26px;border-radius:8px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:12.5px;padding:12px 22px;letter-spacing:.03em";
-  if (concluidas.has(aula.n)) {
-    return `<div><button data-concluir="${aula.n}" style="${base};border:1px solid #1F8A5B;background:rgba(31,138,91,.08);color:#1F8A5B;cursor:pointer">✓ Aula concluída · desmarcar</button></div>`;
-  }
-  return `<div><button data-concluir="${aula.n}" style="${base};border:none;background:linear-gradient(160deg,#D9BE85,#A98E4E);color:#0A2B1E;cursor:pointer;box-shadow:0 6px 16px rgba(169,142,78,.26)">Marcar aula como concluída</button></div>`;
+  return concluida
+    ? {
+        style: `${base};border:1px solid #1F8A5B;background:rgba(31,138,91,.08);color:#1F8A5B;cursor:pointer`,
+        rotulo: "✓ Aula concluída · desmarcar",
+      }
+    : {
+        style: `${base};border:none;background:linear-gradient(160deg,#D9BE85,#A98E4E);color:#0A2B1E;cursor:pointer;box-shadow:0 6px 16px rgba(169,142,78,.26)`,
+        rotulo: "Marcar aula como concluída",
+      };
+}
+
+function concluirBtn(aula: Aula, concluidas: Set<number>): string {
+  const e = estadoConcluir(concluidas.has(aula.n));
+  return `<div><button data-concluir="${aula.n}" style="${e.style}">${e.rotulo}</button></div>`;
 }
 
 function prevBtn(prev?: Aula): string {

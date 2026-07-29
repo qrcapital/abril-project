@@ -1,20 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { definirSenha } from "./actions";
 import { validarSenha } from "@/lib/senha";
-
-const CAIXA = {
-  maxWidth: 400,
-  margin: "16px auto 0",
-  padding: "12px 14px",
-  borderRadius: 8,
-  fontFamily: "'Montserrat',system-ui,sans-serif",
-  fontSize: 12.5,
-  lineHeight: 1.5,
-} as const;
+import { emTrabalho, ligarExigencias, pintarCaixa } from "@/app/app/_ui/feedback";
 
 /**
  * Formulário da senha nova. A conferência de "as duas iguais" é local, porque é erro de
@@ -28,13 +19,30 @@ export default function RedefinirClient({ html }: { html: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const [erro, setErro] = useState<string | null>(null);
-  const [salvando, setSalvando] = useState(false);
+
+  // A caixa vive DENTRO da coluna do formulário (o slot que o senha-template emite), e não
+  // como irmã do HTML injetado, senão cai no fim da página.
+  useEffect(() => {
+    pintarCaixa(ref.current?.querySelector<HTMLElement>("[data-feedback]"), "erro", erro);
+  }, [erro]);
+
+  // Indicador de exigências (DESIGN.md §3, padrão 4) logo abaixo do campo da senha nova. Esta
+  // é uma das telas que CRIAM senha, então a regra precisa aparecer antes da tentativa.
+  useEffect(() => {
+    const senha = ref.current?.querySelector<HTMLInputElement>("#senha");
+    if (!senha) return;
+    const lista = ligarExigencias(senha);
+    senha.after(lista);
+    return () => lista.remove();
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (salvando) return;
 
     const root = ref.current;
+    const btn = root?.querySelector("button") ?? null;
+    if (btn?.disabled) return;
+
     const senha = root?.querySelector<HTMLInputElement>("#senha")?.value ?? "";
     const repetir = root?.querySelector<HTMLInputElement>("#repetir")?.value ?? "";
 
@@ -49,12 +57,14 @@ export default function RedefinirClient({ html }: { html: string }) {
     }
 
     setErro(null);
-    setSalvando(true);
+    const restaurar = emTrabalho(btn, "Salvando...");
     const r = await definirSenha(senha);
     if (r.ok) {
+      // Sem restaurar: a navegação já vai acontecer, e devolver o botão ao normal antes
+      // dela pisca "clique de novo" numa tela que está saindo.
       router.push("/app");
     } else {
-      setSalvando(false);
+      restaurar();
       setErro(r.erro);
     }
   }
@@ -62,25 +72,6 @@ export default function RedefinirClient({ html }: { html: string }) {
   return (
     <form onSubmit={onSubmit} noValidate>
       <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />
-
-      {erro && (
-        <p
-          role="alert"
-          style={{
-            ...CAIXA,
-            border: "1px solid rgba(176,65,62,.4)",
-            background: "rgba(176,65,62,.1)",
-            color: "#E6A9A7",
-          }}
-        >
-          {erro}
-        </p>
-      )}
-      {salvando && (
-        <p style={{ ...CAIXA, color: "#8FA398" }} aria-live="polite">
-          Salvando...
-        </p>
-      )}
     </form>
   );
 }

@@ -7,9 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "check": "npm run check:prova && npm run check:senha",
+    "check": "npm run check:prova && npm run check:senha && npm run check:usuario",
     "check:prova": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/prova-check.mts",
-    "check:senha": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/senha-check.mts"
+    "check:senha": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/senha-check.mts",
+    "check:usuario": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/usuario-check.mts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",

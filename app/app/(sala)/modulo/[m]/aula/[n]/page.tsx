@@ -5,7 +5,7 @@ import AulaClient from "./AulaClient";
 import { acharAula } from "@/lib/curso";
 import { fillAula } from "@/lib/aula-template";
 import { parseConcluidas, nomeCookie } from "@/lib/progresso";
-import { createClient } from "@/lib/supabase/server";
+import { getUsuario } from "@/lib/usuario";
 import { tela } from "@/lib/telas";
 
 export const metadata: Metadata = { title: "Aula" };
@@ -20,8 +20,7 @@ export default async function AulaPage({
   const { n } = await params;
   const found = acharAula(Number(n));
   if (!found) notFound();
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getUsuario();
   const userId = user?.id ?? "";
   const concluidas = parseConcluidas((await cookies()).get(nomeCookie(userId))?.value);
   return (

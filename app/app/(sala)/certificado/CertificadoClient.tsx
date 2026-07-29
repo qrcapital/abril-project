@@ -3,6 +3,11 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { CERT, linkedinAddUrl } from "@/lib/certificado";
+import { emTrabalho, pintarCaixa } from "@/app/app/_ui/feedback";
+
+import contato from "@/lib/contato.json";
+
+const WHATSAPP = contato.whatsapp;
 
 /**
  * Certificado (design portado).
@@ -32,9 +37,15 @@ export default function CertificadoClient({ html }: { html: string }) {
       })
     );
 
-    // Baixar PDF
+    // Baixar PDF. A caixa de erro nasce escondida logo abaixo do botão: é onde o aluno está
+    // olhando quando o download não vem.
     root.querySelectorAll("button").forEach((b) => {
-      if (/baixar pdf/i.test(b.textContent || "")) b.addEventListener("click", () => baixarPdf(b));
+      if (!/baixar pdf/i.test(b.textContent || "")) return;
+      const caixa = document.createElement("div");
+      caixa.hidden = true;
+      caixa.style.marginTop = "12px";
+      b.after(caixa);
+      b.addEventListener("click", () => baixarPdf(b, caixa));
     });
 
     // Links
@@ -70,12 +81,33 @@ async function toDataUri(url: string): Promise<string> {
   });
 }
 
-async function baixarPdf(btn: HTMLButtonElement) {
-  const el = document.getElementById("cert-preview");
-  if (!el) return;
+/**
+ * Gera e baixa o PDF do certificado.
+ *
+ * Tinha `finally` e não tinha `catch`: qualquer falha devolvia o botão ao normal, o arquivo
+ * não vinha e nada era dito, o que para o aluno é indistinguível de "o clique não pegou".
+ * São quatro pontos que podem falhar, nenhum sob nosso controle no momento do clique: baixar
+ * as duas bibliotecas por `import()` dinâmico, buscar os logos em PNG, rasterizar, e salvar.
+ * É a entrega final do curso, então falha silenciosa aqui vira ticket de suporte na hora.
+ */
+async function baixarPdf(btn: HTMLButtonElement, caixa: HTMLElement) {
+  const avisar = (msg: string) =>
+    pintarCaixa(caixa, "erro", msg, "claro", { rotulo: "WhatsApp", href: WHATSAPP });
 
-  btn.style.opacity = "0.6";
-  btn.style.pointerEvents = "none";
+  const el = document.getElementById("cert-preview");
+  if (!el) {
+    // Era o caminho mais silencioso de todos: `return` na primeira linha, sem nem a
+    // opacidade piscar. O único caso em que o clique de fato não fazia nada.
+    console.error("[certificado] #cert-preview não encontrado");
+    return avisar(
+      "Não foi possível preparar o certificado. Recarregue a página; se insistir, fale com o suporte no WhatsApp.",
+    );
+  }
+
+  pintarCaixa(caixa, "erro", null);
+  // Rótulo de trabalho em vez de só esmaecer: a operação leva segundos (duas bibliotecas pela
+  // rede mais a rasterização), e opacidade sozinha é indistinguível de clique perdido.
+  const restaurar = emTrabalho(btn, "Gerando PDF...");
   try {
     const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
       import("html2canvas"),
@@ -117,8 +149,12 @@ async function baixarPdf(btn: HTMLButtonElement) {
     });
     pdf.addImage(canvas.toDataURL("image/jpeg", 0.96), "JPEG", 0, 0, w, h);
     pdf.save("certificado-estrategia-internacional.pdf");
+  } catch (e) {
+    console.error("[certificado] falha ao gerar o PDF:", e);
+    avisar(
+      "Não foi possível gerar o PDF. Tente de novo; se insistir, fale com o suporte no WhatsApp.",
+    );
   } finally {
-    btn.style.opacity = "";
-    btn.style.pointerEvents = "";
+    restaurar();
   }
 }

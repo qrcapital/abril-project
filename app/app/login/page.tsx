@@ -13,16 +13,23 @@ const variants: Record<string, string> = {
   primeiro: readFileSync(join(dir, "login-first.html"), "utf8"),
 };
 
+// Motivos de o aluno ter caído aqui sem pedir. O proxy manda o `estado`; sem ele, a tela é a
+// de sempre. Mesmo padrão da recuperação de senha.
+const AVISOS: Record<string, string> = {
+  expirou: "Sua sessão expirou por inatividade. Entre de novo para continuar de onde parou.",
+};
+
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ s?: string }>;
+  searchParams: Promise<{ s?: string; estado?: string }>;
 }) {
-  const { s } = await searchParams;
+  const { s, estado } = await searchParams;
   return (
     <LoginClient
       html={variants[s ?? "regular"] ?? variants.regular}
       mode={s === "primeiro" ? "primeiro" : "login"}
+      aviso={estado ? AVISOS[estado] : undefined}
     />
   );
 }

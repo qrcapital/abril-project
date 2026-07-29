@@ -5,6 +5,15 @@ import { useRouter } from "next/navigation";
 
 import { enviarProva, responder } from "../../actions";
 import { formatarTempo } from "@/lib/prova-correcao";
+import { pintarCaixa } from "@/app/app/_ui/feedback";
+
+// Minutos em que o aluno é avisado. Tentativa única e 120 minutos: quem está concentrado numa
+// questão não olha para o relógio, e o zero vira envio automático sem preparo nenhum.
+const AVISOS_MIN = [10, 5];
+
+// Pill âmbar do cronômetro em contagem final. Mesmo par do módulo deficitário no resultado
+// (DESIGN.md §2): cor como informação, não como decoração, e 5,71:1 de contraste.
+const TIMER_ALERTA = "background:#F7E3BE;color:#7A4E06;padding:2px 12px;border-radius:999px";
 
 // Estilos de alternativa selecionada/não. Os mesmos do `lib/prova-template.ts`, que
 // pinta o estado inicial no servidor; aqui só repintamos no clique.
@@ -132,12 +141,43 @@ export default function QuizClient({
       });
     }
 
+    // Caixa do aviso de tempo, no topo da questão: acima do enunciado, onde o olho já está,
+    // e fora do cabeçalho, para não desarrumar a linha do cronômetro.
+    const kicker = spans.find((s) => /^Questão \d+$/.test((s.textContent || "").trim()));
+    const avisoBox = document.createElement("div");
+    avisoBox.hidden = true;
+    avisoBox.style.margin = "0 0 22px";
+    kicker?.before(avisoBox);
+
+    // Avisa uma vez por limiar. A frase diz o que ACONTECE no zero, e não só quanto falta:
+    // saber que o respondido é enviado tira o pânico de perder tudo.
+    let avisado = 0;
+    const avisarTempo = (min: number) => {
+      if (avisado === min) return;
+      avisado = min;
+      pintarCaixa(
+        avisoBox,
+        "aviso",
+        `Faltam ${min} minutos. Quando o tempo zerar, a prova é enviada com o que estiver respondido.`,
+        "claro",
+      );
+      if (timerEl) timerEl.style.cssText += `;${TIMER_ALERTA}`;
+    };
+
     // Cronômetro: conta a partir do instante em que a página foi servida, sempre
     // ancorado no deadline do banco.
     const fim = Date.now() + restanteMs;
     const tick = () => {
       const rem = Math.max(0, fim - Date.now());
       if (timerEl) timerEl.textContent = formatarTempo(rem);
+      // Do menor para o maior: quem abre a questão já com 4 minutos vê o aviso de 5, não o
+      // de 10, e quem cruza o de 10 recebe o de 5 depois.
+      for (const min of [...AVISOS_MIN].sort((a, b) => a - b)) {
+        if (rem <= min * 60_000) {
+          avisarTempo(min);
+          break;
+        }
+      }
       if (rem <= 0) {
         clearInterval(iv);
         void enviar(true);

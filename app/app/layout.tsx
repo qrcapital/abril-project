@@ -8,7 +8,11 @@ import { join } from "node:path";
 
 export const metadata: Metadata = {
   title: {
-    default: "Área do aluno | Estratégia Internacional",
+    // Só "Área do aluno": o template do layout raiz completa com o nome do produto. Escrever
+    // o nome aqui triplicava a aba nas páginas SEM metadata própria (o `not-found`, o
+    // `error`, o `loading` e o catch-all), porque o template da raiz se aplica também ao
+    // `default` de um layout filho. As telas com título já saíam certas, e por isso passou.
+    default: "Área do aluno",
     template: "%s | Estratégia Internacional",
   },
   robots: { index: false, follow: false },

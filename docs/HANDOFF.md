@@ -32,11 +32,27 @@ Auth, RLS) · Netlify · Panda Video · Amazon SES · checkout Guru.
 
 ---
 
-## 2. Estado exato em 25/jul/2026
+## 2. Estado exato em 29/jul/2026
 
-- Branch de trabalho: **`homolog`**. Último commit: **`59aed6c`** (wordmark da topbar no
-  mobile e Entrar no hambúrguer). O `79fa278` que este documento citava era o estado de
-  24/jul, antes da frente mobile da LP.
+> **Atualização de 29/jul.** Duas levas entraram depois do que esta seção descrevia. A de
+> 28/jul aplicou o schema do Supabase, fechou três furos de privilégio, deixou o motor da
+> prova funcional e construiu a recuperação de senha. A de 29/jul fechou a **camada de
+> feedback inteira** da área do aluno: os quatro padrões do `DESIGN.md` §3, as telas de
+> `loading`/`error`/`not-found` do grupo `(sala)`, o **nome do aluno vindo do servidor** (que
+> tornou `/app/conta` e `/app/certificado` dinâmicas), a sessão expirada explicada no login, a
+> troca de senha na conta exigindo a senha atual, o indicador progressivo de exigências em três
+> telas, o `catch` do download do certificado, o aviso de tempo na prova, a marcação otimista do
+> concluir aula e o feedback do sair. Detalhe no `CHANGELOG.md`; a fila que sobrou está no bloco
+> "▶ PRÓXIMA SESSÃO" do `PENDENCIAS-LP.md`.
+>
+> **Três regras novas que economizam tempo de quem chegar agora:** a área do aluno **não é
+> escura** (o chrome é, o miolo das telas é claro `#F7F5F2`), então todo padrão visual nasce com
+> dois pares de cor; **caixa de mensagem se pinta no DOM**, nunca em JSX irmão do HTML injetado,
+> senão vai parar no fim da página; e **cor semântica tem um valor por fundo**, porque nenhum
+> verde passa AA nos dois.
+
+- Branch de trabalho: **`homolog`**. Último commit: o desta leva de 29/jul. O `59aed6c` que
+  esta seção citava era o estado de 25/jul, antes das duas levas acima.
 - `main` existe como tronco de produção futuro e está atrás; ninguém trabalha nele hoje.
 - Remoto: `https://github.com/qrcapital/abril-project.git`.
 - Ambiente no ar: **https://abril-project.netlify.app** (auto-deploy a cada push em `homolog`).
@@ -264,6 +280,24 @@ runtime, dentro do componente, o que era para resolver o cache. Não resolve sem
 Next ainda serve versão antiga em algumas situações. Quando a mudança não aparecer, mate
 o processo na porta 3000 e suba o `next dev` de novo. Truque auxiliar: navegar com
 `?v=2`, `?v=3` na URL fura o cache do navegador.
+
+**E serve 404 em rota que existe.** Variante da anterior, vista em 29/jul: depois de criar um
+`actions.ts` novo dentro de uma pasta de rota, o Turbopack passou a devolver **404** em
+`/app/conta` para usuário logado, enquanto o `npm run build` compilava a rota sem reclamar.
+Reiniciar o dev server resolveu. Antes de caçar bug em rota que sumiu, reinicie: o sintoma
+imita perfeitamente um erro de código.
+
+**JSX irmão do HTML injetado vira vizinho do layout inteiro.** As telas são markup portado
+injetado com `dangerouslySetInnerHTML`; um elemento React colocado ao lado desse bloco não fica
+ao lado do formulário, fica ao lado da página. Em 29/jul isso pôs a caixa de aviso da
+recuperação de senha **350px abaixo do formulário**, centrada entre as duas colunas, e nem
+build nem lint enxergam. O conserto é emitir um slot no próprio markup (`[data-feedback]`) e
+pintar nele com o `pintarCaixa`. **Valide posicionamento no browser, não por build.**
+
+**Contraste não é erro de sintaxe.** Nenhuma ferramenta do projeto reprova cor ilegível. Ao
+escolher qualquer cor de texto, meça nos dois fundos da área (o chrome escuro `#0B2D20` e o
+miolo claro `#F7F5F2`): em 29/jul ficou provado que **nenhum verde passa AA nos dois**, e a
+regra do par por fundo está no `DESIGN.md` §2.
 
 **Não meça animação pela aba que o Claude dirige.** A aba controlada pela automação roda
 oculta, então o `requestAnimationFrame` congela e o timing sai distorcido em até 3,5×.

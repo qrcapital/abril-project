@@ -5,7 +5,7 @@
 // (cliente e servidor), então um furo aqui aparece em quatro lugares.
 
 import assert from "node:assert/strict";
-import { MINIMO_SENHA, REGRA_SENHA, validarSenha } from "../lib/senha.ts";
+import { EXIGENCIAS, MINIMO_SENHA, REGRA_SENHA, validarSenha } from "../lib/senha.ts";
 
 const passa = (s: string) => assert.equal(validarSenha(s), null, `deveria aceitar: ${s}`);
 const falha = (s: string, trecho: string) => {
@@ -48,5 +48,21 @@ falha("Abc123", "8 caracteres");
 for (const parte of [String(MINIMO_SENHA), "maiúscula", "minúscula", "número"])
   assert.ok(REGRA_SENHA.includes(parte), `REGRA_SENHA sem "${parte}": ${REGRA_SENHA}`);
 assert.ok(!REGRA_SENHA.includes("—"), "sem travessao, regra do docs/COPY.md");
+
+// --- a lista de exigências é a fonte única: frase, validador e indicador saem dela ---
+// Sem isto, uma exigência nova entraria na lista e sumiria da frase que o aluno lê, ou o
+// indicador progressivo (docs/DESIGN.md §3) marcaria item que o validador não cobra.
+assert.equal(EXIGENCIAS.length, 4);
+for (const e of EXIGENCIAS) {
+  assert.ok(REGRA_SENHA.includes(e.curto), `REGRA_SENHA sem a exigência "${e.curto}"`);
+  assert.ok(e.erro.endsWith("."), `a queixa de "${e.curto}" precisa ser frase inteira`);
+  assert.ok(!e.curto.includes("—") && !e.erro.includes("—"), "sem travessao");
+}
+// Uma senha que cumpre tudo marca as quatro; a vazia não marca nenhuma.
+assert.equal(EXIGENCIAS.filter((e) => e.ok("Abc12345")).length, 4);
+assert.equal(EXIGENCIAS.filter((e) => e.ok("")).length, 0);
+// O validador reporta exatamente a primeira não cumprida, na ordem da lista.
+assert.equal(validarSenha("abc12345"), EXIGENCIAS[1].erro);
+assert.equal(validarSenha("ABCDEFGH"), EXIGENCIAS[2].erro);
 
 console.log("senha-check: ok");

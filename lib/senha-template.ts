@@ -66,6 +66,10 @@ export function telaSenha(
     `<h1 style="${H1}">${esc(dados.titulo)}</h1>` +
     `<p style="${LEAD}">${esc(dados.lead)}</p>` +
     `<div data-campos>${campos}</div>` +
+    // Slot da caixa de feedback, no mesmo lugar em que o login põe a dele: entre os campos
+    // e o botão. Sem ele a caixa era irmã do layout inteiro e caía no rodapé da página,
+    // 350px abaixo do formulário (visto no browser em 29/jul, não pegava em build).
+    `<div data-feedback hidden></div>` +
     `<button type="submit" style="${BOTAO}">${esc(dados.botao)}</button>` +
     (dados.rodapeHtml ? `<p style="${RODAPE}">${dados.rodapeHtml}</p>` : "");
 

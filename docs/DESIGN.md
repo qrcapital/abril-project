@@ -73,6 +73,31 @@ Pondo o amarelo no **fundo**, onde não há exigência de 4,5, a cor fica vibran
 com folga. De quebra, etiqueta colorida chama mais atenção que número colorido, que era o
 objetivo.
 
+#### O verde semântico tem um valor por fundo (regra do Pedro, 29/jul/2026)
+
+Levantado por ele ao aprovar os padrões de feedback: o verde que encaixa no fundo branco não é
+o que encaixa no verde escuro. Medido, e não há meio-termo, porque **nenhum verde passa AA nos
+dois**:
+
+| Verde | Sobre `#F7F5F2` (claro) | Sobre `#0B2D20` (escuro) |
+|---|---|---|
+| `#1B7A50` (o do desempenho por módulo) | **4,89:1** ✓ | 2,80:1 ✗ |
+| `#3FB07A` | 2,51:1 ✗ | **5,46:1** ✓ |
+| `#5BC48F` | 1,98:1 ✗ | **6,90:1** ✓ |
+
+Então: **claro usa `#1B7A50`**, que já está no ar nas telas de resultado, e **escuro usa
+`#3FB07A`** quando a hora chegar. **Decisão do Pedro em 29/jul/2026:** eu havia proposto o
+`#5BC48F` pela margem maior, ele preferiu o `#3FB07A`, que é mais saturado e fica mais perto da
+família de verdes do produto. Os dois passam AA com folga sobre o verde escuro, então a escolha
+era de tom, não de acessibilidade. Não repropor o pastel.
+
+Nunca reaproveitar um do outro lado: a tentação é escrever "verde de sucesso" como um token só,
+e aí metade das telas reprova em contraste sem ninguém perceber. Vale para qualquer cor
+semântica, não só o verde.
+
+Hoje o verde semântico só aparece em fundo claro (desempenho por módulo), então isto é regra
+para quando aparecer no escuro, não dívida aberta.
+
 **Duas correções de AA na mesma leva.** As duas falhas antecediam esta mudança: o percentual em
 verde `#1F8A5B` dava 4,33:1 e falhava por pouco em 12px, e a barra dourada `#A98E4E` dava 2,54:1
 sobre o trilho `#EDE6DD`, abaixo dos 3,0 do WCAG 1.4.11 para objeto gráfico. Isso encerra o item
@@ -226,6 +251,34 @@ Container destacado com o único elemento animado do produto: o `vsGlow` pulsa a
 
 ### Input (login, definição de senha)
 Fundo escuro translúcido sobre verde, borda fina dourada no foco, label em kicker. Tema dark da plataforma.
+
+### Feedback ao usuário (os quatro padrões)
+
+Escolhidos de uma vez em 29/jul/2026, antes das telas, porque feedback nasce espalhado: a mesma caixa já existia escrita à mão em três clients, com três vermelhos e dois jeitos de dizer "carregando". Implementação em `app/app/_ui/feedback.tsx`. Quem for consertar uma tela **estende daqui**, não inventa variante.
+
+**APROVADOS pelo Pedro em 29/jul/2026**, as cinco decisões inteiras: sucesso em dourado e não em verde, botão em trabalho sem spinner, sucesso claro com texto de corpo, um vermelho só, e a caixa pintada no DOM. Não repropor. A ressalva que ele levantou na mesma resposta virou a regra do verde semântico por fundo, na seção 2.
+
+**A caixa se pinta no DOM, não em JSX, e isso não é preguiça.** Toda tela do projeto é HTML portado injetado com `dangerouslySetInnerHTML`, então JSX irmão desse bloco vira vizinho do **layout inteiro**: a primeira versão pôs a caixa no fim da página, 350px abaixo do formulário, e nem build nem lint pegam isso (foi visto dirigindo o browser). O lugar da caixa é um slot `[data-feedback]` que o `senha-template` emite entre os campos e o botão, e o `pintarCaixa()` escreve nele. Tela nova que precise de caixa **emite o slot no próprio markup**.
+
+**Dois temas, não um.** O login e as telas de senha são escuras; o miolo de toda tela de `(sala)` é claro (`#F7F5F2` com texto `#333333`), e só o chrome em volta é escuro. Cada padrão tem os dois pares, com contraste medido, e usar o hex do tema errado deixa a caixa ilegível.
+
+**1. Caixa de erro.** Vermelho `#b0413e` como tinta e borda, que é o único uso não decorativo de vermelho que a seção 2 autoriza. Leva `role="alert"`, que interrompe o leitor de tela na hora, porque é resposta a uma ação que falhou.
+
+**2. Caixa de sucesso e de aviso.** Dourado em vez de verde, para não somar uma segunda cor de destaque. Levam `aria-live="polite"`, que espera a leitura corrente terminar.
+
+| | Escuro (login) | Claro (área) |
+|---|---|---|
+| Erro | tinta `.14`, texto `#E6A9A7` · **7,00:1** | tinta `.08`, texto `#8E3330` · **6,47:1** |
+| Sucesso | tinta `.08`, texto `#EDE6DD` · **10,24:1** | tinta `.10`, texto `#333333` · **10,60:1** |
+| Aviso | tinta `.08`, texto `#D9BE85` · **7,04:1** | tinta `.06`, texto `#7E6836` · **4,66:1** |
+
+Dois achados da medição, que explicam hexes que parecem arbitrários. O `--gold-dark` `#7E6836` sobre tinta dourada a 10% dá **4,49:1** e falha AA por 0,01, então o **sucesso claro leva texto de corpo** com o dourado só na borda; o **aviso**, que é o único que precisa soar dourado, baixa a tinta para 6% e aí o mesmo `#7E6836` passa com folga. O vermelho `#E0736F` que o login usava passa (4,53:1), mas por 0,03, e por isso saiu: margem de três centésimos não sobrevive a um ajuste de fundo.
+
+**3. Botão em trabalho.** O rótulo vira o verbo no gerúndio ("Entrando...", "Salvando...", "Criando conta..."), o botão desabilita e anuncia `aria-busy`. A largura é travada antes da troca, para a tela não pular quando o texto encolhe. **Sem spinner:** a seção 2 reserva movimento ao glow da oferta, e um giro novo aqui brigaria com isso. Trocar o rótulo e não só esmaecer, porque opacidade sozinha é indistinguível de "o clique não pegou".
+
+**4. Lista de exigências que marca conforme cumpre.** Para as duas telas que criam senha. A fonte é a lista `EXIGENCIAS` de `lib/senha.ts`, a mesma que gera a frase da regra e a mensagem de recusa: com a regra escrita em três lugares, elas divergem no primeiro ajuste. Item cumprido ganha ✓ e o cinza vira texto normal; nunca marcar em vermelho o que a pessoa **ainda não terminou de digitar**, que é transformar preenchimento em repreensão. O componente nasce junto com a tela que o consome (tarefa 10 do `PENDENCIAS-LP`), não antes.
+
+**Painel de recado** (`Painel`): tela cheia para `loading`, `error` e `not-found` do grupo `(sala)`, repetindo o envelope das telas portadas (`#F7F5F2`, `100vh - 58px` descontando a topbar) para o recado cair dentro do chrome em vez de romper o layout.
 
 ### Player (aula)
 Panda Video 16:9, cantos 8px a 12px, sem chrome extra. Retomada automática. Controles nativos do Panda.

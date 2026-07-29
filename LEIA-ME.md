@@ -37,7 +37,7 @@ Assim que os docs estiverem no lugar, me avisa que eu leio tudo e a gente segue 
 | `docs/AMBIENTES.md` | Estratégia de ambientes (local, homolog, produção), deploy Netlify e checklist de provisionamento. |
 | `docs/apresentacao-stack.html` | Apresentação do arcabouço ferramental para o time (também publicada como artifact). |
 
-## Continuidade (25/jul/2026)
+## Continuidade (atualizado em 29/jul/2026)
 
 | Doc | Conteúdo |
 |---|---|
@@ -46,6 +46,7 @@ Assim que os docs estiverem no lugar, me avisa que eu leio tudo e a gente segue 
 | `docs/COPY.md` | Diretriz anti-slop de escrita. Obrigatória em qualquer copy, rodada sobre o texto final. |
 | `docs/PENDENCIAS-LP.md` | Checklist vivo do que falta antes do "pronto para produção". O bloco "▶ PRÓXIMA SESSÃO" no topo é a fila de trabalho ordenada. |
 | `docs/FEEDBACK-UX.md` | Mapa de feedback ao usuário: tela por tela, onde o aluno precisa de resposta do sistema, o que já existe e o que falta, com prioridade. |
+| `docs/DESIGN.md` §3 | Os **quatro padrões de feedback** (caixa de erro, caixa de sucesso e aviso, botão em trabalho, lista de exigências de senha), aprovados em 29/jul, com contraste medido nos dois temas. Implementação em `app/app/_ui/feedback.tsx`. Quem for consertar uma tela estende daqui. |
 
 ## Histórico de mudanças
 

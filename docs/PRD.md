@@ -335,6 +335,15 @@ Tela mínima: dados, prazo de acesso e atalho de suporte. Cada campo a mais é u
 ### Estrutura
 
 - **Dados**: nome, e-mail (alterar via suporte), trocar senha.
+
+> **Como a troca de senha funciona (decisão do Pedro, 29/jul/2026).** O link abre um formulário
+> **no próprio cartão**, com senha atual, senha nova e repetição, mais o indicador progressivo de
+> exigências. Exigir a senha atual é decisão de segurança e não de conforto: por padrão o
+> Supabase deixa a **sessão sozinha** trocar a senha (a opção "Secure password change" do painel
+> vem desligada), então sem esse campo um navegador destravado bastaria para tomar a conta do
+> aluno. A alternativa avaliada e recusada foi mandar para o fluxo de e-mail, que tira do
+> produto quem já está logado. A conferência usa `signInWithPassword`, único jeito de verificar
+> a senha atual no Supabase; errar não derruba a sessão de quem está logado.
 - **Acesso**: "acesso liberado por 1 ano", disponível até `{{ accessUntil }}`.
 - **Suporte**: WhatsApp para acesso, pagamento, certificado e 2ª chamada.
 
@@ -342,7 +351,7 @@ Tela mínima: dados, prazo de acesso e atalho de suporte. Cada campo a mais é u
 
 | Regra | Valor |
 |---|---|
-| Trocar senha | Self-service |
+| Trocar senha | Self-service, **no próprio cartão**, exigindo a senha atual (29/jul/2026) |
 | Trocar e-mail | Via suporte (validação manual) |
 | Prazo de acesso | Exibe `accessUntil` calculado do enrollment |
 

@@ -18,11 +18,40 @@ Comece pelo bloco **"▶ PRÓXIMA SESSÃO"** no topo do `docs/PENDENCIAS-LP.md`.
 discretas**, agrupadas e ordenadas, com 🔒 marcando as 4 que dependem do Pedro. Ele pediu para
 começar "a valer" amanhã, então não recontar história: ler o bloco e ir para a tarefa 1.
 
-**Estado do git:** último commit pushado **`c76e196`** em `homolog`, deploy confirmado no ar
-(schema, motor da prova, recuperação de senha). Depois dele ficaram **12 arquivos na árvore sem
-commit**, que são a tarefa 1: regra de senha em 8, cor do desempenho por módulo, o
-`docs/FEEDBACK-UX.md` novo, o `.nvmrc` e a sincronia dos docs. `build`, `lint` e `check` estavam
-passando. A regra de [[commit-push-so-com-ordem]] vale: uma ordem para commit, outra para push.
+**Estado do git (29/jul, fim do dia):** dois commits em `homolog`. O `f22e297` (pushado) fechou
+as tarefas 1 e 2. O **segundo commit de 29/jul**, o mais recente, fecha a **camada de feedback
+inteira** e ainda **não foi pushado**: a regra de [[commit-push-so-com-ordem]] vale, e o Pedro
+deu só a ordem de commit. `build`, `lint` e `check` (3/3) passando.
+
+**O que a sessão de 29/jul fez, em uma passada.** Onze tarefas: o `upsert` silencioso do signup
+(que agora desfaz o usuário, senão a conta fica pela metade e o `verify_certificate` quebra lá
+na frente), os **quatro padrões de feedback** do `DESIGN.md` §3, as telas de `loading`/`error`/
+`not-found` do `(sala)` mais o catch-all, o **nome do aluno no servidor** (conta e certificado
+viraram dinâmicas), a sessão expirada explicada no login, a troca de senha na conta pedindo a
+senha atual, o indicador progressivo de exigências em três telas, o `catch` do download do
+certificado, o aviso de tempo na prova, a marcação otimista do concluir aula, o feedback do
+sair, e o título triplicado da aba.
+
+**Regras novas que saíram daí e valem para sempre:** cor semântica tem
+[[cor-semantica-por-fundo]]; a área do aluno **não é escura** (o chrome é, o miolo das telas é
+claro `#F7F5F2`), então todo padrão nasce com dois pares; e caixa de mensagem se pinta **no
+DOM**, nunca em JSX irmão do HTML injetado, senão vai parar no fim da página.
+
+**A fila válida agora** é o bloco "▶ PRÓXIMA SESSÃO" do `PENDENCIAS-LP.md`, do qual sobraram as
+frentes grandes (14 matrículas, 15 curso no banco), as dívidas da prova (16 cron, 17 modal e
+grade) e as quatro do Pedro no painel, das quais só a **18** (acesso de admin) trava construção
+nova.
+
+**Correção do signup (29/jul), para não reabrir:** o `upsert` em `profiles` não devolvia mais
+"uma linha de tratamento", como a pendência estimava. Só capturar o erro deixaria a conta pela
+metade, usuário no auth sem linha em `profiles`, e o `verify_certificate()` faz join em
+`profiles`, então o furo reapareceria na verificação pública do certificado. Agora loga, desfaz
+o usuário com `deleteUser` e devolve erro à tela — o desfazer é o que faz o retry funcionar.
+
+**Guardado a pedido do Pedro (29/jul):** as três pendências do e-mail de boas-vindas que só
+vencem no lançamento e são invisíveis em homolog estão em
+[[email-boas-vindas-antes-do-lancamento]] e no `PENDENCIAS-LP.md`. O template `Invite user` **não
+tem decisão nenhuma** — é colar uma linha no painel.
 
 **O que a sessão de 28/jul fez.** O **schema do Supabase homolog nunca tinha sido aplicado**, e
 foi (mais backfill de 8 `profiles`). **Três correções de segurança**: o `revoke` do
