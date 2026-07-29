@@ -3,10 +3,14 @@
 // Vive fora dos arquivos de action porque módulo com "use server" só pode exportar função
 // async: uma constante exportada de lá quebra o build.
 
-export const MINIMO_SENHA = 6;
+/**
+ * Mínimo de caracteres. Subiu de 6 para 8 em 28/jul/2026, por decisão do Pedro na mesma
+ * sessão. Acima do mínimo do Supabase, que é 6 e é o que a plataforma garante sozinha.
+ */
+export const MINIMO_SENHA = 8;
 
 /**
- * Exigências, decididas em 28/jul/2026: 6 caracteres, com maiúscula, minúscula e número.
+ * Exigências, decididas em 28/jul/2026: 8 caracteres, com maiúscula, minúscula e número.
  * A frase é usada na tela, para o aluno saber a regra ANTES de tentar, em vez de descobrir
  * por rejeição.
  */

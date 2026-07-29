@@ -15,31 +15,34 @@ const falha = (s: string, trecho: string) => {
 };
 
 // --- aceitas ---
-passa("Abc123");
+passa("Abc12345");
 passa("SenhaNova-28jul-7b2m");
-passa("aB3xyz");
-passa("Ástrid1x"); // acento conta como maiúscula de verdade
-passa("çedilhA9"); // minúscula acentuada + maiúscula ASCII
+passa("aB3xyzwk");
+passa("Ástrid1xy"); // acento conta como maiúscula de verdade
+passa("çedilhA99"); // minúscula acentuada + maiúscula ASCII
 
 // --- tamanho ---
-assert.equal(MINIMO_SENHA, 6);
-falha("Ab1", "6 caracteres");
-falha("", "6 caracteres");
-falha("Ab12", "6 caracteres");
-passa("Ab123c"); // exatamente 6 no limite
+assert.equal(MINIMO_SENHA, 8);
+falha("Ab1", "8 caracteres");
+falha("", "8 caracteres");
+falha("Abc1234", "8 caracteres"); // 7, um a menos que o limite
+passa("Abc12345"); // exatamente 8 no limite
 
 // --- classes de caractere ---
-falha("abc123", "maiúscula");
-falha("ABC123", "minúscula");
-falha("Abcdef", "número");
-falha("ABCDEF", "minúscula"); // sem minúscula e sem número: reporta o primeiro
-falha("123456", "maiúscula");
+falha("abc12345", "maiúscula");
+falha("ABC12345", "minúscula");
+falha("Abcdefgh", "número");
+falha("ABCDEFGH", "minúscula"); // sem minúscula e sem número: reporta o primeiro
+falha("12345678", "maiúscula");
 
 // --- o tamanho é conferido antes das classes ---
-falha("Ab1", "6 caracteres"); // curta E completa nas classes: a queixa é o tamanho
+falha("Ab1", "8 caracteres"); // curta E completa nas classes: a queixa é o tamanho
 
 // --- só símbolos não basta ---
-falha("!@#$%^", "maiúscula");
+falha("!@#$%^&*", "maiúscula");
+
+// --- a senha que o Supabase aceitaria sozinho (6 chars) tem que cair aqui ---
+falha("Abc123", "8 caracteres");
 
 // --- a frase da regra menciona as quatro exigências, porque vai para a tela ---
 for (const parte of [String(MINIMO_SENHA), "maiúscula", "minúscula", "número"])

@@ -29,7 +29,8 @@ A planta do projeto está em `docs/`. É a fonte de verdade:
 - `docs/DESIGN.md` — design system **Meridiano** (tokens, patterns, guarda-corpos anti-slop).
 - `docs/BACKLOG.md` — o que ficou fora do v1.
 - `docs/COPY.md` — diretriz anti-slop de escrita, obrigatória em todo copy.
-- `docs/PENDENCIAS-LP.md` — checklist vivo do que falta para o "pronto para produção".
+- `docs/PENDENCIAS-LP.md` — checklist vivo do que falta para o "pronto para produção". O bloco **"▶ PRÓXIMA SESSÃO"** no topo é a fila ordenada de trabalho.
+- `docs/FEEDBACK-UX.md` — mapa tela por tela de onde o aluno precisa de resposta do sistema, o que existe e o que falta. Consultar antes de mexer em formulário, botão de ação demorada ou estado de erro.
 - `referencias/` — handoff (`cowork/IMPLEMENTACAO.md`), designs finais (`htmls/`, bundles do Claude Design) e fluxos.
 
 ## Stack

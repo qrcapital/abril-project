@@ -39,7 +39,17 @@ export async function criarConta(
     };
   }
   if (data.user) {
-    await admin.from("profiles").upsert({ id: data.user.id }, { onConflict: "id" });
+    const { error: perfil } = await admin
+      .from("profiles")
+      .upsert({ id: data.user.id }, { onConflict: "id" });
+    // Sem perfil a conta fica pela metade: o verify_certificate() faz join em profiles,
+    // então o certificado não verifica lá na frente. Desfaz o usuário para o retry
+    // funcionar, senão ele esbarra em "já tem conta" e o furo continua invisível.
+    if (perfil) {
+      console.error("[login] perfil não criado:", perfil.message);
+      await admin.auth.admin.deleteUser(data.user.id);
+      return { error: "Não foi possível concluir o cadastro. Tente de novo." };
+    }
   }
   return { ok: true };
 }

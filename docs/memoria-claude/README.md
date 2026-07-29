@@ -33,18 +33,17 @@ cp docs/memoria-claude/*.md ~/.claude/projects/$SLUG/memory/
 rm ~/.claude/projects/$SLUG/memory/README.md # este arquivo não é uma memória
 ```
 
-**3.** Crie ou complemente o índice `MEMORY.md` dentro de `memory/`. Ele é o arquivo que
-o Claude carrega no começo de cada sessão; sem ele, as memórias existem mas não são
-encontradas. Cole o bloco abaixo:
+**3.** O índice `MEMORY.md` **viaja junto** desde 29/jul/2026, então o `cp` do passo 2 já
+o levou. Ele é o arquivo que o Claude carrega no começo de cada sessão; sem ele, as
+memórias existem mas não são encontradas. Confira que chegou:
 
-```markdown
-- [Projeto Abril — Estratégia Internacional](projeto-abril-estrategia-internacional.md) — LP + área de membros de curso; copy livre e HTML manda sobre wireframe.
-- [Estado e retomada da LP do Abril](lp-abril-estado-e-pendencias.md) — PONTO DE RETOMADA do projeto; arquitetura do porte, globo do hero e decisões de copy fechadas.
-- [Estado da plataforma Abril](estado-abril-plataforma.md) — área do aluno + auth no ar em homolog e o que falta.
-- [Pendências da LP do Abril](pendencias-lp-abril.md) — checklist em docs/PENDENCIAS-LP.md; puxar quando o Pedro perguntar as pendências.
-- [Critique de slop da LP do Abril](critique-lp-abril.md) — LP sem slop (33/40); backlog de fixes por localização.
-- [COPY.md é obrigatório em todo copy](copy-md-obrigatorio.md) — rodar o checklist anti-slop no texto FINAL, não no rascunho.
+```bash
+cat ~/.claude/projects/$SLUG/memory/MEMORY.md
 ```
+
+Antes ele era um bloco colado à mão aqui neste README, que envelhecia a cada memória nova.
+Ao acrescentar uma memória, copie a pasta inteira de volta para `docs/memoria-claude/`:
+uma cópia de backup desatualizada engana mais do que a ausência dela.
 
 **4.** Reinicie o Claude Code e confirme que ele reconhece o projeto.
 

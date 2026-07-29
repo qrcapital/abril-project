@@ -241,11 +241,35 @@ const QUESTAO = tela("prova-questao");
   assert.ok(out.includes("width:40%"), "barra do modulo fraco");
   assert.ok(!out.includes(">88%</span>"), "numero do design tem que sair");
 
+  // Cor calculada por valor: o 40% num aprovado tem que ganhar a pill âmbar, e o 100% não.
+  const linha40 = out.slice(out.indexOf(">40%</span>") - 200, out.indexOf(">40%</span>") + 12);
+  assert.ok(linha40.includes("#F7E3BE"), "40% num aprovado precisa da pill ambar");
+  assert.ok(linha40.includes("#7A4E06"), "texto escuro dentro da pill");
+  const linha100 = out.slice(out.indexOf(">100%</span>") - 200, out.indexOf(">100%</span>") + 13);
+  assert.ok(linha100.includes("#1B7A50"), "100% em verde que passa AA");
+  assert.ok(!linha100.includes("#F7E3BE"), "sucesso nao leva pill");
+
+  // As cores que falhavam AA não podem sobrar em lugar nenhum.
+  assert.ok(!out.includes("#1F8A5B;font-weight"), "verde 4,33:1 saiu do texto");
+  assert.ok(!out.includes("background:#A98E4E"), "barra dourada 2,54:1 saiu");
+  assert.ok(out.includes(`background:${"#AA7010"}`), "barra ambar no modulo fraco");
+  assert.ok(out.includes(`background:${"#1F8A5B"}`), "barra verde no modulo bom");
+
   const reprovado = corrigir(prova(), respostas(9)); // 45%
   const out2 = fillResultado(tela("resultado-reprovado"), reprovado, [1, 2, 3, 4]);
   assert.equal(reprovado.score, 45);
   assert.ok(out2.includes(">45<span"), "nota grande da reprovacao");
   assert.ok(!out2.includes(">78%</span>"), "numero do design tem que sair");
+  // 9 acertos = I inteiro (5) + 4 do II  ->  100, 80, 0, 0
+  assert.deepEqual(reprovado.porModulo.map((m) => m.pct), [100, 80, 0, 0]);
+  // O bug que existia: o design fixava vermelho nas linhas 3 e 4. Com 100% e 80% reais nas
+  // linhas 1 e 2, nenhuma delas pode herdar vermelho, e o gradiente do design tem que sair.
+  assert.ok(!out2.includes("#c0392b"), "vermelho fixo do design saiu das linhas");
+  assert.ok(!out2.includes("linear-gradient(90deg,#b0413e"), "gradiente vermelho da barra saiu");
+  const l80 = out2.slice(out2.indexOf(">80%</span>") - 200, out2.indexOf(">80%</span>") + 12);
+  assert.ok(l80.includes("#1B7A50"), "80% num reprovado ainda e sucesso de modulo");
+  const l0 = out2.slice(out2.indexOf(">0%</span>") - 200, out2.indexOf(">0%</span>") + 11);
+  assert.ok(l0.includes("#F7E3BE"), "0% leva pill ambar");
 }
 
 console.log("prova-check: ok");

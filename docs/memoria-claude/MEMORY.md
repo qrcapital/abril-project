@@ -1,0 +1,11 @@
+- [Projeto Abril — Estratégia Internacional](projeto-abril-estrategia-internacional.md) — LP + área de membros de curso; copy livre e HTML manda sobre wireframe.
+- [Estado e retomada da LP do Abril](lp-abril-estado-e-pendencias.md) — PONTO DE RETOMADA (25/jul, Mac): docs prontos SEM commit aguardando ordem; próximo = prova funcional; arquitetura do porte e decisões fechadas.
+- [Estado da plataforma Abril](estado-abril-plataforma.md) — área do aluno + auth no ar em homolog e o que falta.
+- [E-mail de boas-vindas: 3 pendências de lançamento](email-boas-vindas-antes-do-lancamento.md) — invisíveis em homolog (o `?s=primeiro` pula o e-mail); puxar na rodada pré-produção.
+- [Pendências da LP do Abril](pendencias-lp-abril.md) — checklist em docs/PENDENCIAS-LP.md; puxar quando o Pedro perguntar as pendências.
+- [Critique de slop da LP do Abril](critique-lp-abril.md) — LP sem slop (33/40); backlog de fixes por localização.
+- [COPY.md é obrigatório em todo copy](copy-md-obrigatorio.md) — rodar o checklist anti-slop no texto FINAL, não no rascunho.
+- [Ambiente do Abril no MacBook](ambiente-mac-abril.md) — fnm + Node 22, repo em ~/projects/abril-project, identidade local Pedro Teixeira; Mac Intel.
+- [Commit e push só com ordem do Pedro](commit-push-so-com-ordem.md) — push em homolog publica; preparar tudo e aguardar a ordem.
+- [Skills neste projeto: só a impeccable](skills-no-projeto-abril.md) — as taste skills ficam no perfil, para outros projetos; aqui brigam com o Meridiano.
+- [Churn do package-lock no npm 10.9](lock-churn-npm-libc.md) — npm install remove campos libc; reverter, não commitar. Corrige a seção 5 do HANDOFF.

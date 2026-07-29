@@ -50,6 +50,36 @@ Paleta fechada. Acento único: **dourado**, com disciplina de variar a intensida
 
 Regra de acento: um só destaque por bloco. O dourado marca o que importa (CTA, número, kicker ativo). Para hierarquia, variar intensidade do dourado, nunca somar uma segunda cor de destaque. Vermelho (`#b0413e`) existe só para estado de erro/reprovação, nunca decorativo.
 
+#### Exceção semântica: desempenho por módulo (decisão do Pedro, 28/jul/2026)
+
+O desempenho por módulo, nas duas telas de resultado da prova, **usa cor como informação, não
+como decoração**, e por isso abre exceção à regra de acento único. O motivo: o aluno aprovado
+precisa enxergar de bate-pronto qual módulo ficou deficitário, e num aprovado não cabe vermelho,
+porque não há erro. Eu havia proposto resolver por intensidade de dourado; o Pedro preferiu
+verde para sucesso e amarelo para deficiência, e é o que vale.
+
+O corte é a própria nota de aprovação, **70%**: o que reprovaria isolado é o que precisa de
+revisão, mesmo com o conjunto aprovado. A mesma regra vale nas duas variantes; o vermelho da
+reprovação fica no veredito grande, não nas linhas de diagnóstico.
+
+| Estado | Texto | Barra | Contraste medido |
+|---|---|---|---|
+| Sucesso, `≥ 70%` | `#1B7A50` | `#1F8A5B` | 5,32:1 no texto · 3,50:1 na barra |
+| Deficitário, `< 70%` | `#7A4E06` sobre pill `#F7E3BE` | `#AA7010` | 5,71:1 no texto · 3,37:1 na barra |
+
+**Por que o amarelo virou pill em vez de cor de texto:** amarelo vivo não passa AA como texto
+sobre branco, é física da cor. O `#e0a54e` do design dá 2,17:1 contra os 4,5 exigidos em 12px.
+Pondo o amarelo no **fundo**, onde não há exigência de 4,5, a cor fica vibrante e o texto passa
+com folga. De quebra, etiqueta colorida chama mais atenção que número colorido, que era o
+objetivo.
+
+**Duas correções de AA na mesma leva.** As duas falhas antecediam esta mudança: o percentual em
+verde `#1F8A5B` dava 4,33:1 e falhava por pouco em 12px, e a barra dourada `#A98E4E` dava 2,54:1
+sobre o trilho `#EDE6DD`, abaixo dos 3,0 do WCAG 1.4.11 para objeto gráfico. Isso encerra o item
+do critique de 21/jul sobre cores fora de paleta nessas telas: `#1F8A5B`, `#e0a54e` e `#c0392b`
+saíram das linhas de desempenho. Cor calculada em `lib/prova-template.ts`, com as medições
+registradas em `docs/FEEDBACK-UX.md`.
+
 ### Tipografia
 
 Duas famílias, self-hosted em produção (woff2 já no bundle):

@@ -7,9 +7,48 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 
 ## Não lançado
 
+### Corrigido
+- **Signup não engole mais erro de banco, e não deixa conta pela metade** — 2026-07-29
+  - `app/app/login/actions.ts` descartava o retorno do `upsert` em `profiles`. Foi esse silêncio
+    que escondeu o **schema vazio do Supabase por meses** (`HANDOFF.md` §6): a conta era criada
+    no auth, o perfil falhava, e a tela dizia que deu certo.
+  - A correção não coube em uma linha, como estava estimado. Só capturar o erro deixaria a conta
+    **pela metade**: usuário no auth, sem linha em `profiles`. E `verify_certificate()` faz
+    `join profiles` (`0001_init.sql:198`), então o furo não apareceria no cadastro, e sim lá na
+    frente, na verificação pública do certificado, que é a entrega final do curso.
+  - Agora o erro é logado no padrão `[escopo]` do projeto, o usuário recém-criado é **desfeito**
+    com `deleteUser`, e a tela recebe erro de verdade. O desfazer é o que faz o retry funcionar:
+    sem ele, a segunda tentativa esbarra em "Este e-mail já tem conta. Faça login", a pessoa
+    entra sem perfil, e o silêncio volta pelo outro lado.
+  - `lint`, `check` e `build` passando.
+
 ### Adicionado
-- **Regra de senha: 6 caracteres, com maiúscula, minúscula e número** — 2026-07-28
-  - Decisão do Pedro. Antes era só o comprimento mínimo de 6, herdado do padrão do Supabase.
+- **Resultado da prova: cor do desempenho por módulo virou informação, e duas falhas de AA
+  antigas caíram** — 2026-07-28
+  - Decisão do Pedro. O design pintava os quatro percentuais de verde na tela de aprovado,
+    porque partia de números uniformemente bons (88, 82, 90, 80). Com nota real, um aprovado com
+    40% num módulo via 40% em verde: a tela pintava a deficiência como sucesso.
+  - Agora a cor é **calculada por valor**, com corte na própria nota de aprovação (70%). Sucesso
+    em verde; módulo deficitário numa **pill âmbar**. Eu havia proposto resolver por intensidade
+    de dourado, para não somar acento; o Pedro preferiu verde e amarelo, e é o que vale. Exceção
+    registrada no `DESIGN.md` §2, com o motivo, para ninguém "corrigir" de volta.
+  - **Por que pill e não texto amarelo:** amarelo vivo não passa AA como texto sobre branco, é
+    física da cor. O `#e0a54e` do design dá 2,17:1 contra os 4,5 exigidos em 12px. Pondo o
+    amarelo no fundo, onde não há essa exigência, a cor fica vibrante e o texto passa com folga
+    (5,71:1). De quebra, etiqueta colorida chama mais atenção que número colorido.
+  - **Bug meu, do mesmo dia, corrigido:** eu substituía o número e não a cor, então na tela de
+    reprovado uma linha com 90% real herdava o vermelho que o design fixara no 42% de exemplo.
+    A cor agora é calculada nas duas variantes; o vermelho da reprovação fica no veredito grande,
+    não nas linhas de diagnóstico.
+  - **Duas falhas de AA anteriores a esta mudança**, consertadas na mesma leva: o percentual em
+    `#1F8A5B` dava 4,33:1 e falhava por pouco em 12px (foi para `#1B7A50`, 5,32:1), e a barra
+    dourada `#A98E4E` dava 2,54:1 sobre o trilho `#EDE6DD`, abaixo dos 3,0 do WCAG 1.4.11 para
+    objeto gráfico. Encerra o item do critique de 21/jul sobre cores fora de paleta nessas telas.
+  - Medições todas em `docs/FEEDBACK-UX.md`; o `npm run check:prova` passou a assertar cor por
+    valor nas duas variantes, e que nenhuma das cores reprovadas sobrou.
+- **Regra de senha: 8 caracteres, com maiúscula, minúscula e número** — 2026-07-28
+  - Decisão do Pedro. Antes era só o comprimento mínimo de 6, herdado do padrão do Supabase. O
+    mínimo nasceu 6 nesta mesma sessão e subiu para 8 em seguida, também por decisão dele.
   - Um validador único em `lib/senha.ts` (`validarSenha`), usado nas **duas portas** que criam
     senha e nos **dois lados** de cada uma: primeiro acesso (`criarConta` no servidor e o
     `LoginClient` no navegador) e redefinição (a server action e o `RedefinirClient`). Antes a
@@ -21,8 +60,13 @@ e é validado no ambiente de **homolog** (branch `homolog`).
   - `\p{Lu}`/`\p{Ll}` em vez de `[A-Z]`/`[a-z]`, para acento contar: "Ástrid1x" tem maiúscula
     de verdade e seria recusada por faixa ASCII sem o aluno entender o motivo.
   - Novo `npm run check:senha`, e `npm run check` roda os dois checks. Cobre o limite exato de
-    6, cada classe faltando, senha só de símbolos, acento, e a precedência do comprimento
-    sobre as classes.
+    8, cada classe faltando, senha só de símbolos, acento, a precedência do comprimento
+    sobre as classes, e a senha de 6 caracteres que o Supabase aceitaria sozinho.
+  - **A plataforma garante menos que a gente, e a distância aumentou.** Medido na API em 28/jul:
+    o Supabase recusa `abc` ("at least 6 characters") mas **aceita** `abcdef`, `ABCDEF` e
+    `123456`. Ou seja, ele garante o comprimento de 6 e nenhuma classe de caractere. Com o
+    mínimo em 8, `Abc123` passa por ele e só é barrada pelo nosso `validarSenha`. Espelhar a
+    regra em Authentication → Password Requirements segue pendente (`PENDENCIAS-LP.md`).
   - **Falta espelhar no painel do Supabase**: validação de aplicação é conveniência; a recusa
     que vale para quem chama a API por fora é a política do projeto em Authentication.
 - **Recuperação de senha, e o caminho real do primeiro acesso junto** — 2026-07-28

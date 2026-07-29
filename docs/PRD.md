@@ -158,7 +158,7 @@ Não há cadastro aberto: a conta nasce da compra. O aluno recebe o acesso por e
 |---|---|
 | Origem da conta | Somente via webhook de compra aprovada |
 | Primeiro acesso | Link do e-mail de boas-vindas leva a definir senha |
-| Política de senha | Mínimo de 6 caracteres, com ao menos uma letra maiúscula, uma minúscula e um número (decidido em 28/jul/2026). Vale igual nas duas portas que criam senha: primeiro acesso e redefinição. Validador único em `lib/senha.ts`, aplicado no cliente e no servidor |
+| Política de senha | Mínimo de **8** caracteres, com ao menos uma letra maiúscula, uma minúscula e um número (decidido em 28/jul/2026; o mínimo nasceu 6 e subiu para 8 no mesmo dia). Vale igual nas duas portas que criam senha: primeiro acesso e redefinição. Validador único em `lib/senha.ts`, aplicado no cliente e no servidor |
 | Validade | `expires_at` = `purchased_at` + 1 ano |
 | Aviso de expiração | E-mail 30 dias antes do vencimento |
 | Pós-expiração | Tela de renovação (contato via suporte) |

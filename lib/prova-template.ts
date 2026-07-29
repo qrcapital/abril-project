@@ -11,7 +11,13 @@
 // Extensão explícita de propósito: além do Next, este módulo é importado pelo
 // `scripts/prova-check.mts` rodando em node puro, e o ESM do node não resolve
 // especificador sem extensão.
-import { LETRAS, formatarTempo, type Correcao, type QuestaoCliente } from "./prova-correcao.ts";
+import {
+  LETRAS,
+  NOTA_MINIMA,
+  formatarTempo,
+  type Correcao,
+  type QuestaoCliente,
+} from "./prova-correcao.ts";
 import { esc, exigir } from "./html-slice.ts";
 
 const ALT_BASE =
@@ -87,11 +93,35 @@ export function fillQuestao(
 }
 
 /**
+ * Corte que separa módulo bem resolvido de módulo deficitário no desempenho por módulo.
+ * É a mesma nota de aprovação da prova, de propósito: o que reprovaria isolado é o que o
+ * aluno precisa rever, mesmo tendo passado no conjunto.
+ */
+const CORTE_MODULO = NOTA_MINIMA;
+
+// Cores do desempenho por módulo. Todas medidas em 28/jul; ver `docs/FEEDBACK-UX.md`.
+// Texto precisa de 4,5:1 (AA, 12px) e barra de 3,0:1 (WCAG 1.4.11, objeto gráfico).
+const OK_TEXTO = "#1B7A50"; // 5,32:1 sobre branco. O #1F8A5B do design dava 4,33 e falhava
+const OK_BARRA = "#1F8A5B"; // 3,50:1 sobre o trilho #EDE6DD
+const FRACO_TEXTO = "#7A4E06"; // 5,71:1 sobre a pill
+const FRACO_PILL = "#F7E3BE"; // o amarelo vive no FUNDO, onde não há exigência de 4,5
+const FRACO_BARRA = "#AA7010"; // 3,37:1 sobre o trilho. Âmbar vivo (#e0a54e) dava 1,76
+
+/**
  * Preenche o resultado. `modulos` é a ordem em que as linhas de desempenho aparecem no
  * design (I, II, III, IV); um módulo sem questão sorteada entra como 0%.
  *
- * Os rótulos dos módulos ficam como o porte emitiu, porque são copy aprovado. Só os
- * números passam a ser reais.
+ * Os rótulos dos módulos ficam como o porte emitiu, porque são copy aprovado. Número e cor
+ * passam a ser reais.
+ *
+ * **A cor é calculada, não herdada do design** (decisão do Pedro, 28/jul). O design pintava
+ * os quatro percentuais de verde na tela de aprovado, partindo de números uniformemente bons;
+ * com nota real, um aprovado com 40% num módulo veria 40% em verde, ou seja, a tela pintaria
+ * a deficiência como sucesso. E na tela de reprovado o design fixava vermelho nas linhas 3 e
+ * 4, então uma linha com 90% real herdava o vermelho do 42% de exemplo.
+ *
+ * A mesma regra vale nas duas variantes: o vermelho da reprovação continua onde ele significa
+ * algo, no veredito grande, e não nas linhas de diagnóstico.
  */
 export function fillResultado(html: string, c: Correcao, modulos: number[]): string {
   // Nota grande: 85 na variante aprovada, 55 na reprovada. Mesmo cuidado do `exigir`:
@@ -101,12 +131,28 @@ export function fillResultado(html: string, c: Correcao, modulos: number[]): str
 
   const pcts = modulos.map((m) => c.porModulo.find((d) => d.modulo === m)?.pct ?? 0);
 
+  // Percentual: o bom fica texto simples; o deficitário vira pill âmbar, que dá o destaque
+  // de bate-pronto sem depender de cor de texto que não passaria AA.
   let iLabel = 0;
-  out = out.replace(/>(\d+)%<\/span>/g, () => `>${pcts[iLabel++] ?? 0}%</span>`);
+  out = out.replace(/<span style="color:[^"]*"[^>]*>\d+%<\/span>/g, () => {
+    const p = pcts[iLabel++] ?? 0;
+    return p >= CORTE_MODULO
+      ? `<span style="color:${OK_TEXTO};font-weight:700">${p}%</span>`
+      : `<span style="color:${FRACO_TEXTO};font-weight:700;background:${FRACO_PILL};` +
+          `border-radius:4px;padding:2px 7px">${p}%</span>`;
+  });
 
-  // `width:<n>%` só existe nas 4 barras; as imagens do selo usam px.
+  // Barra: `width` e `background` juntos, porque o design fixava dourado na tela de aprovado
+  // e um gradiente vermelho nas linhas fracas da de reprovado.
   let iBar = 0;
-  out = out.replace(/width:(\d+)%/g, () => `width:${pcts[iBar++] ?? 0}%`);
+  out = out.replace(
+    /<i style="display:block;height:100%;width:\d+%;background:[^"]*;border-radius:3px">/g,
+    () => {
+      const p = pcts[iBar++] ?? 0;
+      const cor = p >= CORTE_MODULO ? OK_BARRA : FRACO_BARRA;
+      return `<i style="display:block;height:100%;width:${p}%;background:${cor};border-radius:3px">`;
+    },
+  );
 
   if (iLabel !== modulos.length || iBar !== modulos.length)
     throw new Error(

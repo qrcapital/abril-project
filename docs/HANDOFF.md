@@ -191,6 +191,8 @@ interior), então isso só seria necessário para mudar a densidade ou a projeç
 # 1. Ferramentas (assumindo Homebrew instalado)
 brew install git node
 node -v          # 22 ou 24; o Netlify builda com 22 (netlify.toml), local roda 24 sem problema
+#    O .nvmrc (só "22") é versionado desde 29/jul/2026: com fnm ou nvm, um `fnm use` na raiz
+#    já alinha o local com o que o Netlify builda, sem depender de lembrar a versão.
 
 # 2. Clonar (no Mac, o repo ficou em ~/projects/abril-project)
 git clone git@github.com:qrcapital/abril-project.git abril-project

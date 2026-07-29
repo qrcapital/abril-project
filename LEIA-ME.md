@@ -44,7 +44,8 @@ Assim que os docs estiverem no lugar, me avisa que eu leio tudo e a gente segue 
 | `docs/HANDOFF.md` | **Documento de continuidade.** Estado real, o que não vem no clone, setup no macOS, armadilhas e decisões fechadas. |
 | `docs/memoria-claude/` | Cópia de transporte da memória do Claude Code deste projeto, com o procedimento para reinstalar em outra máquina. |
 | `docs/COPY.md` | Diretriz anti-slop de escrita. Obrigatória em qualquer copy, rodada sobre o texto final. |
-| `docs/PENDENCIAS-LP.md` | Checklist vivo do que falta antes do "pronto para produção". |
+| `docs/PENDENCIAS-LP.md` | Checklist vivo do que falta antes do "pronto para produção". O bloco "▶ PRÓXIMA SESSÃO" no topo é a fila de trabalho ordenada. |
+| `docs/FEEDBACK-UX.md` | Mapa de feedback ao usuário: tela por tela, onde o aluno precisa de resposta do sistema, o que já existe e o que falta, com prioridade. |
 
 ## Histórico de mudanças
 

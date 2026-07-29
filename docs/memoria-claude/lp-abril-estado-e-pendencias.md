@@ -1,20 +1,80 @@
 ---
 name: lp-abril-estado-e-pendencias
-description: Estado e ponto de retomada da LP do Abril (Estratégia Internacional) — projeto PAUSADO em 24/jul, o Pedro avisa quando voltar.
+description: Estado e ponto de retomada do Abril (Estratégia Internacional) — última sessão 28/jul; ler o PONTO DE RETOMADA e o bloco PRÓXIMA SESSÃO do docs/PENDENCIAS-LP.md antes de qualquer coisa.
 metadata: 
   node_type: memory
   type: project
   originSessionId: 4b72866b-75a2-4ccb-9364-0b22495f53bd
-  modified: 2026-07-25T21:54:58.641Z
+  modified: 2026-07-26T02:04:57.735Z
 ---
 
 Estado da **LP Estratégia Internacional** (repo `C:\Users\pedro\Claude\abril-estrategia-internacional`, branch `homolog`) após a sessão de **21/jul/2026 (noite)**. Ver [[critique-lp-abril]], [[estado-abril-plataforma]], [[projeto-abril-estrategia-internacional]], [[copy-md-obrigatorio]].
 
 **MIGRAÇÃO DE MÁQUINA (25/jul/2026):** o Pedro comprou um MacBook e vai **transferir o desenvolvimento deste projeto do Windows para lá**. Foi criado o **`docs/HANDOFF.md`** (commit `712b0cb` em `homolog`, pushado), documento de continuidade que consolida tudo desta nota e mais: o que não vem no `git clone`, setup no macOS, armadilhas e decisões fechadas. **Ao trabalhar neste projeto em qualquer máquina, ler o `docs/HANDOFF.md` primeiro** — o `AGENTS.md` já aponta para ele. As memórias do Abril foram copiadas para **`docs/memoria-claude/`** (viajam no git; o README de lá tem o procedimento de reinstalação no Mac) e o `COPY.md` virou `docs/COPY.md`, versionado. Fora do git e a transferir na mão: `.env.local` (recriar do dashboard Supabase) e os insumos brutos de `referencias/cowork/` (~9 MB; um arquivo tem marca d'água Dreamstime, não commitar em bloco). **Os geradores do globo e o `checkpoint-canvas/` do scratchpad já foram apagados pelo sistema, não existem mais em lugar nenhum** — os dados de saída seguem versionados em `scripts/globo-*.txt`.
 
-**PONTO DE RETOMADA (24/jul/2026):** projeto **pausado**, o Pedro avisa quando voltar. Tudo commitado e pushado em `homolog` (último commit **`79fa278`**, working tree limpa fora das refs de cowork não versionadas). Nesta sessão: fechei a revisão de copy de Ferramentas e Oferta, revisão geral + correções de cards de docente e espaçamento, e reescrevi todo o **globo do hero em canvas** (ver bloco abaixo). Ao voltar, as pendências abertas continuam no fim desta nota; a próxima da fila de copy é **FAQ e CTA final**. Se for mexer no globo de novo, os geradores de dados estão no scratchpad (podem ter sido limpos — nesse caso rebaixar do Natural Earth de novo).
+**PONTO DE RETOMADA (28/jul/2026, fim da sessão — repo em `~/projects/abril-project`):**
 
-**Arquitetura:** a LP é gerada por `scripts/port-lp.mjs` a partir do bundle; TODA edição estável vive nesse script (etapas 7d–7k) para sobreviver a re-portes. Nunca editar só o `app/_lp/body.html`/`styles.css` (são gerados). `app/page.tsx` lê o body/css em **runtime** dentro do componente (otimização desta sessão) — dev server mostra mudanças só recarregando, MAS há um cache do Next: quando o hot-reload não pega, **reiniciar o dev server** (matar PID na 3000 + `next dev`). O port termina com libuv assert às vezes — saída válida mesmo assim.
+Comece pelo bloco **"▶ PRÓXIMA SESSÃO"** no topo do `docs/PENDENCIAS-LP.md`. São **20 tarefas
+discretas**, agrupadas e ordenadas, com 🔒 marcando as 4 que dependem do Pedro. Ele pediu para
+começar "a valer" amanhã, então não recontar história: ler o bloco e ir para a tarefa 1.
+
+**Estado do git:** último commit pushado **`c76e196`** em `homolog`, deploy confirmado no ar
+(schema, motor da prova, recuperação de senha). Depois dele ficaram **12 arquivos na árvore sem
+commit**, que são a tarefa 1: regra de senha em 8, cor do desempenho por módulo, o
+`docs/FEEDBACK-UX.md` novo, o `.nvmrc` e a sincronia dos docs. `build`, `lint` e `check` estavam
+passando. A regra de [[commit-push-so-com-ordem]] vale: uma ordem para commit, outra para push.
+
+**O que a sessão de 28/jul fez.** O **schema do Supabase homolog nunca tinha sido aplicado**, e
+foi (mais backfill de 8 `profiles`). **Três correções de segurança**: o `revoke` do
+`sortear_prova` era ineficaz por causa do grant de PUBLIC, o aluno leria o gabarito em
+`exams.questions_snapshot` porque RLS não alcança coluna, e faltava guarda de redirect aberto.
+O **motor da prova** ficou funcional e testado, sem o conteúdo das questões. A **recuperação de
+senha** foi construída e validada com e-mail real, com SMTP em Resend, e o mesmo
+`/auth/confirm` serve o primeiro acesso com `type=invite`. A **regra de senha** virou 8
+caracteres com maiúscula, minúscula e número. E a **cor do desempenho por módulo** passou a ser
+calculada por valor, com pill âmbar no módulo deficitário, junto com duas correções de AA
+antigas. Detalhe no `CHANGELOG.md` e nas armadilhas do `HANDOFF.md` §6.
+
+**Frente nova que o Pedro abriu no fim da sessão: feedback ao usuário.** Auditoria da área
+logada em `docs/FEEDBACK-UX.md`, em duas camadas, com 12 achados graves. Os piores são de
+**camada**, então consertam várias telas de uma vez: o HTML servido a um aluno logado traz o nome
+**"Pedro"** e não o dele (o `AreaChrome` preenche no cliente), e não existe `loading.tsx`,
+`error.tsx` nem `not-found.tsx` em lugar nenhum do projeto. O `error.tsx` virou necessidade
+concreta porque o motor da prova estoura de propósito em duas situações e nenhuma tem tela.
+
+**Pendente do Pedro (4):** template `Invite user` no painel (3), quem escreve as ~100 questões
+(13, **TBD**, e não bloqueia nada), as quatro perguntas do acesso de admin (18, ele disse que
+responde amanhã, e é a única que destrava construção nova) e espelhar a política de senha no
+painel (20). Nada além da 18 trava trabalho.
+
+**O que a sessão de 25/jul fez (9 commits, ver CHANGELOG):** alinhamento de nomes do
+módulo IV entre LP e área (etapas 3b/3c novas no `port-area`); chancela e razão social da
+área corrigidas; item "Nomenclatura da certificação" do BACKLOG fechado (card = "Certificado
+de 30 horas", provisório); refactor ponytail (hover/foco do bundle viram **CSS gerado** em
+`scripts/comum.mjs`, morreram `HoverRuntime`→virou `HeroPointer` e `AreaInteractions`;
+`lib/telas.ts`, `lib/contato.json`; `next.config.ts` removido); e a **frente mobile da LP**:
+globo mantido como está (decisão do Pedro com mock em
+https://claude.ai/code/artifact/f13c280b-caba-425c-bd6a-dc59a53cf1ef), toque sem tranco
+(`pointer:fine` no HeroPointer), Ferramentas com mockup entre lead e bullets
+(`display:contents`), Quem Assina sem selo + slider 88%, **bolinhas nos 2 carrosseis**
+(etapa 7s + `CarrosselDots.tsx`; inativas off-white sobre verde, ativa dourada via
+`--dot-on`), wordmark da topbar corrigido (etapa 7t: compensação do tracking final +
+proporções padrão escaladas) e **ENTRAR no hambúrguer** (7n).
+
+**Fila de 25/jul, SUPERADA em 28/jul.** Ela dizia: 1) prova funcional; 2) recuperação de senha
+(404); 3) acesso de admin; 4) `/obrigado` e `/app/acesso`; 5) migrar o curso para o banco. Os
+itens 1 e 2 estão feitos, o 1 sem o conteúdo das questões. A fila válida hoje é o bloco
+**"▶ PRÓXIMA SESSÃO"** do `docs/PENDENCIAS-LP.md`. Copy do FAQ e CTA final: **encerrado por
+ora**, não repropor.
+
+**Avisos de retomada:** `conta.html` (área) diverge do que o `port-area` gera (edição manual
+antiga: atributo no span vs span aninhado) — toda vez que o porte roda, reverto com
+`git checkout app/app/_ui/screens/conta.html`; unificar um dia. Bolinhas dos carrosseis:
+comportamento dinâmico validado só por evento sintético (aba de automação oculta congela
+scroll/rAF — HANDOFF §6); Pedro validou visual no ar. Área do aluno tem 2 rails na home
+(62% snap) SEM bolinhas — oferecido, sem resposta ainda.
+
+**Arquitetura:** a LP é gerada por `scripts/port-lp.mjs` a partir do bundle; TODA edição estável vive nesse script (etapas 7d–**7t**) para sobreviver a re-portes. Nunca editar só o `app/_lp/body.html`/`styles.css` (são gerados). Desde 25/jul: `scripts/comum.mjs` é compartilhado pelos dois portes (WhatsApp/DPO de `lib/contato.json` + `regrasDeEstado()`, que converte `style-hover`/`style-focus` em CSS com `!important` dentro de `@media(hover:hover)` — os runtimes de hover em JS morreram). Client components da LP: `HeroPointer` (mouse do hero, só `pointer:fine`), `GloboCanvas`, `CarrosselDots`. `app/page.tsx` lê o body/css em **runtime** dentro do componente — quando o hot-reload não pega, reiniciar o dev server (matar PID na 3000). O port termina com libuv assert às vezes — saída válida mesmo assim.
 
 **Feito nesta sessão (commit `11ab621`, pushado em `homolog` — auto-deploy no ar):**
 - **Seção nova "Ferramentas"** (id `entregaveis`, etapa 7i) após "A Formação": lista editorial à esquerda (apostilas/e-book/calculadora com ornamento estrela dourada + réguas internas) + **mockup pronto** de dispositivos à direita (`public/lp/mockup-devices.webp`, imagem final que o Pedro entregou, fundo transparente). Fundo branco.
@@ -44,10 +104,11 @@ Estado da **LP Estratégia Internacional** (repo `C:\Users\pedro\Claude\abril-es
 
 **Decisões do Pedro registradas (não repropor):** a calculadora mantém "Simule cenários e decida com números, não com achismo"; o e-book fica genérico ("Ebook exclusivo") porque ainda é placeholder; **o curso TEM turmas** (nunca escrever "sem turma"); sem âncora de preço no card (nada de "menos de R$ 25 por aula" nem comparação com spread de remessa); preço à vista grande e os 3 selos mantidos; "GARANTIR MINHA VAGA" segue válido justamente porque há turma.
 
-**Pendências abertas:**
+**Pendências abertas (atualizado 25/jul, sessão do Mac):**
 1. **Links reais das redes sociais** do rodapé (hoje `href="#"`).
-2. **Rodapé:** alinhar os nomes da nav do rodapé aos novos da topbar (Professores/Formação/Ferramentas/Idealizadores/FAQ).
-3. **COPY.md** está em `referencias/cowork/` (diretriz anti-slop, não o copy das seções); mover p/ `docs/` fecharia pendência do PRD. Falta o `banned-words.md` que ele referencia.
-4. **Copy seção a seção** em andamento (indo pela LP): feitas hero, corpo docente, currículo, **Ferramentas e Oferta (24/jul)**; faltam **FAQ e CTA final**. Recusados de propósito em 24/jul: o eco "o Brasil lê" entre subtítulo e card na Quem Assina, a pergunta redundante do FAQ ("Preciso já ter conta no exterior?") e o H2 genérico do CTA final ("Investir no mundo é proteger o que você constrói") — o Pedro mandou manter os três. **Ficha técnica (H2) e Diagnóstico (H3) revisados em 24/jul e o Pedro decidiu MANTER como estão — copy aprovado, NÃO repropor.** Ficam registradas (e recusadas) as duas ressalvas que levantei: o Diagnóstico abre em "Seu patrimônio está em uma moeda que trabalha contra ele", ecoando o "Seu patrimônio não devia depender de um só país" do hero; e o lide tem regra de três ("inflação crônica, risco fiscal e um câmbio que corrói"), que o COPY.md proíbe. Faltam revisar: **Ferramentas, Oferta, FAQ, CTA final**.
+2. ~~Rodapé~~ fechado em 25/jul (nav da LP já vinha da etapa 9; o da área foi alinhado no `buildFooter()` do port-area).
+3. ~~COPY.md~~ promovido a `docs/COPY.md` no handoff de 25/jul; segue faltando o `banned-words.md` que ele referencia.
+4. **Copy seção a seção: ENCERRADA por decisão do Pedro (25/jul).** FAQ e CTA final, as duas últimas seções, foram dados como **finalizados por ora**, sem varredura: o texto atual fica. Reabrir só se a rodada pré-launch pedir. Histórico que segue valendo e NÃO se reproprõe: o eco "o Brasil lê" (Quem Assina), a pergunta de conta no exterior do FAQ, o H2 do CTA final, a Ficha técnica e o Diagnóstico — tudo copy aprovado pelo Pedro com minhas ressalvas registradas e recusadas.
+5. **Mobile da LP trabalhado em 25/jul** (globo mantido; Ferramentas reordenada; Quem Assina sem selo + slider; bolinhas nos carrosseis; wordmark e Entrar na topbar) — ver CHANGELOG da data.
 
 **Registro:** CHANGELOG.md, docs/BACKLOG.md e docs/DESIGN.md atualizados. Imagens de referência em `referencias/cowork/` (inclui uma com marca d'água dreamstime — NÃO commitar) ficaram fora do git de propósito. Impeccable instalado em System32 — usado nesta LP (ver [[impeccable-instalado-system32]]).
