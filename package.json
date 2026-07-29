@@ -7,10 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "check": "npm run check:prova && npm run check:senha && npm run check:usuario",
+    "check": "npm run check:prova && npm run check:senha && npm run check:usuario && npm run check:liberacao && npm run check:curriculo",
     "check:prova": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/prova-check.mts",
     "check:senha": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/senha-check.mts",
-    "check:usuario": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/usuario-check.mts"
+    "check:usuario": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/usuario-check.mts",
+    "check:liberacao": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/liberacao-check.mts",
+    "check:curriculo": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/curriculo-check.mts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",

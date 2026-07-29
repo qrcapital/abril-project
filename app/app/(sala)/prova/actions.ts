@@ -1,9 +1,8 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
-import { nomeCookie, parseConcluidas } from "@/lib/progresso";
-import { provaLiberada } from "@/lib/curso";
+import { getConcluidas } from "@/lib/progresso";
+import { getCurriculo } from "@/lib/curriculo";
 import { abrirTentativa, enviar, salvarResposta } from "@/lib/prova";
 import { LETRAS, type Letra } from "@/lib/prova-correcao";
 
@@ -24,15 +23,14 @@ async function usuarioAtual(): Promise<string | null> {
 /**
  * O gate de 16/16 aulas.
  *
- * ponytail: o progresso ainda é cookie (`lib/progresso.ts`), e cookie é editável pelo
- * aluno, então esta checagem tem o teto de confiança do cliente. Não é regressão: a
- * versão anterior checava só no navegador, e aqui pelo menos o servidor recusa abrir a
- * tentativa. Vira garantia de verdade quando o progresso for para a tabela `progress`
- * (HANDOFF §2, item 6), e então só esta função muda.
+ * Desde 29/jul isto é garantia de verdade, e não mais o teto de confiança do cliente: o
+ * progresso saiu do cookie para a tabela `progress`, então o aluno não escreve mais o dado
+ * que abre a própria prova. A trava de calendário da esteira, na página, é independente
+ * desta e continua valendo.
  */
-async function gateLiberado(userId: string): Promise<boolean> {
-  const bruto = (await cookies()).get(nomeCookie(userId))?.value;
-  return provaLiberada(parseConcluidas(bruto));
+async function gateLiberado(): Promise<boolean> {
+  const [curriculo, concluidas] = await Promise.all([getCurriculo(), getConcluidas()]);
+  return curriculo.provaLiberada(concluidas);
 }
 
 export type RespostaAcao = { ok: true } | { ok: false; erro: string };
@@ -40,7 +38,7 @@ export type RespostaAcao = { ok: true } | { ok: false; erro: string };
 export async function iniciarProva(): Promise<RespostaAcao> {
   const userId = await usuarioAtual();
   if (!userId) return { ok: false, erro: "Sessão expirada. Entre de novo." };
-  if (!(await gateLiberado(userId)))
+  if (!(await gateLiberado()))
     return { ok: false, erro: "Conclua as 16 aulas da formação para liberar a prova." };
 
   try {

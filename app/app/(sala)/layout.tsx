@@ -1,33 +1,30 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { redirect } from "next/navigation";
 
-import { getUsuario } from "@/lib/usuario";
-import { preencherUsuario } from "@/lib/usuario-template";
-import AreaChrome from "./AreaChrome";
+import { getMatricula } from "@/lib/matricula";
+import Chrome from "@/app/app/_ui/Chrome";
 
-// Telas autenticadas da área do aluno: envolvidas pelo chrome (topbar + footer).
-// O login (/app/login) fica fora deste route group, sem chrome.
-
-const uiDir = join(process.cwd(), "app", "app", "_ui");
-const top = readFileSync(join(uiDir, "chrome-top.html"), "utf8");
-const foot = readFileSync(join(uiDir, "chrome-foot.html"), "utf8");
+// Telas autenticadas do curso. O login (/app/login) e a tela de acesso (/app/acesso) ficam
+// fora deste grupo, sem chrome. O certificado também saiu daqui, para o grupo `(certificado)`,
+// porque a guarda dele é outra: ver o layout de lá.
 
 /**
- * O nome do aluno na topbar é preenchido AQUI, no servidor, e não no cliente: o chrome
- * aparece em toda tela da área, então preenchê-lo uma vez cobre todas.
+ * Guarda de acesso por matrícula (PRD §4). O `proxy.ts` só sabe dizer se existe sessão; quem
+ * sabe se o acesso vale é a matrícula.
  *
- * Isto torna dinâmicas as telas do grupo, incluindo a conta e o certificado, que eram
- * estáticas. É o custo aceito na tarefa 5: uma chamada de autenticação a mais nas duas telas
- * menos visitadas do produto, contra todo aluno lendo "Pedro" antes do próprio nome. O
- * `getUsuario` é cacheado por requisição, então layout e tela dividem a mesma chamada.
+ * Fica AQUI, e não no proxy, por dois motivos: o proxy roda em toda requisição do site,
+ * inclusive a LP, e pagaria uma ida ao banco por página; e aqui o `cache()` faz esta consulta
+ * ser a mesma que a tela de acesso usa depois.
+ *
+ * `/app/acesso` mora fora deste grupo de propósito: dentro, o bloqueio se redirecionaria para
+ * si mesmo em laço.
  */
 export default async function SalaLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const user = await getUsuario();
-  return (
-    <AreaChrome top={preencherUsuario(top, user)} foot={foot}>
-      {children}
-    </AreaChrome>
-  );
+  // Sem `?estado=` na URL: a tela de acesso lê o estado do banco, porque parâmetro de query é
+  // escolhido por quem digita o endereço e faria a tela contar a história que o visitante quiser.
+  const { estado } = await getMatricula();
+  if (estado !== "ativa") redirect("/app/acesso");
+
+  return <Chrome>{children}</Chrome>;
 }

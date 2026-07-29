@@ -45,6 +45,15 @@ Auth, RLS) · Netlify · Panda Video · Amazon SES · checkout Guru.
 > concluir aula e o feedback do sair. Detalhe no `CHANGELOG.md`; a fila que sobrou está no bloco
 > "▶ PRÓXIMA SESSÃO" do `PENDENCIAS-LP.md`.
 >
+> **Mais duas levas entraram depois disso, no mesmo 29/jul, e mudaram arquitetura:**
+> a **guarda de acesso por matrícula** (tarefa 14, com `/app/acesso` e quatro estados), o
+> **certificado sobrevivendo ao fim do acesso** (grupo de rota próprio, com o porteiro de
+> aprovação que nunca existiu), a **liberação gradual do curso** (um módulo por semana a partir
+> de `enrollments.inicio_em`, com migração `0002` aplicada), o **progresso saindo do cookie para
+> a tabela `progress`**, e o **currículo saindo do código para o banco**. Os dois últimos são os
+> que mais mudam o dia a dia: `lib/curso.ts` não guarda mais as aulas, e mexer em conteúdo no
+> banco muda a tela sem deploy.
+>
 > **Três regras novas que economizam tempo de quem chegar agora:** a área do aluno **não é
 > escura** (o chrome é, o miolo das telas é claro `#F7F5F2`), então todo padrão visual nasce com
 > dois pares de cor; **caixa de mensagem se pinta no DOM**, nunca em JSX irmão do HTML injetado,
@@ -106,11 +115,14 @@ Em ordem do que eu atacaria primeiro:
    acesso** com `type=invite`, que é o link do webhook do Guru; falta só editar o template
    **Invite user** no painel, o que não urge. O desenho e o porquê estão na nota de
    implementação do `ROUTES.md`.
-5. **Pendências pequenas da LP.** Nav do rodapé ainda usa os nomes antigos das seções
-   (a topbar já é Professores/Formação/Ferramentas/Idealizadores/FAQ) e os links de redes
-   sociais são `href="#"` esperando as URLs reais.
-6. **Migrar o curso para o banco.** Hoje ele vive em `lib/curso.ts` e a tabela `lessons`
-   está vazia; o progresso é cookie, não linha de tabela.
+5. **Pendências pequenas da LP.** Os links de redes sociais do rodapé seguem `href="#"`,
+   esperando as URLs reais. (A nav do rodapé já foi alinhada em 25/jul.)
+6. ~~**Migrar o curso para o banco.**~~ **FEITO em 29/jul/2026**, e este item estava errado em
+   duas afirmações: a tabela `lessons` **não** estava vazia (o seed já tinha rodado, com 5
+   módulos e 17 aulas), e o progresso saiu do cookie no mesmo dia. Hoje o `lib/curso.ts` guarda
+   só tipos e lógica; `lib/curriculo.ts` carrega do banco; `progress` guarda a conclusão. Mudar
+   conteúdo no banco muda a tela sem deploy, que é o que a tela de conteúdo do admin
+   (`PLANO-ADMIN.md` §4.6) vai usar.
 7. **Antes de produção:** remover os atalhos de teste da tela de login e trocar o CTA de
    compra pela URL do checkout Guru.
 
@@ -293,6 +305,18 @@ ao lado do formulário, fica ao lado da página. Em 29/jul isso pôs a caixa de 
 recuperação de senha **350px abaixo do formulário**, centrada entre as duas colunas, e nem
 build nem lint enxergam. O conserto é emitir um slot no próprio markup (`[data-feedback]`) e
 pintar nele com o `pintarCaixa`. **Valide posicionamento no browser, não por build.**
+
+**Cookie do aluno nunca é fonte de verdade, nem "só para migrar".** Em 29/jul o progresso saiu
+do cookie para a tabela `progress`, e no meio do caminho escrevi uma migração que semeava o banco
+a partir do cookie na primeira visita, para ninguém perder o que tinha marcado. Testando o
+ataque, a prova abriu com cookie forjado e banco vazio: a semente era uma porta para o aluno
+**plantar** o dado que eu acabara de tirar das mãos dele. Não existe versão segura disso. Se
+precisar de progresso para testar, use `scripts/progresso-conta.mjs`.
+
+**`redirect()` em Server Component sai como 200, não 307.** Com streaming, o começo da resposta
+já foi enviado quando o redirect acontece, então o status fica 200 e a navegação vai no payload.
+Isso me fez ler "a guarda não disparou" duas vezes no mesmo dia. Confira o **corpo** da resposta,
+ou o `location.pathname` no browser, nunca o status.
 
 **Contraste não é erro de sintaxe.** Nenhuma ferramenta do projeto reprova cor ilegível. Ao
 escolher qualquer cor de texto, meça nos dois fundos da área (o chrome escuro `#0B2D20` e o

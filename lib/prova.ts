@@ -1,4 +1,7 @@
 import "server-only";
+import { cache } from "react";
+
+import { getUsuario } from "@/lib/usuario";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   corrigir,
@@ -218,3 +221,21 @@ export async function enviar(userId: string): Promise<Correcao> {
   if (error) throw error;
   return c;
 }
+
+/**
+ * O aluno logado passou na prova?
+ *
+ * Existe porque o certificado precisava de um porteiro e não tinha nenhum: até 29/jul,
+ * qualquer conta logada abria `/app/certificado` e baixava um PDF com o próprio nome sem ter
+ * feito a prova, apesar de o `ROUTES.md` já prometer o contrário.
+ *
+ * `cache()` porque o layout do grupo do certificado consulta para decidir a entrada, e é a
+ * mesma resposta que a tela usaria depois.
+ */
+export const foiAprovado = cache(async (): Promise<boolean> => {
+  const user = await getUsuario();
+  if (!user) return false;
+  const t = await tentativaAtual(user.id);
+  if (!t || t.status !== "submitted") return false;
+  return corrigir(t.questoes, t.respostas).aprovado;
+});

@@ -56,18 +56,41 @@ no `/app/redefinir-senha`. Enquanto o Guru não entra, o homolog segue usando o 
 
 ## Área do aluno, pós-sessão (`/app/*`, autenticado)
 
-Tema dark. Header com olho + wordmark, navegação (Início, Dúvidas via WhatsApp, FAQ), avatar/inicial e menu "Minha conta ▾" (Minha conta, Sair). Guarda de acesso global: enrollment `revoked` ou `expired` bloqueia o conteúdo e redireciona para `/app/acesso` (renovação), preservando o progresso.
+Tema dark. Header com olho + wordmark, navegação (Início, Dúvidas via WhatsApp, FAQ), avatar/inicial e menu "Minha conta ▾" (Minha conta, Sair).
+
+**Guarda de acesso (implementada em 29/jul, no layout do grupo `(sala)`).** Vale para todas as
+rotas desta seção de uma vez: matrícula que não esteja `ativa` redireciona para `/app/acesso`,
+preservando o progresso. São **três** estados de bloqueio, e não dois: `expirada`, `revogada` e
+`ausente` (conta logada sem matrícula nenhuma, que pelo `PRD.md` §4 é anomalia de
+provisionamento, não prazo vencido).
+
+> **Mudança de comportamento em relação ao que esta tabela dizia (29/jul).** A linha de
+> `/app/conta` previa que ela **abrisse** com acesso expirado, bloqueando só o conteúdo do
+> curso. A guarda no layout bloqueia o grupo inteiro, inclusive a conta. Ficou assim porque a
+> própria `/app/acesso` já entrega o que a pessoa bloqueada precisa (o motivo, o suporte e a
+> troca de conta), e abrir exceção por tela transformaria uma regra de uma linha em uma lista de
+> exceções para manter. **Se a conta precisar mesmo abrir bloqueada, é uma decisão de produto e
+> o lugar do conserto é este parágrafo.**
+
+> **O certificado é a exceção, e tem grupo próprio (29/jul, pedido do Pedro).** Ele saiu do
+> `(sala)` para o grupo `(certificado)`, com guarda própria, porque **o diploma é do aluno e não
+> do prazo dele**: quem concluiu continua baixando depois de o acesso terminar. A URL não muda.
+> Duas travas continuam valendo: **matrícula revogada** bloqueia (reembolso ou chargeback desfez
+> a compra, e manter o certificado seria entregar o produto de graça), e **sem aprovação na
+> prova ninguém entra**, com acesso válido ou não. Esta segunda trava **não existia** até 29/jul:
+> qualquer conta logada abria a tela e baixava um PDF com o próprio nome, apesar de a linha de
+> `/app/certificado` desta tabela já prometer o contrário desde o começo.
 
 | Rota | Descrição |
 |---|---|
 | `/app` | Home em vitrine. Banner hero: vídeo de boas-vindas; com progresso, overlay "Continue de onde parou → Módulo X · Aula Y" e CTA de retomada apontando para a última aula não concluída. Prateleira "A Formação" (Módulo 0 a IV, cada card com arte, contador X/N e estado). Prateleira "Materiais e Certificação" (apostilas, e-book, Prova Final bloqueada até 16/16, card de 2ª chamada oculto até liberação do admin). Sem progresso: banner convida ao Módulo 0 / Aula 1 |
-| `/app/modulo/:m/aula/:n` | Página da aula. Player Panda Video 16:9 com retomada, cabeçalho "Módulo X · Aula N de 16", título e descrição, navegação Anterior / Concluir e próxima, bloco "Materiais desta aula" (download do Storage), sidebar "Meu progresso — X% · n de 16" com módulos em acordeão e estado por aula. Conclui automaticamente com `watched_pct ≥ 90` ou pelo botão. Materiais ainda não enviados: seção some ou mostra "em breve", sem link quebrado |
-| `/app/prova` | Instruções da prova. Regras (20 questões, 70%, 120 min, tentativa única, 2ª chamada via suporte) + checkbox "estou ciente das regras e de que esta é uma tentativa única" + "Iniciar prova". Acessível só com 16/16 aulas avaliadas concluídas; caso contrário redireciona para `/app` com aviso de bloqueio. Iniciar grava `deadline` = agora + 120 min e vai para `/app/prova/questao/1` |
+| `/app/modulo/:m/aula/:n` | **Módulo ainda fechado pela esteira não abre, nem pela URL** (guarda de 29/jul; sem ela o gotejamento seria decorativo, porque as aulas são alcançáveis digitando o endereço). Página da aula. Player Panda Video 16:9 com retomada, cabeçalho "Módulo X · Aula N de 16", título e descrição, navegação Anterior / Concluir e próxima, bloco "Materiais desta aula" (download do Storage), sidebar "Meu progresso — X% · n de 16" com módulos em acordeão e estado por aula. Conclui automaticamente com `watched_pct ≥ 90` ou pelo botão. Materiais ainda não enviados: seção some ou mostra "em breve", sem link quebrado |
+| `/app/prova` | **Duas travas, e a de calendário é a que tem dente** (29/jul): a prova só abre quando TODOS os módulos já foram liberados, conferido no servidor pela matrícula, e só então o gate de 16/16 aulas concluídas vale. O gate de aulas sozinho lê um cookie que o aluno edita, então não impede nada. Instruções da prova. Regras (20 questões, 70%, 120 min, tentativa única, 2ª chamada via suporte) + checkbox "estou ciente das regras e de que esta é uma tentativa única" + "Iniciar prova". Acessível só com 16/16 aulas avaliadas concluídas; caso contrário redireciona para `/app` com aviso de bloqueio. Iniciar grava `deadline` = agora + 120 min e vai para `/app/prova/questao/1` |
 | `/app/prova/questao/:q` | Questão q de 20. Cronômetro visível, barra "n respondidas", 4 alternativas, Anterior / Próxima, "Enviar prova" na última (ou a qualquer momento). Refresh ou reentrada não reinicia: o `deadline` persistido manda e retoma as respostas. Deadline estourado: corrige o respondido e vai para o resultado. Sem prova iniciada: redireciona para `/app/prova` |
 | `/app/prova/resultado` | Resultado da última tentativa. Aprovado (≥ 70%): nota /100, desempenho por módulo, CTA "Emitir certificado" → `/app/certificado`. Reprovado: nota /100, desempenho por módulo (onde revisar), CTA "Solicitar 2ª chamada no WhatsApp" (link pré-preenchido). Sem tentativa submetida: redireciona para `/app/prova` |
 | `/app/certificado` | Certificado. Preview (wordmark, olho, gravuras, nome, 30h, assinaturas), "Baixar PDF", "Compartilhar no LinkedIn", bloco de NPS (0 a 10). Só acessível com prova aprovada; senão redireciona para `/app/prova/resultado` ou `/app`. Código `EI-2026-XXXX` exibido, com link para `/verificar/:codigo`. Reemissão reusa o mesmo código |
 | `/app/conta` | Minha conta. Dados (nome, e-mail com "alterar via suporte", trocar senha self-service), Acesso ("liberado por 1 ano", disponível até `accessUntil`), Suporte (atalho WhatsApp). Acesso expirado: abre, mas o conteúdo do curso fica bloqueado com via de renovação |
-| `/app/acesso` | Tela de renovação/bloqueio. Destino de enrollment `expired` ou `revoked`. Explica o status e oferece contato via suporte. Progresso preservado |
+| `/app/acesso` | Tela de renovação e bloqueio. **Fora do grupo `(sala)`** (lá dentro, a guarda se redirecionaria para si mesma em laço) e **sem chrome**, porque a navegação do chrome leva ao curso, que é o que está bloqueado. Destino da guarda nos estados `expirada`, `revogada` e `ausente`, cada um com texto próprio; o estado vem **do banco, nunca da URL**. Oferece o suporte e "trocar de conta" (que faz `signOut` antes, senão a sessão antiga empurra de volta para cá em laço). Progresso preservado, e a tela diz isso. Quem tem acesso ativo é devolvido para `/app` |
 
 ## Admin (`/admin`, papel admin)
 

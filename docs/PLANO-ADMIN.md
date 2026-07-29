@@ -74,17 +74,49 @@ _Rascunho para aprovação — 2026-07-20._
 - Tabela: aluno, template, data de envio, status (enviado/falha).
 - _Dados_: `email_log` (somente leitura).
 
+### 4.6 `/admin/conteudo` — Aulas e materiais
+
+> **Escopo NOVO, decidido pelo Pedro em 29/jul/2026.** Este plano não previa edição de conteúdo:
+> a Fase 1 ia de casca a e-mails sem passar por aulas. A tela nasceu de uma pergunta dele sobre
+> onde ficariam os links de vídeo, e a resposta puxou o resto junto — **painel não edita código**,
+> então tudo o que o admin mexe precisa estar no banco.
+>
+> A migração que isso exigia **já foi feita no mesmo dia** (tarefa 15b): o `lib/curso.ts` não
+> guarda mais as aulas, o currículo vem de `modules`/`lessons` e os materiais de `materials`.
+> Trocar título, descrição ou `panda_video_id` no banco já muda a tela **sem deploy**, o que foi
+> verificado. Falta só a tela que faz isso com as mãos de alguém.
+
+- **Lista de módulos**, com as aulas de cada um em acordeão, na ordem do curso.
+- **Editar módulo**: título, docente, arte.
+- **Editar aula**: título, descrição, **link do vídeo** (`panda_video_id`), duração, e se
+  conta para o gate de 16/16 (`conta_no_gate`).
+- **Materiais**: adicionar, renomear e remover, com o vínculo à **aula** (resumo) ou ao
+  **módulo** (apostila), que é a distinção que a tabela já suporta.
+- _Dados_: `modules`, `lessons`, `materials` (leitura e escrita).
+
+**A definir antes de construir:**
+
+- **Arquivo: upload ou URL?** O material pode ser enviado pelo painel para o Supabase Storage,
+  ou o admin cola um link já hospedado. A coluna `materials.arquivo` guarda caminho, então as
+  duas cabem; muda o tamanho da tela e se precisamos de bucket com policy.
+- **Reordenar aulas.** O `ord` define a ordem do curso e, por consequência, o **número da aula
+  na URL**. Deixar reordenar é útil e perigoso: o progresso do aluno é gravado por `lesson_id`,
+  então ele não se perde, mas links compartilhados apontariam para outra aula. Talvez reordenar
+  fique fora do v1.
+- **Criar e apagar aula.** Apagar aula com progresso gravado apaga o progresso junto (o
+  `on delete cascade` da tabela). Isso pede confirmação forte, ou desativação em vez de exclusão.
+
 ## 5. Modelo de dados (tabelas usadas)
 
-`profiles`, `enrollments`, `modules`, `lessons`, `progress`, `questions`, `exams`,
-`certificates`, `email_log` — todas já no schema (`supabase/migrations/0001_init.sql`).
+`profiles`, `enrollments`, `modules`, `lessons`, `materials`, `progress`, `questions`,
+`exams`, `certificates`, `email_log` — todas já no schema (`supabase/migrations/0001_init.sql`).
 Funções úteis: `is_admin`, `has_active_access`, `sortear_prova`, `verify_certificate`.
 
 ## 6. Fases
 
 | Fase | Entrega | Depende de |
 |---|---|---|
-| **1 — UI funcional** | Casca + Painel (métricas de exemplo) + Questões (CRUD sobre o seed) + Alunos/Detalhe/E-mails com dados mock | — |
+| **1 — UI funcional** | Casca + Painel (métricas de exemplo) + Questões (CRUD sobre o seed) + Alunos/Detalhe/E-mails com dados mock + **Conteúdo (aulas e materiais)** | — |
 | **2 — Supabase real** | Todas as leituras vindas do banco; CRUD de questões persistindo; guarda `is_admin` no proxy | Supabase provisionado |
 | **3 — Ações que mutam** | Revogar/estender acesso, reenviar acesso, liberar 2ª chamada, trocar e-mail | Guru (docs/secret) + SES |
 

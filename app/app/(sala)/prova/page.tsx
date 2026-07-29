@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { tela } from "@/lib/telas";
 import { getUsuario } from "@/lib/usuario";
-import { nomeCookie, parseConcluidas } from "@/lib/progresso";
-import { provaLiberada } from "@/lib/curso";
+import { getConcluidas } from "@/lib/progresso";
+import { getCurriculo } from "@/lib/curriculo";
+import { getMatricula } from "@/lib/matricula";
+import { liberacao } from "@/lib/liberacao";
 import { tentativaAtual } from "@/lib/prova";
 import ProvaClient from "./ProvaClient";
 
@@ -25,8 +26,18 @@ export default async function ProvaPage() {
   if (t?.status === "submitted") redirect("/app/prova/resultado");
   if (t) redirect("/app/prova/questao/1");
 
-  const concluidas = parseConcluidas((await cookies()).get(nomeCookie(userId))?.value);
-  if (!provaLiberada(concluidas)) redirect("/app");
+  // Trava de CALENDÁRIO, e ela é a que tem dente. O gate de 16/16 abaixo é conferido contra um
+  // cookie que o próprio aluno edita, então sozinho ele não impede nada: bastaria forjar o
+  // cookie no dia 1, passar na prova e emitir o certificado dentro da janela de arrependimento,
+  // que é exatamente o abuso que a esteira existe para evitar. Esta trava vem da matrícula, no
+  // servidor, e não tem como ser forjada pelo navegador.
+  const curriculo = await getCurriculo();
+  const { inicioEm, liberacaoTotal } = await getMatricula();
+  if (!inicioEm || !liberacao(inicioEm, liberacaoTotal, curriculo.modulos.length).completo)
+    redirect("/app");
+
+  const concluidas = await getConcluidas();
+  if (!curriculo.provaLiberada(concluidas)) redirect("/app");
 
   return <ProvaClient html={html} />;
 }

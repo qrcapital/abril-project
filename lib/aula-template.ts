@@ -2,7 +2,9 @@
 // e regenera a sidebar de progresso com os estados reais (concluída/atual/futura).
 // Mantém os estilos exatos do design; só troca o conteúdo dinâmico.
 
-import { AULAS, MODULOS, TOTAL_AULAS, href, progressoPct, type Aula } from "./curso";
+import { href, type Aula, type Curriculo } from "./curso";
+import { esc } from "./html-slice.ts";
+import type { Material } from "./materiais";
 
 const CHEV =
   '<svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#A98E4E" stroke-width="2" style="flex:0 0 auto"><path d="M6 9l6 6 6-6"></path></svg>';
@@ -22,8 +24,14 @@ const LDOT = {
 
 const aulaLabel = (a: Aula) => (a.numero ? `${a.numero} · ${a.titulo}` : a.titulo);
 
-function summary(idx: number, done: number, total: number, hasCurrent: boolean): string {
-  const m = MODULOS[idx];
+function summary(
+  c: Curriculo,
+  idx: number,
+  done: number,
+  total: number,
+  hasCurrent: boolean,
+): string {
+  const m = c.modulos[idx];
   const dot = done === total ? MDOT.done : done > 0 || hasCurrent ? MDOT.progress : MDOT.todo;
   const countColor = done === 0 && !hasCurrent ? "#8F887E" : "#7E6836";
   const count = done === total ? `${done}/${total} ✓` : `${done}/${total}`;
@@ -39,13 +47,14 @@ function row(a: Aula, currentN: number, concluidas: Set<number>): string {
   return `<div data-href="${href(a)}" style="display:flex;align-items:center;gap:10px;padding:9px 15px 9px 22px;font-size:11px;color:#565049;border-top:1px solid #EFE7DB;cursor:pointer" style-hover="background:#FAF7F1"><span style="${dot}"></span> ${label}</div>`;
 }
 
-export function renderSidebar(currentN: number, concluidas: Set<number>): string {
-  return MODULOS.map((m) => {
-    const aulas = AULAS.filter((a) => a.modulo === m.idx);
+export function renderSidebar(c: Curriculo, currentN: number, concluidas: Set<number>): string {
+  return c.modulos.map((m) => {
+    const aulas = c.aulas.filter((a) => a.modulo === m.idx);
     const done = aulas.filter((a) => concluidas.has(a.n)).length;
     const hasCurrent = aulas.some((a) => a.n === currentN);
     const open = hasCurrent ? " open=\"\"" : "";
     return `<details name="modacc" class="modacc"${open} style="background:#fff;border:1px solid #E4DACC;border-radius:10px;margin-bottom:8px;overflow:hidden">${summary(
+      c,
       m.idx,
       done,
       aulas.length,
@@ -96,17 +105,53 @@ const VIDEO_EXEMPLO = "/app/video/aula-exemplo.mp4";
 // os materiais sim.) A proteção definitiva vem do Panda Video / URLs assinadas.
 const PLAYER = `<div style="background:#000;width:100%;height:clamp(300px,46vw,520px);display:flex;align-items:center;justify-content:center"><video controls controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false" playsinline style="height:100%;max-width:100%;aspect-ratio:16/9;background:#000;display:block" src="${VIDEO_EXEMPLO}"></video></div>`;
 
+
+/** Ícone de documento do design, reusado em cada linha de material. */
+const ICONE_DOC =
+  '<span style="width:28px;height:28px;border-radius:7px;background:#EDE6DD;display:flex;' +
+  'align-items:center;justify-content:center;flex:0 0 auto"><svg width="14" height="14" ' +
+  'viewBox="0 0 24 24" fill="none" stroke="#7E6836" stroke-width="1.6"><rect x="5" y="3" ' +
+  'width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6"></path></svg></span>';
+
+const LINHA_MATERIAL =
+  "display:flex;align-items:center;gap:12px;padding:11px 0;font-size:13px;color:#333333;" +
+  "border-top:1px solid #EFE7DB;margin-top:8px";
+
+/**
+ * As linhas de material da aula, ou o estado "em breve" quando não há nenhum.
+ *
+ * O `PRD.md` §6 pede que a seção suma ou diga "em breve", **sem link quebrado**. Até 29/jul o
+ * template reescrevia os três `href="#"` do design para o mesmo PDF de exemplo, o que dava três
+ * materiais falsos em toda aula e nenhum caminho para o caso de não haver material.
+ */
+function linhasDeMaterial(materiais: Material[]): string {
+  if (!materiais.length)
+    return (
+      `<p style="${LINHA_MATERIAL};color:#8F887E;font-style:italic">` +
+      "Os materiais desta aula chegam em breve.</p>"
+    );
+  return materiais
+    .map(
+      (m) =>
+        `<a href="${esc(m.arquivo)}" download style="${LINHA_MATERIAL}" ` +
+        `style-hover="color:#7E6836">${ICONE_DOC} ${esc(m.titulo)}</a>`,
+    )
+    .join("");
+}
+
 export function fillAula(
   html: string,
+  c: Curriculo,
   aula: Aula,
   pos: number,
-  concluidas: Set<number>
+  concluidas: Set<number>,
+  materiais: Material[] = []
 ): string {
-  const mod = MODULOS[aula.modulo];
-  const anterior = AULAS[pos - 1];
-  const proxima = AULAS[pos + 1];
+  const mod = c.modulos[aula.modulo];
+  const anterior = c.aulas[pos - 1];
+  const proxima = c.aulas[pos + 1];
   const breadLabel = aula.numero ? `Aula ${aula.n}` : "Boas-vindas";
-  const pct = progressoPct(concluidas);
+  const pct = c.progressoPct(concluidas);
   const count = concluidas.size;
 
   return html
@@ -115,9 +160,12 @@ export function fillAula(
       /<div style="background:#000;position:relative;width:100%;height:clamp[\s\S]*?(?=<div class="lesson-grid")/,
       PLAYER
     )
-    // materiais: os 3 links (href="#") baixam o PDF de exemplo
-    .split('<a href="#" style=')
-    .join('<a href="/app/materiais/material-exemplo.pdf" download style=')
+    // materiais: o card do design tem três links fixos; aqui eles viram os do banco, ou o
+    // estado "em breve". A âncora é o rótulo do card, que é único na tela.
+    .replace(
+      /(MATERIAIS DESTA AULA<\/b>)[\s\S]*?(?=<\/div>)/,
+      (_m, rotulo) => rotulo + linhasDeMaterial(materiais),
+    )
     // breadcrumb
     .replace("Módulo II · Renda Fixa e Ações nos EUA", `${mod.label} · ${mod.titulo}`)
     .replace(">Aula 7</span>", `>${breadLabel}</span>`)
@@ -139,8 +187,8 @@ export function fillAula(
     )
     // progresso
     .replace(">43%</span>", `>${pct}%</span>`)
-    .replace(">7 de 16 aulas concluídas</span>", `>${count} de ${TOTAL_AULAS} aulas concluídas</span>`)
+    .replace(">7 de 16 aulas concluídas</span>", `>${count} de ${c.totalAvaliadas} aulas concluídas</span>`)
     .replace("width:43%", `width:${pct}%`)
     // sidebar (accordions gerados a partir do currículo)
-    .replace(/<details name="modacc"[\s\S]*<\/details>/, renderSidebar(aula.n, concluidas));
+    .replace(/<details name="modacc"[\s\S]*<\/details>/, renderSidebar(c, aula.n, concluidas));
 }

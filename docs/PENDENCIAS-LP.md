@@ -4,59 +4,55 @@ Checklist vivo do que falta antes do "pronto para produção" (V1/homolog). Atua
 conforme os insumos chegam. Quando o Pedro perguntar "quais as pendências?", este é o
 documento a puxar. (O admin é V2 — ver `PLANO-ADMIN.md`.)
 
-_Última atualização: 2026-07-29, fim do dia. **A camada de feedback ao usuário está inteira.**
-Saíram as tarefas **1, 2, 3b, 4, 5, 6, 7, 8, 9, 10, 12** e metade da **11**. Do que sobra, nada
-é de feedback: são as frentes grandes (**14** matrículas e **15** curso no banco), as dívidas da
-prova (**16** cron e **17** modal e grade de questões) e as quatro do Pedro no painel, das quais
-só a **18** trava construção nova. A outra metade da 11, a aula sem material, foi movida para
-dentro da 15, porque o estado só existe quando os materiais tiverem fonte de verdade._
+_Última atualização: 2026-07-29, fim do dia. **Dia grande: a camada de feedback fechou inteira,
+e a arquitetura de conteúdo e acesso mudou de lugar.** Saíram as tarefas **1, 2, 3b, 4, 5, 6, 7,
+8, 9, 10, 11 (a metade que fazia sentido), 12, 14 e 15**, mais duas frentes que o Pedro abriu no
+caminho: o **certificado sobrevivendo ao fim do acesso** e a **liberação gradual do curso** (um
+módulo por semana, para o aluno não concluir e pedir reembolso dentro da janela de
+arrependimento).
+
+Três coisas saíram do lugar e vale saber antes de mexer: **o currículo agora vive no banco** (o
+`lib/curso.ts` não guarda mais as aulas), **o progresso também** (era cookie, e o aluno o
+editava), e **a guarda de acesso mora no layout do `(sala)`**, não no proxy.
+
+A fila de amanhã está logo abaixo._
 
 > Legenda: 🟢 dá para fazer agora (sem insumo externo) · 🔒 bloqueado por insumo/decisão.
 
 ---
 
-## ▶ PRÓXIMA SESSÃO (fila montada em 28/jul, para retomar em 29/jul)
+## ▶ PRÓXIMA SESSÃO (fila montada em 29/jul, para retomar em 30/jul)
 
-Tarefas discretas, na ordem sugerida. O detalhe de cada uma está nas seções abaixo e, para as
-de feedback, no `docs/FEEDBACK-UX.md`.
+Tudo o que estava na fila de 28/jul saiu, menos o que depende de você. O que resta:
 
-### Rápidas, minutos cada
+### Código, na ordem sugerida
 
-1. ~~**Commitar os 12 arquivos da árvore**, incluindo o `.nvmrc`.~~ **FEITO em 29/jul**, junto
-   com a tarefa 2. O `.nvmrc` (três bytes, `22`)
-   ficou fora do `c76e196` porque é arquivo do Pedro e a regra era não mexer sem perguntar; ele
-   autorizou deixar para o commit seguinte. Registrar no `HANDOFF` que passou a ser versionado.
-   Conteúdo do commit: regra de senha em 8 caracteres, cor calculada do desempenho por módulo
-   com as duas correções de AA, o `docs/FEEDBACK-UX.md` novo, e a sincronia de PRD, DESIGN,
-   AGENTS, LEIA-ME, CHANGELOG e deste documento. `npm run build`, `npm run lint` e
-   `npm run check` estavam passando no fim da sessão. Push é ordem separada.
-2. ~~**`upsert` silencioso** em `app/app/login/actions.ts`.~~ **FEITO em 29/jul.** Saiu em seis
-   linhas, não uma: só capturar o erro deixaria a conta pela metade, com usuário no auth e sem
-   linha em `profiles`, e o `verify_certificate()` faz join em `profiles`, então o furo só
-   apareceria na verificação pública do certificado. Agora loga, **desfaz o usuário** e devolve
-   erro à tela. Sem o desfazer, o retry esbarra em "já tem conta" e o silêncio volta pelo outro
-   lado.
-3. 🔒 **Template `Invite user`** no painel do Supabase, para o primeiro acesso ficar pronto antes
-   do Guru: `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=invite`. Tarefa do Pedro.
-   **Não há o que decidir aqui:** é a mesma edição do Reset Password trocando o tipo, e o
-   `/auth/confirm` já aceita `invite`. O que fica em aberto é vizinho e só importa no lançamento
-   (corpo do e-mail e remetente) — ver "Antes de produção: o e-mail de boas-vindas" abaixo.
+1. **17 · Modal de envio e grade de questões da prova.** A maior lacuna de UX que sobrou, e
+   está destravada (dependia dos padrões de feedback, que saíram em 29/jul). Duas coisas: o
+   envio ainda usa o `window.confirm` cinza do navegador, no momento mais tenso da jornada
+   (tentativa única, clique irreversível); e **não existe grade de questões**, então o aluno não
+   vê quais deixou em branco antes de enviar nem consegue voltar a uma específica. O modal novo
+   deve dizer **quantas ficaram em branco**, que é a informação que faz a confirmação valer.
+2. **16 · Cron da prova abandonada.** Quem fecha a aba deixa a tentativa `in_progress` para
+   sempre, porque o cronômetro só envia com a aba aberta. Previsto no `PRD.md` §15. Faz mais
+   sentido agora do que antes, porque o ciclo de vida da tentativa já está assentado.
+3. **Tela de conteúdo do admin** (`PLANO-ADMIN.md` §4.6), quando a 18 destravar. A migração que
+   ela exigia já está pronta: mudar título, descrição ou vídeo no banco já muda a tela sem
+   deploy. Falta a tela.
 
-### Primeiro do próximo lote (achado em 29/jul, dirigindo o browser)
+### Suas, e a primeira trava construção nova
 
-3b. **`<title>` da área repete o nome do produto.** Medido no browser: `/app/naoexiste` abre a
-    aba como **"Área do aluno | Estratégia Internacional | Estratégia Internacional"**. Causa:
-    o `app/app/layout.tsx` declara `title.default = "Área do aluno | Estratégia Internacional"`
-    e o layout raiz aplica por cima o `template` `"%s | Estratégia Internacional"`. Só aparece
-    em página **sem metadata própria**, e por isso passou despercebido: as telas com título
-    (`Entrar`, `Minha conta`, `Certificado`) saem certas. Ficou mais visível agora, porque o
-    `not-found`, o `error`, o `loading` e o catch-all novos não declaram título.
-    **Conserto de uma linha:** o `default` vira `"Área do aluno"` e o template da raiz completa
-    o resto. O Pedro pediu em 29/jul para começar o próximo lote por aqui.
-
-    _Registrado e descartado no mesmo dia:_ eu havia relatado que a barra de teste do homolog
-    cobria o rodapé do login. **Não cobre**, fica abaixo dos logos nos dois tamanhos medidos.
-    A remoção dela já está na lista de antes do go-live e não precisa de item novo.
+- 🔒 **18 · Acesso de admin**, as quatro perguntas do `PLANO-ADMIN.md` §8. Continua sendo a
+  única que impede começar o admin. Todas são sobre **acesso**, não sobre conteúdo.
+- 🔒 **3 · Template `Invite user`** no painel: colar uma linha.
+- 🔒 **20 · Política de senha** no painel: a nossa é 8 com classes, a plataforma garante 6 e
+  nenhuma classe.
+- 🔒 **13 · Quem escreve as ~100 questões.** Não bloqueia código, mas é o que falta para a prova
+  deixar de rodar sobre as 24 de exemplo.
+- 🔒 **Três decisões novas da tela de conteúdo** (§4.6): upload de arquivo ou URL colada;
+  se dá para reordenar aulas (o `ord` define o número na URL); e o que acontece ao apagar aula
+  com progresso gravado.
+- 🔒 **URL do checkout do Guru** e os **materiais e vídeos reais**, que seguem pendentes.
 
 ### Feedback ao usuário: a camada que atravessa a área logada
 
@@ -169,14 +165,63 @@ um consertando várias telas de uma vez, e é por isso que vêm antes dos de tel
     banco é construção nossa ponta a ponta, estrutura e conteúdo, e não dependência de docente
     nem de terceiro; falta decidir se saem daqui ou de outra fonte. **Não bloqueia mais nada:**
     o motor está pronto e testado sobre as 24 de exemplo, então tudo da fila anda sem isto.
-14. **Matrículas + `/app/acesso` + guarda real de acesso.** Hoje há **zero `enrollments`**, e a
-    RLS de `modules`/`lessons`/`materials` exige `has_active_access()`: no dia em que o curso
-    sair do `lib/curso.ts` para o banco, todo aluno logado vê currículo vazio. O `proxy.ts` só
-    checa se existe sessão, e o `PRD.md` §4 manda `revoked` e `expired` caírem em `/app/acesso`.
-    Criar matrícula para as contas de teste do homolog entra aqui.
-15. **Migrar o curso para o banco** (depende da 14). Mata a duplicação entre `seed.sql` e
-    `lib/curso.ts`, tira o progresso do cookie e transforma o gate de 16/16 em garantia de
-    verdade, em vez de checagem sobre cookie editável pelo aluno.
+14. ~~**Matrículas + `/app/acesso` + guarda real de acesso.**~~ **FEITO em 29/jul.**
+
+    - **A guarda mora no layout do `(sala)`, não no `proxy.ts`.** O proxy roda em toda
+      requisição do site, inclusive a LP, e pagaria uma ida ao banco por página; no layout, o
+      `cache()` faz a consulta ser a mesma que a tela de acesso usa depois. O proxy continua
+      responsável só por "existe sessão?".
+    - **`/app/acesso` fica FORA do grupo `(sala)`**: lá dentro, a guarda se redirecionaria para
+      si mesma em laço. Sem chrome também é o certo, porque a navegação do chrome leva ao curso,
+      que é justamente o que está bloqueado. Reaproveita a coluna do login pelo `telaSenha` sem
+      campos, então o aluno bloqueado continua dentro da marca.
+    - **Quatro estados, não três:** `ativa`, `expirada`, `revogada` e **`ausente`**. O último é
+      conta logada sem matrícula nenhuma, que pelo PRD §4 é anomalia de provisionamento e não
+      prazo vencido; tratar os dois igual esconderia um defeito atrás de uma tela de renovação.
+      Cada um tem texto próprio, e os três de bloqueio dizem que **o progresso não é apagado**.
+    - **O estado vem do banco, nunca da URL.** Cheguei a aceitar `?estado=` no redirect e tirei:
+      parâmetro de query é escolhido por quem digita o endereço, e a tela passaria a contar a
+      história que o visitante quisesse.
+    - **O primeiro acesso passou a criar a matrícula.** Em homolog o `?s=primeiro` faz o papel
+      da compra, então ele também provisiona; sem isso a conta nova nasceria bloqueada. Em
+      produção quem cria continua sendo o webhook do Guru, com o `guru_order_id` real.
+    - **Backfill aplicado:** `scripts/matricular-existentes.mjs` (idempotente, com simulação por
+      padrão) criou matrícula para as **9 contas** que já existiam sem nenhuma, incluindo as de
+      pessoas de verdade que testam o homolog. Sem ele, o primeiro deploy trancaria todo mundo
+      para fora.
+    - Verificado nos quatro estados, com a matrícula da conta de teste virada uma a uma.
+15. **Migrar o curso para o banco** (a 14 já saiu, então está destravada).
+
+    > **Correção de 29/jul: este item dizia que a tabela `lessons` estava vazia. Não está.**
+    > Medido no homolog: `modules` tem **5** linhas, `lessons` tem **17**, com `conta_no_gate`
+    > marcando exatamente as 16 avaliadas, e `questions` tem as 24 de exemplo. O seed foi
+    > aplicado em algum momento e o documento não acompanhou. Só `materials`, `progress` e
+    > `certificates` estão vazias, e as duas primeiras por motivo legítimo (não há material real
+    > nem progresso gravado ainda).
+    >
+    > **Consequência: a tarefa é menor do que parecia.** Não é migrar dado, é o app parar de ler
+    > `lib/curso.ts` e o progresso sair do cookie. Conferido também que a ordem e os títulos do
+    > banco batem com o `lib/curso.ts` nas 17 aulas, então a ponte entre os dois é determinística.
+
+    Ela se divide em duas metades, e elas são **acopladas**: `progress.lesson_id` é FK para
+    `lessons`, então não dá para tirar o progresso do cookie sem as aulas no banco (o que hoje
+    já é verdade).
+
+    **15a — progresso no banco.** É a metade com consequência. O gate de 16/16, o
+    `aulasRestantes` e a sidebar são conferidos hoje contra um cookie que o aluno edita, e isso
+    já foi explorado três vezes em 29/jul: para abrir o gate da prova, para forjar 16/16 contra
+    a esteira, e para fazer um módulo travado se exibir como "4/4 ✓". As policies de escrita do
+    próprio aluno em `progress` já existem no schema.
+
+    **A aula sem material saiu desta tarefa e já está FEITA (29/jul).** Ela não dependia do
+    banco: virou dado em `lib/materiais.ts`, e aula sem material declarado mostra "em breve".
+    Cheguei a implementar lendo da tabela `materials` e o Pedro mandou reverter, com o argumento
+    que ficou como regra: **material é conteúdo da página, não estado do aluno**, então mora no
+    código junto do resto do currículo e não custa consulta por página.
+
+    **15b — currículo lido do banco.** Mata a duplicação entre `seed.sql` e `lib/curso.ts` e
+    destrava o "em breve" dos materiais, que veio da tarefa 11. Estrutural, sem risco de
+    segurança.
 
     **Entra aqui junto (movido da tarefa 11 em 29/jul):** a **aula sem material** mostrando
     "em breve" em vez de seção vazia, que o `PRD.md` §6 exige. Ela veio parar nesta tarefa
@@ -277,7 +322,15 @@ um consertando várias telas de uma vez, e é por isso que vêm antes dos de tel
       com a tela `/app/acesso`.
 - [ ] **`{{ preco }}` / `{{ parcelas }}`** configuráveis (hoje hardcoded no porte).
 - [ ] **Telas secundárias** — `/obrigado`, `/app/acesso`.
-- [ ] **Remover atalhos de teste** (login e prova) antes do go-live.
+- [ ] **Remover atalhos de teste** (login e prova) antes do go-live. Entra aqui também o
+      `scripts/aprovar-conta.mjs`, criado em 29/jul para revisar o design do certificado sem
+      responder 20 questões: ele grava um resultado de prova que não aconteceu, o que em
+      produção significaria emitir certificado para quem não fez a prova.
+- [ ] **Código do certificado é fixo para todo mundo** — `EI-2026-4817`, em `lib/certificado.ts`,
+      com nome fixo junto. Dois alunos teriam o mesmo código de verificação, e o
+      `/verificar/:codigo` valida contra esse único código. A emissão real (tabela
+      `certificates`, código por aluno, função `verify_certificate`) pertence à migração para o
+      banco, tarefa 15. Achado em 29/jul, ao construir a guarda do certificado.
 - [ ] **Pixels de tracking** (`fbq`/`gtag`) — estrutura pronta; precisa dos IDs.
 - [ ] **Migrar o curso para o banco** — hoje vive em `lib/curso.ts`, a tabela `lessons`
       está vazia e o progresso é cookie.

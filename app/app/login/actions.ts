@@ -3,6 +3,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { validarSenha } from "@/lib/senha";
 
+/** Anos de acesso da matrícula. Espelha o ACCESS_YEARS do webhook do Guru. */
+const ANOS_ACESSO = 1;
+
 /**
  * Cria a conta do aluno no primeiro acesso (homolog simula a compra do Guru).
  * Usa a service role: cria o usuário JÁ CONFIRMADO (sem depender de e-mail de
@@ -39,6 +42,23 @@ export async function criarConta(
     };
   }
   if (data.user) {
+    // Em homolog este signup FAZ o papel da compra, então ele também cria a matrícula. Em
+    // produção quem cria é o webhook do Guru, com o `guru_order_id` real. Sem isto, a conta
+    // nasceria sem matrícula e a guarda de acesso do `(sala)` mandaria o aluno recém-criado
+    // direto para a tela de bloqueio.
+    const expiraEm = new Date();
+    expiraEm.setFullYear(expiraEm.getFullYear() + ANOS_ACESSO);
+    const { error: matricula } = await admin.from("enrollments").insert({
+      user_id: data.user.id,
+      status: "active",
+      expires_at: expiraEm.toISOString(),
+    });
+    if (matricula) {
+      console.error("[login] matricula nao criada:", matricula.message);
+      await admin.auth.admin.deleteUser(data.user.id);
+      return { error: "Não foi possível concluir o cadastro. Tente de novo." };
+    }
+
     const { error: perfil } = await admin
       .from("profiles")
       .upsert({ id: data.user.id }, { onConflict: "id" });

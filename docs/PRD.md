@@ -160,6 +160,8 @@ Não há cadastro aberto: a conta nasce da compra. O aluno recebe o acesso por e
 | Primeiro acesso | Link do e-mail de boas-vindas leva a definir senha |
 | Política de senha | Mínimo de **8** caracteres, com ao menos uma letra maiúscula, uma minúscula e um número (decidido em 28/jul/2026; o mínimo nasceu 6 e subiu para 8 no mesmo dia). Vale igual nas duas portas que criam senha: primeiro acesso e redefinição. Validador único em `lib/senha.ts`, aplicado no cliente e no servidor |
 | Validade | `expires_at` = `purchased_at` + 1 ano |
+| Liberação do conteúdo | **Um módulo por semana** a partir de `inicio_em` (29/jul/2026). Módulos 0 e I no ato da compra, II em 7 dias, III em 14, IV em 21 |
+| Chave de liberação total | `enrollments.liberacao_total`, **só nas mãos do admin**, para casos específicos. Garantida por estrutura: a tabela não tem policy de UPDATE |
 | Aviso de expiração | E-mail 30 dias antes do vencimento |
 | Pós-expiração | Tela de renovação (contato via suporte) |
 | Troca de e-mail | Não é self-service na v1; feita pelo suporte com validação |
@@ -174,6 +176,12 @@ Não há cadastro aberto: a conta nasce da compra. O aluno recebe o acesso por e
 ### Pontos a definir
 
 - Política de retenção do progresso após expiração ou revogação (manter para eventual renovação?).
+
+> **Onde o conteúdo do curso mora (29/jul/2026).** Título, descrição, link de vídeo e materiais
+> das aulas vivem no **banco** (`modules`, `lessons`, `materials`), não em código. A razão é
+> operacional: o admin vai editar tudo isso pelo painel (`PLANO-ADMIN.md` §4.6), e painel não
+> edita código. O `lib/curso.ts` guarda só a lógica do currículo. Consequência: mudar conteúdo
+> não exige deploy.
 
 ## 5. Home (vitrine)
 

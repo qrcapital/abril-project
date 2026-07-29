@@ -1,6 +1,6 @@
 ---
 name: lp-abril-estado-e-pendencias
-description: Estado e ponto de retomada do Abril (Estratégia Internacional) — última sessão 28/jul; ler o PONTO DE RETOMADA e o bloco PRÓXIMA SESSÃO do docs/PENDENCIAS-LP.md antes de qualquer coisa.
+description: Estado e ponto de retomada do Abril (Estratégia Internacional) — última sessão 29/jul; ler o bloco PRÓXIMA SESSÃO do docs/PENDENCIAS-LP.md antes de qualquer coisa.
 metadata: 
   node_type: memory
   type: project
@@ -12,35 +12,47 @@ Estado da **LP Estratégia Internacional** (repo `C:\Users\pedro\Claude\abril-es
 
 **MIGRAÇÃO DE MÁQUINA (25/jul/2026):** o Pedro comprou um MacBook e vai **transferir o desenvolvimento deste projeto do Windows para lá**. Foi criado o **`docs/HANDOFF.md`** (commit `712b0cb` em `homolog`, pushado), documento de continuidade que consolida tudo desta nota e mais: o que não vem no `git clone`, setup no macOS, armadilhas e decisões fechadas. **Ao trabalhar neste projeto em qualquer máquina, ler o `docs/HANDOFF.md` primeiro** — o `AGENTS.md` já aponta para ele. As memórias do Abril foram copiadas para **`docs/memoria-claude/`** (viajam no git; o README de lá tem o procedimento de reinstalação no Mac) e o `COPY.md` virou `docs/COPY.md`, versionado. Fora do git e a transferir na mão: `.env.local` (recriar do dashboard Supabase) e os insumos brutos de `referencias/cowork/` (~9 MB; um arquivo tem marca d'água Dreamstime, não commitar em bloco). **Os geradores do globo e o `checkpoint-canvas/` do scratchpad já foram apagados pelo sistema, não existem mais em lugar nenhum** — os dados de saída seguem versionados em `scripts/globo-*.txt`.
 
-**PONTO DE RETOMADA (28/jul/2026, fim da sessão — repo em `~/projects/abril-project`):**
+**PONTO DE RETOMADA (29/jul/2026, fim da sessão — repo em `~/projects/abril-project`):**
 
-Comece pelo bloco **"▶ PRÓXIMA SESSÃO"** no topo do `docs/PENDENCIAS-LP.md`. São **20 tarefas
-discretas**, agrupadas e ordenadas, com 🔒 marcando as 4 que dependem do Pedro. Ele pediu para
-começar "a valer" amanhã, então não recontar história: ler o bloco e ir para a tarefa 1.
+Comece pelo bloco **"▶ PRÓXIMA SESSÃO"** no topo do `docs/PENDENCIAS-LP.md`, que foi remontado
+em 29/jul. A primeira de código é a **17** (modal de envio e grade de questões da prova). Não
+recontar história: ler o bloco e ir para ela.
 
-**Estado do git (29/jul, fim do dia):** dois commits em `homolog`. O `f22e297` (pushado) fechou
-as tarefas 1 e 2. O **segundo commit de 29/jul**, o mais recente, fecha a **camada de feedback
-inteira** e ainda **não foi pushado**: a regra de [[commit-push-so-com-ordem]] vale, e o Pedro
-deu só a ordem de commit. `build`, `lint` e `check` (3/3) passando.
+**Estado do git (29/jul, fim do dia):** três commits em `homolog`, todos pushados. O `f22e297`
+fechou as tarefas 1 e 2; o `33f6469` fechou a camada de feedback; o terceiro fecha **acesso,
+liberação e conteúdo**. Árvore limpa, `build`, `lint` e `check` (5/5) passando.
 
-**O que a sessão de 29/jul fez, em uma passada.** Onze tarefas: o `upsert` silencioso do signup
-(que agora desfaz o usuário, senão a conta fica pela metade e o `verify_certificate` quebra lá
-na frente), os **quatro padrões de feedback** do `DESIGN.md` §3, as telas de `loading`/`error`/
-`not-found` do `(sala)` mais o catch-all, o **nome do aluno no servidor** (conta e certificado
-viraram dinâmicas), a sessão expirada explicada no login, a troca de senha na conta pedindo a
-senha atual, o indicador progressivo de exigências em três telas, o `catch` do download do
-certificado, o aviso de tempo na prova, a marcação otimista do concluir aula, o feedback do
-sair, e o título triplicado da aba.
+**O que a sessão de 29/jul fez.** Fechou as tarefas 1, 2, 3b, 4, 5, 6, 7, 8, 9, 10, 12, metade
+da 11, e depois **14 e 15** inteiras. Mais duas frentes que o Pedro abriu no caminho: o
+**certificado sobrevive ao fim do acesso** (com o porteiro de aprovação que nunca existiu, e
+matrícula revogada continua bloqueada) e a **liberação gradual do curso**, um módulo por semana,
+cuja razão é comercial e não pedagógica: sem esteira o aluno conclui, emite o certificado e pede
+reembolso dentro da janela de arrependimento.
+
+**Três mudanças de arquitetura que valem mais que a lista de tarefas:**
+
+1. **O currículo saiu do código para o banco.** `lib/curso.ts` não guarda mais as aulas; ele tem
+   tipo e lógica pura, e `lib/curriculo.ts` carrega de `modules`/`lessons`. O motivo é o admin:
+   ele vai editar título, descrição, vídeo e materiais pelo painel, e painel não edita código.
+   Verificado: mudar no banco muda a tela **sem deploy**. Registrado como escopo novo do admin
+   em `PLANO-ADMIN.md` §4.6, com três decisões pendentes.
+2. **O progresso saiu do cookie para a tabela `progress`.** O gate de 16/16 era conferido contra
+   um dado que o aluno escrevia, e eu explorei isso três vezes no mesmo dia. Escrevi uma migração
+   que semeava o banco a partir do cookie e **removi ao testar o ataque**: era uma porta para
+   plantar o dado. Cookie de aluno nunca é fonte de verdade, nem "só para migrar".
+3. **A guarda de acesso mora no layout do `(sala)`**, não no proxy, com quatro estados de
+   matrícula e `/app/acesso` fora do grupo (senão o bloqueio se redireciona em laço).
 
 **Regras novas que saíram daí e valem para sempre:** cor semântica tem
 [[cor-semantica-por-fundo]]; a área do aluno **não é escura** (o chrome é, o miolo das telas é
 claro `#F7F5F2`), então todo padrão nasce com dois pares; e caixa de mensagem se pinta **no
 DOM**, nunca em JSX irmão do HTML injetado, senão vai parar no fim da página.
 
-**A fila válida agora** é o bloco "▶ PRÓXIMA SESSÃO" do `PENDENCIAS-LP.md`, do qual sobraram as
-frentes grandes (14 matrículas, 15 curso no banco), as dívidas da prova (16 cron, 17 modal e
-grade) e as quatro do Pedro no painel, das quais só a **18** (acesso de admin) trava construção
-nova.
+**A fila válida agora** é o bloco "▶ PRÓXIMA SESSÃO" do `PENDENCIAS-LP.md`. Sobraram, de código,
+a **17** (modal de envio e grade de questões) e a **16** (cron da prova abandonada), mais a tela
+de conteúdo do admin quando a 18 destravar. Do lado do Pedro: **18** (acesso de admin, única que
+trava construção nova), 3, 20, 13, as três decisões da tela de conteúdo, e os insumos que faltam
+(URL do checkout, vídeos e materiais reais).
 
 **Correção do signup (29/jul), para não reabrir:** o `upsert` em `profiles` não devolvia mais
 "uma linha de tratamento", como a pendência estimava. Só capturar o erro deixaria a conta pela

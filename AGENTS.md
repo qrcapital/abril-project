@@ -49,7 +49,20 @@ TypeScript · Next.js 16 (App Router, RSC) · Tailwind v4 · Supabase (Postgres,
 
 ## Banco de dados
 
-Migrations em `supabase/migrations/`, seed de dev em `supabase/seed.sql` (módulos, 16 aulas reais e um banco de questões de exemplo para testar o sorteio). O banco de questões real, estrutura e conteúdo, é construção nossa.
+Migrations em `supabase/migrations/`, seed em `supabase/seed.sql`. O banco de questões real,
+estrutura e conteúdo, é construção nossa.
+
+**O currículo vive no banco desde 29/jul/2026.** O `lib/curso.ts` não guarda mais as aulas: ele
+tem tipos e lógica pura, e o `lib/curriculo.ts` carrega módulos e aulas de `modules`/`lessons`,
+uma vez por requisição. Materiais vêm de `materials`. A razão é o admin: ele vai editar título,
+descrição, link de vídeo e materiais pelo painel (`PLANO-ADMIN.md` §4.6), e painel não edita
+código. Consequência prática: **mudar conteúdo no banco muda a tela sem deploy**, e o seed
+deixou de duplicar o código para virar a carga inicial.
+
+**O progresso também é do banco** (tabela `progress`), e não mais um cookie. O gate de 16/16 que
+libera a prova era conferido contra um dado que o próprio aluno escrevia; isso foi explorado
+três vezes em 29/jul. Se precisar de progresso para testar, use
+`scripts/progresso-conta.mjs`, que escreve pelo servidor.
 
 ## Rodar
 
@@ -57,14 +70,15 @@ Migrations em `supabase/migrations/`, seed de dev em `supabase/seed.sql` (módul
 npm run dev      # dev server
 npm run build    # build de produção
 npm run lint
-npm run check    # self-checks de regra de negócio (prova + senha + usuário)
+npm run check    # self-checks (prova, senha, usuário, liberação, currículo)
 ```
 Variáveis em `.env.local` (ver `.env.example`). Sem elas, o app sobe mas as integrações ficam inertes.
 
 O `npm run check` roda os scripts de `scripts/*-check.mts` em node puro, sem framework de teste.
 Cobrem as regras que doem quando quebram: a correção da prova (nota de corte, questão em
-branco, desempenho por módulo), a política de senha, e os **marcadores de usuário** do markup
-portado. Rodam também as âncoras de HTML dos templates, para uma mudança no porte estourar ali
+branco, desempenho por módulo), a política de senha, os **marcadores de usuário** do markup
+portado, o **calendário de liberação** (que falha o build se o curso ficar concluível dentro da
+janela de arrependimento) e as **invariantes do currículo** no banco. Rodam também as âncoras de HTML dos templates, para uma mudança no porte estourar ali
 em vez de servir placeholder do design como se fosse conteúdo real. **Ao mexer em nota, senha,
 nos dados do aluno ou nos templates de tela, rode antes de commitar.**
 

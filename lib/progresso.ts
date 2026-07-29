@@ -1,45 +1,53 @@
-// Estado de conclusão das aulas (progresso do aluno), POR USUÁRIO.
+import "server-only";
+import { cache } from "react";
+
+import { createClient } from "./supabase/server";
+import { getUsuario } from "./usuario";
+import { getCurriculo } from "./curriculo";
+
+// Estado de conclusão das aulas (progresso do aluno), na tabela `progress`.
 //
-// Guardado num cookie escopado pelo id do usuário (`ei_progresso_<userId>`), para
-// que cada conta tenha o seu progresso e uma conta nova comece do zero. O SSR lê o
-// cookie do usuário logado; o cliente atualiza ao marcar/desmarcar. Quando o DB
-// entrar (tabela `progress`), estas funções passam a ler/gravar no banco.
+// Morava num cookie até 29/jul/2026, e o cookie é escrito pelo próprio aluno: o gate de 16/16
+// que libera a prova, e portanto o certificado, era conferido contra um dado que ele edita.
+// Isso foi explorado três vezes no mesmo dia, por mim, para conseguir testar outras coisas.
+// Agora o estado é do servidor, e o cookie antigo é simplesmente ABANDONADO.
+//
+// Cheguei a escrever uma migração que lia o cookie e semeava o banco na primeira visita, para
+// ninguém perder o que já tinha marcado. **Removi depois de testar o ataque:** com o cookie
+// forjado e o banco vazio, a prova abria. A semente era uma porta para o aluno PLANTAR o dado
+// que eu acabara de tirar das mãos dele, e não existe versão segura disso, porque o cookie é
+// escrito por quem está do outro lado. Quem precisar de progresso para testar usa
+// `scripts/progresso-conta.mjs`, que escreve pelo servidor.
+//
+// A ponte entre número e id que existia aqui morreu junto com o currículo em código: a aula
+// carregada do banco já traz o próprio `id`, então não há mais duas listas para casar.
 
-const PREFIXO = "ei_progresso_";
+/**
+ * As aulas concluídas do aluno logado, por número.
+ *
+ * A leitura usa o cliente com a sessão: a policy `progress_self_select` restringe à própria
+ * linha, então quem garante o isolamento é a RLS, não um `where` que alguém pode esquecer.
+ */
+export const getConcluidas = cache(async (): Promise<Set<number>> => {
+  const user = await getUsuario();
+  if (!user) return new Set();
 
-export function nomeCookie(userId: string): string {
-  return PREFIXO + userId;
-}
-
-// Estado inicial: vazio (aluno começa do zero).
-export function parseConcluidas(raw?: string | null): Set<number> {
-  if (!raw) return new Set();
-  try {
-    const arr = JSON.parse(raw);
-    return Array.isArray(arr) ? new Set(arr.map(Number)) : new Set();
-  } catch {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("progress")
+    .select("lesson_id")
+    .eq("status", "completed");
+  if (error) {
+    console.error("[progresso] falha ao ler:", error.message);
     return new Set();
   }
-}
 
-// ---- cliente ----
-export function lerConcluidas(userId: string): Set<number> {
-  if (typeof document === "undefined" || !userId) return new Set();
-  const m = document.cookie.match(
-    new RegExp(`(?:^|;\\s*)${PREFIXO}${userId}=([^;]*)`)
-  );
-  return parseConcluidas(m ? decodeURIComponent(m[1]) : null);
-}
-
-function gravar(userId: string, s: Set<number>) {
-  const val = encodeURIComponent(JSON.stringify([...s].sort((a, b) => a - b)));
-  document.cookie = `${nomeCookie(userId)}=${val}; path=/; max-age=${60 * 60 * 24 * 365}`;
-}
-
-export function alternarConcluida(userId: string, n: number): boolean {
-  const s = lerConcluidas(userId);
-  if (s.has(n)) s.delete(n);
-  else s.add(n);
-  gravar(userId, s);
-  return s.has(n);
-}
+  const { aulas } = await getCurriculo();
+  const numeroPorId = new Map(aulas.map((a) => [a.id, a.n]));
+  const concluidas = new Set<number>();
+  for (const linha of data ?? []) {
+    const n = numeroPorId.get(linha.lesson_id as string);
+    if (n !== undefined) concluidas.add(n);
+  }
+  return concluidas;
+});

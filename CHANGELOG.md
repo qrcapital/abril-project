@@ -8,6 +8,168 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **O currículo saiu do código e virou dado do banco (15b)** — 2026-07-29
+  - Decisão do Pedro, e o motivo mudou o desenho: **o admin vai editar título, descrição, link
+    de vídeo e materiais pelo painel**, e painel não edita código. Enquanto a pergunta era só
+    "onde o dado mora", o código ganhava; com um editor humano na jogada, o banco passou a ser
+    a única resposta possível.
+  - `lib/curso.ts` **não tem mais dado nenhum**: as 17 aulas escritas à mão saíram, e o arquivo
+    virou tipo mais lógica pura (`montarCurriculo`). `lib/curriculo.ts` carrega do banco, uma
+    vez por requisição.
+  - **O cliente deixou de conhecer o currículo.** O `HomeClient` importava cinco funções de
+    `lib/curso`; agora recebe prontos os destinos de cada cartão, o do "continuar" e os dois
+    números do gate. Navegador não lê banco, e essa era a parte do refactor que dava trabalho.
+  - **A ponte número↔id morreu junto.** A aula carregada do banco já traz o próprio `id`, então
+    o progresso grava direto, sem casar duas listas. O `check:progresso`, que existia só para
+    detectar divergência entre código e banco, virou `check:curriculo` e passou a guardar o que
+    ainda pode quebrar: `ord` repetido dentro de um módulo torna a ordem ambígua, e a mesma URL
+    passaria a apontar para aulas diferentes entre dois deploys, em silêncio.
+  - Materiais voltaram para o banco pelo mesmo motivo do resto. Ida e volta registrada com
+    honestidade: saíram do código de manhã, voltaram ao meio-dia a pedido do Pedro, e voltaram
+    ao banco quando ele definiu que o admin os edita. A razão mudou, não a opinião.
+  - **Verificado com a prova que interessa:** troquei título, descrição e `panda_video_id` de
+    uma aula direto no banco e a tela mudou **sem rebuild e sem deploy**. É exatamente o que o
+    painel vai fazer.
+  - Achado no caminho: o `PLANO-ADMIN.md` **não previa tela de conteúdo** (a Fase 1 é casca →
+    Painel → Questões → Alunos → E-mails). O que o Pedro pediu é escopo novo do admin, e as
+    quatro perguntas travadas da tarefa 18 são todas sobre **acesso**, não sobre conteúdo, então
+    esta migração não dependia delas.
+- **Materiais da aula: dados em código, com o estado "em breve"** — 2026-07-29
+  - O template reescrevia **todos** os `href="#"` da tela da aula para o mesmo PDF de exemplo:
+    três materiais falsos em toda aula, nomes iguais em todas elas, e nenhum caminho para o caso
+    de não haver material. O `PRD.md` §6 pede o contrário desde sempre.
+  - Agora as linhas vêm de `lib/materiais.ts`, e aula sem material declarado mostra
+    **"Os materiais desta aula chegam em breve"** em vez de link quebrado. O Módulo 0 é quem
+    exercita esse estado hoje.
+  - **Passou pelo banco e voltou, por decisão do Pedro.** Cheguei a ler da tabela `materials`,
+    com script de seed e tudo. Ele apontou que material é **conteúdo da página**, como o título
+    e a descrição da aula, e não estado do aluno: muda junto com o deploy do conteúdo, então
+    guardar no banco custava uma consulta por página de aula sem ganho correspondente. Revertida
+    a leitura, apagadas as 20 linhas que eu tinha inserido no homolog, e removido o script.
+  - O que ficou da ida ao banco é o que valia: o estado vazio e a morte do rewrite cego de
+    `href="#"`, que fazia qualquer outro link `#` do design virar download de PDF em silêncio.
+    Os dois independem de onde o dado mora.
+- **O progresso saiu do cookie e foi para o banco (15a)** — 2026-07-29
+  - O gate de 16/16 que libera a prova, e por consequência o certificado, era conferido contra
+    um **cookie que o próprio aluno escreve**. Isso foi explorado três vezes no mesmo dia, por
+    mim, para conseguir testar outras coisas: abrir a prova sem assistir nada, forjar 16/16
+    contra a esteira, e fazer um módulo travado se exibir como "4/4 ✓".
+  - **A tarefa era menor do que o documento dizia.** O `PENDENCIAS` afirmava que a tabela
+    `lessons` estava vazia; medido, o banco já tinha **5 módulos e 17 aulas**, com
+    `conta_no_gate` marcando exatamente as 16 avaliadas. Não era migrar dado, era o app parar de
+    ler o cookie.
+  - A ponte entre o número da aula (código) e o id dela (banco) é resolvida **por ordem**, e
+    guardada pelo `npm run check:progresso` novo: se alguém reordenar o `seed.sql` ou o
+    `curso.ts` sem o outro, o progresso apontaria para a aula errada **em silêncio**, e agora
+    isso é falha de build.
+  - Marcar aula virou **server action**, escrevendo com o cliente da sessão para a policy
+    `progress_self_write` amarrar a linha ao próprio aluno. A action repete a checagem de
+    liberação de propósito: server action é porta própria, e quem chamasse direto marcaria aulas
+    de módulos que ainda nem abriram.
+  - **Um furo que eu mesmo abri, e fechei ao testar o ataque.** Escrevi uma migração que semeava
+    o banco a partir do cookie na primeira visita, para ninguém perder progresso. Com o cookie
+    forjado e o banco vazio, **a prova abria**: eu havia tirado o dado das mãos do aluno e criado
+    uma porta para ele plantá-lo. Não existe versão segura disso, porque o cookie é escrito por
+    quem está do outro lado. A semente saiu, o cookie antigo é **abandonado**, e quem precisar de
+    progresso para testar usa `scripts/progresso-conta.mjs`, que escreve pelo servidor.
+  - Consequência assumida: quem marcou aulas em homolog recomeça do zero. É test data, e o preço
+    de manter era reabrir o buraco.
+  - Verificado com o ataque real: cookie forjado em 16/16 com banco zerado **não abre a prova**,
+    e a home mostra 0/1 e 0/4. E com o caminho feliz: clique repinta no mesmo tick, a linha
+    aparece em `progress` com `completed`, e a sidebar vai para 1 de 16.
+- **Liberação gradual do curso: um módulo por semana** — 2026-07-29
+  - Pedido do Pedro, com razão **comercial e não pedagógica**: sem esteira, o aluno termina o
+    curso em poucos dias, emite o certificado e pede reembolso dentro da janela de
+    arrependimento, ficando com a peça sem ter pago.
+  - **Módulos 0 e I abrem na compra**, depois um por semana; curso inteiro no dia 21. Deixar só
+    as boas-vindas no dia zero entregaria uma tela quase vazia a quem acabou de pagar.
+  - **A trava da prova é de CALENDÁRIO, e é ela que tem dente.** O gate de 16/16 lê um cookie
+    que o próprio aluno edita, então sozinho não impede nada: bastaria forjá-lo no dia 1 e
+    emitir o certificado dentro da janela. Verificado contra o ataque real, com o cookie forjado
+    em 16/16 no dia 0: **a prova não abre**.
+  - `lib/liberacao.ts`, pura, com `npm run check:liberacao`. A asserção central não é de UI: ela
+    **falha o build** se o calendário deixar o curso concluível dentro dos 7 dias de
+    arrependimento, ou seja, se a esteira perder a razão de existir.
+  - **`inicio_em` separado de `purchased_at`**, e essa separação é a resposta à tensão da turma:
+    o curso tem turmas, mas gotejamento por compra individual dá calendários diferentes a quem
+    está na mesma turma. Com a âncora própria, no dia em que turma virar operação basta gravar a
+    mesma data para todos e o calendário vira coletivo, sem migração nova nem reescrita de regra.
+  - **`liberacao_total` é a chave do admin**, para casos específicos (decisão do Pedro). A
+    garantia é **estrutural, não de disciplina**: `enrollments` não tem policy de UPDATE, então
+    nem o dono da linha vira a chave pela API. Só service role.
+  - **A aula travada explica em vez de só devolver.** Pedido do Pedro: em vez de tela própria,
+    o aluno volta para a home com um modal dizendo qual módulo é, em quantos dias abre e a data.
+    Reusa o modal que já existia para a prova bloqueada, que virou componente em vez de ganhar
+    uma segunda cópia de oitenta linhas de JSX. Cartão de módulo fechado também deixou de
+    navegar: o ida e volta pareceria defeito, e o card já diz quando abre.
+  - **A URL diz qual módulo foi tentado, o banco diz se está travado.** Mesma disciplina da tela
+    de acesso: `?travado=1` digitado à mão para um módulo aberto não abre modal nenhum, nem
+    índice inexistente. Testados os dois.
+  - Guardas em três lugares: prova (calendário), aula (módulo fechado não abre nem pela URL,
+    senão o gotejamento seria decorativo) e home (cartão travado com "ABRE EM X DIAS" na pill
+    âmbar do `DESIGN.md` §2).
+  - Migração `0002_liberacao.sql` aplicada no homolog. As **9 matrículas** existentes receberam
+    `inicio_em = purchased_at`; **8 ficaram com liberação total** (são contas de stakeholders,
+    que veriam módulos sumir sem aviso) e **uma ficou na esteira** para o comportamento real
+    permanecer visível no ambiente.
+  - Nota de verificação: com streaming, `redirect()` em Server Component sai como **200 com
+    instrução de navegação no payload**, não como 307. Cheguei a ler isso como "a guarda não
+    disparou"; o corpo da resposta não tinha o conteúdo da aula, e no browser a navegação
+    acontece. Mesmo fenômeno já registrado no 404.
+- **O certificado sobrevive ao fim do acesso, e ganhou o porteiro que nunca teve** — 2026-07-29
+  - Pedido do Pedro: quem concluiu o curso deve conseguir baixar o certificado mesmo depois de
+    o acesso terminar. **O diploma é do aluno, não do prazo dele**; o conteúdo é que expira, não
+    a conquista. Bloquear a peça que a pessoa já ganhou seria punição e viraria ticket na hora.
+  - **Achado no caminho, maior que o pedido:** o certificado **não tinha porteiro nenhum**.
+    Qualquer conta logada abria `/app/certificado` e baixava um PDF com o próprio nome sem ter
+    feito a prova, apesar de o `ROUTES.md` prometer "só acessível com prova aprovada" desde
+    sempre. O porteiro veio junto porque é ele que define o "se concluiu" do pedido.
+  - **Matrícula revogada continua bloqueada**, e é a única exceção. Revogação é reembolso ou
+    chargeback: a compra foi desfeita, e manter o certificado seria entregar o produto de graça.
+    É a diferença entre "o prazo acabou" e "a compra não vale".
+  - Implementado com um **grupo de rota próprio**, `(certificado)`, com a sua guarda. A URL não
+    muda. O chrome saiu para `app/app/_ui/Chrome.tsx`, usado pelos dois grupos, porque o que
+    difere entre eles é a guarda e não o cabeçalho.
+  - `foiAprovado()` em `lib/prova.ts`, com `cache()`, lendo a tentativa e corrigindo pelo mesmo
+    `corrigir` das telas de resultado. Nada de nota nova em lugar novo.
+  - `scripts/aprovar-conta.mjs` novo, **só para homolog**: marca uma conta como aprovada para
+    revisar o design do certificado sem responder 20 questões. Entra na lista de atalhos de
+    teste a remover antes do go-live. Escrevi a primeira versão com o formato errado do snapshot
+    (`module_ord` em vez de `modulo`, `correta` como letra em vez de índice) e a correção
+    reprovou em silêncio: o script agora espelha o `abrirTentativa` campo a campo.
+  - Matriz verificada nos oito cruzamentos de estado de matrícula e aprovação.
+- **Matrículas de verdade, guarda de acesso e `/app/acesso`** — 2026-07-29
+  - Havia **zero `enrollments`** no banco, e a RLS de `modules`/`lessons`/`materials` exige
+    `has_active_access()`. O furo era latente: nada no app lê essas tabelas ainda, mas no dia em
+    que o curso saísse do `lib/curso.ts` para o banco, **todo aluno logado veria currículo
+    vazio**. E o `proxy.ts` só sabia dizer se existe sessão, enquanto o `PRD.md` §4 manda
+    `revoked` e `expired` caírem numa tela de renovação.
+  - **A guarda mora no layout do `(sala)`, não no proxy.** O proxy roda em toda requisição do
+    site, inclusive a LP, e pagaria uma ida ao banco por página. No layout, o `cache()` do React
+    faz a consulta ser a mesma que a tela de acesso usa depois, então o custo é uma query por
+    requisição em `/app/*` e zero no resto do site.
+  - **`/app/acesso` fica fora do grupo `(sala)`**, senão a guarda se redirecionaria para si
+    mesma em laço. Sem chrome de propósito: a navegação do chrome leva ao curso, que é o que
+    está bloqueado. Reaproveita a coluna do login pelo `telaSenha` sem campos.
+  - **Quatro estados, não três.** Além de `ativa`, `expirada` e `revogada`, existe **`ausente`**:
+    conta logada sem matrícula nenhuma. Pelo PRD §4 a conta nasce da compra, então isso é
+    anomalia de provisionamento e não prazo vencido; tratar os dois igual esconderia um defeito
+    atrás de uma tela de renovação. Cada estado tem texto próprio, e os três dizem que **o
+    progresso não é apagado**, que é metade do alívio.
+  - **O estado vem do banco, nunca da URL.** A primeira versão passava `?estado=` no redirect;
+    saiu, porque parâmetro de query é escolhido por quem digita o endereço e a tela passaria a
+    contar a história que o visitante quisesse.
+  - **O primeiro acesso passou a criar a matrícula.** Em homolog o `?s=primeiro` faz o papel da
+    compra, então provisiona também; sem isso a conta nova nasceria bloqueada. Em produção quem
+    cria continua sendo o webhook do Guru. Falha ao criar desfaz o usuário, mesma regra do
+    perfil.
+  - **Backfill aplicado no homolog:** `scripts/matricular-existentes.mjs`, idempotente e com
+    simulação por padrão, criou matrícula para as **9 contas** que existiam sem nenhuma,
+    incluindo as de pessoas reais que testam o ambiente. Sem ele, o deploy desta leva trancaria
+    todo mundo para fora.
+  - Verificado nos quatro estados, virando a matrícula da conta de teste uma a uma: com acesso
+    ativo as telas abrem e `/app/acesso` devolve para `/app`; nos três de bloqueio, `/app`
+    redireciona e cada tela mostra o seu texto.
 - **O resto do mapa de feedback: concluir aula e sair** — 2026-07-29
   - Metade desta pendência já tinha caído junto das outras tarefas do dia, e fica registrado
     para ninguém procurar trabalho inexistente: o `role="alert"` passou a sair do `pintarCaixa`
