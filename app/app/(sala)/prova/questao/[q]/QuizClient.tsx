@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { enviarProva, responder } from "../../actions";
-import { formatarTempo } from "@/lib/prova-correcao";
-import { pintarCaixa } from "@/app/app/_ui/feedback";
+import { formatarTempo, fraseEmBranco, resumoProva, trechoEmBranco } from "@/lib/prova-correcao";
+import { confirmar, emTrabalho, pintarCaixa } from "@/app/app/_ui/feedback";
 
 // Minutos em que o aluno é avisado. Tentativa única e 120 minutos: quem está concentrado numa
 // questão não olha para o relógio, e o zero vira envio automático sem preparo nenhum.
@@ -38,16 +38,72 @@ const BOLA_ON = `${BOLA_BASE};border:1.5px solid #A98E4E;background:#A98E4E;colo
  * - zerado o tempo, envia sozinho, e o servidor corrige o que houver respondido;
  * - "Enviar prova" na última questão, com confirmação, porque a tentativa é única.
  */
+/**
+ * A grade de questões do diálogo de envio: um botão por posição, respondida ou em branco,
+ * clicável para ir direto à questão.
+ *
+ * Reusa as bolinhas de alternativa (`BOLA_ON`/`BOLA_OFF`): respondida é a bolinha dourada
+ * cheia, em branco é a de contorno. Nenhuma cor nova entra por isto, e a diferença entre os
+ * dois estados é preenchimento contra contorno, não só matiz, que é o que faz a grade
+ * funcionar para quem não distingue as duas cores. O `aria-label` diz o estado por extenso,
+ * porque o número sozinho não o carrega.
+ *
+ * **Dez por linha, fixo.** Com 20 questões dá duas fileiras de dez, que se leem como dezenas.
+ * O `auto-fill` da primeira versão quebrava em 11 e 9 conforme a largura sobrava, o que não
+ * tem leitura nenhuma.
+ *
+ * **Sem marca de questão atual.** A grade só abre pelo botão de envio, que só existe na última
+ * questão, então "atual" seria sempre a última: constante, e portanto sem informação. O anel
+ * saiu junto com o `aria-current` na revisão do Pedro em 30/jul.
+ */
+function montarGrade(
+  total: number,
+  respondidas: Set<number>,
+  ir: (posicao: number) => void,
+): HTMLElement {
+  const grade = document.createElement("div");
+  grade.setAttribute("role", "group");
+  grade.setAttribute("aria-label", "Questões da prova");
+  grade.style.cssText =
+    "display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:8px;margin:0 0 20px";
+
+  for (let p = 1; p <= total; p++) {
+    const respondida = respondidas.has(p);
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = String(p);
+    // `BOLA_ON` pinta o glifo em BRANCO, que sobre o dourado `#A98E4E` dá 3,15:1 e falha AA.
+    // Na alternativa isso passa porque o texto ao lado carrega o sentido e a letra é quase
+    // decoração; aqui o NÚMERO é a única informação do chip, então ele troca para o verde
+    // profundo (4,84:1), que é o mesmo par do botão dourado da plataforma. A declaração vem
+    // depois da base de propósito: no mesmo `cssText`, a última ganha.
+    b.style.cssText =
+      `${respondida ? BOLA_ON : BOLA_OFF};width:100%;height:38px;border-radius:8px;` +
+      "font-family:inherit;cursor:pointer;transition:all .14s ease" +
+      (respondida ? ";color:#0A2B1E" : "");
+    b.setAttribute(
+      "aria-label",
+      `Questão ${p}, ${respondida ? "respondida" : "em branco"}`,
+    );
+    b.addEventListener("click", () => ir(p));
+    grade.append(b);
+  }
+  return grade;
+}
+
 export default function QuizClient({
   html,
   posicao,
   total,
   restanteMs,
+  respondidasPos,
 }: {
   html: string;
   posicao: number;
   total: number;
   restanteMs: number;
+  /** Posições já gravadas no banco. O estado da questão ATUAL é lido da tela, não daqui. */
+  respondidasPos: number[];
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -107,15 +163,43 @@ export default function QuizClient({
 
     const enviar = async (automatico: boolean) => {
       if (enviandoRef.current) return;
-      if (!automatico && !window.confirm(
-        "Enviar a prova agora? A tentativa é única e não dá para voltar depois do envio.",
-      ))
-        return;
+
+      if (!automatico) {
+        // O servidor só sabe do que existia na carga da página, e a questão atual pode ter
+        // sido respondida (ou trocada) depois disso. Por isso o estado dela sai da tela.
+        const respondidas = new Set(respondidasPos);
+        if (atual()) respondidas.add(posicao);
+        else respondidas.delete(posicao);
+
+        const { emBranco } = resumoProva(total, [...respondidas]);
+        const decidiu = await confirmar({
+          titulo: "Enviar a prova?",
+          corpo:
+            emBranco > 0
+              ? `${fraseEmBranco(emBranco)} Questão em branco conta como erro. A tentativa é ` +
+                "única: depois do envio não dá para voltar."
+              : `${fraseEmBranco(emBranco)} A tentativa é única: depois do envio não dá para voltar.`,
+          confirmar: "Enviar prova",
+          cancelar: "Voltar para a prova",
+          destaque: emBranco > 0 ? trechoEmBranco(emBranco) : undefined,
+          // Clicar numa questão navega; o `cleanup` do efeito fecha o diálogo na desmontagem,
+          // então não é preciso fechá-lo aqui à mão.
+          extra: montarGrade(total, respondidas, (p) => {
+            if (p !== posicao) router.push(`/app/prova/questao/${p}`);
+          }),
+        });
+        if (!decidiu) return;
+      }
+
       enviandoRef.current = true;
+      // O envio é ida ao servidor no clique mais tenso da jornada. Sem isto o botão fica
+      // parado e o aluno não sabe se pegou (padrão 3 do DESIGN.md §3).
+      const restaurar = automatico ? () => {} : emTrabalho(next ?? null, "Enviando...");
       const r = await enviarProva();
       if (r.ok) router.push("/app/prova/resultado");
       else {
         enviandoRef.current = false;
+        restaurar();
         setErro(r.erro);
       }
     };
@@ -189,8 +273,14 @@ export default function QuizClient({
     return () => {
       clearInterval(iv);
       ac.abort();
+      // O diálogo mora no `document.body`, fora do React: navegar não o desmonta. Fechá-lo
+      // aqui cobre os dois jeitos de sair com ele aberto — pular para outra questão pela
+      // grade, e o cronômetro zerar enquanto o aluno hesita na confirmação.
+      document
+        .querySelectorAll<HTMLDialogElement>("dialog.ei-confirma")
+        .forEach((d) => d.close());
     };
-  }, [router, posicao, total, restanteMs]);
+  }, [router, posicao, total, restanteMs, respondidasPos]);
 
   return (
     <>

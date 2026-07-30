@@ -17,11 +17,15 @@ import {
   TOTAL_QUESTOES,
   corrigir,
   formatarTempo,
+  fraseEmBranco,
   restanteMs,
+  resumoProva,
+  trechoEmBranco,
   type Letra,
   type QuestaoSnapshot,
   type Respostas,
 } from "../lib/prova-correcao.ts";
+import { planejarFechamentos, type LinhaExpirada } from "../lib/prova-expiradas.ts";
 
 /** 20 questões, 5 por módulo, gabarito sempre na letra A (índice 0). */
 function prova(total = TOTAL_QUESTOES): QuestaoSnapshot[] {
@@ -116,6 +120,9 @@ function respostas(n: number, total = TOTAL_QUESTOES): Respostas {
   assert.equal(c.score, 0);
   assert.equal(c.total, 0);
   assert.deepEqual(c.porModulo, []);
+  // Sem o guard de `total > 0` isto seria TRUE (`0 >= 70 * 0`), e este booleano é o
+  // porteiro do certificado.
+  assert.equal(c.aprovado, false, "prova sem questao nao aprova");
 }
 
 // --- cronômetro ---
@@ -271,5 +278,118 @@ const QUESTAO = tela("prova-questao");
   const l0 = out2.slice(out2.indexOf(">0%</span>") - 200, out2.indexOf(">0%</span>") + 11);
   assert.ok(l0.includes("#F7E3BE"), "0% leva pill ambar");
 }
+
+// ============================================================
+// Grade de questões e contagem de em branco (diálogo de envio)
+// ============================================================
+
+// --- a contagem, que é a informação que dá sentido à confirmação ---
+{
+  const r = resumoProva(20, [1, 2, 3]);
+  assert.equal(r.respondidas, 3);
+  assert.equal(r.emBranco, 17);
+  assert.equal(r.itens.length, 20);
+  assert.deepEqual(
+    r.itens.filter((i) => i.respondida).map((i) => i.posicao),
+    [1, 2, 3],
+  );
+}
+
+// --- prova inteira respondida e prova intocada ---
+{
+  const cheia = resumoProva(20, Array.from({ length: 20 }, (_, i) => i + 1));
+  assert.equal(cheia.emBranco, 0);
+  const vazia = resumoProva(20, []);
+  assert.equal(vazia.emBranco, 20);
+  assert.equal(vazia.itens.every((i) => !i.respondida), true);
+}
+
+// --- sujeira na entrada não conta em dobro nem estoura o total ---
+{
+  // `answers` é dado gravado ao longo de duas horas: repetida, fora de faixa e não inteira
+  // são todas plausíveis se o snapshot mudou de tamanho entre versões.
+  const r = resumoProva(20, [5, 5, 0, 21, -3, 7.5, 12]);
+  assert.equal(r.respondidas, 2, "5 e 12 valem; repetida, zero, 21, negativa e fracionária nao");
+  assert.equal(r.emBranco, 18);
+  assert.equal(r.respondidas + r.emBranco, 20, "a soma tem que fechar no total");
+}
+
+// --- o plural da frase, que só aparece para o aluno ---
+{
+  assert.equal(fraseEmBranco(0), "Você respondeu todas as questões.");
+  assert.equal(fraseEmBranco(1), "Você deixou 1 questão em branco.", "singular sem 's'");
+  assert.equal(fraseEmBranco(2), "Você deixou 2 questões em branco.");
+  assert.equal(fraseEmBranco(20), "Você deixou 20 questões em branco.");
+}
+
+// --- o trecho em negrito tem que ser substring exata da frase ---
+{
+  // O diálogo aplica o negrito procurando o trecho DENTRO do corpo. Se os dois divergirem, o
+  // destaque desaparece em silêncio: a frase continua certa e ninguém percebe.
+  for (const n of [1, 2, 7, 20]) {
+    const trecho = trechoEmBranco(n);
+    assert.ok(
+      fraseEmBranco(n).includes(trecho),
+      `"${trecho}" tem que aparecer dentro de "${fraseEmBranco(n)}"`,
+    );
+  }
+  assert.equal(trechoEmBranco(1), "1 questão em branco", "singular");
+  assert.equal(trechoEmBranco(3), "3 questões em branco");
+}
+
+// ============================================================
+// Fechamento das tentativas abandonadas (lib/prova-expiradas.ts)
+// ============================================================
+
+const PRAZO = "2026-07-28T12:00:00.000Z";
+
+const vencida = (id: string, resp: Respostas, total = TOTAL_QUESTOES): LinhaExpirada => ({
+  id,
+  deadline: PRAZO,
+  questions_snapshot: prova(total),
+  answers: resp,
+});
+
+// --- a data de entrega é o prazo, não a hora em que a rotina rodou ---
+{
+  const [f] = planejarFechamentos([vencida("e1", respostas(20))]);
+  assert.equal(
+    f.submitted_at,
+    PRAZO,
+    "submitted_at tem que ser o deadline: amarrar ao now() da rotina faria a entrega depender da cadência do agendador",
+  );
+  assert.equal(f.score, 100);
+  assert.equal(f.aprovado, true);
+}
+
+// --- corrige o respondido: em branco conta como erro e o denominador segue sendo 20 ---
+{
+  const [f] = planejarFechamentos([
+    vencida("e2", { "1": "A" as Letra, "2": "A" as Letra }),
+  ]);
+  assert.equal(f.score, 10, "2 certas de 20 questoes, nao de 2 respondidas");
+  assert.equal(f.aprovado, false, "abandonar a prova nao pode aprovar");
+}
+
+// --- a nota de corte vale igual para quem abandonou ---
+{
+  const [passa] = planejarFechamentos([vencida("e3", respostas(14))]);
+  assert.equal(passa.aprovado, true, "14/20 aprova mesmo com o prazo estourado");
+  const [cai] = planejarFechamentos([vencida("e4", respostas(13))]);
+  assert.equal(cai.aprovado, false);
+}
+
+// --- tentativa aberta e nunca tocada não estoura ---
+{
+  const [f] = planejarFechamentos([
+    { id: "e5", deadline: PRAZO, questions_snapshot: null, answers: null },
+  ]);
+  assert.equal(f.score, 0);
+  assert.equal(f.aprovado, false);
+  assert.equal(f.submitted_at, PRAZO);
+}
+
+// --- nada vencido, nada a fazer ---
+assert.deepEqual(planejarFechamentos([]), []);
 
 console.log("prova-check: ok");

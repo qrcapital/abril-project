@@ -1,6 +1,6 @@
 ---
 name: lp-abril-estado-e-pendencias
-description: Estado e ponto de retomada do Abril (Estratégia Internacional) — última sessão 29/jul; ler o bloco PRÓXIMA SESSÃO do docs/PENDENCIAS-LP.md antes de qualquer coisa.
+description: Estado e ponto de retomada do Abril (Estrategia Internacional) - ultima sessao 30/jul, fila de codigo vazia; ler o bloco PROXIMA SESSAO do docs/PENDENCIAS-LP.md antes de qualquer coisa.
 metadata: 
   node_type: memory
   type: project
@@ -12,15 +12,47 @@ Estado da **LP Estratégia Internacional** (repo `C:\Users\pedro\Claude\abril-es
 
 **MIGRAÇÃO DE MÁQUINA (25/jul/2026):** o Pedro comprou um MacBook e vai **transferir o desenvolvimento deste projeto do Windows para lá**. Foi criado o **`docs/HANDOFF.md`** (commit `712b0cb` em `homolog`, pushado), documento de continuidade que consolida tudo desta nota e mais: o que não vem no `git clone`, setup no macOS, armadilhas e decisões fechadas. **Ao trabalhar neste projeto em qualquer máquina, ler o `docs/HANDOFF.md` primeiro** — o `AGENTS.md` já aponta para ele. As memórias do Abril foram copiadas para **`docs/memoria-claude/`** (viajam no git; o README de lá tem o procedimento de reinstalação no Mac) e o `COPY.md` virou `docs/COPY.md`, versionado. Fora do git e a transferir na mão: `.env.local` (recriar do dashboard Supabase) e os insumos brutos de `referencias/cowork/` (~9 MB; um arquivo tem marca d'água Dreamstime, não commitar em bloco). **Os geradores do globo e o `checkpoint-canvas/` do scratchpad já foram apagados pelo sistema, não existem mais em lugar nenhum** — os dados de saída seguem versionados em `scripts/globo-*.txt`.
 
-**PONTO DE RETOMADA (29/jul/2026, fim da sessão — repo em `~/projects/abril-project`):**
+**PONTO DE RETOMADA (30/jul/2026, fim da sessão — repo em `~/projects/abril-project`):**
 
-Comece pelo bloco **"▶ PRÓXIMA SESSÃO"** no topo do `docs/PENDENCIAS-LP.md`, que foi remontado
-em 29/jul. A primeira de código é a **17** (modal de envio e grade de questões da prova). Não
-recontar história: ler o bloco e ir para ela.
+Comece pelo bloco **"▶ PRÓXIMA SESSÃO"** no topo do `docs/PENDENCIAS-LP.md`. Não recontar
+história: ler o bloco e ir para o trabalho.
 
-**Estado do git (29/jul, fim do dia):** três commits em `homolog`, todos pushados. O `f22e297`
-fechou as tarefas 1 e 2; o `33f6469` fechou a camada de feedback; o terceiro fecha **acesso,
-liberação e conteúdo**. Árvore limpa, `build`, `lint` e `check` (5/5) passando.
+**A fila de código está VAZIA.** As duas tarefas que restavam saíram em 30/jul: a **16** (rotina
+da prova abandonada) e a **17** (diálogo de envio e grade de questões). O que sobra é tudo do
+Pedro, e a de maior alavanca é a **18** (acesso de admin, as quatro perguntas do
+`PLANO-ADMIN.md` §8), porque ela destrava a tela de conteúdo do admin, que é a maior frente
+aberta. Também dele: as três decisões do §4.6, o banco de ~100 questões (a prova hoje roda sobre
+24 `[EXEMPLO]`, e dois sorteios repetem 19 das 20), o template Invite user e a política de senha
+no painel do Supabase.
+
+**Duas armadilhas de ambiente que custaram tempo em 30/jul, as duas com o mesmo formato — o erro
+apontava para a causa errada:**
+
+- **O dev server só funciona em `localhost:3000`.** Por `127.0.0.1:3000` o Next bloqueia os
+  recursos de dev por cross-origin e a **hidratação morre em silêncio**: a página renderiza, os
+  chunks carregam, o console fica limpo, e nenhum `useEffect` roda. Na tela de login isso aparece
+  como os valores de exemplo do design (`pedro@email.com`) permanecendo nos campos, e clicar em
+  ENTRAR não faz nada, sem caixa de erro. O aviso está na **primeira linha** do output do dev
+  server. Medir em um comando: procurar chaves `__react` subindo a árvore a partir de um input;
+  nenhuma significa que não hidratou. Cuidado com um falso positivo: `nextjs-portal` existe
+  sempre em dev, não indica erro.
+- **A extensão do Chrome não pareia até reiniciar o Chrome por completo.** Clicar no ícone,
+  recarregar a extensão e conferir o login não resolvem.
+
+**Preparo de teste da área do aluno** (só homolog, e está na lista da tarefa 10 para remover
+antes do go-live): a conta `testinhos@joao.com.br` está com senha `Admin123`, matrícula ativa com
+`liberacao_total`, 17/17 de progresso e uma tentativa de prova **aberta** (17 respondidas, 3 em
+branco). O progresso se marca com `scripts/progresso-conta.mjs <email> --tudo`.
+
+**Estado do git (29/jul, fim do dia):** três commits em `homolog`, **todos pushados e no ar**.
+`f22e297` (tarefas 1 e 2), **`33f6469`** (camada de feedback inteira) e **`ecafa52`** (acesso por
+matrícula, liberação gradual, progresso e currículo no banco). Deploy conferido em
+https://abril-project.netlify.app. Árvore limpa, `build`, `lint` e `check` (5/5) passando.
+
+**Estado do git (30/jul):** a leva de hoje foi commitada e pushada em `homolog` com as tarefas 16
+e 17 juntas, mais os documentos. A cópia desta memória em `docs/memoria-claude/` sempre fica um
+passo atrás por construção, porque é atualizada depois do commit; se ela aparecer modificada na
+árvore, é isso, e vai junto no commit seguinte.
 
 **O que a sessão de 29/jul fez.** Fechou as tarefas 1, 2, 3b, 4, 5, 6, 7, 8, 9, 10, 12, metade
 da 11, e depois **14 e 15** inteiras. Mais duas frentes que o Pedro abriu no caminho: o
@@ -48,11 +80,11 @@ reembolso dentro da janela de arrependimento.
 claro `#F7F5F2`), então todo padrão nasce com dois pares; e caixa de mensagem se pinta **no
 DOM**, nunca em JSX irmão do HTML injetado, senão vai parar no fim da página.
 
-**A fila válida agora** é o bloco "▶ PRÓXIMA SESSÃO" do `PENDENCIAS-LP.md`. Sobraram, de código,
-a **17** (modal de envio e grade de questões) e a **16** (cron da prova abandonada), mais a tela
-de conteúdo do admin quando a 18 destravar. Do lado do Pedro: **18** (acesso de admin, única que
-trava construção nova), 3, 20, 13, as três decisões da tela de conteúdo, e os insumos que faltam
-(URL do checkout, vídeos e materiais reais).
+**A fila válida agora** é o bloco "▶ PRÓXIMA SESSÃO" do `PENDENCIAS-LP.md`. Este parágrafo
+descrevia o estado de 29/jul, quando **16** e **17** ainda estavam abertas; as duas saíram em
+30/jul e **não sobrou código desbloqueado** — ver o PONTO DE RETOMADA no topo. Do lado do Pedro
+segue: **18** (acesso de admin, única que trava construção nova), 3, 20, 13, as três decisões da
+tela de conteúdo, e os insumos que faltam (URL do checkout, vídeos e materiais reais).
 
 **Correção do signup (29/jul), para não reabrir:** o `upsert` em `profiles` não devolvia mais
 "uma linha de tratamento", como a pendência estimava. Só capturar o erro deixaria a conta pela

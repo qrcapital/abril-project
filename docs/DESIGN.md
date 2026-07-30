@@ -252,7 +252,7 @@ Container destacado com o único elemento animado do produto: o `vsGlow` pulsa a
 ### Input (login, definição de senha)
 Fundo escuro translúcido sobre verde, borda fina dourada no foco, label em kicker. Tema dark da plataforma.
 
-### Feedback ao usuário (os quatro padrões)
+### Feedback ao usuário (os cinco padrões)
 
 Escolhidos de uma vez em 29/jul/2026, antes das telas, porque feedback nasce espalhado: a mesma caixa já existia escrita à mão em três clients, com três vermelhos e dois jeitos de dizer "carregando". Implementação em `app/app/_ui/feedback.tsx`. Quem for consertar uma tela **estende daqui**, não inventa variante.
 
@@ -277,6 +277,28 @@ Dois achados da medição, que explicam hexes que parecem arbitrários. O `--gol
 **3. Botão em trabalho.** O rótulo vira o verbo no gerúndio ("Entrando...", "Salvando...", "Criando conta..."), o botão desabilita e anuncia `aria-busy`. A largura é travada antes da troca, para a tela não pular quando o texto encolhe. **Sem spinner:** a seção 2 reserva movimento ao glow da oferta, e um giro novo aqui brigaria com isso. Trocar o rótulo e não só esmaecer, porque opacidade sozinha é indistinguível de "o clique não pegou".
 
 **4. Lista de exigências que marca conforme cumpre.** Para as duas telas que criam senha. A fonte é a lista `EXIGENCIAS` de `lib/senha.ts`, a mesma que gera a frase da regra e a mensagem de recusa: com a regra escrita em três lugares, elas divergem no primeiro ajuste. Item cumprido ganha ✓ e o cinza vira texto normal; nunca marcar em vermelho o que a pessoa **ainda não terminou de digitar**, que é transformar preenchimento em repreensão. O componente nasce junto com a tela que o consome (tarefa 10 do `PENDENCIAS-LP`), não antes.
+
+**5. Confirmação de ação irreversível** (`confirmar()`, acrescentado em 30/jul/2026). Substitui o `window.confirm`, que é cinza do sistema, não diz o que está em jogo e aparecia no clique mais tenso do produto: o envio da prova, que é tentativa única. Devolve `true`/`false`, com Esc, clique fora e o botão de cancelar todos resolvendo `false`. Aceita conteúdo extra entre o corpo e os botões, que é onde a grade de questões da prova entra. Qualifica como componente pela seção 8 por ter estado (aberto/fechado), não por repetição.
+
+`<dialog>` nativo com `showModal()`, e não div com overlay à mão, porque a plataforma entrega de graça o que essa div exigiria escrever: camada superior acima de qualquer `z-index`, backdrop, foco preso, Esc e devolução do foco a quem abriu. Botões reusam o par que já está na tela da questão (dourado para a ação, contorno para voltar), então nenhuma cor nova entra.
+
+**Três decisões que parecem detalhe e não são:**
+
+- **O diálogo é anexado ao `document.body`.** Mesma razão da caixa pintada no DOM, um passo além: além de JSX irmão virar vizinho do layout, o CSS gerado pelo porte não deve alcançar este componente.
+- **`position:fixed` e `margin:auto` vão inline.** A centralização de `dialog:modal` vem da folha do navegador, e basta uma regra da página pôr `position:relative` no `dialog` para ele cair no fluxo normal: **o backdrop aparece, o diálogo sai do viewport e o console fica limpo**, sem nada para depurar. Estilo inline ganha de folha e fecha a porta. É a mesma armadilha que já custou tempo em outro projeto.
+- **O foco nasce no botão seguro.** `showModal()` foca o primeiro focável; num diálogo de ação irreversível esse não pode ser o botão que destrói, senão um Enter reflexo envia a prova. O `autofocus` fica no "voltar".
+
+`::backdrop` não aceita estilo inline, e é a única razão pela qual o componente injeta uma folha (uma regra, uma vez, idempotente).
+
+O parâmetro `destaque` põe em **negrito** um trecho do corpo, achado por busca de substring e embrulhado com nós de texto, exatamente como o `link` do `pintarCaixa`. Nunca `innerHTML`: o corpo carrega número vindo do servidor, e destaque não é motivo para abrir essa porta. Trecho ausente da frase fica sem negrito em vez de sumir do corpo. Na prova o destaque é a quantidade em branco, e o par frase/trecho vem de `fraseEmBranco`/`trechoEmBranco`, com o check garantindo que um é substring do outro: se divergirem, o negrito desaparece em silêncio e a frase continua certa.
+
+**Grade de questões** (na prova): um botão por posição, respondida ou em branco, clicável para ir direto à questão. Reusa as bolinhas de alternativa (`BOLA_ON`/`BOLA_OFF`), então a diferença entre os estados é **preenchimento contra contorno**, não só matiz, e funciona para quem não distingue as duas cores; o `aria-label` diz o estado por extenso, porque o número sozinho não o carrega.
+
+**Dez por linha, fixo** (`repeat(10,minmax(0,1fr))`): com 20 questões dá duas fileiras de dez, que se leem como dezenas. A primeira versão usava `auto-fill`, que quebrava em 11 e 9 conforme a largura sobrava, e isso não tem leitura nenhuma. Verificado até 430px de largura: os chips encolhem e seguem legíveis, sem estouro nem barra de rolagem.
+
+**Sem marca de questão atual.** A grade abre pelo botão de envio, que só existe na última questão, então "atual" seria sempre a última: constante, e portanto sem informação. O anel e o `aria-current` saíram na revisão do Pedro em 30/jul.
+
+Uma troca em relação à bolinha original, achada medindo: `BOLA_ON` pinta o glifo em **branco**, que sobre o dourado `#A98E4E` dá **3,15:1** e falha AA. Na alternativa isso não pesa, porque o texto ao lado carrega o sentido e a letra é quase decoração; na grade o **número é a única informação do chip**, então ele vira verde profundo `#0A2B1E` (**4,84:1**), que é o mesmo par do botão dourado da plataforma. Em branco: `#7E6836` sobre o branco do diálogo, **5,36:1**. Fica registrado que a bolinha da alternativa segue com os 3,15:1 originais, que é decisão de design aprovada e não foi tocada aqui.
 
 **Painel de recado** (`Painel`): tela cheia para `loading`, `error` e `not-found` do grupo `(sala)`, repetindo o envelope das telas portadas (`#F7F5F2`, `100vh - 58px` descontando a topbar) para o recado cair dentro do chrome em vez de romper o layout.
 

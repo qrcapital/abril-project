@@ -281,6 +281,140 @@ export function ligarExigencias(
 }
 
 /**
+ * Padrão 5 do DESIGN.md §3: confirmação de ação irreversível.
+ *
+ * Substitui o `window.confirm`, que é cinza do sistema, não diz o que está em jogo e aparece
+ * no momento mais tenso da jornada (o envio da prova, tentativa única). Devolve `true` para
+ * confirmado e `false` para cancelado, inclusive por Esc e por clique fora.
+ *
+ * `<dialog>` nativo com `showModal()`, e não div com overlay à mão, porque a plataforma já
+ * entrega o que essa div exigiria escrever: camada superior acima de qualquer `z-index`,
+ * backdrop, foco preso dentro do diálogo, Esc para fechar e devolução do foco ao elemento
+ * que abriu.
+ *
+ * TRÊS DECISÕES QUE PARECEM DETALHE E NÃO SÃO:
+ *
+ * 1. O diálogo é anexado ao `document.body`, não ao markup da tela. Toda tela do projeto é
+ *    HTML portado injetado, e o CSS gerado pelo porte não deve alcançar este componente.
+ * 2. `position:fixed` e `margin:auto` vão INLINE. A centralização de `dialog:modal` vem da
+ *    folha do navegador, e basta uma regra da página pôr `position:relative` no `dialog` para
+ *    ele cair no fluxo normal: o backdrop aparece, o diálogo sai do viewport e o console fica
+ *    limpo, sem sintoma nenhum para depurar. Estilo inline ganha de folha e fecha essa porta.
+ * 3. O foco nasce no botão SEGURO (cancelar). `showModal()` foca o primeiro focável, e num
+ *    diálogo de ação irreversível isso não pode ser o botão que destrói: Enter reflexo tem que
+ *    cair em "voltar", não em "enviar".
+ */
+
+const CONFIRMA_ID = "ei-confirma-backdrop";
+
+/** `::backdrop` não aceita estilo inline; é a única razão desta folha existir. */
+function garantirBackdrop(): void {
+  if (document.getElementById(CONFIRMA_ID)) return;
+  const s = document.createElement("style");
+  s.id = CONFIRMA_ID;
+  s.textContent = "dialog.ei-confirma::backdrop{background:rgba(11,45,32,.55)}";
+  document.head.append(s);
+}
+
+export function confirmar(opts: {
+  titulo: string;
+  corpo: string;
+  confirmar: string;
+  cancelar: string;
+  /**
+   * Trecho do `corpo` que recebe negrito. Encontrado por busca de substring e embrulhado com
+   * nós de texto, como o `link` do `pintarCaixa`: o corpo pode carregar número vindo do
+   * servidor, e destaque não é motivo para abrir `innerHTML`.
+   */
+  destaque?: string;
+  /** Conteúdo opcional entre o corpo e os botões — a grade de questões da prova entra aqui. */
+  extra?: HTMLElement;
+}): Promise<boolean> {
+  garantirBackdrop();
+
+  const dlg = document.createElement("dialog");
+  dlg.className = "ei-confirma";
+  dlg.style.cssText =
+    "position:fixed;margin:auto;border:1px solid #E4DACC;border-radius:12px;padding:26px 26px 22px;" +
+    "background:#fff;color:#333333;width:min(520px,calc(100vw - 40px));max-height:calc(100vh - 80px);" +
+    "box-shadow:0 24px 60px rgba(11,45,32,.28);font-family:'Montserrat',system-ui,sans-serif";
+
+  const h = document.createElement("h2");
+  h.id = "ei-confirma-titulo";
+  h.textContent = opts.titulo;
+  h.style.cssText =
+    "font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:21px;line-height:1.3;" +
+    "color:#0B2D20;margin:0 0 10px";
+  dlg.setAttribute("aria-labelledby", h.id);
+
+  const p = document.createElement("p");
+  p.textContent = opts.corpo;
+  p.style.cssText = "font-size:13.5px;line-height:1.6;color:#333333;margin:0 0 18px";
+  if (opts.destaque) {
+    const corte = opts.corpo.indexOf(opts.destaque);
+    // Trecho ausente da frase: fica sem negrito, em vez de sumir do corpo.
+    if (corte >= 0) {
+      const forte = document.createElement("strong");
+      forte.textContent = opts.destaque;
+      forte.style.fontWeight = "700";
+      p.textContent = opts.corpo.slice(0, corte);
+      p.append(forte, opts.corpo.slice(corte + opts.destaque.length));
+    }
+  }
+
+  const acoes = document.createElement("div");
+  acoes.style.cssText = "display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap";
+
+  const cancelar = document.createElement("button");
+  cancelar.type = "button";
+  cancelar.textContent = opts.cancelar;
+  cancelar.autofocus = true;
+  cancelar.style.cssText =
+    "border-radius:6px;font-family:inherit;font-weight:700;font-size:12.5px;padding:12px 20px;" +
+    "cursor:pointer;background:#fff;border:1px solid #D6C3C2;color:#565049";
+
+  const ok = document.createElement("button");
+  ok.type = "button";
+  ok.textContent = opts.confirmar;
+  ok.style.cssText =
+    "border:none;border-radius:6px;font-family:inherit;font-weight:700;font-size:12.5px;" +
+    "letter-spacing:.06em;padding:13px 24px;cursor:pointer;color:#0A2B1E;" +
+    "background:linear-gradient(160deg,#D9BE85,#A98E4E);box-shadow:0 8px 20px rgba(169,142,78,.3)";
+
+  acoes.append(cancelar, ok);
+  dlg.append(h, p);
+  if (opts.extra) dlg.append(opts.extra);
+  dlg.append(acoes);
+  document.body.append(dlg);
+
+  return new Promise<boolean>((resolve) => {
+    let decidido = false;
+    const fechar = (valor: boolean) => {
+      if (decidido) return;
+      decidido = true;
+      resolve(valor);
+      dlg.close();
+    };
+    cancelar.addEventListener("click", () => fechar(false));
+    ok.addEventListener("click", () => fechar(true));
+    // Clique no backdrop: o alvo do evento é o próprio dialog, porque o miolo está nos filhos.
+    dlg.addEventListener("click", (e) => {
+      if (e.target === dlg) fechar(false);
+    });
+    // Esc dispara `close` sem passar por nenhum handler acima; e é aqui que o nó sai do DOM,
+    // em qualquer caminho de saída.
+    dlg.addEventListener("close", () => {
+      if (!decidido) {
+        decidido = true;
+        resolve(false);
+      }
+      dlg.remove();
+    });
+    dlg.showModal();
+  });
+}
+
+/**
  * Botão em trabalho: o rótulo vira o verbo no gerúndio, o botão desabilita e anuncia
  * `aria-busy`. Devolve a função que restaura tudo, para o `finally` de quem chamou.
  *

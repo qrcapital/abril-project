@@ -8,6 +8,96 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **Diálogo de envio da prova e grade de questões (tarefa 17)** — 2026-07-30
+  - O envio usava o `window.confirm` cinza do sistema, no clique mais tenso do produto: tentativa
+    única, irreversível, e a caixa do navegador não diz o que está em jogo. E não havia **grade
+    de questões**, então o aluno não via o que tinha deixado em branco nem voltava a uma
+    questão específica. O rodapé da tela já prometia "você pode revisar e alterar respostas
+    antes de enviar"; a promessa existia só como texto.
+  - **Padrão 5 do `DESIGN.md` §3: `confirmar()`.** `<dialog>` nativo com `showModal()`, que
+    entrega camada superior, backdrop, foco preso, Esc e devolução de foco sem uma linha de
+    overlay à mão. Qualifica como componente pela §8 por ter estado, não por repetição. Botões
+    reusam o par que já está na tela (dourado para a ação, contorno para voltar): nenhuma cor
+    nova entrou.
+  - Três detalhes que o padrão fixa e que dariam bug silencioso: o diálogo é anexado ao
+    `document.body`, para o CSS gerado pelo porte não o alcançar; `position:fixed` e
+    `margin:auto` vão **inline**, porque uma regra de folha com `position:relative` no `dialog`
+    o derruba no fluxo normal, e o sintoma é backdrop presente, diálogo fora do viewport e
+    console limpo; e o `autofocus` fica no botão **seguro**, senão um Enter reflexo envia a
+    prova.
+  - **A grade diz quantas ficaram em branco**, que é a informação que faz a confirmação valer.
+    Modelo e frase saíram para `lib/prova-correcao.ts` (`resumoProva`, `fraseEmBranco`), puros,
+    e o `check:prova` ganhou 11 casos: contagem, prova cheia, prova intocada, sujeira na
+    entrada (posição repetida, fora de faixa, fracionária) e o plural da frase.
+  - **Achado ao medir, e corrigido:** `BOLA_ON` pinta o glifo em branco, e sobre o dourado
+    `#A98E4E` isso dá **3,15:1**, abaixo de AA. Na alternativa o texto ao lado carrega o
+    sentido; na grade o número é a única informação do chip, então ele virou `#0A2B1E`
+    (**4,84:1**), o mesmo par do botão dourado. A bolinha da alternativa **não** foi tocada:
+    segue com os 3,15:1, que é design aprovado e decisão do Pedro.
+  - O contador do cabeçalho passou a sair do mesmo `resumoProva` da grade. Antes era
+    `Object.keys(answers).length` cru, então uma resposta órfã de um snapshot anterior faria a
+    tela dizer "21 respondidas" de 20.
+  - O envio ganhou o **botão em trabalho** (padrão 3), que faltava justamente no clique que mais
+    precisa: entre confirmar e o redirecionamento havia ida ao servidor sem resposta na tela.
+  - **Revisão do Pedro, no mesmo dia, olhando a réplica:** o anel de "questão atual" saiu (a
+    grade só abre da última questão, então o destaque era sempre no 20: constante, logo sem
+    informação, e o `aria-current` saiu com ele); a grade passou de `auto-fill` para **dez
+    colunas fixas**, porque quebrar em 11 e 9 conforme a largura não tem leitura, e dez dá duas
+    fileiras que se leem como dezenas; e a **quantidade em branco ganhou negrito**, via um
+    parâmetro `destaque` novo no padrão 5. Conferido até 430px de largura: os chips encolhem e
+    seguem legíveis, sem estouro.
+  - **Conferido na tela real**, logado e com tentativa de verdade (17 respondidas, 18/19/20 em
+    branco): abre centralizado sobre a questão com o backdrop cobrindo o cabeçalho
+    `position:sticky; z-index:80`; o clique no número 18 navegou para a questão e **o diálogo não
+    sobrou na tela seguinte**, validando a limpeza no teardown do efeito; Esc fecha e devolve o
+    foco ao botão que abriu; clique fora fecha e **remove o nó do DOM**, então não vaza um nó por
+    abertura; e o banco seguiu `in_progress` / `submitted_at: null` depois de tudo. Não
+    exercitado: confirmar o envio, que consome a tentativa única.
+  - Verificado no browser, porque é o único jeito: a armadilha do `<dialog>` não emite erro nem
+    aviso. Réplica servida por HTTP com as mesmas strings de `cssText`, sobre um cabeçalho
+    `position:sticky; z-index:80` igual ao da tela real. Resultado: `position: fixed`,
+    574×293 centralizado em 1416×897, backdrop cobrindo o cabeçalho. **A tela real, com sessão
+    e tentativa aberta, ainda precisa do olho do Pedro** (login pede senha, que a máquina não
+    digita).
+- **Rotina da prova abandonada, e um furo no porteiro do certificado (tarefa 16)** — 2026-07-30
+  - O cronômetro da prova só envia com a aba aberta, então quem fechava o navegador deixava a
+    tentativa `in_progress` **para sempre**: sem resultado registrado e com o certificado
+    barrado pelo porteiro, que exige `submitted`. Previsto no `PRD.md` §15, nunca construído —
+    não existia rotina agendada nenhuma no projeto.
+  - `lib/prova-expiradas.ts`, deliberadamente **sem** `server-only` e sem `cache` do React,
+    porque roda em três runtimes (Next, script de linha de comando, função agendada) e o
+    `lib/prova.ts` estoura fora de um bundle React Server. O cliente do Supabase entra por
+    parâmetro pela mesma razão.
+  - A decisão fica separada do IO: `planejarFechamentos()` é pura, e é o que o check exercita
+    sem banco. `submitted_at` recebe o **deadline**, não o instante da execução — amarrar ao
+    `now()` faria a data de entrega depender da cadência do agendador, e uma rotina atrasada
+    empurraria a entrega do aluno para frente, possivelmente para depois do fim do acesso dele.
+  - **Achado grave no caminho, e o check foi quem pegou:** `corrigir([], {})` devolvia
+    `aprovado: true`, porque a comparação em inteiros vira `0 >= NOTA_MINIMA * 0`. Esse booleano
+    é o porteiro do certificado (`foiAprovado`). Enquanto nada fechava tentativa com
+    `questions_snapshot` vazio o caso era inalcançável — e esta rotina fecha. Sem o guard, ela
+    teria criado exatamente a linha `submitted` que libera o PDF a quem não respondeu nada.
+    Corrigido na raiz, em `lib/prova-correcao.ts` (`total > 0 && ...`), que conserta todos os
+    chamadores em vez de só o novo.
+  - Gatilho: **função agendada do Netlify** a cada 15 minutos, e não `pg_cron` como a §15
+    descrevia. O `pg_cron` obrigaria a expor rota pública com segredo compartilhado para chegar
+    ao mesmo TypeScript; reescrever a correção em SQL criaria uma segunda verdade sobre a nota
+    de corte. Desvio registrado no `PRD.md` §15.
+  - `npm run prova:expiradas` roda a mesma função à mão, listando por padrão (o planejamento é
+    puro, então dá para ver a nota que cada tentativa receberia antes de gravar) e escrevendo só
+    com `--fechar`.
+  - **Escopo real da lacuna**, porque o auto-envio no zero já existia e é fácil concluir que
+    isto era redundante: o `if (rem <= 0) enviar(true)` do `QuizClient` roda num `setInterval`
+    do navegador, então some com a aba. O aluno que **reabre** se resolve sozinho e sem clicar
+    em nada — `page.tsx` o manda para `questao/1`, a página vem com `restanteMs = 0` e o
+    primeiro `tick()` envia. A rotina cobre só **quem nunca volta**: para esse, a tentativa fica
+    `in_progress` para sempre e o certificado fica barrado mesmo que o respondido passasse.
+  - Corrida conferida: se o prazo estoura com o aluno na tela, cliente e rotina corrigem as
+    mesmas respostas com a mesma função, e o guard de `status` deixa só um gravar. Difere apenas
+    o `submitted_at` (prazo vs. instante), por segundos.
+  - Cinco casos novos no `check:prova`: a data de entrega ser o prazo, em branco contando como
+    erro com denominador 20, o corte de 70% valendo igual para quem abandonou, tentativa nunca
+    tocada não estourando, e lista vazia.
 - **O currículo saiu do código e virou dado do banco (15b)** — 2026-07-29
   - Decisão do Pedro, e o motivo mudou o desenho: **o admin vai editar título, descrição, link
     de vídeo e materiais pelo painel**, e painel não edita código. Enquanto a pergunta era só

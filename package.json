@@ -12,7 +12,8 @@
     "check:senha": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/senha-check.mts",
     "check:usuario": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/usuario-check.mts",
     "check:liberacao": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/liberacao-check.mts",
-    "check:curriculo": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/curriculo-check.mts"
+    "check:curriculo": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/curriculo-check.mts",
+    "prova:expiradas": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/prova-expiradas.mts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",

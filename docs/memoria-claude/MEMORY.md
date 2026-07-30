@@ -1,5 +1,5 @@
 - [Projeto Abril — Estratégia Internacional](projeto-abril-estrategia-internacional.md) — LP + área de membros de curso; copy livre e HTML manda sobre wireframe.
-- [Estado e retomada da LP do Abril](lp-abril-estado-e-pendencias.md) — PONTO DE RETOMADA (25/jul, Mac): docs prontos SEM commit aguardando ordem; próximo = prova funcional; arquitetura do porte e decisões fechadas.
+- [Estado e retomada da LP do Abril](lp-abril-estado-e-pendencias.md) — PONTO DE RETOMADA (30/jul): fila de código VAZIA, tarefas 16 e 17 fechadas; o que resta trava na 18 (acesso de admin).
 - [Estado da plataforma Abril](estado-abril-plataforma.md) — área do aluno + auth no ar em homolog e o que falta.
 - [E-mail de boas-vindas: 3 pendências de lançamento](email-boas-vindas-antes-do-lancamento.md) — invisíveis em homolog (o `?s=primeiro` pula o e-mail); puxar na rodada pré-produção.
 - [Cor semântica tem um valor por fundo](cor-semantica-por-fundo.md) — nenhum verde passa AA no claro e no escuro; medir nos dois antes de nomear o token.
@@ -10,3 +10,4 @@
 - [Commit e push só com ordem do Pedro](commit-push-so-com-ordem.md) — push em homolog publica; preparar tudo e aguardar a ordem.
 - [Skills neste projeto: só a impeccable](skills-no-projeto-abril.md) — as taste skills ficam no perfil, para outros projetos; aqui brigam com o Meridiano.
 - [Churn do package-lock no npm 10.9](lock-churn-npm-libc.md) — npm install remove campos libc; reverter, não commitar. Corrige a seção 5 do HANDOFF.
+- [Dev server só em localhost](dev-server-so-em-localhost.md) — por 127.0.0.1 a hidratação morre calada; ler o output do dev server antes de formular hipótese.

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { tela } from "@/lib/telas";
 import { getUsuario } from "@/lib/usuario";
 import { semGabarito, tentativaAtual } from "@/lib/prova";
-import { restanteMs } from "@/lib/prova-correcao";
+import { restanteMs, resumoProva } from "@/lib/prova-correcao";
 import { fillQuestao } from "@/lib/prova-template";
 import QuizClient from "./QuizClient";
 
@@ -39,11 +39,17 @@ export default async function QuestaoPage({
   const questao = semGabarito(t.questoes)[posicao - 1];
   const restante = t.deadline ? restanteMs(t.deadline) : 0;
 
+  // `resumoProva` descarta posição fora de 1..total, então o contador do cabeçalho e a
+  // contagem de em branco do diálogo de envio saem da mesma conta. Sem isso, uma resposta
+  // órfã de um snapshot anterior faria a tela dizer "21 respondidas" de 20.
+  const respondidasPos = Object.keys(t.respostas).map(Number);
+  const resumo = resumoProva(total, respondidasPos);
+
   const pageHtml = fillQuestao(html, {
     questao,
     posicao,
     total,
-    respondidas: Object.keys(t.respostas).length,
+    respondidas: resumo.respondidas,
     escolhida: t.respostas[String(posicao)],
     restanteMs: restante,
   });
@@ -57,6 +63,7 @@ export default async function QuestaoPage({
       posicao={posicao}
       total={total}
       restanteMs={restante}
+      respondidasPos={respondidasPos}
     />
   );
 }

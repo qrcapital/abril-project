@@ -431,6 +431,22 @@ módulo, com meta de 5× e piso de 60. O banco inteiro, estrutura e conteúdo, �
 nossa, não dependência de docente nem de terceiro. Exit-intent ficou fora do corte
 inicial. Modo claro na plataforma foi para o backlog, não foi descartado.
 
+**Fim do relógio da prova (decidido em 30/jul/2026).** O cronômetro é **relógio de parede**,
+ancorado no `exams.deadline`: fechar a aba por 30 minutos consome 30 minutos da prova, e isso
+é intencional — pausar permitiria consultar material. Fechar a aba **não** encerra a
+tentativa: o aluno retoma de onde parou dentro do prazo, com as respostas já gravadas
+(cada clique em alternativa grava na hora) e a escolha repintada pelo servidor.
+
+No fim do relógio o envio acontece **sempre**, independente de haver navegador aberto — é o
+que a rotina `netlify/functions/prova-expiradas.mts` garante; o auto-envio do `QuizClient` é
+só o caminho rápido de quem está com a tela aberta. Vale o que foi respondido: se passou
+assim, passou; se não, reprovou. Ao voltar, o aluno vai para o resultado.
+
+Descartado explicitamente: auto-enviar **no fechamento da aba**. Além de contrariar a
+retomada, `beforeunload`/`visibilitychange` não garantem trabalho assíncrono, e crash,
+bateria ou aba morta por memória não disparam nada — seria um envio que falha em silêncio
+exatamente nos casos em que importaria, numa prova de tentativa única.
+
 **Escopo do homolog.** Termos, Privacidade, LGPD, VSL, vídeos e materiais reais não
 entram no homolog. O rodapé fica com razão social e DPO por enquanto.
 

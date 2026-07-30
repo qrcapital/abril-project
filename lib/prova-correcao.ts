@@ -71,11 +71,61 @@ export function corrigir(
     // Comparação em inteiros, não sobre o score arredondado: com um total diferente de
     // 20 (banco incompleto, 2ª chamada encurtada), arredondar primeiro poderia
     // promover 69,5% a 70 e aprovar quem não passou.
-    aprovado: acertos * 100 >= NOTA_MINIMA * total,
+    //
+    // O `total > 0` não é defensivo por gosto: sem ele uma prova sem questão APROVA, porque
+    // `0 >= NOTA_MINIMA * 0` é verdadeiro. E este booleano é o porteiro do certificado
+    // (`foiAprovado`, em `lib/prova.ts`). Enquanto nada fechava tentativa com
+    // `questions_snapshot` vazio o caso era inalcançável; a rotina de prova abandonada
+    // (`lib/prova-expiradas.ts`) fecha, e sem este guard ela emitiria a linha `submitted`
+    // que libera o PDF a quem não respondeu nada.
+    aprovado: total > 0 && acertos * 100 >= NOTA_MINIMA * total,
     porModulo: [...porMod.entries()]
       .sort(([a], [b]) => a - b)
       .map(([modulo, m]) => ({ modulo, ...m, pct: pct(m.acertos, m.total) })),
   };
+}
+
+export type ItemGrade = { posicao: number; respondida: boolean };
+export type ResumoProva = { respondidas: number; emBranco: number; itens: ItemGrade[] };
+
+/**
+ * O modelo da grade de questões e a contagem de em branco, a partir das posições já
+ * respondidas. Puro para o check pinar a aritmética: é o número que dá sentido à
+ * confirmação de envio, e errar por um significa dizer ao aluno que ele respondeu tudo
+ * quando deixou uma para trás.
+ *
+ * Aceita posição repetida e posição fora de 1..total sem contar em dobro nem estourar: a
+ * entrada vem de `Object.keys(answers)`, que é dado gravado ao longo de duas horas e pode
+ * carregar sujeira de uma versão anterior do snapshot.
+ */
+export function resumoProva(total: number, posicoesRespondidas: number[]): ResumoProva {
+  const validas = new Set(
+    posicoesRespondidas.filter((p) => Number.isInteger(p) && p >= 1 && p <= total),
+  );
+  const itens = Array.from({ length: Math.max(0, total) }, (_, i) => ({
+    posicao: i + 1,
+    respondida: validas.has(i + 1),
+  }));
+  return { respondidas: validas.size, emBranco: itens.length - validas.size, itens };
+}
+
+/**
+ * O trecho que leva negrito no diálogo de envio: a quantidade em branco. Existe separado da
+ * frase para o destaque ser encontrado por busca de substring, sem `innerHTML`, e para o
+ * plural viver num lugar só.
+ */
+export function trechoEmBranco(emBranco: number): string {
+  return emBranco === 1 ? "1 questão em branco" : `${emBranco} questões em branco`;
+}
+
+/**
+ * A frase da contagem, com plural. Fica aqui e não no cliente porque é conteúdo que o check
+ * verifica junto com o número — "1 questões em branco" é o tipo de erro que passa por build,
+ * lint e revisão, e aparece só para o aluno.
+ */
+export function fraseEmBranco(emBranco: number): string {
+  if (emBranco === 0) return "Você respondeu todas as questões.";
+  return `Você deixou ${trechoEmBranco(emBranco)}.`;
 }
 
 /** Milissegundos restantes até o deadline; nunca negativo. */

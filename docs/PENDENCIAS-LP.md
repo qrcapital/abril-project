@@ -17,6 +17,13 @@ editava), e **a guarda de acesso mora no layout do `(sala)`**, não no proxy.
 
 A fila de amanhã está logo abaixo._
 
+_**Atualização de 2026-07-30.** Saíram as duas tarefas de código que restavam: a **16** (rotina
+da prova abandonada) e a **17** (diálogo de envio e grade de questões). Com isso **a fila de
+código fica vazia até você destravar a 18** — a tela de conteúdo do admin depende dela e das três
+decisões do §4.6. As duas levas de hoje acharam um furo cada uma, os dois no mesmo lugar
+conceitual: o porteiro do certificado aprovava prova sem questão (`0 >= 70 * 0`), e o glifo
+branco da bolinha sobre o dourado falhava AA na grade. Detalhe no `CHANGELOG.md`._
+
 > Legenda: 🟢 dá para fazer agora (sem insumo externo) · 🔒 bloqueado por insumo/decisão.
 
 ---
@@ -27,15 +34,28 @@ Tudo o que estava na fila de 28/jul saiu, menos o que depende de você. O que re
 
 ### Código, na ordem sugerida
 
-1. **17 · Modal de envio e grade de questões da prova.** A maior lacuna de UX que sobrou, e
-   está destravada (dependia dos padrões de feedback, que saíram em 29/jul). Duas coisas: o
-   envio ainda usa o `window.confirm` cinza do navegador, no momento mais tenso da jornada
-   (tentativa única, clique irreversível); e **não existe grade de questões**, então o aluno não
-   vê quais deixou em branco antes de enviar nem consegue voltar a uma específica. O modal novo
-   deve dizer **quantas ficaram em branco**, que é a informação que faz a confirmação valer.
-2. **16 · Cron da prova abandonada.** Quem fecha a aba deixa a tentativa `in_progress` para
-   sempre, porque o cronômetro só envia com a aba aberta. Previsto no `PRD.md` §15. Faz mais
-   sentido agora do que antes, porque o ciclo de vida da tentativa já está assentado.
+1. ~~**17 · Modal de envio e grade de questões da prova.**~~ **FEITO em 30/jul/2026**, faltando a
+   conferida visual na tela real. O `window.confirm` saiu; entrou o padrão 5 do `DESIGN.md` §3
+   (`confirmar()`, `<dialog>` nativo) com a grade de 20 chips, respondida contra em branco por
+   preenchimento e não só por cor, clicáveis para ir direto à questão. A frase diz quantas
+   ficaram em branco e que em branco conta como erro. Modelo e frase são puros
+   (`resumoProva`/`fraseEmBranco`), com 11 casos novos no `check:prova`. O envio ganhou o botão
+   em trabalho, que faltava. **Achado ao medir:** o glifo branco da bolinha sobre o dourado dá
+   3,15:1 e falha AA; na grade virou `#0A2B1E` (4,84:1), e a bolinha da alternativa ficou como
+   está, por ser design aprovado. **Conferido na tela real** em 30/jul, com tentativa de
+   verdade (17 respondidas, 3 em branco): abre centralizado sobre a questão com o backdrop
+   cobrindo o cabeçalho sticky, o clique na grade navega e o diálogo não sobra na tela seguinte,
+   Esc devolve o foco ao botão que abriu, clique fora remove o nó do DOM, e o banco seguiu
+   `in_progress` depois de tudo. **Não exercitado:** confirmar o envio (botão virando
+   "Enviando..." e a tela de resultado), porque consome a tentativa única.
+2. ~~**16 · Cron da prova abandonada.**~~ **CÓDIGO FEITO em 30/jul/2026, falta o deploy para
+   verificar.** `lib/prova-expiradas.ts` (decisão pura + IO separados),
+   `netlify/functions/prova-expiradas.mts` a cada 15 minutos, e `npm run prova:expiradas` para
+   rodar à mão. Gatilho é função agendada do Netlify, **não** `pg_cron` — desvio registrado no
+   `PRD.md` §15. Achado no caminho: `corrigir([], {})` aprovava (`0 >= 70 * 0`), e esse booleano
+   é o porteiro do certificado; consertado na raiz em `lib/prova-correcao.ts`. **O que falta é
+   só o que exige deploy:** confirmar que o agendador dispara e que a rotina fecha uma tentativa
+   real. Nada disso é verificável local.
 3. **Tela de conteúdo do admin** (`PLANO-ADMIN.md` §4.6), quando a 18 destravar. A migração que
    ela exigia já está pronta: mudar título, descrição ou vídeo no banco já muda a tela sem
    deploy. Falta a tela.

@@ -492,7 +492,7 @@ Postgres gerenciado (Supabase). Acesso a dado sensível protegido por RLS. Leitu
 
 ## 15. Rotinas agendadas
 
-Edge functions agendadas por `pg_cron`, cadência proporcional à volatilidade.
+Rotinas agendadas, cadência proporcional à volatilidade.
 
 | Rotina | Cadência | Ação |
 |---|---|---|
@@ -500,7 +500,18 @@ Edge functions agendadas por `pg_cron`, cadência proporcional à volatilidade.
 | D+14 sem atividade | Diária | E-mail 7 |
 | Aviso de expiração (−30d) | Diária | E-mail de aviso |
 | Expiração de enrollment | Diária | Muda status para expired |
-| Prova com deadline estourado | Frequente | Corrige o respondido e registra resultado |
+| Prova com deadline estourado | 15 min | Corrige o respondido e registra resultado |
+
+**Onde as rotinas rodam (revisto em 2026-07-30).** Esta seção dizia "edge functions agendadas
+por `pg_cron`". A primeira rotina implementada, a da prova abandonada, roda como **função
+agendada do Netlify** (`netlify/functions/prova-expiradas.mts`), e a razão tende a valer para
+as demais: a regra que a rotina aplica já existe em TypeScript, e o `pg_cron` só alcançaria
+esse código expondo uma rota pública protegida por segredo compartilhado. Reescrever a regra
+em SQL, que é o único jeito de dispensar o TypeScript, criaria uma segunda definição da nota
+de corte para divergir da primeira. A função agendada é invocada internamente pela
+plataforma: sem endpoint público e sem segredo novo.
+
+O `pg_cron` continua sendo o caminho natural para rotina cuja regra viva inteira no banco.
 
 ## 16. Admin
 
