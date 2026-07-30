@@ -41,8 +41,13 @@ apontava para a causa errada:**
 
 **Preparo de teste da área do aluno** (só homolog, e está na lista da tarefa 10 para remover
 antes do go-live): a conta `testinhos@joao.com.br` está com senha `Admin123`, matrícula ativa com
-`liberacao_total`, 17/17 de progresso e uma tentativa de prova **aberta** (17 respondidas, 3 em
-branco). O progresso se marca com `scripts/progresso-conta.mjs <email> --tudo`.
+`liberacao_total`, 17/17 de progresso e uma tentativa de prova **já enviada** (`submitted`, nota
+20, 17 respondidas e 3 em branco). O Pedro confirmou o envio no fim da sessão, o que exercitou o
+último caminho que faltava do diálogo: botão virando "Enviando..." e a tela de resultado.
+**Consequência para quem for testar a prova de novo:** `/app/prova` agora redireciona esta conta
+para `/app/prova/resultado`, porque a tentativa é única. Para reabrir, apagar a linha de `exams`
+desta conta (é o que o `scripts/aprovar-conta.mjs` faz antes de gravar a dele). O progresso se
+marca com `scripts/progresso-conta.mjs <email> --tudo`.
 
 **Estado do git (29/jul, fim do dia):** três commits em `homolog`, **todos pushados e no ar**.
 `f22e297` (tarefas 1 e 2), **`33f6469`** (camada de feedback inteira) e **`ecafa52`** (acesso por
