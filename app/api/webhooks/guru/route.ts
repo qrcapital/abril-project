@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { enviarAcesso } from "@/lib/email";
 
 export const runtime = "nodejs";
 
 /**
  * Webhook do Digital Manager Guru.
- * Compra aprovada -> cria usuário + matrícula + registra e-mail de boas-vindas.
+ * Compra aprovada -> cria usuário + matrícula + **envia** o e-mail de boas-vindas.
  * Reembolso/chargeback -> revoga o acesso.
  *
  * Requisitos (PRD §3): idempotente (dedupe por guru_order_id) e assinatura validada.
@@ -113,17 +114,7 @@ async function provisionAccess(
   // Corrida de reentrega simultânea: a unique constraint protege.
   if (enrollErr && !enrollErr.message.includes("duplicate")) throw enrollErr;
 
-  // E-mail de boas-vindas com link de definição de senha.
-  // TODO(ses): disparar via Amazon SES (template 3). Por ora, geramos o link e logamos.
-  const { data: link } = await db.auth.admin.generateLink({
-    type: "invite",
-    email: event.email,
-  });
-  await db.from("email_log").insert({
-    user_id: userId,
-    template: "boas-vindas",
-    status: link ? "queued" : "link_error",
-  });
+  await enviarAcesso(db, { email: event.email, userId, nome: event.nome });
 }
 
 /** Revoga acesso por ordem (reembolso/chargeback). */

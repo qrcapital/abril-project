@@ -498,6 +498,39 @@ Postgres gerenciado (Supabase). Acesso a dado sensível protegido por RLS. Leitu
 | 11 | Reembolso confirmado | Webhook de reembolso |
 | 12 a 14 | Carrinho abandonado +1h / +48h / +72h | Guru nativo, ou cron próprio |
 
+> **A camada de envio existe desde 31/jul/2026, e o texto dos nossos é editável no painel.** Até
+> então o projeto **não mandava e-mail nenhum**: o webhook gerava o link de acesso e não enviava,
+> porque `generateLink` gera sem enviar.
+>
+> **Divisão de responsabilidade, decidida pelo Pedro em 31/jul:** os de **pagamento** (1, 2, 12 a 14)
+> saem pelo **Guru**, que é quem conhece o estado do pagamento. Os do **produto** são nossos.
+>
+> **Assunto, corpo e banner vivem no banco** (`email_templates`), editáveis em `/admin/emails` com
+> prévia e envio de teste. O banner é opcional, por template, com **texto alternativo obrigatório**:
+> cliente de e-mail bloqueia imagem por padrão em boa parte dos casos, então banner sem alt não sai.
+> Arte em **1120 × 360 px** (exibe em 560 de largura, o dobro por causa de tela retina), PNG ou JPG
+> até 500 KB, por **upload** para o bucket `email` do Storage ou por endereço colado. O bucket é
+> **público** por requisito: cliente de e-mail busca a imagem de um proxy, sem sessão, então URL
+> assinada com validade não serve. **Layout, marca e o destino do botão ficam no código** (`lib/email-render.ts`):
+> moldura é design system, e o destino vem do gatilho. Cada template tem um **contrato de variáveis**
+> em código, e o painel recusa ao salvar qualquer `{{campo}}` fora dele, porque ninguém o preencheria
+> no envio.
+>
+> **Provedor: Resend**, por HTTP e sem dependência nova, o mesmo que já é o SMTP do Supabase Auth
+> desde 28/jul. O SES segue previsto para produção junto com a decisão do domínio; a troca é uma
+> chamada em `lib/email.ts`.
+>
+> **Precisão sobre os templates 9 e 10:** aprovado recebe **um** e-mail, o do certificado, e reprovado
+> recebe o do resultado. Os dois disparam no mesmo evento (o envio da prova), e mandar ambos na
+> aprovação seriam duas mensagens no mesmo segundo dizendo a mesma coisa.
+>
+> **No ar hoje:** 3 (boas-vindas, na compra aprovada), 9 e 10 (no envio da prova). O restante espera
+> o gatilho, que em quase todos é uma rotina agendada que ainda não existe (§15).
+>
+> **O link de acesso não usa o template "Invite user" do painel do Supabase.** Ele é montado com o
+> `hashed_token` e aponta para o nosso `/auth/confirm`, então aquela pendência de configuração deixou
+> de valer para este caminho.
+
 ## 15. Rotinas agendadas
 
 Rotinas agendadas, cadência proporcional à volatilidade.
@@ -529,7 +562,28 @@ Painel interno em `/admin`, acesso role-based (papel admin).
 - **Ações por aluno**: reenviar acesso, trocar e-mail, **liberar 2ª chamada**, revogar ou estender acesso.
 - **Prova**: CRUD das questões por módulo.
 - **Métricas**: alunos, taxa de conclusão, taxa de aprovação, NPS.
-- **Log de e-mails**: leitura do `email_log`.
+- **Log de e-mails**: leitura do `email_log`, com busca por e-mail ou template (`/admin/emails`, no
+  ar desde 31/jul/2026). Nasce vazia porque o SES ainda não dispara nada; hoje só a compra aprovada
+  escreve uma linha, pelo webhook do Guru. O registro **sobrevive à conta apagada** (`user_id` é
+  `on delete set null`), e a linha mostra "conta removida".
+- **Conteúdo**: edição de módulos, aulas e materiais (`/admin/conteudo`, no ar desde 31/jul/2026).
+
+**Escopo do Conteúdo, com as três decisões do Pedro de 31/jul/2026** (detalhe em
+`PLANO-ADMIN.md` §4.6):
+
+| Item | Decisão |
+|---|---|
+| Material | **URL colada**, não upload para o Storage. `materials.arquivo` guarda o endereço e o link do aluno aponta direto para ele |
+| Ordem das aulas | **Reordenável**, com a consequência aceita: a ordem define o número da aula na URL, então link já compartilhado passa a abrir a aula que ficou naquela posição. O progresso acompanha a aula, porque é gravado por `lesson_id` |
+| Criar e apagar aula | **Permitido**, com confirmação que diz quantos alunos perdem o progresso gravado (o `on delete cascade` leva `progress` e `materials` junto) |
+| `lessons.duracao` e `modules.arte` | **Fora**, por não terem leitor nenhum no app hoje. Entram quando a tela do aluno passar a exibi-los |
+
+O `tipo` do material é derivado do vínculo (aula = resumo, módulo = apostila), que é a distinção
+que a tela da aula já faz ao juntar os dois numa lista só.
+
+**O conteúdo do curso muda sem deploy** desde que o currículo saiu do código para o banco
+(29/jul/2026). É a única parte do produto com essa propriedade, e é o que esta tela existe para
+usar.
 
 ## 17. Arquitetura e performance
 

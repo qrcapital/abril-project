@@ -136,8 +136,34 @@ a tela avisa quando ele é atingido.
 - _Dados_: `questions`. **Já dá para usar o seed real** — vira funcional cedo.
 
 ### 4.5 `/admin/emails` — Log de e-mails
-- Tabela: aluno, template, data de envio, status (enviado/falha).
-- _Dados_: `email_log` (somente leitura).
+
+> **CONSTRUÍDA em 31/jul/2026**, com migration `0008_listar_emails.sql` aplicada no `ei-homolog`.
+
+- Tabela: quando, aluno, template, status. Somente leitura, e a tela diz isso: não dispara nem
+  reenvia.
+- **Busca por e-mail ou template** num `<form method="get">`, com o termo na URL. São as duas
+  perguntas que se faz a um log ("o que foi para esta pessoa?" e "quem recebeu este template?"), e
+  uma caixa que responde as duas custa menos que dois filtros.
+- _Dados_: `email_log` (somente leitura), via `listar_emails`.
+
+**Ela nasce mostrando estado vazio, e é por isso que valeu construir agora.** O SES não está
+configurado (PRD §14: 12 dos 14 templates saem por ele) e hoje só o webhook do Guru escreve uma
+linha aqui, na compra aprovada. Tela existindo antes do dado é o que faz alguém olhar o log no
+primeiro dia, em vez de descobrir meses depois que ninguém recebeu nada.
+
+**Três decisões pequenas que evitam retrabalho:**
+
+- **`left join` em `auth.users` e `profiles`, não join comum.** `email_log.user_id` é
+  `on delete set null`: o registro do envio sobrevive à conta que o recebeu, e é isso que faz dele
+  um log. Com join comum, apagar uma conta apagaria o histórico **da tela** sem apagar nada do
+  banco. A linha mostra "conta removida".
+- **O nome do template aparece cru.** Quem escreve o valor é quem dispara (hoje `boas-vindas`), e um
+  mapa de rótulos aqui seria uma segunda lista para manter sincronizada: template novo cairia na
+  tela como branco ou "—", pior que ler o identificador real.
+- **O tom do status é conservador.** O vocabulário é de quem envia (o webhook grava `queued` e
+  `link_error`; o SES vai trazer os dele), então o padrão é **neutro**. Pintar de vermelho o que não
+  se reconhece transformaria cada template novo num incidente falso. `queued` fica em atenção de
+  propósito: enfileirado não é entregue.
 
 ### 4.6 `/admin/conteudo` — Aulas e materiais
 
@@ -151,25 +177,47 @@ a tela avisa quando ele é atingido.
 > Trocar título, descrição ou `panda_video_id` no banco já muda a tela **sem deploy**, o que foi
 > verificado. Falta só a tela que faz isso com as mãos de alguém.
 
+> **CONSTRUÍDA em 31/jul/2026** e no ar em homolog, com as três decisões abaixo tomadas pelo Pedro
+> no mesmo dia. Migration `0007_mover_aula.sql` aplicada no `ei-homolog`.
+
 - **Lista de módulos**, com as aulas de cada um em acordeão, na ordem do curso.
-- **Editar módulo**: título, docente, arte.
-- **Editar aula**: título, descrição, **link do vídeo** (`panda_video_id`), duração, e se
-  conta para o gate de 16/16 (`conta_no_gate`).
+- **Editar módulo**: título e docente.
+- **Editar aula**: título, descrição, **link do vídeo** (`panda_video_id`) e se conta para o gate
+  de 16/16 (`conta_no_gate`).
+- **Reordenar, criar e apagar aula**, o último com confirmação que diz a consequência medida.
 - **Materiais**: adicionar, renomear e remover, com o vínculo à **aula** (resumo) ou ao
   **módulo** (apostila), que é a distinção que a tabela já suporta.
 - _Dados_: `modules`, `lessons`, `materials` (leitura e escrita).
 
-**A definir antes de construir:**
+**As três decisões, como ficaram:**
 
-- **Arquivo: upload ou URL?** O material pode ser enviado pelo painel para o Supabase Storage,
-  ou o admin cola um link já hospedado. A coluna `materials.arquivo` guarda caminho, então as
-  duas cabem; muda o tamanho da tela e se precisamos de bucket com policy.
-- **Reordenar aulas.** O `ord` define a ordem do curso e, por consequência, o **número da aula
-  na URL**. Deixar reordenar é útil e perigoso: o progresso do aluno é gravado por `lesson_id`,
-  então ele não se perde, mas links compartilhados apontariam para outra aula. Talvez reordenar
-  fique fora do v1.
-- **Criar e apagar aula.** Apagar aula com progresso gravado apaga o progresso junto (o
-  `on delete cascade` da tabela). Isso pede confirmação forte, ou desativação em vez de exclusão.
+| Pergunta | Decisão | Consequência |
+|---|---|---|
+| Arquivo: upload ou URL? | **URL colada** | Zero bucket, zero policy de Storage, zero tela de upload. O template da aula já joga `materials.arquivo` direto no `href`, então nada mudou do lado do aluno. A validação do endereço mora na rota |
+| Reordenar aulas? | **Sim**, com setas ↑↓ | A ordem define o número da aula na URL, então link já compartilhado passa a abrir a aula que ficou naquela posição. O aviso está na tela. O progresso acompanha a aula, porque é gravado por `lesson_id` |
+| Criar e apagar aula? | **Sim**, com confirmação forte | O diálogo diz **quantos alunos perdem o progresso** gravado naquela aula, contado na hora. O `on delete cascade` leva `progress` e `materials` junto |
+
+**Duas coisas ficaram fora, e não por esquecimento.** `lessons.duracao` e `modules.arte` não têm
+leitor nenhum no app hoje (o `getCurriculo` nem seleciona as colunas). Campo de formulário que
+grava dado que nenhuma tela mostra é pior que campo ausente: quem preenche fica esperando o
+efeito. Entram quando a tela do aluno passar a exibi-los.
+
+**O `tipo` do material é derivado do vínculo** (aula = resumo, módulo = apostila) em vez de
+perguntado. É a distinção que o `lib/materiais.ts` já faz ao juntar os dois numa lista só para o
+aluno, nada lê a coluna hoje, e um `<select>` a mais seria escolha sem consequência.
+
+**Por que a troca de ordem é uma função no banco** (`mover_aula`, migration `0007`): `lessons` tem
+`unique (module_id, ord)` e o Postgres checa unique **linha por linha**, não no fim do comando.
+Trocar A com B em dois `update` do supabase-js quebra no primeiro, e passar por um valor
+temporário exige os três passos na mesma transação — que uma função plpgsql é e dois `await` não
+são. Se falhasse no meio, uma aula ficaria com `ord = -1` e o currículo inteiro sairia de ordem
+sem nada reclamar. Ela troca com o **vizinho imediato** e não com `ord ± 1`, porque apagar aula
+deixa buraco na numeração.
+
+**Sem JS na tela, por escolha:** acordeão é `<details>` nativo, cada bloco é um
+`<form method="post">`, e a ação sai do `name`/`value` do botão de submit clicado — é isso que
+deixa [Salvar] [↑] [↓] num formulário só em vez de três. O único componente de cliente é o
+diálogo de apagar aula.
 
 ### 4.7 `/admin/equipe` — Quem tem acesso ao painel
 

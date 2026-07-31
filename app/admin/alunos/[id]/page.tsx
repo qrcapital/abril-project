@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import ReenviarAcesso from "./ReenviarAcesso";
+
 import {
   Cabecalho,
   Linha,
@@ -9,6 +11,7 @@ import {
   Selo,
   TOM_ESTADO,
   Vazio,
+  dataHora as data,
   situacaoProva,
 } from "@/app/admin/_ui/tabela";
 import { ROTULO_ESTADO, estadoDaMatricula } from "@/lib/matricula-estado";
@@ -19,11 +22,12 @@ export const metadata: Metadata = { title: "Aluno" };
 /**
  * Detalhe do aluno (PLANO-ADMIN §4.3), somente leitura.
  *
- * As AÇÕES do §4.3 (reenviar acesso, trocar e-mail, liberar 2ª chamada, revogar ou estender) são
- * Fase 3 e continuam bloqueadas em Guru e SES. Duas delas não dependem de integração nenhuma
- * (liberar 2ª chamada e estender acesso) e ainda assim ficam de fora: o §2 pede auditoria para ação
- * sensível, e a tela de Equipe já abriu essa dívida com log de servidor. Somar mais três ações
- * sobre o mesmo rastro fraco é a hora errada.
+ * Das AÇÕES do §4.3, **reenviar acesso saiu em 31/jul/2026**, quando a camada de envio passou a
+ * existir: é a mais pedida no suporte ("não recebi o acesso") e a única cuja falta deixava o aluno
+ * sem entrar no produto. As outras três (trocar e-mail, liberar 2ª chamada, revogar ou estender)
+ * seguem fora, e não por dependência externa: o §2 pede auditoria para ação sensível, e a tela de
+ * Equipe já abriu essa dívida com log de servidor. Somar mais três ações sobre o mesmo rastro fraco
+ * é a hora errada.
  *
  * Aqui a leitura é MISTA de propósito: `aluno_modulos` é função da `0006`, porque agrupar por módulo
  * é agregação; o resto vem do PostgREST direto, porque é uma linha por tabela para um aluno só, e
@@ -48,13 +52,14 @@ type Exame = {
   deadline: string | null;
 };
 
-const data = (iso: string | null | undefined) =>
-  iso
-    ? new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })
-    : "—";
-
-export default async function Aluno({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function Aluno({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ ok?: string; erro?: string }>;
+}) {
+  const [{ id }, { ok, erro }] = await Promise.all([params, searchParams]);
   // Sem isto, um id malformado viraria erro de banco (uuid inválido) e o aluno veria a tela de
   // erro em vez de um 404 honesto.
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
@@ -112,6 +117,21 @@ export default async function Aluno({ params }: { params: Promise<{ id: string }
           ) : null}
           {atual?.liberacao_total && <Selo tom="destaque">liberação total</Selo>}
         </div>
+
+        {/* A ação de suporte mais pedida (PRD §16): "não recebi o acesso". Fica no cabeçalho da
+            conta, e não na tela de E-mails, porque quem chega aqui chega pelo nome da pessoa, e
+            quando o e-mail nunca saiu não existe linha no log para clicar. */}
+        {user.email && (
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <ReenviarAcesso userId={user.id} email={user.email} />
+            {ok === "acesso" && (
+              <span className="text-[12px] text-sucesso">
+                E-mail de acesso reenviado, com link novo.
+              </span>
+            )}
+            {erro && <span className="text-[12px] text-falha">{erro}</span>}
+          </div>
+        )}
       </header>
 
       <section className="mb-8">

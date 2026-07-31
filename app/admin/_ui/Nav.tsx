@@ -18,8 +18,8 @@ const ITENS = [
   { href: "/admin", rotulo: "Painel", pronto: true },
   { href: "/admin/alunos", rotulo: "Alunos", pronto: true },
   { href: "/admin/questoes", rotulo: "Questões", pronto: false },
-  { href: "/admin/conteudo", rotulo: "Conteúdo", pronto: false },
-  { href: "/admin/emails", rotulo: "E-mails", pronto: false },
+  { href: "/admin/conteudo", rotulo: "Conteúdo", pronto: true },
+  { href: "/admin/emails", rotulo: "E-mails", pronto: true },
   // Equipe é escopo novo, pedido pelo Pedro em 30/jul/2026, e não estava no §3 do plano. Fica
   // separada por uma régua porque é a única que fala de quem OPERA, não do que é operado.
   { href: "/admin/equipe", rotulo: "Equipe", pronto: true, separar: true },

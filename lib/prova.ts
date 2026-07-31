@@ -3,9 +3,12 @@ import { cache } from "react";
 
 import { getUsuario } from "@/lib/usuario";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { enviarEmail } from "@/lib/email";
+import contato from "@/lib/contato.json";
 import {
   corrigir,
   MINUTOS,
+  NOTA_MINIMA,
   TOTAL_QUESTOES,
   type Correcao,
   type Letra,
@@ -219,6 +222,33 @@ export async function enviar(userId: string): Promise<Correcao> {
     .eq("id", t.id)
     .eq("status", "in_progress"); // não sobrescreve uma correção que já aconteceu
   if (error) throw error;
+
+  // O resultado por e-mail (PRD §14, templates 9 e 10). Depois do update e dentro do caminho que
+  // só roda na TRANSIÇÃO: a saída antecipada de `status === "submitted"` lá em cima é o que garante
+  // que duplo clique não manda dois e-mails.
+  //
+  // Aprovado recebe o e-mail do certificado e reprovado o do resultado, um por aluno. O PRD lista
+  // os dois como e-mails separados, e disparar os dois na aprovação seria duas mensagens no mesmo
+  // segundo dizendo a mesma coisa. Registrado no PRD §14.
+  //
+  // `enviarEmail` não lança: uma falha de e-mail não pode desfazer uma prova já corrigida, e a
+  // tentativa fica registrada no `email_log` de qualquer jeito.
+  const user = await getUsuario();
+  if (user?.email) {
+    const site = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+    await enviarEmail(db, {
+      chave: c.aprovado ? "resultado-aprovado" : "resultado-reprovado",
+      para: user.email,
+      userId: user.id,
+      dados: {
+        nome: ((user.user_metadata?.nome as string | undefined) ?? "").trim().split(/\s+/)[0] ?? "",
+        nota: c.score,
+        minimo: NOTA_MINIMA,
+        link: c.aprovado ? `${site}/app/certificado` : contato.whatsapp,
+      },
+    });
+  }
+
   return c;
 }
 

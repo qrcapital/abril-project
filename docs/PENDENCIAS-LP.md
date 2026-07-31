@@ -4,7 +4,7 @@ Checklist vivo do que falta antes do "pronto para produção" (V1/homolog). Atua
 conforme os insumos chegam. Quando o Pedro perguntar "quais as pendências?", este é o
 documento a puxar. (O admin é V2 — ver `PLANO-ADMIN.md`.)
 
-_Última atualização: **2026-07-30, fim do dia**. A fila de amanhã está no bloco
+_Última atualização: **2026-07-31, fim do dia**. A fila de amanhã está no bloco
 **"▶ PRÓXIMA SESSÃO"** logo abaixo, e é por ali que se começa._
 
 **O que mudou de lugar e vale saber antes de mexer em qualquer coisa:**
@@ -32,57 +32,84 @@ documento é a lista do que **falta**.
 
 ---
 
-## ▶ PRÓXIMA SESSÃO (fila montada em 30/jul, para retomar em 31/jul)
+## ▶ PRÓXIMA SESSÃO (fila montada em 31/jul, ao fim da leva de Conteúdo e E-mails)
 
 Nada de recontar história: leia este bloco e vá para o trabalho. O que aconteceu está no
 `CHANGELOG.md`; o que **decidir** está aqui.
 
-**Onde paramos:** o admin saiu do zero e está no ar em homolog com cinco telas — Painel, Alunos,
-Detalhe do aluno, Equipe e a casca. Migrations `0003` a `0006` aplicadas no `ei-homolog` e
-commitadas (`1bb23d9`). A conta `pedrohfontei@gmail.com` é **admin mestre**, e a senha dela em
-homolog é a de teste conhecida.
+**Onde paramos:** o admin está no ar em homolog com **sete** telas — Painel, Alunos, Detalhe do
+aluno, Equipe, **Conteúdo**, **E-mails** e a casca. Falta só **Questões**, que é a única do
+`PLANO-ADMIN` ainda de pé. Entrou também a **camada de envio de e-mail** (que não existia) com o
+builder dos transacionais nossos. Migrations `0003` a `0009` aplicadas no `ei-homolog`. A conta
+`pedrohfontei@gmail.com` é **admin mestre**, e a senha dela em homolog é a de teste conhecida. Duas
+travas caíram em 31/jul: as **três decisões do §4.6** (tela construída) e a **`liberacao_total`** do
+homolog, agora desligada em 8 das 9 matrículas.
+
+**Uma coisa sua destrava entrega de e-mail:** a `RESEND_API_KEY` no `.env.local` e nas variáveis do
+Netlify (item 2 abaixo). Fora isso, o que sobra é insumo externo (checkout do Guru, vídeos, materiais,
+domínio de e-mail) e as duas decisões pequenas do §4.4.
 
 ### Código, na ordem sugerida
 
-1. **Tela de conteúdo do admin** (`PLANO-ADMIN.md` §4.6) — a maior frente aberta, e a única que
-   muda conteúdo **sem deploy**. Travada só nas **três decisões do §4.6** (abaixo). Se elas vierem,
-   é a primeira. Se não vierem, pule para a 2.
-2. **`/admin/emails`** (§4.5), somente leitura sobre `email_log`. A mais barata das que restam, e
-   não depende de ninguém. Contra: o SES não está configurado e a tabela está vazia, então a tela
-   nasce mostrando estado vazio. Vale construir agora justamente por isso — quando o SES entrar, o
-   log já tem tela.
-3. **`/admin/questoes`** (§4.4), CRUD por módulo. Funciona hoje, mas sobre as 24 questões
-   `[EXEMPLO]` do seed, então só passa a significar algo depois da sua tarefa 13.
+1. ~~**Tela de conteúdo do admin**~~ **FEITA em 31/jul**, com as três decisões do §4.6 tomadas no
+   mesmo dia: URL colada em vez de upload, reordenar aulas permitido, criar e apagar com
+   confirmação que diz quantos alunos perdem progresso. Detalhe no `CHANGELOG.md` e no
+   `PLANO-ADMIN.md` §4.6. O que ficou de fora e por quê: `lessons.duracao` e `modules.arte`, que
+   não têm leitor nenhum no app.
+2. ~~**`/admin/emails`**~~ **FEITA em 31/jul**, migration `0008` (log) e `0009` (templates). A tela
+   virou duas metades no mesmo dia: o log e o **builder dos transacionais nossos**, pedido pelo Pedro
+   depois de ver o log vazio. Junto veio a **camada de envio**, que não existia: até 31/jul o projeto
+   não mandava e-mail nenhum, e o "queued" do log era falso.
+
+   **🔒 Falta uma coisa sua para o primeiro e-mail sair de verdade: a `RESEND_API_KEY` no
+   `.env.local`** (e nas variáveis do Netlify, contexto de produção, para o homolog no ar). É a mesma
+   conta Resend que você configurou em 28/jul como SMTP do Supabase Auth: o painel do Resend, em API
+   Keys. Sem ela tudo funciona menos a entrega, e cada tentativa fica registrada no log com
+   `falha: sem RESEND_API_KEY no ambiente`. Não me mande a chave por aqui, cole no arquivo.
+3. **`/admin/questoes`** (§4.4), CRUD por módulo — **a última tela do painel**. Funciona hoje, mas
+   sobre as 24 questões `[EXEMPLO]` do seed, então só passa a significar algo depois da sua tarefa
+   13. Duas coisas a decidir quando ela chegar, e nenhuma trava começar: se tirar questão do ar é
+   apagar ou desativar (a coluna `questions.ativo` já existe e o índice do sorteio filtra por ela; a
+   prova já feita guarda o `questions_snapshot`, então nenhum dos dois corrompe histórico), e se a
+   tela mostra o contador por módulo contra a meta de 25, que é o que transforma "escrever questões"
+   em tarefa com fim visível.
+
+**Uma consequência de 31/jul para quem for testar a área do aluno:** com a `liberacao_total`
+desligada e `inicio_em` em 29/jul, as contas de teste veem só os módulos que a esteira já abriu.
+Isso é o produto. Para inspecionar o curso inteiro, use `pedrohfontei@gmail.com`, que ficou com a
+liberação total, ou ligue a coluna para a conta que precisar.
 
 **Ao construir tela nova de admin, três coisas que já custaram tempo** (detalhe no `HANDOFF.md` §6):
 route handler **não passa por layout**, então rota que muta refaz a checagem de papel; peças de
 tabela vêm de `app/admin/_ui/tabela.tsx`, não se inventa a sexta; e **não rode `npm run build` com o
 `next dev` de pé**.
 
-### Suas, e a primeira trava a construção nova
+### Suas, e nenhuma trava construção nova agora
 
-- 🔒 **Três decisões da tela de conteúdo** (§4.6), que travam o item 1 acima: upload de arquivo ou
-  URL colada; se dá para reordenar aulas (o `ord` define o número da aula na URL, então links
-  compartilhados passariam a apontar para outra); e o que acontece ao apagar aula com progresso
-  gravado (o `on delete cascade` apaga o progresso junto). **Posso devolver as três com recomendação**,
-  como fiz com as quatro da 18.
-- 🔒 **`liberacao_total = true` nas 9 matrículas do homolog**, achado em 30/jul pela própria tela de
-  Alunos. Desliga a esteira semanal para todo mundo, então quem testa homolog aprova um
-  comportamento que **não é o produto**. Decidir se o homolog volta a gotejar e quais contas ficam
-  liberadas para teste. Detalhe na seção de pendências abaixo.
 - 🔒 **13 · Quem escreve as ~100 questões.** Não bloqueia código, mas é o que falta para a prova
   deixar de rodar sobre as 24 de exemplo, onde dois sorteios repetem 19 das 20.
-- 🔒 **3 · Template `Invite user`** no painel do Supabase: colar uma linha.
 - 🔒 **Auditoria do admin**: a tela de Equipe escreve privilégio e o rastro hoje é log de servidor,
   com retenção curta. Se a operação crescer, o caminho é uma tabela `admin_audit`. Decisão sua, não
   foi pedida.
 - 🔒 **URL do checkout do Guru** e os **materiais e vídeos reais**, que seguem pendentes.
+- 🔒 **Arte do banner dos e-mails**, se você quiser usar (o campo existe desde 31/jul, por template,
+  com **upload** na tela). **1120 × 360 px** em PNG ou JPG, de preferência abaixo de 200 KB, que exibe
+  em 560 de largura. Lembrando que ele é decoração: o texto do e-mail se explica sem imagem, porque
+  boa parte dos clientes bloqueia imagem por padrão, e o texto alternativo é obrigatório por isso.
+- 🔒 **Domínio de envio de e-mail.** Hoje o remetente é o `onboarding@resend.dev`, que entrega mas não
+  é o produto. Verificar um domínio (no Resend ou no SES) muda o remetente e a reputação de entrega, e
+  é a mesma decisão que o `AMBIENTES.md` já registrava para o SMTP do Auth.
+- 🔒 **Template `Invite user`**, que era o item 3, **deixou de ser necessário** para o acesso do aluno:
+  o link agora é montado com o `hashed_token` e vai no nosso e-mail de boas-vindas. Só volta a importar
+  se alguém convidar gente pelo painel do Supabase.
 
 ### Já resolvidas, para não voltarem à fila
 
 **18 · Acesso de admin** (as quatro decisões, 30/jul), **20 · Política de senha** no painel do
 Supabase (30/jul), **16 · Cron da prova abandonada**, **17 · Modal de envio e grade**, a **escalada
-de privilégio** do `is_admin` e o **admin mestre**. Tudo no `CHANGELOG.md` em "Não lançado".
+de privilégio** do `is_admin` e o **admin mestre**. Em 31/jul entraram as **três decisões da tela de
+conteúdo** (§4.6) e a **`liberacao_total` do homolog**, desligada em 8 das 9 matrículas. Tudo no
+`CHANGELOG.md` em "Não lançado".
 
 ### Feedback ao usuário: a camada que atravessa a área logada
 
@@ -362,6 +389,11 @@ um consertando várias telas de uma vez, e é por isso que vêm antes dos de tel
       dez policies de `is_admin()` e lê o banco de questões com o gabarito. Vale só no homolog,
       e o `ei-prod` nasce com admin próprio pelo item 7 do `AMBIENTES.md`.
       **NÃO remover o `scripts/admin-conta.mjs`**: é procedimento de produção, não atalho.
+- [x] **RESOLVIDO em 31/jul/2026: desligada em 8 das 9.** Decisão do Pedro: o homolog volta a
+      gotejar, e só `pedrohfontei@gmail.com` mantém liberação total, para inspecionar o curso
+      inteiro sem esperar a esteira. Quem for testar a área do aluno com outra conta vê os módulos
+      que a esteira já abriu, contando de `inicio_em` (29/jul nas nove). O texto original abaixo,
+      para o registro do que era o problema.
 - [ ] **As 9 matrículas do homolog estão com `liberacao_total = true`** (achado em 30/jul/2026 pela
       própria tela de Alunos, no primeiro carregamento). Isso **desliga o calendário de liberação
       gradual para todo mundo**: o curso inteiro abre na hora, em vez de um módulo por semana.
@@ -379,33 +411,36 @@ um consertando várias telas de uma vez, e é por isso que vêm antes dos de tel
       `certificates`, código por aluno, função `verify_certificate`) pertence à migração para o
       banco, tarefa 15. Achado em 29/jul, ao construir a guarda do certificado.
 - [ ] **Pixels de tracking** (`fbq`/`gtag`) — estrutura pronta; precisa dos IDs.
-- [ ] **Migrar o curso para o banco** — hoje vive em `lib/curso.ts`, a tabela `lessons`
-      está vazia e o progresso é cookie.
+- [x] ~~**Migrar o curso para o banco**~~ **FEITO em 29/jul/2026**, e o texto que estava aqui
+      errava em dois pontos: a tabela `lessons` **não** estava vazia (o seed já tinha rodado) e o
+      progresso saiu do cookie para a tabela `progress` no mesmo dia. Desde 31/jul quem edita esse
+      conteúdo é `/admin/conteudo`.
 
 ## 🔒 Bloqueado por insumo
 
-- [ ] **Template de e-mail do convite (primeiro acesso)** — o `/auth/confirm` já aceita
-      `type=invite`, e o webhook do Guru já gera esse link, mas o template **Invite user** no
-      painel segue no padrão. Mesma edição do Reset Password, trocando o tipo:
-      `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=invite`. Não urge, porque o primeiro
-      acesso do homolog usa o atalho `?s=primeiro` até o Guru entrar.
+- [x] ~~**Template de e-mail do convite (primeiro acesso)**~~ **DEIXOU DE SER PENDÊNCIA em
+      31/jul/2026**, e não por ter sido feito: o e-mail de boas-vindas passou a ser **nosso**, com o
+      link montado a partir do `hashed_token` apontando para o nosso `/auth/confirm`. O template
+      **Invite user** do painel só voltaria a importar se alguém convidasse gente pelo dashboard do
+      Supabase.
 
 ### Antes de produção: o e-mail de boas-vindas (registrado em 29/jul, a pedido do Pedro)
 
-O **link** do convite não é decisão, é a linha acima. Estas três são, e todas vencem no
-lançamento, não antes. Elas se juntam porque quem for editar o template no painel resolve as
-três de uma vez, e porque nenhuma delas aparece em homolog: o atalho `?s=primeiro` pula o
-e-mail inteiro, então o furo só apareceria com o primeiro aluno real pagante.
+**Duas das três caíram em 31/jul/2026**, quando a camada de envio passou a existir: o e-mail é
+nosso, com layout de marca e copy passada pelo `COPY.md`, e o link não depende mais do painel do
+Supabase. Sobrou o **remetente**, que é decisão de domínio. Continua valendo o aviso de que nada
+disso aparece em homolog enquanto o atalho `?s=primeiro` pular o e-mail: quem quiser ver o de
+verdade usa o "Enviar teste para mim" da tela de E-mails.
 
-- [ ] **Colar a linha do `Invite user`** no painel. Sem ela, o link do e-mail que o webhook do
-      Guru dispara na compra aprovada não leva a lugar nenhum útil, e é o **primeiro contato do
-      aluno que pagou**. É a única das três que quebra o fluxo se ficar para trás.
-- [ ] **Corpo do e-mail #3 (boas-vindas + acesso)**, do `PRD.md` §14. A spec está no
-      `FLUXO-v1.md`, documento referenciado que nunca foi trazido ao repo (pendência antiga).
-      Sem ele, o aluno recebe o corpo padrão do Supabase: funciona, mas fora da marca, sem o
-      template base (logo clara, fundo claro, CTA dourado) e sem passar pelo `COPY.md`.
-- [ ] **Remetente definitivo.** Hoje é `onboarding@resend.dev`, remetente de **teste** do
-      Resend, escolhido em 28/jul para destravar o homolog. Depende da decisão de domínio do
+- [x] ~~**Colar a linha do `Invite user`** no painel~~ **RESOLVIDO por outro caminho em 31/jul**: o
+      link vai no nosso e-mail, montado com o `hashed_token`. Era a única das três que quebrava o
+      fluxo, e não quebra mais.
+- [x] ~~**Corpo do e-mail #3 (boas-vindas + acesso)**~~ **ESCRITO em 31/jul**, na marca e passado
+      pelo `COPY.md`, e agora **editável em `/admin/emails`** sem deploy. A spec do `FLUXO-v1.md`
+      nunca chegou ao repo; se ela aparecer, é edição de texto no painel, não de código.
+- [ ] 🔒 **Remetente definitivo, a única das três que sobrou.** Hoje é `onboarding@resend.dev`,
+      remetente de **teste** do Resend, escolhido em 28/jul para destravar o homolog e agora usado
+      também pelos nossos transacionais (`EMAIL_FROM` vazio cai nele). Depende da decisão de domínio do
       `AMBIENTES.md`: seguir no Resend com domínio verificado, ou passar para o SES, que já é o
       previsto para os outros doze e-mails. Enquanto for o de teste, o e-mail sai de um domínio
       que não é o da Abril, com o custo de entregabilidade e de confiança que isso tem numa

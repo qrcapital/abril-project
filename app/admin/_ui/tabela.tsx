@@ -78,6 +78,15 @@ export function Vazio({ children }: { children: ReactNode }) {
 }
 
 /**
+ * Data e hora curtas em pt-BR, com travessão para nulo. Subiu do `alunos/[id]` para cá quando a
+ * segunda tela precisou dela (o log de e-mails), pela mesma regra que trouxe as peças de tabela:
+ * duas cópias do mesmo formato divergem sem ninguém notar, e aí a mesma data aparece de dois jeitos
+ * em telas vizinhas.
+ */
+export const dataHora = (iso: string | null | undefined) =>
+  iso ? new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" }) : "—";
+
+/**
  * Qual tom cada estado de acesso recebe. Mora aqui, junto do `Selo`, porque quem é dono da tabela
  * de tons é quem deve decidir o mapeamento: as duas telas de aluno precisavam do mesmo mapa, e a
  * primeira versão o duplicou nos dois arquivos.

@@ -112,8 +112,10 @@ Em ordem do que eu atacaria primeiro:
    `AMBIENTES.md`), o template de Reset Password aponta para
    `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=recovery`, e o fluxo foi percorrido de
    ponta a ponta com entrega em caixa de verdade. O mesmo `/auth/confirm` serve o **primeiro
-   acesso** com `type=invite`, que é o link do webhook do Guru; falta só editar o template
-   **Invite user** no painel, o que não urge. O desenho e o porquê estão na nota de
+   acesso** com `type=invite`, que é o link do webhook do Guru. O template **Invite user** do
+   painel, que esta linha pedia, **deixou de ser necessário em 31/jul/2026**: o e-mail de
+   boas-vindas passou a ser nosso, com o link montado a partir do `hashed_token` apontando para
+   este mesmo `/auth/confirm`. O desenho e o porquê estão na nota de
    implementação do `ROUTES.md`.
 5. **Pendências pequenas da LP.** Os links de redes sociais do rodapé seguem `href="#"`,
    esperando as URLs reais. (A nav do rodapé já foi alinhada em 25/jul.)
@@ -122,9 +124,24 @@ Em ordem do que eu atacaria primeiro:
    módulos e 17 aulas), e o progresso saiu do cookie no mesmo dia. Hoje o `lib/curso.ts` guarda
    só tipos e lógica; `lib/curriculo.ts` carrega do banco; `progress` guarda a conclusão. Mudar
    conteúdo no banco muda a tela sem deploy, que é o que a tela de conteúdo do admin
-   (`PLANO-ADMIN.md` §4.6) vai usar.
+   (`PLANO-ADMIN.md` §4.6) usa.
+
+   **E o admin edita esse conteúdo desde 31/jul/2026** (`/admin/conteudo`), com três decisões do
+   Pedro que valem saber antes de mexer: material é **URL colada** (não há bucket de Storage no
+   projeto), **reordenar aula é permitido** e muda o número da aula na URL, e **apagar aula é
+   permitido** com confirmação que diz quantos alunos perdem progresso. A troca de ordem é a função
+   `mover_aula` da migration `0007`, e não dois `update` no TypeScript, porque o
+   `unique (module_id, ord)` é checado linha por linha e a troca precisa dos três passos na mesma
+   transação.
 7. **Antes de produção:** remover os atalhos de teste da tela de login e trocar o CTA de
    compra pela URL do checkout Guru.
+8. **E-mail: a camada existe desde 31/jul/2026, e falta a chave.** Antes disso o projeto **não
+   mandava e-mail nenhum** — o webhook do Guru gerava o link de acesso e não enviava, porque
+   `generateLink` gera sem enviar. Hoje `lib/email.ts` entrega pelo **Resend** (HTTP, sem dependência
+   nova) e registra toda tentativa no `email_log`; o texto de cada e-mail é editável em
+   `/admin/emails`. **Falta a `RESEND_API_KEY`** no `.env.local` e nas variáveis do Netlify: sem ela
+   o envio falha e o log diz exatamente isso. O SES continua previsto para produção, junto com a
+   decisão do domínio, e a troca é uma chamada em `lib/email.ts`.
 
 O `docs/PENDENCIAS-LP.md` é o checklist formal, mas estava congelado em 20/jul e já
 divergia do real. Foi ressincronizado junto com este handoff.

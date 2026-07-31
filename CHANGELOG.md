@@ -8,6 +8,149 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **E-mail transacional: a camada de envio e o builder dos nossos** — 2026-07-31
+  - **O projeto não mandava e-mail nenhum até hoje.** O webhook do Guru gerava o link de acesso,
+    escrevia `queued` no `email_log` e terminava: `generateLink` **gera sem enviar** (quem envia é o
+    `inviteUserByEmail`). Quem comprava recebia silêncio, e o log dizia o contrário.
+  - `lib/email.ts` (envio e registro), `lib/email-render.ts` (variáveis, layout e versão texto,
+    puro), `supabase/migrations/0009_email_templates.sql` (assunto e corpo no banco) e o builder na
+    tela de E-mails, com prévia e teste. `npm run check:email` guarda a parte pura.
+  - **Assunto e corpo no banco, layout em código.** Mesma divisão do currículo: painel edita texto,
+    não código. O que fica no código é a moldura (marca, tipografia, botão, rodapé), que é design
+    system, e o **contrato de variáveis**: qual `{{campo}}` cada template aceita. O contrato é entre
+    o gatilho e o texto, então mora onde o gatilho mora. A tela **recusa ao salvar** uma variável
+    fora dele, porque a alternativa é um branco no meio da frase na caixa de entrada de alguém.
+  - **O destino do botão não é editável**, só o rótulo. Ele vem do gatilho (link de senha,
+    certificado, WhatsApp). URL no editor seria a forma mais barata de mandar a turma para o lugar
+    errado, e a mais difícil de perceber.
+  - **Resend por HTTP com `fetch`, zero dependência nova.** O Resend já era o SMTP dos e-mails do
+    Supabase Auth desde 28/jul, então ele entrega hoje, sem esperar domínio verificado na AWS nem
+    saída do sandbox do SES. Trocar para o SES é reescrever uma chamada neste arquivo, e é quando o
+    SDK da AWS entra (SigV4 não se assina à mão).
+  - **`enviarEmail` nunca lança, e toda tentativa vira linha no log.** Ela roda dentro do webhook de
+    compra aprovada: se o e-mail derrubasse o handler, o Guru reentregaria o evento e uma falha de
+    entrega viraria matrícula duplicada. Sem chave de API configurada, o envio falha, a tela diz o
+    motivo e o log registra `falha: sem RESEND_API_KEY no ambiente`, que é o estado de hoje.
+  - **Gatilhos ligados:** boas-vindas na compra aprovada, e o resultado da prova no `enviar()` de
+    `lib/prova.ts`, depois do update e dentro do caminho que só roda na transição (a saída antecipada
+    de `status === "submitted"` é o que garante que duplo clique não manda dois e-mails).
+  - **Aprovado recebe o e-mail do certificado, reprovado o do resultado**, um por aluno. O PRD §14
+    lista os dois separados, e disparar os dois na aprovação seriam duas mensagens no mesmo segundo
+    dizendo a mesma coisa. Registrado no PRD.
+  - **O link de acesso é montado com o `hashed_token`**, não com o `action_link` da resposta: aponta
+    direto para o nosso `/auth/confirm` e **não depende do template "Invite user"** do painel do
+    Supabase, que era pendência de configuração aberta desde 28/jul.
+  - **"Reenviar acesso" no detalhe do aluno** (PRD §16), com confirmação que avisa o que não é
+    óbvio: o link anterior para de funcionar, porque cada reenvio gera um novo.
+  - **Nome vazio não abre o e-mail com vírgula.** `{{nome}}, sua matrícula...` numa conta sem nome
+    sairia como `, sua matrícula...`, e isso não é hipótese: o backfill de 28/jul achou 3 das 8
+    contas do homolog sem nome. A montagem some com a vírgula órfã e devolve a maiúscula.
+  - **Banner de imagem por template** (`0010`), pedido pelo Pedro ao ver a prévia, com **upload**
+    (`0011`) no mesmo dia, quando ele perguntou. A medida aparece na própria tela: **1120 × 360 px**
+    para 560 de exibição, o dobro por causa de tela retina. Continua aceitando endereço colado, para
+    arte já hospedada, e o campo de endereço é também como se tira o banner.
+  - **O bucket do Storage nasce na migration**, com `public = true`, limite de 500 KB e a lista de
+    MIME em `storage.buckets`. Criar bucket sob demanda no primeiro upload funciona e deixa uma peça
+    de infraestrutura invisível: ninguém sabe que existe, com que limites, nem como recriá-la no
+    `ei-prod`. **Público é requisito**, não descuido: cliente de e-mail busca a imagem de um proxy do
+    Gmail ou do Outlook, sem sessão, então URL assinada com validade não serve.
+  - **As duas recusas do upload vêm antes de subir o arquivo**, e a arte anterior só é apagada
+    **depois** da gravação. Na primeira versão eu subia antes de validar o alt: cada tentativa
+    recusada deixava um órfão no bucket, e um save que falhasse depois de apagar a arte antiga
+    deixaria o e-mail apontando para um arquivo que não existe mais.
+  - **O nome do arquivo leva carimbo de tempo.** Proxy de imagem do Gmail e do Outlook guarda o que
+    baixou, então trocar a arte mantendo o endereço deixaria parte das pessoas vendo o banner antigo
+    por tempo indeterminado.
+  - WebP fica fora da lista de propósito: não renderiza no Outlook nem em Apple Mail antigo, e o
+    banner viraria caixa vazia justamente para parte de quem abre no desktop.
+  - **Texto alternativo é obrigatório quando há banner**, e é a decisão que importa aqui: cliente de
+    e-mail bloqueia imagem por padrão em boa parte dos casos, e sem o alt o e-mail abre com uma caixa
+    muda no topo. Banner sem alt **não sai**, e o e-mail vai sem ele em vez de ir mudo. Mesma regra
+    quando falta `NEXT_PUBLIC_SITE_URL` e o caminho não vira absoluto: melhor sem banner que com
+    imagem quebrada.
+  - **A marca não depende de imagem**, e é o que deixa o banner ser opcional: o cabeçalho de verdade é
+    o wordmark em serifada, e o banner é decoração que some sem levar informação embora. O botão é
+    verde com texto claro porque dourado com branco dá 2,9:1 e não passa AA.
+  - Verificação: prévia conferida no browser nos três templates, salvar gravando (`updated_at`) e
+    recusando variável inválida sem escrever nada, e o teste de envio caindo no log com a falha
+    honesta. `build`, `lint` e `check` (7/7) limpos.
+- **Admin: log de e-mails** — 2026-07-31
+  - `/admin/emails` (`PLANO-ADMIN` §4.5), somente leitura sobre `email_log`, com busca por e-mail ou
+    template em `<form method="get">`. Migration `0008_listar_emails.sql` aplicada no homolog.
+  - **Construída sabendo que nasce vazia**, e por isso mesmo: o SES não está configurado (PRD §14) e
+    hoje só o webhook do Guru escreve uma linha, na compra aprovada. Tela existindo antes do dado é o
+    que faz alguém olhar o log no primeiro dia, em vez de descobrir meses depois que ninguém recebeu
+    nada.
+  - **`left join` em `auth.users` e `profiles`, não join comum**, porque `email_log.user_id` é
+    `on delete set null`: o registro do envio sobrevive à conta que o recebeu, e é isso que faz dele
+    um log. Com join comum, apagar uma conta apagaria o histórico **da tela** sem apagar nada do
+    banco — omissão silenciosa e convincente. A linha mostra "conta removida".
+  - **O nome do template aparece cru e o tom do status é conservador.** Quem define os dois
+    vocabulários é quem dispara o e-mail (hoje `queued` e `link_error`), então um mapa de rótulos
+    aqui seria uma segunda lista para manter sincronizada, e pintar de vermelho o que não se
+    reconhece transformaria cada template novo num incidente falso. `queued` fica em atenção porque
+    enfileirado não é entregue.
+  - **Falha de leitura não vira "nenhum e-mail enviado".** Num log, dizer que não há registro quando
+    a consulta é que falhou esconde exatamente o que se veio ver.
+  - `dataHora` subiu do `alunos/[id]` para `app/admin/_ui/tabela.tsx` ao ganhar o segundo consumidor,
+    pela mesma regra que levou as peças de tabela para lá: duas cópias do mesmo formato divergem sem
+    ninguém notar.
+  - Verificação: tela conferida no browser vazia, populada (com quatro linhas temporárias, cobrindo
+    os quatro tons de status e o caso da conta removida, depois apagadas), com busca casando por
+    e-mail e por template, e sem resultado. `build`, `lint` e `check` (6/6) limpos.
+- **Admin: tela de Conteúdo, a que muda o curso sem deploy** — 2026-07-31
+  - `/admin/conteudo` (`PLANO-ADMIN` §4.6): módulos em acordeão, edição de título e docente do
+    módulo, edição de título, descrição, vídeo (`panda_video_id`) e `conta_no_gate` da aula,
+    reordenar com setas, criar e apagar aula, e materiais com adicionar, renomear e remover. A
+    escrita inteira passa por `app/admin/api/conteudo/route.ts`. Migration
+    `0007_mover_aula.sql` aplicada no homolog.
+  - **É a única tela do painel que muda o que o aluno vê sem passar por deploy.** Ela é a razão
+    pela qual o currículo saiu do código para `modules`/`lessons` em 29/jul; até hoje essa
+    propriedade existia e não tinha mãos.
+  - **As três decisões do Pedro que definiram o tamanho da tela:**
+    - **URL colada, não upload para o Storage.** O template da aula já joga `materials.arquivo`
+      direto no `href`, então nada mudou do lado do aluno, e a tela não precisou de bucket, policy
+      nem tratamento de upload. Os materiais reais ainda não existem: upload seria infra para um
+      arquivo que ninguém tem.
+    - **Reordenar aulas, sim**, com a consequência aceita: a ordem define o número da aula na URL,
+      então link já compartilhado passa a abrir a aula que ficou naquela posição. O aviso está na
+      tela, junto das setas. O progresso acompanha a aula, porque é gravado por `lesson_id`.
+    - **Criar e apagar aula, com confirmação forte.** O diálogo diz **quantos alunos perdem o
+      progresso** gravado naquela aula, contado na hora, em vez de um aviso genérico. O
+      `on delete cascade` leva `progress` e `materials` junto.
+  - **`mover_aula` é função no banco, e não dois `update` no TypeScript.** `lessons` tem
+    `unique (module_id, ord)`, e o Postgres checa unique **linha por linha**, não no fim do
+    comando: trocar A com B em dois comandos quebra no primeiro, quando os dois compartilham o
+    `ord` por um instante. Passar por um valor temporário exige os três passos na **mesma
+    transação**, que uma função plpgsql é e dois `await` do supabase-js não são. Se falhasse no
+    meio, uma aula ficaria com `ord = -1` e o currículo inteiro sairia de ordem sem nada reclamar.
+    Ela troca com o **vizinho imediato** e não com `ord ± 1`, porque apagar aula deixa buraco na
+    numeração — e apagar é permitido nesta mesma tela.
+  - **Duas colunas ficaram fora de propósito:** `lessons.duracao` e `modules.arte` não têm leitor
+    nenhum no app (o `getCurriculo` nem as seleciona). Campo que grava dado que nenhuma tela mostra
+    é pior que campo ausente, porque quem preenche fica esperando o efeito. O `tipo` do material,
+    pelo mesmo raciocínio, é **derivado** do vínculo (aula = resumo, módulo = apostila): é a
+    distinção que o `lib/materiais.ts` já faz, e um `<select>` a mais seria escolha sem
+    consequência.
+  - **Nenhuma linha de JS na tela**, fora o diálogo de apagar: acordeão é `<details>` nativo, cada
+    bloco é um `<form method="post">`, e a ação sai do `name`/`value` do botão de submit clicado. É
+    isso que deixa [Salvar] [↑] [↓] num formulário só em vez de três, e faz a tela funcionar sem
+    hidratação.
+  - **A checagem de papel foi refeita dentro da rota**, como o `api/papel` já fazia: route handler
+    não passa por layout, e a escrita sai pela service role, onde `auth.uid()` é null e nenhuma
+    policy segura por baixo. Provado com sessão real: aluno recebe **404** no endpoint e na tela,
+    anônimo recebe 307 para o login.
+  - **`ROMANO`/`rotuloModulo` saíram para `lib/curso.ts`**: a área do aluno e o admin rotulam o
+    mesmo módulo, e com uma cópia em cada lado o "Módulo III" de uma tela viraria "Módulo 3" na
+    outra sem ninguém notar.
+  - Verificação: as nove ações da rota exercitadas contra o banco vivo (incluindo os quatro casos
+    de recusa), a troca de ordem testada com ida e volta e no caso de ponta, `npm run check` e
+    `npm run build` limpos, e a tela conferida no browser com sessão de admin real.
+- **`liberacao_total` desligada em 8 das 9 matrículas do homolog** — 2026-07-31
+  - Achado pela tela de Alunos em 30/jul e decidido pelo Pedro em 31/jul: o homolog volta a gotejar
+    um módulo por semana, que é o produto de verdade, e só `pedrohfontei@gmail.com` mantém liberação
+    total para inspecionar o curso inteiro. Antes disso, quem testava homolog aprovava um
+    comportamento que não é o que o aluno recebe.
 - **Admin: telas de Alunos e detalhe do aluno** — 2026-07-30
   - `PLANO-ADMIN` §4.2 e §4.3, com migration `0006_listar_alunos.sql` (`listar_alunos` e
     `aluno_modulos`), aplicada no homolog. Lista com busca por nome ou e-mail, filtro por status,

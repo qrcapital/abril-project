@@ -2,13 +2,11 @@ import "server-only";
 import { cache } from "react";
 
 import { createAdminClient } from "./supabase/admin";
-import { montarCurriculo, type Aula, type Curriculo, type Modulo } from "./curso";
+import { montarCurriculo, rotuloModulo, type Aula, type Curriculo, type Modulo } from "./curso";
 
 // Carrega o currículo do banco. Fonte única desde 29/jul/2026: o `lib/curso.ts` deixou de
 // guardar as 17 aulas e passou a guardar só a lógica, porque o admin vai editar título,
 // descrição, vídeo e materiais pelo painel, e painel não edita código.
-
-const ROMANO = ["0", "I", "II", "III", "IV"];
 
 /**
  * Lido com a **service role**, e não com a sessão do aluno, de propósito: a RLS de `modules` e
@@ -28,7 +26,7 @@ export const getCurriculo = cache(async (): Promise<Curriculo> => {
 
   const modulos: Modulo[] = (mods ?? []).map((m) => ({
     idx: m.ord as number,
-    label: `Módulo ${ROMANO[m.ord as number] ?? m.ord}`,
+    label: rotuloModulo(m.ord as number),
     titulo: m.titulo as string,
     docente: (m.docente as string | null) ?? undefined,
   }));

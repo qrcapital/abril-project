@@ -71,7 +71,7 @@ três vezes em 29/jul. Se precisar de progresso para testar, use
 npm run dev           # dev server
 npm run build         # build de produção — NÃO rodar com o dev de pé (ver abaixo)
 npm run lint
-npm run check         # self-checks offline (prova, senha, usuário, liberação, currículo, matrícula)
+npm run check         # self-checks offline (prova, senha, usuário, liberação, currículo, matrícula, e-mail)
 npm run check:rls     # contra o banco: aluno não vira admin (precisa de rede + .env.local)
 npm run check:mestre  # contra o banco: regras do admin mestre (idem)
 ```
@@ -107,6 +107,32 @@ de cada marcador, então um porte que remova um marcador faz a tela voltar a ser
 design ("Pedro Teixeira") como se fosse o nome do aluno, **sem erro nenhum**. Ele guarda os 9
 marcadores em 6 arquivos, o escape de HTML no nome, e a âncora do link "Trocar senha", que é
 onde o formulário de troca é montado.
+
+## E-mail transacional
+
+Criado em 31/jul/2026, e antes disso **o projeto não mandava e-mail nenhum**. Três arquivos:
+`lib/email-render.ts` (puro: variáveis, layout, versão texto), `lib/email.ts` (envio pelo Resend por
+HTTP, sem dependência nova, e o registro em `email_log`) e a tabela `email_templates`, editável em
+`/admin/emails` com prévia e teste.
+
+- **Assunto, corpo e banner no banco; layout e destino do botão em código.** Mesma divisão do
+  currículo: painel edita conteúdo, não código. A URL do CTA vem do gatilho, nunca do editor.
+- **Banner sem texto alternativo não sai.** Cliente de e-mail bloqueia imagem por padrão em boa parte
+  dos casos, e sem o alt a mensagem abre com uma caixa muda no topo. A medida da arte e os limites de
+  peso saem da constante `BANNER` de `lib/email-render.ts`, que é também o que a tela mostra ao lado
+  do campo e o que a rota usa para recusar.
+- **O bucket `email` do Storage é declarado na migration `0011`**, público e com limite de peso e de
+  MIME na própria tabela `storage.buckets`. Público é requisito: cliente de e-mail busca a imagem de
+  um proxy do Gmail ou do Outlook, sem sessão, então URL assinada não serve. Upload novo apaga a arte
+  anterior **depois** de gravar, e o nome leva carimbo de tempo porque proxy de imagem cacheia.
+- **Cada template tem um contrato de variáveis** (`VARIAVEIS`, em `lib/email-render.ts`), e a tela
+  recusa ao salvar qualquer `{{campo}}` fora dele. Template novo se registra ali junto com o rótulo e
+  o gatilho, senão ele não aparece na tela.
+- **`enviarEmail` recebe o cliente do Supabase por parâmetro e nunca lança.** Ela roda dentro do
+  webhook de compra aprovada: erro de e-mail que derrubasse o handler viraria reentrega do Guru e
+  matrícula duplicada. Toda tentativa vira linha no log, inclusive as falhas e os testes.
+- **Os de pagamento não são nossos.** PIX, boleto, cartão recusado e carrinho saem pelo Guru.
+- Sem `RESEND_API_KEY` no ambiente, tudo funciona menos a entrega, e o log registra o motivo.
 
 ## Feedback ao usuário
 

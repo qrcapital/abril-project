@@ -15,6 +15,12 @@ export type Modulo = {
   docente?: string;
 };
 
+/** O numeral de cada módulo pelo `ord`. Mora aqui porque a área do aluno e o admin rotulam o
+ *  mesmo módulo, e com uma cópia em cada lado o "Módulo III" de uma tela viraria "Módulo 3" na
+ *  outra sem ninguém notar. */
+export const ROMANO = ["0", "I", "II", "III", "IV"];
+export const rotuloModulo = (ord: number) => `Módulo ${ROMANO[ord] ?? ord}`;
+
 export type Aula = {
   /** `lessons.id`. É por ele que o progresso é gravado. */
   id: string;
