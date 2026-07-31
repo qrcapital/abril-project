@@ -345,6 +345,9 @@ const PRAZO = "2026-07-28T12:00:00.000Z";
 
 const vencida = (id: string, resp: Respostas, total = TOTAL_QUESTOES): LinhaExpirada => ({
   id,
+  // Quem é o aluno importa desde 31/jul: o fechamento carrega o `user_id` para a rotina achar o
+  // destinatário do e-mail de resultado. Sem ele no plano, quem abandonou a prova não é avisado.
+  user_id: `u-${id}`,
   deadline: PRAZO,
   questions_snapshot: prova(total),
   answers: resp,
@@ -382,11 +385,12 @@ const vencida = (id: string, resp: Respostas, total = TOTAL_QUESTOES): LinhaExpi
 // --- tentativa aberta e nunca tocada não estoura ---
 {
   const [f] = planejarFechamentos([
-    { id: "e5", deadline: PRAZO, questions_snapshot: null, answers: null },
+    { id: "e5", user_id: "u-e5", deadline: PRAZO, questions_snapshot: null, answers: null },
   ]);
   assert.equal(f.score, 0);
   assert.equal(f.aprovado, false);
   assert.equal(f.submitted_at, PRAZO);
+  assert.equal(f.user_id, "u-e5", "o plano carrega de quem e a tentativa, senao o e-mail nao tem para quem ir");
 }
 
 // --- nada vencido, nada a fazer ---

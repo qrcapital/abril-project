@@ -12,19 +12,17 @@
 // Roda com a service role, como toda escrita confiável do projeto. Lista por padrão porque
 // o planejamento é puro: dá para ver a nota que cada tentativa receberia antes de gravar.
 
-import { readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 
 import { fecharExpiradas, listarExpiradas, planejarFechamentos } from "../lib/prova-expiradas.ts";
+import { carregarEnv } from "./env.mjs";
 
 const fechar = process.argv.includes("--fechar");
 
-const env = Object.fromEntries(
-  readFileSync(".env.local", "utf8")
-    .split("\n")
-    .filter((l) => l.includes("=") && !l.trim().startsWith("#"))
-    .map((l) => [l.slice(0, l.indexOf("=")).trim(), l.slice(l.indexOf("=") + 1).trim()]),
-);
+// Usa o `carregarEnv` compartilhado em vez da cópia que morava aqui, porque ele também exporta as
+// variáveis para o `process.env`: o e-mail de resultado que esta rotina dispara é montado pelo
+// `lib/email.ts`, que lê a chave do provedor de lá e não do objeto devolvido.
+const env = carregarEnv();
 const db = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
   auth: { persistSession: false },
 });

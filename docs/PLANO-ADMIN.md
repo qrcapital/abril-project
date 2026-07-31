@@ -63,7 +63,8 @@ _Rascunho para aprovação — 2026-07-20._
 
   Construída em 30/jul/2026. Item cuja tela ainda não existe aparece sem link e marcado "em
   breve": a alternativa era listar seis links e entregar quatro 404, e navegação é a promessa da
-  casca.
+  casca. **Desde 31/jul/2026 nenhum item está nesse estado**, porque as seis telas existem; o
+  caminho do "em breve" fica no código para a próxima tela que aparecer.
 - **Header**: título da tela, busca contextual, avatar do admin.
 - Estados de tabela: carregando, vazio, erro, paginação. Padrões reutilizáveis.
 
@@ -131,9 +132,34 @@ a tela avisa quando ele é atingido.
 > aqui".
 
 ### 4.4 `/admin/questoes` — Banco de questões
-- CRUD por módulo: enunciado, 4 alternativas, correta, ativo/inativo.
-- Contador por módulo (a prova sorteia 5 por módulo — `sortear_prova`).
-- _Dados_: `questions`. **Já dá para usar o seed real** — vira funcional cedo.
+
+> **CONSTRUÍDA em 31/jul/2026**, a pedido do Pedro, antes das ~100 questões existirem: a casca vale
+> por si, porque escrever questão sem tela é escrever SQL. **Nenhuma migration foi necessária** — a
+> tabela `questions` já tinha tudo, e é a primeira tela do painel que não precisou de banco novo.
+
+- CRUD por módulo: enunciado, 4 alternativas, qual é a correta, ativo/inativo. Cada questão é um
+  formulário com [Salvar] e [Apagar]; cada módulo tem um formulário de questão nova.
+- **Quatro módulos e não cinco**, porque é o que o sorteio usa (`m.ord between 1 and 4`). Um acordeão
+  do Módulo 0 aqui seria convite a escrever questão que nunca cai na prova.
+- **Duas réguas por módulo, e a diferença entre elas decide a prioridade:**
+  - **piso de 5 ativas** (o `q.rn <= 5` do `sortear_prova`): abaixo dele o sorteio não completa as 20,
+    o `abrirTentativa` estoura e **a prova para de abrir para todos os alunos**. Aviso vermelho na
+    tela, e desde 31/jul também uma asserção no `npm run check:curriculo`, que fala com o banco;
+  - **meta de 25** (PRD §7): acima do piso a prova abre, mas com banco pequeno dois alunos veem quase
+    as mesmas questões. Com as 6 do seed, dois sorteios repetem 19 das 20.
+- **Apagar existe além de desativar**, e a confirmação diz o que ninguém sabe de cabeça: prova já
+  feita **não muda**, porque cada tentativa guarda `exams.questions_snapshot` com enunciado e gabarito
+  de quando o aluno respondeu. Desativar é para questão que pode voltar; apagar é para questão que
+  nasceu errada.
+- Os números (4 alternativas, 5 por módulo, meta de 25) saíram para `lib/questoes.ts`, derivados de
+  `TOTAL_QUESTOES` onde faz sentido: eles viviam em três lugares que não conversavam (o `CHECK` da
+  migration, o `sortear_prova` e a prosa do PRD).
+- _Dados_: `questions` (leitura e escrita pela service role).
+
+**A rota de escrita é a mais sensível do painel**, e o comentário em caixa dela diz por quê: a coluna
+`correta` é o gabarito, a tabela é fechada para o aluno de propósito, e a escrita sai pela service
+role. Sem a checagem de papel dentro da rota, qualquer pessoa logada editaria o gabarito do próprio
+exame.
 
 ### 4.5 `/admin/emails` — Log de e-mails
 

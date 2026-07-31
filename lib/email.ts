@@ -21,7 +21,7 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { renderizar, type Dados, type Template } from "./email-render.ts";
+import { linkUtilizavel, renderizar, type Dados, type Template } from "./email-render.ts";
 
 const ENDPOINT = "https://api.resend.com/emails";
 const REMETENTE_PADRAO = "onboarding@resend.dev"; // o validado em homolog (AMBIENTES.md)
@@ -76,6 +76,14 @@ export async function enviarEmail(
   if (template.ativo === false) {
     await registrar("desligado");
     return { ok: false, status: "desligado" };
+  }
+
+  // Link morto NÃO SAI. Os gatilhos montam o destino do botão com `NEXT_PUBLIC_SITE_URL`, e a
+  // variável faltando produziria `/app/certificado` cru: um botão que não vai a lugar nenhum na
+  // caixa de entrada de quem pagou. Entre mandar um e-mail quebrado e não mandar, não mandar é
+  // recuperável — o log diz o motivo e o "Reenviar acesso" do admin refaz depois do conserto.
+  if ("link" in dados && !linkUtilizavel(dados.link)) {
+    return falhar("link do botao nao e absoluto (NEXT_PUBLIC_SITE_URL ausente no ambiente?)");
   }
 
   const chaveApi = process.env.RESEND_API_KEY;

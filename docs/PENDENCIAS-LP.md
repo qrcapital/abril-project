@@ -37,10 +37,10 @@ documento é a lista do que **falta**.
 Nada de recontar história: leia este bloco e vá para o trabalho. O que aconteceu está no
 `CHANGELOG.md`; o que **decidir** está aqui.
 
-**Onde paramos:** o admin está no ar em homolog com **sete** telas — Painel, Alunos, Detalhe do
-aluno, Equipe, **Conteúdo**, **E-mails** e a casca. Falta só **Questões**, que é a única do
-`PLANO-ADMIN` ainda de pé. Entrou também a **camada de envio de e-mail** (que não existia) com o
-builder dos transacionais nossos. Migrations `0003` a `0009` aplicadas no `ei-homolog`. A conta
+**Onde paramos:** o **painel está completo** — Painel, Alunos, Detalhe do aluno, Equipe, Conteúdo,
+E-mails, **Questões** e a casca, todas no ar em homolog. Entrou também a **camada de envio de e-mail**
+(que não existia) com o builder dos transacionais nossos. Migrations `0003` a `0011` aplicadas no
+`ei-homolog`. A conta
 `pedrohfontei@gmail.com` é **admin mestre**, e a senha dela em homolog é a de teste conhecida. Duas
 travas caíram em 31/jul: as **três decisões do §4.6** (tela construída) e a **`liberacao_total`** do
 homolog, agora desligada em 8 das 9 matrículas.
@@ -66,13 +66,14 @@ domínio de e-mail) e as duas decisões pequenas do §4.4.
    conta Resend que você configurou em 28/jul como SMTP do Supabase Auth: o painel do Resend, em API
    Keys. Sem ela tudo funciona menos a entrega, e cada tentativa fica registrada no log com
    `falha: sem RESEND_API_KEY no ambiente`. Não me mande a chave por aqui, cole no arquivo.
-3. **`/admin/questoes`** (§4.4), CRUD por módulo — **a última tela do painel**. Funciona hoje, mas
-   sobre as 24 questões `[EXEMPLO]` do seed, então só passa a significar algo depois da sua tarefa
-   13. Duas coisas a decidir quando ela chegar, e nenhuma trava começar: se tirar questão do ar é
-   apagar ou desativar (a coluna `questions.ativo` já existe e o índice do sorteio filtra por ela; a
-   prova já feita guarda o `questions_snapshot`, então nenhum dos dois corrompe histórico), e se a
-   tela mostra o contador por módulo contra a meta de 25, que é o que transforma "escrever questões"
-   em tarefa com fim visível.
+3. ~~**`/admin/questoes`**~~ **FEITA em 31/jul**, a pedido do Pedro, e **sem migration nenhuma**: a
+   tabela `questions` já tinha tudo. As duas decisões que estavam listadas aqui foram tomadas na
+   construção: **apagar E desativar**, porque são coisas diferentes (desativar é questão que pode
+   voltar, apagar é questão que nasceu errada, e nenhum dos dois corrompe prova já feita por causa do
+   snapshot), e **sim ao contador**, com duas réguas: o piso de 5 ativas por módulo, que se rompido
+   faz a prova parar de abrir, e a meta de 25 do PRD.
+
+   **O painel está completo.** As seis telas do `PLANO-ADMIN` estão no ar.
 
 **Uma consequência de 31/jul para quem for testar a área do aluno:** com a `liberacao_total`
 desligada e `inicio_em` em 29/jul, as contas de teste veem só os módulos que a esteira já abriu.

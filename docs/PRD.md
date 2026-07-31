@@ -524,7 +524,7 @@ Postgres gerenciado (Supabase). Acesso a dado sensível protegido por RLS. Leitu
 > recebe o do resultado. Os dois disparam no mesmo evento (o envio da prova), e mandar ambos na
 > aprovação seriam duas mensagens no mesmo segundo dizendo a mesma coisa.
 >
-> **No ar hoje:** 3 (boas-vindas, na compra aprovada), 9 e 10 (no envio da prova). O restante espera
+> **No ar hoje:** 3 (boas-vindas, na compra aprovada), 9 e 10 (no envio da prova **e** no fechamento pela rotina do deadline, §15, que é o caso de quem abandonou a prova e não veria o resultado na tela). O restante espera
 > o gatilho, que em quase todos é uma rotina agendada que ainda não existe (§15).
 >
 > **O link de acesso não usa o template "Invite user" do painel do Supabase.** Ele é montado com o

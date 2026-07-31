@@ -25,6 +25,7 @@ import {
   GATILHOS,
   ROTULOS,
   VARIAVEIS,
+  linkUtilizavel,
   renderizar,
   variaveisInvalidas,
   type Template,
@@ -165,6 +166,25 @@ const base = (extra: Partial<Template> = {}): Template => ({
   const orfao = renderizar(base({ banner: "/lp/banner.png", banner_alt: "Estratégia" }), {});
   assert.ok(!orfao.html.includes("<img"), "sem NEXT_PUBLIC_SITE_URL, o banner relativo nao sai");
   process.env.NEXT_PUBLIC_SITE_URL = site;
+}
+
+// --- 5c. o destino do botão precisa ser clicável de dentro de uma caixa de entrada ---
+{
+  assert.ok(linkUtilizavel("https://ei.test/app/certificado"));
+  assert.ok(linkUtilizavel("http://localhost:3000/auth/confirm?token_hash=x"));
+  assert.ok(linkUtilizavel("https://wa.me/message/W2USYZZK75FMC1"));
+  assert.ok(
+    !linkUtilizavel("/app/certificado"),
+    "caminho relativo e o caso real: o gatilho monta o link com NEXT_PUBLIC_SITE_URL, e a variavel " +
+      "faltando produz exatamente isso. O envio recusa em vez de mandar botao morto",
+  );
+  assert.ok(!linkUtilizavel(""), "vazio nao e link");
+  assert.ok(!linkUtilizavel(undefined));
+  assert.ok(!linkUtilizavel(82), "numero nao e link");
+  assert.ok(
+    !linkUtilizavel("javascript:alert(1)"),
+    "so http, https e mailto: o resto nao e destino de botao de e-mail",
+  );
 }
 
 // --- 6. o HTML é um documento fechado, com preheader ---

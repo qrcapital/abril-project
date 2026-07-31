@@ -18,6 +18,8 @@ import { readFileSync } from "node:fs";
 
 import { createClient } from "@supabase/supabase-js";
 
+import { ORDS_AVALIADOS, POR_MODULO } from "../lib/questoes.ts";
+
 let env: Record<string, string> = {};
 try {
   env = Object.fromEntries(
@@ -81,10 +83,33 @@ assert.ok(
   "todas as aulas contam para o gate: as boas-vindas deveriam ficar de fora",
 );
 
+// --- o banco de questões sustenta um sorteio completo ---
+// Acrescentado em 31/jul/2026, junto com a tela de Questões. O `sortear_prova` tira POR_MODULO de
+// cada módulo I..IV; com menos ativas em qualquer um deles, ele devolve menos que o total, o
+// `abrirTentativa` estoura de propósito e A PROVA PARA DE ABRIR PARA TODOS. Isso passa por build e
+// por lint, e apareceria como "a prova não abre" no suporte. Apagar ou desativar questão pela tela
+// nova é o caminho mais curto para cair aqui.
+const { data: questoes, error: erroQuestoes } = await db
+  .from("questions")
+  .select("module_id, ativo");
+if (erroQuestoes) throw erroQuestoes;
+
+for (const ord of ORDS_AVALIADOS) {
+  const modulo = mods.find((m) => m.ord === ord);
+  assert.ok(modulo, `modulo de ord ${ord} nao existe: o sorteio da prova conta com I..IV`);
+  const ativas = questoes.filter((q) => q.module_id === modulo.id && q.ativo).length;
+  assert.ok(
+    ativas >= POR_MODULO,
+    `modulo ${ord} ("${modulo.titulo}") tem ${ativas} questoes ativas e o sorteio precisa de ` +
+      `${POR_MODULO}: a prova nao abriria para nenhum aluno`,
+  );
+}
+
 // --- títulos preenchidos: título vazio vira card em branco na vitrine ---
 for (const m of mods) assert.ok(m.titulo?.trim(), `modulo ${m.ord} sem titulo`);
 for (const a of aulas) assert.ok(a.titulo?.trim(), `aula ${a.id} sem titulo`);
 
 console.log(
-  `curriculo-check: ok (${mods.length} modulos, ${aulas.length} aulas, ${noGate} valem para o gate)`,
+  `curriculo-check: ok (${mods.length} modulos, ${aulas.length} aulas, ${noGate} valem para o gate, ` +
+    `${questoes.filter((q) => q.ativo).length} questoes ativas)`,
 );

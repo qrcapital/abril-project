@@ -146,6 +146,19 @@ function absoluta(endereco: string): string | null {
 }
 
 /**
+ * O destino do botão dá para clicar de dentro de uma caixa de entrada?
+ *
+ * A resposta é não para caminho relativo, pelo mesmo motivo do banner: e-mail é aberto fora do nosso
+ * domínio. E isso acontece de um jeito nada teórico — os gatilhos montam o link com
+ * `${NEXT_PUBLIC_SITE_URL}/app/certificado`, então **a variável faltando no ambiente transforma o
+ * botão num link morto**, sem nada reclamando. É `lib/email.ts` quem usa esta função para recusar o
+ * envio; a regra mora aqui porque é aqui que existe check.
+ */
+export function linkUtilizavel(link: string | number | null | undefined): boolean {
+  return typeof link === "string" && /^(https?:\/\/|mailto:)/i.test(link.trim());
+}
+
+/**
  * O banner do topo, quando existe.
  *
  * `width` em atributo E em `style`, porque o Outlook lê o atributo e ignora parte do CSS. O `alt`

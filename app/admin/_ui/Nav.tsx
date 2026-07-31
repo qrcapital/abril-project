@@ -17,7 +17,7 @@ import { createClient } from "@/lib/supabase/client";
 const ITENS = [
   { href: "/admin", rotulo: "Painel", pronto: true },
   { href: "/admin/alunos", rotulo: "Alunos", pronto: true },
-  { href: "/admin/questoes", rotulo: "Questões", pronto: false },
+  { href: "/admin/questoes", rotulo: "Questões", pronto: true },
   { href: "/admin/conteudo", rotulo: "Conteúdo", pronto: true },
   { href: "/admin/emails", rotulo: "E-mails", pronto: true },
   // Equipe é escopo novo, pedido pelo Pedro em 30/jul/2026, e não estava no §3 do plano. Fica

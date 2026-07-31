@@ -8,6 +8,54 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **Admin: banco de questões, a última tela do painel** — 2026-07-31
+  - `/admin/questoes` (`PLANO-ADMIN` §4.4), pedida pelo Pedro antes das ~100 questões existirem, e a
+    casca vale por si: escrever questão sem tela é escrever SQL. **Primeira tela do painel sem
+    migration nenhuma**, porque a tabela `questions` já tinha tudo.
+  - Quatro módulos e não cinco, porque é o que o `sortear_prova` usa (`m.ord between 1 and 4`). Cada
+    questão é um formulário com enunciado, as quatro alternativas, o rádio da correta, o `ativo` e os
+    botões [Salvar] e [Apagar]; cada módulo tem um formulário de questão nova.
+  - **Duas réguas por módulo, e a diferença entre elas é o ponto da tela.** O **piso de 5 ativas** é o
+    que o sorteio precisa: abaixo dele a prova **para de abrir para todos os alunos**, e é aviso
+    vermelho. A **meta de 25** (PRD §7) é qualidade de amostra: acima do piso a prova abre, mas com as
+    6 do seed dois sorteios repetem 19 das 20 questões. Sem as duas, a tela mostraria uma contagem
+    sem régua.
+  - **O piso virou asserção no `check:curriculo`**, que já fala com o banco. Desativar ou apagar
+    questão pela tela nova é o caminho mais curto para deixar a prova sem abrir, e isso não aparece em
+    build nem em lint: apareceria no suporte.
+  - **Apagar existe além de desativar**, e o diálogo diz o que ninguém sabe de cabeça: prova já feita
+    não muda, porque cada tentativa guarda o `questions_snapshot` com enunciado e gabarito de quando o
+    aluno respondeu. Quando a exclusão deixa o módulo abaixo do piso, a confirmação avisa disso também.
+  - `lib/questoes.ts` reúne os números que viviam em três lugares sem conversa: o `CHECK` de 4
+    alternativas da migration, o 5 por módulo do `sortear_prova` (agora derivado de `TOTAL_QUESTOES`,
+    porque a prova é balanceada) e a meta de 25 que só existia em prosa no PRD.
+  - Verificação com sessão real: questão criada, editada (trocando a correta e desativando), apagada,
+    e as três recusas (sem enunciado, alternativa em branco, correta fora de 0..3) sem escrever nada.
+    Aluno recebe 404 no endpoint. Banco de volta às 24 do seed no fim.
+- **E-mail de resultado também para quem abandonou a prova** — 2026-07-31
+  - A camada de envio nasceu cobrindo só o botão "Enviar": quem fechava o navegador e tinha a
+    tentativa encerrada pela rotina do deadline (`lib/prova-expiradas.ts`) **não recebia nada**, que é
+    justamente quem não tem como saber o resultado pela tela. Achado ao conferir o próprio trabalho,
+    e não estava registrado em lugar nenhum.
+  - O e-mail sai de dentro do `fecharExpiradas`, então os **dois** chamadores ganham juntos: a
+    Netlify function agendada e o `npm run prova:expiradas -- --fechar`. Só depois do update
+    bem-sucedido e só para as tentativas que mudaram de estado, pelo mesmo motivo do envio pelo
+    botão: a corrida em que o aluno reabriu a aba e enviou não pode render dois e-mails. O
+    `Fechamento` passou a carregar o `user_id`, com o caso novo no `check:prova`.
+  - **Dois furos silenciosos consertados no caminho, os dois achados testando:**
+    - **`carregarEnv` não exportava para o `process.env`.** O script montava o cliente do Supabase
+      com o objeto devolvido, mas quem lê a chave do provedor é o `lib/email.ts`, de `process.env`:
+      rodar a rotina pela linha de comando fechava a prova e registrava
+      `falha: sem RESEND_API_KEY` numa máquina onde a chave estava configurada. O
+      `prova-expiradas.mts` passou a usar o loader compartilhado em vez da cópia local.
+    - **Link de botão relativo não sai mais.** Os gatilhos montam o destino com
+      `${NEXT_PUBLIC_SITE_URL}/app/certificado`, então a variável faltando produziria `/app/...` cru,
+      um botão morto na caixa de entrada de quem pagou. `enviarEmail` recusa e o log diz o motivo:
+      entre mandar e-mail quebrado e não mandar, não mandar é recuperável, porque o "Reenviar acesso"
+      refaz depois do conserto. A regra é `linkUtilizavel`, em `email-render.ts`, com check.
+  - Verificação contra o banco vivo: tentativa vencida criada de propósito, rotina rodada em modo
+    seco (mostrou nota 15, reprovado) e depois com `--fechar`, e-mail `resultado-reprovado` chegando
+    numa caixa de verdade, tentativa de teste apagada no fim. `build`, `lint` e `check` (7/7) limpos.
 - **E-mail transacional: a camada de envio e o builder dos nossos** — 2026-07-31
   - **O projeto não mandava e-mail nenhum até hoje.** O webhook do Guru gerava o link de acesso,
     escrevia `queued` no `email_log` e terminava: `generateLink` **gera sem enviar** (quem envia é o
