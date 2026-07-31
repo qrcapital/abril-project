@@ -302,6 +302,35 @@ Uma troca em relação à bolinha original, achada medindo: `BOLA_ON` pinta o gl
 
 **Painel de recado** (`Painel`): tela cheia para `loading`, `error` e `not-found` do grupo `(sala)`, repetindo o envelope das telas portadas (`#F7F5F2`, `100vh - 58px` descontando a topbar) para o recado cair dentro do chrome em vez de romper o layout.
 
+### Tabela do admin (30/jul/2026)
+
+O admin é a única superfície onde o **Tailwind roda de fato** (a LP e a área do aluno são HTML
+portado com CSS próprio; o `app/globals.css` que o `AGENTS.md` citava nunca existiu). Os tokens do
+Meridiano vivem num bloco `@theme` em `app/admin/admin.css`, e as peças de tabela em
+`app/admin/_ui/tabela.tsx`. **Estenda daqui, não invente variante** — mesma regra dos padrões de
+feedback acima.
+
+| Peça | O que resolve |
+|---|---|
+| `Quadro` | Envelope com borda `--areia`, fundo branco e **`overflow-x-auto`**, que é obrigatório: e-mail é longo e não pode empurrar a página inteira para o lado |
+| `Cabecalho` | `thead` a partir dos rótulos, em 11px `uppercase` com `tracking` largo. String vazia vira coluna sem título (a de ações) |
+| `Linha` | `tr` com régua `--bege` e `last:border-0` |
+| `Selo` | Pílula de estado, com seis tons: `neutro`, `ok`, `atencao`, `ruim`, `destaque`, `forte` |
+| `Vazio` | Estado vazio como peça, para ninguém entregar tabela que abre em branco sem explicação |
+
+Extraídas quando a **segunda** tabela apareceu, não antes, e o gatilho foi concreto: a primeira
+versão duplicou o mapa de tons e a formatação de situação da prova nas duas telas de aluno.
+
+**O verde dos selos é o do fundo CLARO** (`#1B7A50`), pela regra do §2 de que cor semântica tem um
+valor por fundo: o miolo do admin é claro, e usar o par do escuro (`#3FB07A`, 2,51:1 sobre claro)
+deixaria o texto ilegível. O amarelo segue a mesma solução do desempenho por módulo, no **fundo**
+(`#F7E3BE` com texto `#7A4E06`), porque amarelo vivo não passa AA como texto.
+
+Uma escolha de significado, não de estética: **`expirada` é `atencao` e não `ruim`**. Prazo que
+vence é o ciclo normal do produto; `revogada` é reembolso ou chargeback, que é o caso que alguém
+precisa olhar. Pintar os dois de vermelho apagaria a diferença justamente na tela feita para
+enxergá-la.
+
 ### Player (aula)
 Panda Video 16:9, cantos 8px a 12px, sem chrome extra. Retomada automática. Controles nativos do Panda.
 

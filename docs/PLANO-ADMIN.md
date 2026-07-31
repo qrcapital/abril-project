@@ -77,9 +77,32 @@ _Rascunho para aprovação — 2026-07-20._
 - _Dados_: agregações sobre `enrollments`, `progress`, `exams`, `certificates`.
 
 ### 4.2 `/admin/alunos` — Lista + busca
+
+> **FEITA em 30/jul/2026.** Migration `0006_listar_alunos.sql`, aplicada no homolog.
+
 - Tabela: nome, e-mail, status de acesso (ativo/expirado/revogado), progresso (X/16),
   situação da prova. Busca por nome/e-mail; filtro por status.
 - _Dados_: `profiles` + `enrollments` (+ resumo de `progress`/`exams`).
+
+**Uma consulta, não N+1.** `listar_alunos(termo, limite)` agrega em SQL porque a alternativa é
+puxar `progress` inteiro (16 linhas por aluno) e `exams` inteiro para contar na memória. Com nove
+contas dá na mesma; com uma turma de verdade, são dezenas de milhares de linhas para exibir uma
+tabela.
+
+**O ESTADO DE ACESSO NÃO É CALCULADO EM SQL, de propósito.** A função devolve `status` e
+`expires_at` crus, e quem traduz para ativa/expirada/revogada/ausente é o
+`lib/matricula-estado.ts` — a **mesma** função que a guarda do aluno usa. Repetir a regra em SQL
+criaria uma segunda verdade sobre quem tem acesso, e a divergência não apareceria em build nem em
+lint: apareceria no suporte, com o painel dizendo "ativo" para quem o app tranca na porta.
+
+Essa decisão custou uma extração: a derivação morava dentro do `getMatricula`, acoplada à sessão do
+aluno logado, e virou função pura com 12 casos em `npm run check:matricula`. **Consequência de
+projeto:** o filtro por status roda depois da derivação, em TypeScript, e não na cláusula `where`.
+
+**Busca e filtro em `<form method="get">`**, com os termos na URL: nenhuma linha de JS, e o
+resultado fica compartilhável e recarregável. Ao contrário do `buscar_usuarios`, aqui termo vazio
+devolve TODOS, porque lista que abre vazia esconde a operação; o `limite` é que segura o tamanho, e
+a tela avisa quando ele é atingido.
 
 ### 4.3 `/admin/alunos/[id]` — Detalhe do aluno
 - **Dados**: nome, e-mail, `guru_customer_id`, datas de acesso.
@@ -91,6 +114,21 @@ _Rascunho para aprovação — 2026-07-20._
   - Liberar 2ª chamada da prova.
   - Revogar ou estender acesso (`enrollments`).
   - _As que dependem de SES/Guru ficam para a Fase 3._
+
+> **FEITA em 30/jul/2026, somente leitura.** Cadastro e datas, progresso por módulo (com a coluna
+> "conta no gate", que explica por que o Módulo 0 não entra no 16/16) e a tabela de tentativas da
+> prova com nota e horários.
+>
+> **As ações continuam fora, inclusive as duas que não dependem de integração** (liberar 2ª chamada
+> e estender acesso). O §2 pede auditoria para ação sensível, e a tela de Equipe já abriu essa
+> dívida com log de servidor; somar mais três ações sobre o mesmo rastro fraco é a hora errada.
+>
+> **Leitura mista, e a mistura é a escolha barata:** `aluno_modulos` é função da `0006` porque
+> agrupar por módulo é agregação; o resto vem do PostgREST direto, porque é uma linha por tabela
+> para um aluno só. O e-mail vem do Admin API (`getUserById`), o único jeito de alcançar
+> `auth.users` sem função nova. `aluno_modulos` parte de `modules` com `left join` para devolver
+> **todos** os módulos: módulo ausente da lista seria lido como "não existe" em vez de "nada feito
+> aqui".
 
 ### 4.4 `/admin/questoes` — Banco de questões
 - CRUD por módulo: enunciado, 4 alternativas, correta, ativo/inativo.
@@ -244,7 +282,7 @@ Funções úteis: `is_admin`, `has_active_access`, `sortear_prova`, `verify_cert
 
 | Fase | Entrega | Depende de | Estado |
 |---|---|---|---|
-| **1 — UI funcional** | ~~Casca + Painel (métricas de exemplo)~~ + Questões (CRUD sobre o seed) + Alunos/Detalhe/E-mails ~~com dados mock~~ **com dados reais** + **Conteúdo (aulas e materiais)** | — | **Casca e Painel feitos** em 30/jul, com números reais. Falta Alunos, Questões, Conteúdo, E-mails |
+| **1 — UI funcional** | ~~Casca + Painel (métricas de exemplo)~~ + Questões (CRUD sobre o seed) + ~~Alunos/Detalhe~~/E-mails ~~com dados mock~~ **com dados reais** + **Conteúdo (aulas e materiais)** | — | **Casca, Painel, Equipe (§4.7), Alunos e Detalhe feitos** em 30/jul, todos com dados reais. Faltam **Questões**, **Conteúdo** e **E-mails** |
 | **2 — Supabase real** | ~~Todas as leituras vindas do banco; guarda `is_admin` no proxy~~ | Supabase provisionado | **Absorvida pela Fase 1.** A guarda ficou no layout, não no proxy (ver §2) |
 | **3 — Ações que mutam** | Revogar/estender acesso, reenviar acesso, liberar 2ª chamada, trocar e-mail | Guru (docs/secret) + SES | Bloqueada, sem mudança |
 
@@ -323,6 +361,10 @@ Funções úteis: `is_admin`, `has_active_access`, `sortear_prova`, `verify_cert
 _Ao aprovar, começo pela Fase 1 na ordem: casca → Painel → Questões → Alunos/Detalhe →
 E-mails. Cada tela validada com você antes de seguir._
 
-**Casca e Painel entregues em 30/jul/2026.** A ordem restante mudou de "Questões primeiro" para
-o Pedro escolher, porque as Questões dependem das ~100 questões reais (tarefa 13, dele) para o
-CRUD significar algo, enquanto Alunos e Conteúdo já têm dado de verdade no banco.
+**Entregues em 30/jul/2026:** casca, Painel, Equipe (§4.7, escopo novo), Alunos (§4.2) e Detalhe do
+aluno (§4.3). Migrations `0003` a `0006`, todas aplicadas no homolog.
+
+**Restam três, e a ordem depende do Pedro:** **Questões** (§4.4) só significa algo depois das ~100
+questões reais, que são tarefa dele; **Conteúdo** (§4.6) espera as três decisões do próprio §4.6;
+**E-mails** (§4.5) é a mais barata e nasce mostrando estado vazio, porque o SES não está configurado
+e o `email_log` está vazio.

@@ -16,7 +16,7 @@ import { createClient } from "@/lib/supabase/client";
  */
 const ITENS = [
   { href: "/admin", rotulo: "Painel", pronto: true },
-  { href: "/admin/alunos", rotulo: "Alunos", pronto: false },
+  { href: "/admin/alunos", rotulo: "Alunos", pronto: true },
   { href: "/admin/questoes", rotulo: "Questões", pronto: false },
   { href: "/admin/conteudo", rotulo: "Conteúdo", pronto: false },
   { href: "/admin/emails", rotulo: "E-mails", pronto: false },

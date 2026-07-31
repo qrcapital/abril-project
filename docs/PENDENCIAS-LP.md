@@ -396,6 +396,17 @@ um consertando várias telas de uma vez, e é por isso que vêm antes dos de tel
       dez policies de `is_admin()` e lê o banco de questões com o gabarito. Vale só no homolog,
       e o `ei-prod` nasce com admin próprio pelo item 7 do `AMBIENTES.md`.
       **NÃO remover o `scripts/admin-conta.mjs`**: é procedimento de produção, não atalho.
+- [ ] **As 9 matrículas do homolog estão com `liberacao_total = true`** (achado em 30/jul/2026 pela
+      própria tela de Alunos, no primeiro carregamento). Isso **desliga o calendário de liberação
+      gradual para todo mundo**: o curso inteiro abre na hora, em vez de um módulo por semana.
+      O default da coluna é `false`, a `0002` escreve `false` e o backfill não toca nela, então foi
+      service role em algum teste, provavelmente para conferir as telas do curso sem esperar a
+      esteira.
+      **Por que importa:** a esteira existe por razão comercial, para o aluno não concluir e pedir
+      reembolso dentro da janela de arrependimento. Com `liberacao_total`, um stakeholder testando
+      homolog aprova um comportamento que **não é o produto**. Decidir se o homolog volta a
+      gotejar (e quais contas ficam liberadas para teste), e garantir que nenhuma matrícula de
+      produção nasça assim.
 - [ ] **Código do certificado é fixo para todo mundo** — `EI-2026-4817`, em `lib/certificado.ts`,
       com nome fixo junto. Dois alunos teriam o mesmo código de verificação, e o
       `/verificar/:codigo` valida contra esse único código. A emissão real (tabela

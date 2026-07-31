@@ -442,6 +442,18 @@ me fez dar o schema por seguro na primeira passada. O `handle_new_user` também 
 em teoria, mas não é explorável: o próprio Postgres recusa com "trigger functions can only
 be called as triggers". Deixado como está.
 
+**Regra que o self-check impõe: lógica que precisa de teste não pode morar no módulo que importa
+Supabase.** Qualquer módulo que puxe `lib/supabase/server.ts` puxa `next/headers` por baixo, e
+**não roda fora do Next**: o `node --experimental-strip-types` do `npm run check` estoura com
+`ERR_MODULE_NOT_FOUND: Cannot find module '.../lib/supabase/server'`, apontando para um arquivo
+que existe. É por isso que o projeto tem os pares `prova-correcao`/`prova`,
+`usuario-template`/`usuario` e, desde 30/jul/2026, `matricula-estado`/`matricula`.
+
+O padrão: a regra pura no módulo sem IO, o IO importando dela, e o módulo de IO reexportando o
+nome para os consumidores antigos não precisarem saber da divisão. Cuidado com um detalhe de
+sintaxe que me pegou: `export { x } from "./y"` **reexporta sem trazer `x` para o escopo** do
+arquivo, então se o próprio módulo usa a função precisa de `import` além do `export`.
+
 **Não rode `npm run build` com o `next dev` de pé** (30/jul/2026, e custou um bug relatado que não
 existia). Os dois escrevem no mesmo `.next`. O dev server não morre: ele continua com o processo
 vivo e a porta escutando, e simplesmente **para de responder**. O sintoma chega como defeito de

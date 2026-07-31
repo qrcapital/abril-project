@@ -94,15 +94,39 @@ provisionamento, não prazo vencido).
 
 ## Admin (`/admin`, papel admin)
 
-Acesso role-based. Fora da navegação do aluno.
+Acesso role-based. Fora da navegação do aluno, com layout e URL próprios. Construído a partir de
+30/jul/2026; planta e decisões em `PLANO-ADMIN.md`.
 
-| Rota | Descrição |
-|---|---|
-| `/admin` | Painel. Métricas básicas: alunos, taxa de conclusão, taxa de aprovação, NPS. Atalho para log de e-mails |
-| `/admin/alunos` | Lista e busca de alunos |
-| `/admin/alunos/:id` | Detalhe do aluno: progresso, tentativas de prova. Ações: reenviar acesso, trocar e-mail, liberar 2ª chamada, revogar ou estender acesso |
-| `/admin/questoes` | CRUD das questões da prova, por módulo (enunciado, 4 alternativas, correta, ativo) |
-| `/admin/emails` | Leitura do `email_log` (aluno, template, envio, status) |
+**Porta de entrada é a mesma `/app/login`**, e o redirect pós-login decide pelo papel. Não existe
+`/admin/login`: dobraria a superfície de autenticação e pediria o próprio fluxo de recuperação.
+
+**Quem chega sem ser admin** (guarda no `app/admin/layout.tsx`, não no proxy):
+
+| Quem | Resposta | Por quê |
+|---|---|---|
+| Sem sessão | 307 para `/app/login` | Não revelou nada sobre si, e 404 deixaria o admin legítimo de fora sem entender que só faltava entrar |
+| Logado, não admin | **404** | Redirecionar para `/app` confirmaria que a rota existe para quem digitou o endereço |
+
+**Dois níveis de admin** (migration `0005`): mestre e comum. O comum faz tudo menos mexer no acesso
+de um mestre.
+
+| Rota | Estado | Descrição |
+|---|---|---|
+| `/admin` | **no ar** | Painel. Quatro cards de número real: matrículas (e quantas ativas), conclusão de aulas, aprovação na prova, certificados. Sem NPS enquanto a pesquisa não existir, e sem atalhos para telas que ainda não existem |
+| `/admin/alunos` | **no ar** | Lista de todas as contas: nome, e-mail, acesso, progresso X/16, situação da prova. Busca por nome ou e-mail e filtro por status, os dois na URL via `<form method="get">` |
+| `/admin/alunos/:id` | **no ar**, somente leitura | Cadastro, datas, progresso por módulo (com a coluna "conta no gate") e tentativas de prova. As ações (reenviar acesso, trocar e-mail, liberar 2ª chamada, revogar ou estender) são Fase 3, presas em Guru e SES |
+| `/admin/equipe` | **no ar** | Quem tem acesso ao painel. Busca por e-mail, dar e remover acesso de admin. Escopo novo de 30/jul, não previsto na planta original |
+| `/admin/questoes` | a fazer | CRUD das questões da prova, por módulo (enunciado, 4 alternativas, correta, ativo) |
+| `/admin/conteudo` | a fazer | Módulos, aulas e materiais (`PLANO-ADMIN.md` §4.6). Depende de três decisões do Pedro |
+| `/admin/emails` | a fazer | Leitura do `email_log` (aluno, template, envio, status) |
+
+**Uma rota que não é tela:** `POST /admin/api/papel` concede e revoga `is_admin`. Route handler
+**não passa por layout**, então a guarda acima não a protege: ela refaz a checagem de papel por
+conta própria, e sem isso qualquer pessoa logada mudaria privilégio por POST direto. Vale para toda
+rota nova sob `app/admin/`, e para Server Action. Ver `HANDOFF.md` §6.
+
+Na sidebar, tela que ainda não existe aparece **sem link** e marcada "em breve", em vez de virar um
+404 depois do clique.
 
 ## Estados de rota do grupo `(sala)` (29/jul/2026)
 

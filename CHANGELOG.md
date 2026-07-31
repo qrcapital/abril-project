@@ -8,6 +8,40 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **Admin: telas de Alunos e detalhe do aluno** — 2026-07-30
+  - `PLANO-ADMIN` §4.2 e §4.3, com migration `0006_listar_alunos.sql` (`listar_alunos` e
+    `aluno_modulos`), aplicada no homolog. Lista com busca por nome ou e-mail, filtro por status,
+    progresso X/16 e situação da prova; detalhe com cadastro, datas, progresso por módulo e as
+    tentativas de prova.
+  - **Agregação em SQL e não em JavaScript:** contar aulas concluídas por aluno em JS é puxar
+    `progress` inteiro (16 linhas por aluno) para a memória. Com nove contas dá na mesma; com uma
+    turma de verdade, são dezenas de milhares de linhas para exibir uma tabela.
+  - **O estado de acesso NÃO é calculado em SQL, e essa é a decisão de projeto da leva.** A função
+    devolve `status` e `expires_at` crus, e a tradução para ativa/expirada/revogada/ausente é a
+    **mesma** `estadoDaMatricula` que a guarda do aluno usa. Repetir a regra em SQL criaria uma
+    segunda verdade sobre quem tem acesso, e a divergência não apareceria em build nem em lint:
+    apareceria no suporte, com o painel dizendo "ativo" para quem o app tranca na porta.
+  - Isso exigiu extrair a derivação, que morava dentro do `getMatricula` acoplada à sessão do aluno
+    logado. Virou `lib/matricula-estado.ts`, puro, com **`npm run check:matricula`** e 12 casos. O
+    caso que justifica a função existir é `status = 'active'` com `expires_at` no passado: nada
+    reescreve a coluna na virada do prazo, então confiar só nela daria acesso a matrícula vencida.
+    Consequência assumida: o filtro por status roda depois da derivação, em TypeScript.
+  - **A separação pura/IO não era opcional, era obrigatória:** módulo que importa
+    `lib/supabase/server.ts` puxa `next/headers` e não roda no `node` do `npm run check`, que
+    estoura com `ERR_MODULE_NOT_FOUND` apontando para um arquivo que existe. Foi o primeiro erro da
+    leva, e virou entrada do `HANDOFF.md` §6 junto com o detalhe de que `export { x } from "./y"`
+    reexporta sem trazer `x` para o escopo do arquivo.
+  - `app/admin/_ui/tabela.tsx` com as peças que a §3 pedia como reutilizáveis (`Quadro`,
+    `Cabecalho`, `Linha`, `Selo`, `Vazio`), extraídas quando a segunda tabela apareceu e não antes.
+    O mapa de tons e a `situacaoProva` moram lá porque a primeira versão os duplicou nas duas telas
+    de aluno. O verde dos selos é o do fundo **claro** (`#1B7A50`), pela regra de que cor semântica
+    tem um valor por fundo.
+  - **A tela achou um problema de dados no primeiro carregamento:** as **9** matrículas do homolog
+    estão com `liberacao_total = true`, o que desliga o calendário de liberação gradual para todo
+    mundo. O default da coluna é `false` e nem a `0002` nem o backfill escrevem `true`, então foi
+    service role em algum teste. Registrado no `PENDENCIAS-LP.md`, porque muda o que os
+    stakeholders veem em homolog.
+
 - **Admin mestre: dois níveis de admin** — 2026-07-30
   - Pedido pelo Pedro depois de testar dar e revogar acesso: um **admin mestre**, e os outros
     admins fazem tudo menos mexer no acesso dele. `PLANO-ADMIN` §4.7.1.

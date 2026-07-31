@@ -33,8 +33,18 @@ primeiro lugar do projeto onde o Tailwind roda de fato (tokens em `app/admin/adm
 armadilha do `redirect()` sair como 200 vale **só com streaming já iniciado** — na primeira linha
 de um layout é 307 de verdade, medido.
 
-**A próxima fatia do admin é escolha do Pedro:** Alunos e E-mails já têm dado real; Questões só
-significa algo depois das ~100 questões. Dele também: as três decisões do §4.6, o banco de ~100
+**Alunos e detalhe do aluno saíram em 30/jul** (§4.2 e §4.3, migration `0006`), somente leitura. A
+decisão de projeto dessa fatia: **o estado de acesso não é calculado em SQL** — a função devolve
+`status` e `expires_at` crus, e a tradução é a MESMA `estadoDaMatricula` que a guarda do aluno usa,
+extraída para `lib/matricula-estado.ts` com `npm run check:matricula`. Duas verdades sobre quem tem
+acesso apareceriam no suporte, não no build.
+
+**A tela achou um problema no primeiro carregamento:** as 9 matrículas do homolog estão com
+`liberacao_total = true`, o que desliga a esteira semanal para todo mundo. Não revertido, porque
+pode ter sido deliberado para teste e muda o que os stakeholders veem. Pendência do Pedro.
+
+**Restam do admin:** Questões (§4.4, só significa algo depois das ~100 questões) e E-mails (§4.5,
+`email_log` vazio até o SES). Dele: as três decisões do §4.6, o banco de ~100
 questões (a prova hoje roda sobre
 24 `[EXEMPLO]`, e dois sorteios repetem 19 das 20), o template Invite user e a política de senha
 no painel do Supabase.

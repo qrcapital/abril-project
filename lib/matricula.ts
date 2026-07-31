@@ -3,15 +3,12 @@ import { cache } from "react";
 import { createClient } from "./supabase/server";
 import { getUsuario } from "./usuario";
 
-/**
- * Estado de acesso do aluno, derivado da matrícula.
- *
- * `ausente` é diferente de `expirada` de propósito: pelo `PRD.md` §4 a conta nasce da compra,
- * então quem está logado sem matrícula nenhuma é um caso anômalo (conta criada à mão, ou
- * webhook que falhou no meio), e não alguém cujo prazo acabou. Tratar os dois como a mesma
- * coisa esconderia um defeito de provisionamento atrás de uma tela de renovação.
- */
-export type EstadoAcesso = "ativa" | "expirada" | "revogada" | "ausente";
+// O estado e a sua derivação moram em `matricula-estado.ts`, que é puro e por isso roda no
+// self-check. Importados (para uso aqui) e reexportados (para os consumidores existentes não
+// precisarem saber da divisão): `export ... from` sozinho não traz o nome para este escopo.
+import { estadoDaMatricula, type EstadoAcesso } from "./matricula-estado";
+
+export { estadoDaMatricula, type EstadoAcesso };
 
 export type Matricula = {
   estado: EstadoAcesso;
@@ -62,16 +59,8 @@ export const getMatricula = cache(async (): Promise<Matricula> => {
   }
   if (!data) return VAZIA;
 
-  const expirou = new Date(data.expires_at).getTime() <= Date.now();
-  const estado: EstadoAcesso =
-    data.status === "revoked"
-      ? "revogada"
-      : data.status === "expired" || expirou
-        ? "expirada"
-        : "ativa";
-
   return {
-    estado,
+    estado: estadoDaMatricula(data.status, data.expires_at),
     expiraEm: data.expires_at,
     inicioEm: data.inicio_em ? new Date(data.inicio_em) : null,
     liberacaoTotal: Boolean(data.liberacao_total),
