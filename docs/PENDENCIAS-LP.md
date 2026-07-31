@@ -406,11 +406,11 @@ um consertando várias telas de uma vez, e é por isso que vêm antes dos de tel
       homolog aprova um comportamento que **não é o produto**. Decidir se o homolog volta a
       gotejar (e quais contas ficam liberadas para teste), e garantir que nenhuma matrícula de
       produção nasça assim.
-- [ ] **Código do certificado é fixo para todo mundo** — `EI-2026-4817`, em `lib/certificado.ts`,
-      com nome fixo junto. Dois alunos teriam o mesmo código de verificação, e o
-      `/verificar/:codigo` valida contra esse único código. A emissão real (tabela
-      `certificates`, código por aluno, função `verify_certificate`) pertence à migração para o
-      banco, tarefa 15. Achado em 29/jul, ao construir a guarda do certificado.
+- [x] ~~**Código do certificado é fixo para todo mundo**~~ **RESOLVIDO em 31/jul/2026.** Emissão real:
+      código `EI-XXXX-XXXX` aleatório e único por aluno (migration `0012` garante um por pessoa), gerado
+      na aprovação nos dois caminhos, e a página pública passou a consultar `verify_certificate` no
+      banco em vez de comparar com uma constante. O nome fixo "Pedro Teixeira" saiu junto: ele vinha da
+      mesma constante e aparecia para qualquer consulta pública.
 - [ ] **Pixels de tracking** (`fbq`/`gtag`) — estrutura pronta; precisa dos IDs.
 - [x] ~~**Migrar o curso para o banco**~~ **FEITO em 29/jul/2026**, e o texto que estava aqui
       errava em dois pontos: a tabela `lessons` **não** estava vazia (o seed já tinha rodado) e o

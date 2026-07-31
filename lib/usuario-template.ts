@@ -47,6 +47,21 @@ export function preencherUsuario(html: string, user: User | null): string {
 }
 
 /**
+ * Põe o código do certificado no markup portado.
+ *
+ * Separado do `preencherUsuario` porque o código não vem do `User` do Auth: ele nasce na aprovação e
+ * mora em `certificates`. O marcador é `data-cert`, emitido pelo `port-area.mjs` em volta do código
+ * de exemplo do design.
+ *
+ * **Sem código, o marcador fica vazio**, pela mesma regra do nome: dado vazio é problema visível, e
+ * dado de outra pessoa (aqui, o `EI-2026-4817` do design) é problema que se disfarça de conteúdo
+ * real. O `certificado-check` guarda o marcador para um porte futuro não reabrir esse buraco.
+ */
+export function preencherCodigo(html: string, codigo: string | null): string {
+  return trocar(html, "data-cert", codigo ?? "");
+}
+
+/**
  * Data de fim do acesso. Em produção a fonte de verdade é `enrollments.expires_at`; enquanto
  * não há matrícula, a criação da conta serve de proxy da data de compra.
  */

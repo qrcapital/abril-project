@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { Cabecalho, Linha, Quadro, Selo, Vazio, dataHora } from "@/app/admin/_ui/tabela";
-import { BANNER, GATILHOS, ROTULOS, VARIAVEIS, type Template } from "@/lib/email-render";
+import { BANNER, DESCRICOES, GATILHOS, ROTULOS, VARIAVEIS, type Template } from "@/lib/email-render";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = { title: "E-mails" };
@@ -184,15 +184,37 @@ export default async function Emails({
                     />
                   </div>
 
-                  <p className="mb-4 text-[12px] text-medio">
-                    Variáveis deste e-mail:{" "}
-                    {VARIAVEIS[t.chave].map((v) => (
-                      <code key={v} className="mr-2 text-[11px] text-gold-dark">{`{{${v}}}`}</code>
-                    ))}
-                    <span className="text-pedra">
-                      Qualquer outra é recusada ao salvar, porque ninguém a preencheria no envio.
-                    </span>
-                  </p>
+                  {/* A LEGENDA, e não uma lista de nomes. Listar `{{nota}}` sem dizer o que ele é
+                      obriga quem escreve a adivinhar se vem "82", "82%" ou "oitenta e dois", e a
+                      única forma de descobrir era mandar um teste para si mesmo. O exemplo mostrado
+                      é o MESMO que a prévia usa. */}
+                  <div className="mb-4 rounded-md border border-bege bg-offwhite px-4 py-3">
+                    <p className={ROTULO}>Variáveis que este e-mail aceita</p>
+                    <dl className="mt-1 flex flex-col gap-1.5">
+                      {VARIAVEIS[t.chave].map((v) => (
+                        <div key={v} className="flex flex-wrap items-baseline gap-x-2 text-[12px]">
+                          <dt>
+                            <code className="text-[11px] text-gold-dark">{`{{${v}}}`}</code>
+                          </dt>
+                          <dd className="text-medio">
+                            {DESCRICOES[v]?.texto}{" "}
+                            <span className="text-pedra">
+                              Na prévia: <strong className="font-normal">{DESCRICOES[v]?.exemplo}</strong>
+                            </span>
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                    <p className="mt-2 text-[12px] text-pedra">
+                      Escreva o nome entre chaves duplas, exatamente como está acima. Qualquer outra
+                      variável é recusada ao salvar, porque ninguém a preencheria no envio e ela sairia
+                      como um branco no meio da frase.{" "}
+                      {/* O endereço do botão é a pergunta que todo redator faz e não encontra. Dizer
+                          onde ele está evita a busca inútil. */}
+                      O <strong>endereço do botão</strong> não é variável: ele vem do gatilho, e aqui
+                      você muda só o rótulo dele.
+                    </p>
+                  </div>
 
                   <div className="mb-4 max-w-sm">
                     <label className={ROTULO} htmlFor={`b-${t.chave}`}>

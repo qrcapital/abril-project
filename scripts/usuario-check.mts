@@ -20,7 +20,9 @@ const ESPERADO: [string, string[]][] = [
   ["screens/resultado.html", ['data-u="first"']],
   ["screens/resultado-reprovado.html", ['data-u="first"']],
   ["screens/conta.html", ['data-u="full"', "data-email", "data-acesso"]],
-  ["screens/certificado.html", ['data-u="full"']],
+  // `data-cert` entrou em 31/jul/2026, com a emissão real: sem ele, a tela volta a servir o código
+  // do design (`EI-2026-4817`) como se fosse o do aluno, e ele era o MESMO para todos.
+  ["screens/certificado.html", ['data-u="full"', "data-cert"]],
 ];
 
 for (const [arquivo, marcadores] of ESPERADO) {

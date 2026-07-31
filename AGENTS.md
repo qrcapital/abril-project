@@ -134,6 +134,24 @@ HTTP, sem dependência nova, e o registro em `email_log`) e a tabela `email_temp
 - **Os de pagamento não são nossos.** PIX, boleto, cartão recusado e carrinho saem pelo Guru.
 - Sem `RESEND_API_KEY` no ambiente, tudo funciona menos a entrega, e o log registra o motivo.
 
+## Certificado
+
+Emissão real desde 31/jul/2026. Antes disso o código era uma constante igual para todos, e a página
+pública mostrava o nome escrito nela para qualquer consulta.
+
+- **`lib/certificado.ts` é puro E client-safe.** O `CertificadoClient` importa dele, então nada de
+  `node:*` ali: o sorteio usa Web Crypto, que existe nos dois lados. O IO vive em
+  `lib/certificados.ts`, com o cliente do Supabase por parâmetro.
+- **O alfabeto do código não tem `I`, `O`, `L`, `U`, `0` nem `1`.** O código é ditado por telefone e
+  digitado de um PDF; símbolo ambíguo vira "inválido" para um certificado verdadeiro. Mexer no
+  alfabeto ou no formato quebra códigos já emitidos e já publicados em perfil de LinkedIn.
+- **Emissão na aprovação, nos dois caminhos** (`lib/prova.ts` e `lib/prova-expiradas.ts`), mais o
+  resgate na tela. É idempotente, e o índice único de `certificates(user_id)` é quem decide a corrida.
+- **A verificação pública usa o cliente anon** e a função `verify_certificate`. Página pública não
+  pode depender de sessão, e a service role ali estaria errada por definição.
+- **O código entra no markup por marcador `data-cert`**, emitido pelo `port-area.mjs`. Editar o HTML
+  gerado não sobrevive ao próximo porte, e o `check:usuario` guarda o marcador.
+
 ## Feedback ao usuário
 
 Os quatro padrões (caixa de erro, caixa de sucesso e aviso, botão em trabalho, lista de

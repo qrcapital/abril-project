@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { CERT, linkedinAddUrl } from "@/lib/certificado";
+import { linkedinAddUrl } from "@/lib/certificado";
 import { emTrabalho, pintarCaixa } from "@/app/app/_ui/feedback";
 
 import contato from "@/lib/contato.json";
@@ -17,8 +17,19 @@ const WHATSAPP = contato.whatsapp;
  * - "Compartilhar no LinkedIn" → fluxo oficial de adicionar certificação ao perfil;
  * - "Validar em…" → página pública /verificar/:codigo;
  * - "Voltar para a home" → /app.
+ *
+ * O CÓDIGO VEM POR PROP, do servidor. Até 31/jul/2026 ele era a constante `CERT` deste projeto, a
+ * mesma para todo aluno: o link do LinkedIn e o de validação levavam o certificado de outra pessoa.
  */
-export default function CertificadoClient({ html }: { html: string }) {
+export default function CertificadoClient({
+  html,
+  codigo,
+  emitidoEm,
+}: {
+  html: string;
+  codigo: string;
+  emitidoEm: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -57,16 +68,16 @@ export default function CertificadoClient({ html }: { html: string }) {
           router.push("/app");
         });
       } else if (/LinkedIn/i.test(t)) {
-        a.href = linkedinAddUrl(window.location.origin);
+        a.href = linkedinAddUrl(window.location.origin, codigo, new Date(emitidoEm));
         a.target = "_blank";
         a.rel = "noopener";
       } else if (/Validar em/i.test(t)) {
-        a.href = `/verificar/${CERT.codigo}`;
+        a.href = `/verificar/${codigo}`;
         a.target = "_blank";
         a.rel = "noopener";
       }
     });
-  }, [router]);
+  }, [router, codigo, emitidoEm]);
 
   return <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />;
 }

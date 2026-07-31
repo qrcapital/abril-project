@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "check": "npm run check:prova && npm run check:senha && npm run check:usuario && npm run check:liberacao && npm run check:curriculo && npm run check:matricula && npm run check:email",
+    "check": "npm run check:prova && npm run check:senha && npm run check:usuario && npm run check:liberacao && npm run check:curriculo && npm run check:matricula && npm run check:email && npm run check:certificado",
     "check:prova": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/prova-check.mts",
     "check:senha": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/senha-check.mts",
     "check:usuario": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/usuario-check.mts",
@@ -17,7 +17,8 @@
     "check:rls": "node scripts/rls-check.mjs",
     "check:mestre": "node scripts/mestre-check.mjs",
     "check:matricula": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/matricula-check.mts",
-    "check:email": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/email-check.mts"
+    "check:email": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/email-check.mts",
+    "check:certificado": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/certificado-check.mts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",

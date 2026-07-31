@@ -315,6 +315,11 @@ const screens = {
                 // id no preview (para o "Baixar PDF" isolar via print)
                 .replace('<div style="background:#F7F5F2;border-radius:8px;box-shadow:0 34px 80px',
                          '<div id="cert-preview" style="background:#F7F5F2;border-radius:8px;box-shadow:0 34px 80px')
+                // codigo de verificacao vira dinamico: <span data-cert> em volta do exemplo do
+                // design, preenchido no servidor pelo preencherCodigo. Sem isto, o codigo do
+                // design (EI-2026-4817) sairia como se fosse o do aluno, e ele era o MESMO para
+                // todos — o furo que a emissao real fechou em 31/jul/2026.
+                .replace(/>(EI-\d{4}-\d{4})</, '><span data-cert>$1</span><')
                 // ano de emissao no canto inferior esquerdo do certificado
                 .replace(/(<div style="position:relative;border:2px solid #A98E4E;[^"]*">)/,
                   '$1<span style="position:absolute;right:26px;bottom:18px;font-size:10px;letter-spacing:.16em;color:#A98E4E;font-weight:600">2026</span>')

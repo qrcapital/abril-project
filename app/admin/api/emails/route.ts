@@ -3,8 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { papelAtual } from "@/lib/admin";
 import contato from "@/lib/contato.json";
 import { carregarTemplate, enviarAcesso, enviarEmail } from "@/lib/email";
-import { BANNER, renderizar, variaveisInvalidas, VARIAVEIS } from "@/lib/email-render";
-import { NOTA_MINIMA } from "@/lib/prova-correcao";
+import { BANNER, DESCRICOES, renderizar, variaveisInvalidas, VARIAVEIS } from "@/lib/email-render";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -99,7 +98,15 @@ function dadosExemplo(chave: string) {
       : chave === "resultado-aprovado"
         ? `${site}/app/certificado`
         : contato.whatsapp;
-  return { nome: "Ana", nota: 82, minimo: NOTA_MINIMA, link };
+  // Os exemplos saem da legenda (`DESCRICOES`), para a prévia mostrar exatamente o valor que a tela
+  // promete ao redator. Um exemplo divergente aqui faria a legenda mentir.
+  const exemplo = (campo: string) => DESCRICOES[campo]?.exemplo ?? "";
+  return {
+    nome: exemplo("nome"),
+    nota: exemplo("nota"),
+    codigo: exemplo("codigo"),
+    link,
+  };
 }
 
 export async function GET(req: NextRequest) {

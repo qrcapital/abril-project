@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { verificar } from "@/lib/certificado";
+
+import { CURSO, HORAS, normalizarCodigo } from "@/lib/certificado";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Verificação de certificado",
@@ -12,13 +14,57 @@ const meses = [
   "julho", "agosto", "setembro", "outubro", "novembro", "dezembro",
 ];
 
+type Cert = { nome: string; codigo: string; emissao: Date };
+
+/**
+ * A verificação pública, agora contra o BANCO.
+ *
+ * Até 31/jul/2026 ela comparava com uma constante do código: um único código valia, e a tela mostrava
+ * o nome que estava escrito ali ("Pedro Teixeira") para quem consultasse. Ou seja, a peça que existe
+ * para um terceiro conferir era a que menos conferia.
+ *
+ * Chama a função `verify_certificate` com o cliente **anon**, e isso é o desenho, não um atalho: a
+ * função é `security definer`, está concedida a `anon`, e devolve só nome, código e data. A tabela
+ * `certificates` continua fechada, e nada aqui expõe `user_id`, e-mail ou nota. Página pública tem
+ * que funcionar sem sessão, então a service role estaria errada por definição.
+ *
+ * O código é normalizado antes da consulta, porque ele chega **digitado de um PDF**: em minúsculas,
+ * com espaço no lugar do hífen, ou sem o prefixo. Recusar por pontuação seria dizer "inválido" para
+ * um certificado verdadeiro.
+ */
+async function buscar(entrada: string): Promise<Cert | null> {
+  const codigo = normalizarCodigo(decodeURIComponent(entrada));
+  if (!codigo) return null;
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("verify_certificate", { p_codigo: codigo });
+  if (error) {
+    // Falha de leitura não pode virar "certificado inválido": isso acusaria de falso um documento
+    // verdadeiro por causa de um problema nosso. Sem linha, a tela mostra o estado de não encontrado,
+    // e o log guarda o motivo real.
+    console.error("[verificar] falha ao consultar:", error.message);
+    return null;
+  }
+
+  const linha = (data ?? [])[0] as
+    | { nome: string | null; codigo: string; issued_at: string; valido: boolean }
+    | undefined;
+  if (!linha?.valido) return null;
+
+  return {
+    nome: (linha.nome ?? "").trim(),
+    codigo: linha.codigo,
+    emissao: new Date(linha.issued_at),
+  };
+}
+
 export default async function VerificarPage({
   params,
 }: {
   params: Promise<{ codigo: string }>;
 }) {
   const { codigo } = await params;
-  const cert = verificar(codigo);
+  const cert = await buscar(codigo);
 
   return (
     <main
@@ -94,11 +140,15 @@ export default async function VerificarPage({
               Certificado válido
             </p>
             <h1 style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 600, margin: "0 0 14px", color: "#F7F5F2" }}>
-              {cert.nome}
+              {/* Conta sem nome cadastrado existe (o backfill de 28/jul achou 3 de 8), e aqui o nome
+                  é o ponto da consulta: dizer que falta o cadastro é mais honesto que uma linha em
+                  branco no lugar de quem se formou. */}
+              {cert.nome || "Aluno sem nome no cadastro"}
             </h1>
             <p style={{ fontSize: 14.5, lineHeight: 1.6, color: "#C9D3CC", margin: "0 0 24px" }}>
-              concluiu a formação <b style={{ color: "#F7F5F2" }}>{cert.curso}</b>, com carga horária de{" "}
-              <b style={{ color: "#F7F5F2" }}>{cert.horas} horas</b>, emitido em {meses[cert.emissao.mes - 1]} de {cert.emissao.ano}.
+              concluiu a formação <b style={{ color: "#F7F5F2" }}>{CURSO}</b>, com carga horária de{" "}
+              <b style={{ color: "#F7F5F2" }}>{HORAS} horas</b>, emitido em{" "}
+              {meses[cert.emissao.getMonth()]} de {cert.emissao.getFullYear()}.
             </p>
             <div style={{ borderTop: "1px solid rgba(217,190,133,.18)", paddingTop: 18 }}>
               <span style={{ fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", color: "#8FA398" }}>

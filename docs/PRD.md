@@ -22,7 +22,7 @@ Os pilares são sequenciais na jornada (LP → compra → consumo → prova → 
 |---|---|
 | Preço | R$ 397 à vista, ou até 10x sem juros de R$ 39,70 |
 | Acesso | 1 ano a partir da compra |
-| Prova | 20 questões, nota mínima 70%, 120 minutos, tentativa única, 2ª chamada liberada por admin |
+| Prova | 20 questões, nota mínima 70%, 120 minutos, tentativa única, 2ª chamada liberada por admin. **Mudar a nota mínima exige tocar em três lugares:** `NOTA_MINIMA` (`lib/prova-correcao.ts`), o texto do e-mail `resultado-reprovado` em `/admin/emails` (o 70 ali é literal desde 31/jul/2026, por decisão de não ter variável para uma constante) e este PRD |
 | Conteúdo | Módulo 0 (boas-vindas, 1 aula) + 4 módulos de 4 aulas, 16 aulas avaliadas, 30h+ |
 | Suporte | 100% WhatsApp (wa.me, sem API na v1) |
 | Materiais | Apostila por módulo + e-book bônus. Sem minidocumentário, sem comunidade, sem gamificação, sem busca. Plataforma só dark no v1 (modo claro no backlog pós-launch, ver `BACKLOG.md`) |
@@ -312,7 +312,7 @@ Peça de marca gerada em PDF na aprovação, com código único e página públi
 
 - **Preview** na tela: wordmark, olho, gravuras, nome do aluno, carga de 30h, assinaturas (BlockTrends como emissora, VEJA Negócios como chancela institucional cossignatária).
 - **Ações**: baixar PDF, compartilhar no LinkedIn, avaliar a formação (NPS).
-- **Código**: formato `EI-2026-XXXX`.
+- **Código**: formato `EI-XXXX-XXXX`, oito símbolos aleatórios (decisão do Pedro, 31/jul/2026: sem ano e sem sequência).
 - **Verificação pública**: `/verificar/:codigo`.
 
 > **Chancela da VEJA Negócios (direção recomendada, 20/jul/2026):** VEJA Negócios é marca editorial, não entidade certificadora (diferente da ANCORD no CCA, que dá nome à "Certificação de Criptoativos ANCORD"). Portanto **não usar "Certificação VEJA Negócios"**. O certificado é **emitido pela BlockTrends**, com a VEJA Negócios como **assinatura/chancela editorial** cossignatária (marca presente, sem se amarrar ao nome da certificação). Na LP, trocar "Certificação VEJA Negócios" por formulações como "certificado de 30h com chancela institucional VEJA Negócios" ou "assinado por BlockTrends e VEJA Negócios". A redação final depende do aval do jurídico/Grupo Abril.
@@ -327,8 +327,9 @@ Peça de marca gerada em PDF na aprovação, com código único e página públi
 |---|---|
 | Emissão | Somente com prova aprovada (≥ 70%) |
 | Carga | 30 horas |
-| Código | `EI-2026-XXXX`, único |
-| Verificação | Página pública `/verificar/:codigo` confirma validade e nome |
+| Código | `EI-XXXX-XXXX`, **único por aluno e aleatório**. Alfabeto de 30 símbolos, sem `I`, `O`, `L`, `U`, `0` e `1`, porque o código é ditado por telefone e digitado de um PDF; sorteio criptográfico, porque sequencial vazaria o número de formados e permitiria enumerar quem concluiu |
+| Verificação | Página pública `/verificar/:codigo` confirma validade e nome, pela função `verify_certificate` (anon, `security definer`, devolve só nome, código e data). Aceita o código digitado com espaço, em minúsculas ou sem o prefixo |
+| Emissão | Na **aprovação**, nos dois caminhos (envio pela tela e fechamento pela rotina do deadline), mais um resgate na primeira visita à tela do certificado. Idempotente, e o banco garante **um por aluno** (índice da migration `0012`) |
 | Armazenamento | PDF no Storage, registro em `certificates` |
 
 ### Edge cases
@@ -512,7 +513,7 @@ Postgres gerenciado (Supabase). Acesso a dado sensível protegido por RLS. Leitu
 > até 500 KB, por **upload** para o bucket `email` do Storage ou por endereço colado. O bucket é
 > **público** por requisito: cliente de e-mail busca a imagem de um proxy, sem sessão, então URL
 > assinada com validade não serve. **Layout, marca e o destino do botão ficam no código** (`lib/email-render.ts`):
-> moldura é design system, e o destino vem do gatilho. Cada template tem um **contrato de variáveis**
+> moldura é design system, e o destino vem do gatilho. Cada template mostra a **legenda das suas variáveis**, com o que cada uma significa e o exemplo que a prévia usa, e tem um **contrato**
 > em código, e o painel recusa ao salvar qualquer `{{campo}}` fora dele, porque ninguém o preencheria
 > no envio.
 >

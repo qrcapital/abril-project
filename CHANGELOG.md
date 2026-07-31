@@ -8,6 +8,73 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **`{{codigo}}` nos e-mails, e a legenda de variáveis para quem escreve** — 2026-07-31
+  - O código do certificado passou a ser variável do template `resultado-aprovado`, preenchida nos
+    dois caminhos de aprovação a partir da emissão que acabou de acontecer. É o dado que um RH pede
+    quando o aluno diz que concluiu, e ele não estava em lugar nenhum do e-mail.
+  - **A lista de variáveis virou legenda.** Antes a tela mostrava `{{nota}}` e nada mais: quem escreve
+    tinha de adivinhar se o valor vem como "82", "82%" ou "oitenta e dois", e a única forma de
+    descobrir era mandar um teste para si mesmo. Agora cada variável traz o que significa e **o
+    exemplo que a prévia usa**, porque legenda que promete um valor e prévia que mostra outro é pior
+    que nenhuma das duas.
+  - A legenda também responde a pergunta que todo redator faz e não achava: **o endereço do botão não
+    é variável**, vem do gatilho, e ali se muda só o rótulo.
+  - **`{{minimo}}` saiu do contrato**, por decisão do Pedro no mesmo dia: a nota mínima é 70 e é
+    premissa travada do PRD, e variável que nunca varia é uma linha a mais que quem escreve tem de
+    entender para descobrir que ela não muda nada. O corpo do template passou a dizer 70 em texto pela
+    migration `0013`, e não por edição no painel, porque a troca está **acoplada à mudança de código**:
+    tirar a variável sem trocar o corpo deixaria a frase "o mínimo para aprovação é %", já que o
+    interpolador substitui variável ausente por vazio de propósito. O `where` da migration não pisa em
+    edição feita no painel. **Teto conhecido:** o 70 agora é texto, então mexer no `NOTA_MINIMA` exige
+    passar por este e-mail, e nenhum check pega isso porque copy vive no banco.
+  - O `check:email` guarda os dois lados da legenda: toda variável do contrato tem descrição e exemplo,
+    e `minimo` não voltou a ser variável.
+  - Verificação com sessão real: o corpo salvo com `{{codigo}}` e a prévia mostrando
+    `EI-K6MC-4RMC`; `{{minimo}}`, que não pertence a esse template, recusado com a lista do que existe;
+    e o texto original devolvido no fim.
+- **Certificado com emissão real: um código único por aluno** — 2026-07-31
+  - **O que era:** `lib/certificado.ts` guardava UM certificado escrito à mão, com o código
+    `EI-2026-4817` e o nome "Pedro Teixeira". Todo aluno aprovado receberia o mesmo código, e a página
+    pública `/verificar/:codigo` validava contra esse único valor e mostrava o nome de outra pessoa
+    para qualquer consulta. A tabela `certificates` existia **vazia** e a função `verify_certificate()`
+    nunca era chamada.
+  - **O formato, decidido pelo Pedro:** `EI-XXXX-XXXX`, oito símbolos, alfanumérico, aleatório, sem
+    ano e sem sequência.
+  - **O alfabeto exclui `I`, `O`, `L`, `U`, `0` e `1`**, e isso não é preciosismo: o código é **ditado
+    por telefone e digitado de um PDF** por quem confere o certificado de um candidato. Par ambíguo ali
+    vira "código inválido" para um documento verdadeiro. Sobram 30 símbolos, 656 bilhões de
+    combinações.
+  - **Sorteio com `crypto.getRandomValues` e descarte de viés de módulo**, não `Math.random`. Código
+    sequencial ou previsível entregaria de graça quantos alunos concluíram e a posição de cada um, e
+    num verificador público permitiria enumerar quem se formou. O descarte acima do teto existe porque
+    256 não é múltiplo de 30: sem ele, 16 dos 30 símbolos sairiam com mais frequência.
+  - **A normalização aceita o que a pessoa digita:** minúsculas, espaço no lugar do hífen, sem o
+    prefixo. Recusar por pontuação seria dizer "inválido" para um certificado verdadeiro, que é o pior
+    erro que essa tela pode cometer. Símbolo fora do alfabeto é recusado sem consultar o banco.
+  - **Emissão na aprovação, nos dois caminhos** (o botão "Enviar" e a rotina que fecha prova
+    abandonada, porque também dá para acertar 14 de 20 e fechar a aba), mais um resgate na própria
+    tela do certificado: quem foi aprovado **antes de a emissão existir** ganha o código na primeira
+    visita, sem abrir ticket. `emitirCertificado` é idempotente.
+  - **Migration `0012`: um certificado por aluno.** A tabela já tinha `codigo` unique, mas nada
+    impedia o mesmo aluno de ter dois — e as duas rotas de aprovação, mais a 2ª chamada, davam três
+    caminhos para isso. O `on conflict` conta com o índice: quem chega segundo não grava, e a leitura
+    devolve o que existe. Conferir antes de escrever tem uma janela, e é nela que a segunda rota entra.
+  - **A verificação pública passou a chamar `verify_certificate` com o cliente anon**, que é o desenho
+    e não um atalho: a função é `security definer`, concedida a `anon`, e devolve só nome, código e
+    data. A tabela segue fechada, e nada ali expõe `user_id`, e-mail ou nota. Falha de leitura **não**
+    vira "certificado inválido": acusar de falso um documento verdadeiro por problema nosso é pior que
+    mostrar "não encontrado".
+  - **O código do design saiu do markup por marcador**, `data-cert`, emitido pelo `port-area.mjs` e
+    preenchido no servidor — não por edição do HTML gerado, que o próximo porte apagaria. Está no
+    `check:usuario` junto dos outros nove marcadores, exatamente pelo motivo que aquele check existe:
+    um porte que remova o marcador faria a tela servir `EI-2026-4817` como se fosse o código do aluno.
+  - `npm run check:certificado`, com 5 blocos: alfabeto sem símbolo confundível, formato, 2000
+    sorteios sem repetição com uso de 80% do alfabeto em cada posição, normalização (ida e volta em
+    200 códigos) e o link do LinkedIn com mês 1..12.
+  - Verificação contra o banco vivo: emissão, idempotência, o código aparecendo no HTML da tela e o
+    `EI-2026-4817` desaparecendo dela, a página pública **sem cookie nenhum** validando nas quatro
+    formas de digitação, código inexistente caindo em "não encontrado", e as duas restrições de
+    unicidade recusando no banco. Certificados de teste apagados no fim.
 - **Admin: banco de questões, a última tela do painel** — 2026-07-31
   - `/admin/questoes` (`PLANO-ADMIN` §4.4), pedida pelo Pedro antes das ~100 questões existirem, e a
     casca vale por si: escrever questão sem tela é escrever SQL. **Primeira tela do painel sem

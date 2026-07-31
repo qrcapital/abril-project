@@ -52,8 +52,29 @@ export const BANNER = {
  */
 export const VARIAVEIS: Record<string, string[]> = {
   "boas-vindas": ["nome"],
-  "resultado-aprovado": ["nome", "nota"],
-  "resultado-reprovado": ["nome", "nota", "minimo"],
+  "resultado-aprovado": ["nome", "nota", "codigo"],
+  "resultado-reprovado": ["nome", "nota"],
+};
+
+/**
+ * O que cada variável significa e um exemplo do valor. **É a legenda que a tela mostra ao redator.**
+ *
+ * Existe porque listar `{{nota}}` sem dizer o que ele é obriga quem escreve a adivinhar se vem "82",
+ * "82%" ou "oitenta e dois", e a única forma de descobrir era mandar um teste. O exemplo aqui é o
+ * mesmo que a pré-visualização usa, então o que a legenda promete é o que a prévia mostra.
+ *
+ * A descrição é por NOME e não por template, porque `nome` significa a mesma coisa nos três. O
+ * `certificado-check`... na verdade o `email-check` é quem garante que nenhuma variável do contrato
+ * fique sem descrição: variável documentada pela metade é pior que variável ausente, porque parece
+ * pronta.
+ */
+export const DESCRICOES: Record<string, { texto: string; exemplo: string }> = {
+  nome: { texto: "Primeiro nome do aluno. Fica vazio em conta sem nome no cadastro.", exemplo: "Ana" },
+  nota: { texto: "Nota da prova em porcentagem, só o número.", exemplo: "82" },
+  codigo: {
+    texto: "Código de verificação do certificado, único por aluno.",
+    exemplo: "EI-K6MC-4RMC",
+  },
 };
 
 /** Rótulo humano de cada template, para a tela do admin. */

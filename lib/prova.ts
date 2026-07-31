@@ -3,12 +3,12 @@ import { cache } from "react";
 
 import { getUsuario } from "@/lib/usuario";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { emitirCertificado } from "@/lib/certificados";
 import { enviarEmail } from "@/lib/email";
 import contato from "@/lib/contato.json";
 import {
   corrigir,
   MINUTOS,
-  NOTA_MINIMA,
   TOTAL_QUESTOES,
   type Correcao,
   type Letra,
@@ -234,6 +234,13 @@ export async function enviar(userId: string): Promise<Correcao> {
   // `enviarEmail` não lança: uma falha de e-mail não pode desfazer uma prova já corrigida, e a
   // tentativa fica registrada no `email_log` de qualquer jeito.
   const user = await getUsuario();
+
+  // O CERTIFICADO É EMITIDO NA APROVAÇÃO, e não na primeira visita à tela dele. Duas razões: o código
+  // passa a existir no instante em que o aluno tem direito a ele (o e-mail de aprovação já poderia
+  // carregá-lo), e a emissão fica num lugar só em vez de num efeito colateral de renderizar página.
+  // `emitirCertificado` é idempotente e não lança; falhar aqui não desfaz a prova.
+  const cert = user && c.aprovado ? await emitirCertificado(db, user.id) : null;
+
   if (user?.email) {
     const site = process.env.NEXT_PUBLIC_SITE_URL ?? "";
     await enviarEmail(db, {
@@ -243,7 +250,9 @@ export async function enviar(userId: string): Promise<Correcao> {
       dados: {
         nome: ((user.user_metadata?.nome as string | undefined) ?? "").trim().split(/\s+/)[0] ?? "",
         nota: c.score,
-        minimo: NOTA_MINIMA,
+        // O código só existe no e-mail de aprovado, e é o que um RH pede quando o aluno diz que
+        // concluiu. Sem certificado emitido a variável fica vazia, e o texto continua de pé.
+        codigo: cert?.codigo ?? "",
         link: c.aprovado ? `${site}/app/certificado` : contato.whatsapp,
       },
     });

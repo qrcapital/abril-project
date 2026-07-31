@@ -22,6 +22,7 @@ import assert from "node:assert/strict";
 process.env.NEXT_PUBLIC_SITE_URL = "https://ei.test";
 
 import {
+  DESCRICOES,
   GATILHOS,
   ROTULOS,
   VARIAVEIS,
@@ -77,6 +78,21 @@ const base = (extra: Partial<Template> = {}): Template => ({
   for (const chave of Object.keys(VARIAVEIS)) {
     assert.ok(ROTULOS[chave]?.trim(), `${chave} sem rotulo para a tela`);
     assert.ok(GATILHOS[chave]?.trim(), `${chave} sem gatilho descrito`);
+  }
+
+  // TODA variável do contrato aparece na legenda, com descrição e exemplo. Variável documentada pela
+  // metade é pior que ausente, porque parece pronta para quem escreve o texto.
+  for (const [chave, lista] of Object.entries(VARIAVEIS)) {
+    for (const v of lista) {
+      assert.ok(DESCRICOES[v]?.texto?.trim(), `{{${v}}} (${chave}) sem descricao na legenda`);
+      assert.ok(DESCRICOES[v]?.exemplo?.trim(), `{{${v}}} (${chave}) sem exemplo na legenda`);
+    }
+  }
+  // `minimo` NAO e variavel (decisao do Pedro em 31/jul: a nota de corte e 70 e e premissa travada,
+  // e variavel que nunca varia e uma linha a mais para quem escreve entender). O corpo do template
+  // diz 70 em texto, trocado pela migration 0013.
+  for (const lista of Object.values(VARIAVEIS)) {
+    assert.ok(!lista.includes("minimo"), "minimo saiu do contrato: a nota de corte e texto no corpo");
   }
 }
 

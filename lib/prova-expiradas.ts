@@ -12,11 +12,12 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import { emitirCertificado } from "./certificados.ts";
 import { enviarEmail } from "./email.ts";
 // `with { type: "json" }` e não import solto: este módulo roda também em node puro (o
 // `npm run check:prova` e o `npm run prova:expiradas`), onde JSON sem atributo não carrega.
 import contato from "./contato.json" with { type: "json" };
-import { corrigir, NOTA_MINIMA, type QuestaoSnapshot, type Respostas } from "./prova-correcao.ts";
+import { corrigir, type QuestaoSnapshot, type Respostas } from "./prova-correcao.ts";
 
 /** O que interessa de uma tentativa em aberto para poder fechá-la. */
 export type LinhaExpirada = {
@@ -108,7 +109,10 @@ export async function fecharExpiradas(
     if (error) throw error;
     if ((data ?? []).length > 0) {
       aplicados.push(f);
-      await avisarResultado(db, f);
+      // Prova abandonada TAMBÉM aprova: dá para acertar 14 das 20 e fechar a aba. Sem esta linha, o
+      // aluno aprovado por aqui receberia o e-mail do certificado e encontraria a tela sem código.
+      const cert = f.aprovado ? await emitirCertificado(db, f.user_id) : null;
+      await avisarResultado(db, f, cert?.codigo ?? "");
     }
   }
   return aplicados;
@@ -129,7 +133,7 @@ export async function fecharExpiradas(
  * `enviarEmail` não lança e registra a tentativa no `email_log`, então uma falha de entrega aqui não
  * desfaz o fechamento nem interrompe o laço das outras provas.
  */
-async function avisarResultado(db: SupabaseClient, f: Fechamento): Promise<void> {
+async function avisarResultado(db: SupabaseClient, f: Fechamento, codigo: string): Promise<void> {
   const { data, error } = await db.auth.admin.getUserById(f.user_id);
   const conta = data?.user;
   if (error || !conta?.email) {
@@ -145,7 +149,7 @@ async function avisarResultado(db: SupabaseClient, f: Fechamento): Promise<void>
     dados: {
       nome: ((conta.user_metadata?.nome as string | undefined) ?? "").trim().split(/\s+/)[0] ?? "",
       nota: f.score,
-      minimo: NOTA_MINIMA,
+      codigo,
       link: f.aprovado ? `${site}/app/certificado` : contato.whatsapp,
     },
   });
