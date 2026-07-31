@@ -19,6 +19,7 @@ type Aviso = {
  * `lib/curso`, que passou a depender do banco em 29/jul e não pode ser lido daqui.
  *
  * - cards de módulo → primeira aula do módulo, se o módulo já abriu;
+ * - card de 2ª chamada (só existe se um admin liberou) → /app/prova, direto;
  * - card da Prova Final → /app/prova SE liberada (16/16); senão abre o modal;
  * - "Continuar" → aula atual.
  * Delegação de evento (sobrevive à re-render ao abrir/fechar o modal).
@@ -87,6 +88,10 @@ export default function HomeClient({
         if (card.dataset.travado === "1") return;
         const i = [...root.querySelectorAll<HTMLElement>(".mcard")].indexOf(card);
         if (i >= 0 && i < destinos.length) return router.push(destinos[i]);
+        // O card de 2ª chamada vem antes do da prova e cai no mesmo teste de texto ("tentativa nova
+        // da prova final"), então ele é tratado ANTES e por atributo, não por texto: sem isto, ele
+        // dependeria do gate de 16/16 que o aluno já cumpriu e daria no mesmo, mas por coincidência.
+        if (card.dataset.segunda === "1") return router.push("/app/prova");
         if (/Prova|Certifica/i.test(card.textContent || "")) {
           if (provaLiberada) return router.push("/app/prova");
           setAviso({

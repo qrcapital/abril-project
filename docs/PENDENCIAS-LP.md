@@ -89,17 +89,39 @@ tabela vêm de `app/admin/_ui/tabela.tsx`, não se inventa a sexta; e **não rod
 
 - 🔒 **13 · Quem escreve as ~100 questões.** Não bloqueia código, mas é o que falta para a prova
   deixar de rodar sobre as 24 de exemplo, onde dois sorteios repetem 19 das 20.
-- 🔒 **Auditoria do admin**: a tela de Equipe escreve privilégio e o rastro hoje é log de servidor,
-  com retenção curta. Se a operação crescer, o caminho é uma tabela `admin_audit`. Decisão sua, não
-  foi pedida.
+- ~~🔒 **Auditoria do admin**~~ **FEITA em 31/jul**, decidida por mim quando você me deu a sequência:
+  a tabela `admin_audit` (migration `0014`) entrou junto com a liberação de 2ª chamada, que seria a
+  quarta escrita sensível sobre log de servidor. Grava papel de admin e liberação de prova. **Falta uma
+  tela para consultar** — hoje se lê por SQL, e isso só vira necessidade quando alguém precisar
+  auditar sem abrir o banco.
 - 🔒 **URL do checkout do Guru** e os **materiais e vídeos reais**, que seguem pendentes.
 - 🔒 **Arte do banner dos e-mails**, se você quiser usar (o campo existe desde 31/jul, por template,
   com **upload** na tela). **1120 × 360 px** em PNG ou JPG, de preferência abaixo de 200 KB, que exibe
   em 560 de largura. Lembrando que ele é decoração: o texto do e-mail se explica sem imagem, porque
   boa parte dos clientes bloqueia imagem por padrão, e o texto alternativo é obrigatório por isso.
-- 🔒 **Domínio de envio de e-mail.** Hoje o remetente é o `onboarding@resend.dev`, que entrega mas não
-  é o produto. Verificar um domínio (no Resend ou no SES) muda o remetente e a reputação de entrega, e
-  é a mesma decisão que o `AMBIENTES.md` já registrava para o SMTP do Auth.
+- 🔴 **DOMÍNIO DE E-MAIL: isto virou BLOQUEIO DE LANÇAMENTO, não questão de marca** (medido em
+  31/jul/2026). Com o remetente de teste `onboarding@resend.dev`, o Resend **só entrega para o e-mail
+  do dono da conta**. Provado sem querer: o e-mail de aprovação disparado para `carlos@testinho.com`
+  voltou `403 validation_error: You can only send testing emails to your own email address`, e está
+  registrado assim no `email_log`.
+  **Consequência:** hoje o único endereço do mundo que recebe e-mail nosso é o do Pedro. Toda a camada
+  funciona (template, banner, variáveis, gatilhos, log), e nenhum aluno receberia nada. Verificar um
+  domínio no Resend, ou configurar o SES, é o que destrava **todos** os e-mails de uma vez.
+  Enquanto isso, o log conta a verdade: a falha aparece com o motivo em vez de sumir.
+
+  **Conferido na API do Resend em 31/jul:** a conta **não tem nenhum domínio cadastrado**, e não existe
+  lista de teste ou allowlist. Os dois contornos óbvios foram testados e recusados com a mesma
+  mensagem: alias com `+` no próprio endereço (`pedrohfontei+aluno1@gmail.com`) e outro endereço
+  qualquer (`ph@maracajalabs.com`). Verificar domínio é o único caminho, e **é liberado no plano free**
+  (o free limita volume, não destinatário).
+
+  **RECOMENDAÇÃO, e ela separa dois problemas que não precisam andar juntos:** verificar um
+  **subdomínio de um domínio que já é nosso** (algo em `maracajalabs.com` ou `qr.capital`) só para o
+  homolog destrava todo o e-mail hoje, para qualquer destinatário. O remetente **de produção** é outra
+  decisão: a LP vai para um subdomínio da Abril, e registro DNS em domínio da Abril depende de gente e
+  prazo institucional. Amarradas, o e-mail fica esperando a Abril; separadas, o homolog anda agora — e
+  manter remetentes diferentes é saudável, porque reputação de teste não contamina a de produção.
+  Depois do domínio: preencher `EMAIL_FROM` (a variável já está ligada) e rodar a bateria de entrega.
 - 🔒 **Template `Invite user`**, que era o item 3, **deixou de ser necessário** para o acesso do aluno:
   o link agora é montado com o `hashed_token` e vai no nosso e-mail de boas-vindas. Só volta a importar
   se alguém convidar gente pelo painel do Supabase.

@@ -8,6 +8,7 @@ import { getCurriculo } from "@/lib/curriculo";
 import { getMatricula } from "@/lib/matricula";
 import { aberturaDoModulo, diasAte, liberacao } from "@/lib/liberacao";
 import { getUsuario } from "@/lib/usuario";
+import { tentativaAtual } from "@/lib/prova";
 import { preencherUsuario } from "@/lib/usuario-template";
 
 export const metadata: Metadata = { title: "Início" };
@@ -24,6 +25,12 @@ export default async function HomePage({
     getCurriculo(),
     getConcluidas(),
   ]);
+
+  // 2ª CHAMADA LIBERADA E NÃO INICIADA. `attempt > 1` porque a primeira prova de todo mundo também
+  // nasceria `available` se um dia a criação mudasse, e um card de "segunda chamada" na home de quem
+  // nunca fez a prova seria mentira. O dado vem do banco, nunca da URL.
+  const tentativa = user ? await tentativaAtual(user.id) : null;
+  const segundaChamada = tentativa?.status === "available" && tentativa.attempt > 1;
 
   // Quais módulos ainda não abriram, e em quantos dias. O cartão travado mostra a espera em
   // vez de sumir: o aluno precisa ver que o curso continua, e quando.
@@ -52,7 +59,10 @@ export default async function HomePage({
 
   return (
     <HomeClient
-      html={preencherUsuario(fillHome(template, curriculo, concluidas, travados), user)}
+      html={preencherUsuario(
+        fillHome(template, curriculo, concluidas, travados, segundaChamada),
+        user,
+      )}
       // O cliente deixou de conhecer o currículo: recebe pronto o que precisaria calcular.
       destinos={curriculo.modulos.map((m) => href(curriculo.primeiraAulaDoModulo(m.idx)))}
       destinoAtual={href(curriculo.aulaAtual(concluidas))}

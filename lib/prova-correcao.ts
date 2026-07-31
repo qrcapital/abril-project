@@ -8,6 +8,42 @@ export const NOTA_MINIMA = 70; // por cento (PRD §7)
 
 // As alternativas aparecem rotuladas A..D na tela; no banco, `correta` é o índice 0..3.
 export const LETRAS = ["A", "B", "C", "D"] as const;
+
+/**
+ * Este aluno pode receber 2ª chamada?
+ *
+ * Só quem **entregou e reprovou**. As três recusas existem por motivos diferentes:
+ *
+ * - **sem tentativa**: não há o que refazer, e a primeira prova já está disponível para ele;
+ * - **tentativa em andamento ou liberada e não iniciada**: ele já tem uma prova aberta nas mãos, e
+ *   somar outra criaria duas tentativas válidas ao mesmo tempo;
+ * Nota **nula** numa tentativa entregue é anomalia (a correção grava a nota no mesmo update do
+ * envio), e aqui ela conta como não aprovado: dar outra chance a quem não tem nota registrada é o
+ * lado gentil do erro, e a tela de Alunos já sinaliza esse caso como "entregue, sem nota".
+ *
+ * - **aprovado**: e esta é a que morde de verdade. O porteiro do certificado (`foiAprovado`) olha a
+ *   tentativa MAIS RECENTE. Liberar 2ª chamada para quem passou trocaria a tentativa vigente por uma
+ *   sem nota, e o aluno **perderia o acesso ao certificado que já tinha** até refazer a prova. Uma
+ *   gentileza mal colocada viraria retirada de direito.
+ */
+export function podeSegundaChamada(
+  atual: { status: "available" | "in_progress" | "submitted"; nota: number | null } | null,
+): { ok: true } | { ok: false; motivo: string } {
+  if (!atual) return { ok: false, motivo: "Este aluno ainda não fez a prova." };
+  if (atual.status !== "submitted")
+    return { ok: false, motivo: "Este aluno já tem uma tentativa em aberto." };
+  // A FUNÇÃO recebe a nota crua e decide: quem chama não calcula "aprovado". A primeira versão pedia
+  // um booleano, e os dois chamadores o calcularam de formas diferentes (a tela pela coluna `score`, a
+  // rota recorrigindo o snapshot). O teste pegou a divergência na hora: a tela oferecia o botão e a
+  // rota liberava para um aluno aprovado. Uma regra, um lugar.
+  if (atual.nota !== null && atual.nota >= NOTA_MINIMA)
+    return {
+      ok: false,
+      motivo:
+        "Este aluno foi aprovado. Liberar outra tentativa tiraria o acesso ao certificado dele até refazer a prova.",
+    };
+  return { ok: true };
+}
 export type Letra = (typeof LETRAS)[number];
 
 export type QuestaoSnapshot = {

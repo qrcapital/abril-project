@@ -8,6 +8,54 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **O card de 2ª chamada na área do aluno** — 2026-07-31
+  - A liberação existia e era **invisível para o aluno**: o card da prova continuava dizendo
+    "desbloqueia com 16/16 aulas", e quem acabou de reprovar não tem motivo para clicar nele de novo. A
+    2ª chamada só chegava se o suporte dissesse "entra lá e clica" pelo WhatsApp. O PRD §5 já
+    especificava o card ("oculto até liberado pelo admin") e ele nunca havia sido construído.
+  - Aparece só quando existe tentativa `available` com `attempt > 1`, lida do banco. O `attempt > 1`
+    importa: um card de "segunda chamada" na home de quem nunca fez a prova seria mentira.
+  - Reaproveita a moldura do card da Prova Final em vez de inventar uma, porque é a mesma família
+    visual e o aluno já sabe o que aquele bloco significa. Injetado pelo `fillHome`, e não por edição
+    do HTML gerado, que o próximo porte apagaria.
+  - O clique é tratado por `data-segunda` e **antes** do card da prova: o texto dele casa com o mesmo
+    teste de "Prova" do outro card, e sem o atributo funcionaria por coincidência.
+  - Verificação do fluxo inteiro que o Pedro descreveu, com sessão de aluno e de admin: home sem card →
+    suporte libera → card aparece com a copy certa → o card leva às instruções → depois de iniciar, o
+    card **sai** da home e a prova volta a mandar para a questão.
+- **Liberar a 2ª chamada da prova, e a auditoria do admin** — 2026-07-31
+  - **A ação existia em dois textos nossos e em nenhuma linha de código.** A tela do aluno reprovado
+    manda "Solicitar 2ª chamada no WhatsApp", o e-mail de resultado diz que ela é liberada caso a caso,
+    o `lib/prova.ts` já era escrito para a tentativa 2 — e não havia botão nem script. O primeiro aluno
+    a reprovar em produção geraria um ticket sem resposta possível.
+  - **A liberação usa o estado `available`**, que o enum `exam_status` sempre teve e nunca foi usado:
+    ele significa exatamente "tem direito, não começou". Liberar insere a tentativa seguinte nesse
+    estado, e o `abrirTentativa` passou a **armá-la** (sorteio, snapshot e prazo) em vez de devolvê-la
+    vazia. Nenhuma coluna nova.
+  - **Isso obrigou a guardar três telas do aluno contra um estado que elas nunca viram.** O
+    `/app/prova` antes mandava qualquer tentativa não enviada para a questão 1, o que com a 2ª chamada
+    liberada seria uma questão de uma prova ainda não sorteada; o resultado e a questão agora devolvem
+    para as instruções, porque o cronômetro de 120 minutos nasce no "Iniciar prova" e não na liberação.
+  - **A regra de quem pode receber é pura**, com sete casos no `check:prova`. A recusa que importa não
+    é óbvia: liberar para quem **passou** trocaria a tentativa vigente por uma sem nota e o aluno
+    perderia o acesso ao certificado que já tinha, porque o porteiro olha a tentativa mais recente.
+  - **UM BUG MEU, ACHADO PELO TESTE E NÃO PELA LEITURA.** A primeira versão pedia um booleano
+    `aprovado`, e os dois chamadores o calcularam de formas diferentes: a tela pela coluna `score`, a
+    rota recorrigindo o snapshot. Resultado medido contra o banco: a tela oferecia o botão e a rota
+    **liberava** para um aluno aprovado. É o padrão que este repositório já documenta três vezes, duas
+    verdades sobre o mesmo fato divergindo em silêncio, e eu havia escrito um comentário dizendo que o
+    tinha evitado. Agora a função recebe a **nota crua** e decide sozinha; quem chama não calcula nada.
+  - **Auditoria (`admin_audit`, migration `0014`)**, que o `PLANO-ADMIN` §2 pedia desde 20/jul e três
+    telas empurraram com `console.log`. A liberação de 2ª chamada seria a quarta escrita sensível sobre
+    um rastro de retenção curta que ninguém consulta, e é a que mais precisa responder "quem liberou e
+    por quê" meses depois: o rastro guarda a nota que reprovou. O `autor_email` é congelado junto do
+    id, e o id é `on delete set null`: auditoria que desaparece com quem foi auditado não é auditoria.
+    O `auditar` não lança e continua logando no servidor, então o pior caso é o de antes.
+  - A rota de papel passou a auditar também, fechando o "TETO CONHECIDO" que estava anotado nela.
+  - Verificação contra o banco vivo: liberação para reprovado (attempt 2 em `available`, rastro
+    gravado), segundo clique recusado, aprovado com 90 e exatamente 70 recusados, 69 liberado, as três
+    telas do aluno checadas **pelo corpo servido** e não pelo status (a armadilha do `redirect()` com
+    streaming), e a semântica do UPDATE que arma a tentativa exercitada com a corrida de dois cliques.
 - **`{{codigo}}` nos e-mails, e a legenda de variáveis para quem escreve** — 2026-07-31
   - O código do certificado passou a ser variável do template `resultado-aprovado`, preenchida nos
     dois caminhos de aprovação a partir da emissão que acabou de acontecer. É o dado que um RH pede

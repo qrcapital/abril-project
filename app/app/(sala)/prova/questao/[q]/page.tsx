@@ -30,6 +30,9 @@ export default async function QuestaoPage({
   const t = await tentativaAtual(userId);
   if (!t) redirect("/app/prova");
   if (t.status === "submitted") redirect("/app/prova/resultado");
+  // 2ª chamada liberada e não iniciada: sem snapshot não há questão para mostrar, e o aluno precisa
+  // passar pelas instruções para o cronômetro começar.
+  if (t.status === "available") redirect("/app/prova");
 
   const total = t.questoes.length;
   const posicao = Number(q);

@@ -88,10 +88,19 @@ export async function tentativaAtual(userId: string): Promise<Tentativa | null> 
 /**
  * Abre a tentativa, ou devolve a que já existe (reentrada não reinicia, PRD §7).
  * O `deadline` nasce aqui, no banco, e é a única fonte do cronômetro.
+ *
+ * TRÊS ESTADOS, TRÊS COMPORTAMENTOS, e o do meio nasceu em 31/jul/2026 com a 2ª chamada:
+ *
+ * - **nenhuma tentativa**: sorteia e cria a primeira;
+ * - **tentativa `available`**: é a 2ª chamada que um admin liberou e o aluno ainda não começou. A
+ *   linha existe sem sorteio, então aqui ela é **armada** (sorteio, snapshot e prazo) em vez de
+ *   devolvida vazia. O `available` é o valor que o enum `exam_status` sempre teve e nunca usou: ele
+ *   existe exatamente para "tem direito, não começou";
+ * - **`in_progress` ou `submitted`**: devolve como está, que é o "reentrada não reinicia".
  */
 export async function abrirTentativa(userId: string): Promise<Tentativa> {
   const existente = await tentativaAtual(userId);
-  if (existente) return existente;
+  if (existente && existente.status !== "available") return existente;
 
   const db = createAdminClient();
 
@@ -141,18 +150,35 @@ export async function abrirTentativa(userId: string): Promise<Tentativa> {
 
   const agora = new Date();
   const deadline = new Date(agora.getTime() + MINUTOS * 60_000);
+  const inicio = {
+    status: "in_progress" as const,
+    started_at: agora.toISOString(),
+    deadline: deadline.toISOString(),
+    questions_snapshot: questoes,
+    answers: {},
+  };
+
+  // A 2ª chamada já tem linha: arma a que existe. O `.eq("status", "available")` é o mesmo guard de
+  // corrida do `enviar()`: se dois cliques em "Iniciar prova" chegarem juntos, o segundo não encontra
+  // linha para atualizar e cai na releitura, em vez de sortear uma prova nova por cima da primeira.
+  if (existente) {
+    const { data, error } = await db
+      .from("exams")
+      .update(inicio)
+      .eq("id", existente.id)
+      .eq("status", "available")
+      .select(COLUNAS)
+      .maybeSingle();
+    if (error) throw error;
+    if (data) return daLinha(data as LinhaExame);
+    const jaArmada = await tentativaAtual(userId);
+    if (jaArmada) return jaArmada;
+    throw new Error(`tentativa ${existente.id} desapareceu ao ser armada`);
+  }
 
   const { data, error } = await db
     .from("exams")
-    .insert({
-      user_id: userId,
-      attempt: 1,
-      status: "in_progress",
-      started_at: agora.toISOString(),
-      deadline: deadline.toISOString(),
-      questions_snapshot: questoes,
-      answers: {},
-    })
+    .insert({ user_id: userId, attempt: 1, ...inicio })
     .select(COLUNAS)
     .single();
 
@@ -164,6 +190,33 @@ export async function abrirTentativa(userId: string): Promise<Tentativa> {
     throw error;
   }
   return daLinha(data as LinhaExame);
+}
+
+/**
+ * Libera a 2ª chamada: cria a tentativa seguinte no estado `available` (PRD §7, "2ª chamada liberada
+ * por admin").
+ *
+ * A regra de QUEM pode receber é pura e mora no `lib/prova-correcao.ts`, para o check exercitar. Aqui
+ * fica o IO, e o `userId` vem do admin, não de sessão: é a única função deste módulo que age sobre
+ * outra pessoa.
+ *
+ * `attempt` é o último + 1, e a unique `(user_id, attempt)` é quem decide a corrida de dois cliques:
+ * o segundo insert falha e a função devolve `null`, sem criar uma terceira tentativa.
+ */
+export async function liberarSegundaChamada(
+  userId: string,
+): Promise<{ attempt: number } | null> {
+  const atual = await tentativaAtual(userId);
+  if (!atual) return null;
+
+  const db = createAdminClient();
+  const attempt = atual.attempt + 1;
+  const { error } = await db.from("exams").insert({ user_id: userId, attempt, status: "available" });
+  if (error) {
+    console.error(`[prova] nao deu para liberar 2a chamada de ${userId}:`, error.message);
+    return null;
+  }
+  return { attempt };
 }
 
 /**

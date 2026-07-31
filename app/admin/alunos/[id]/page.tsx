@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import ReenviarAcesso from "./ReenviarAcesso";
+import SegundaChamada from "./SegundaChamada";
 
 import {
   Cabecalho,
@@ -15,6 +16,7 @@ import {
   situacaoProva,
 } from "@/app/admin/_ui/tabela";
 import { ROTULO_ESTADO, estadoDaMatricula } from "@/lib/matricula-estado";
+import { podeSegundaChamada } from "@/lib/prova-correcao";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = { title: "Aluno" };
@@ -22,12 +24,18 @@ export const metadata: Metadata = { title: "Aluno" };
 /**
  * Detalhe do aluno (PLANO-ADMIN §4.3), somente leitura.
  *
- * Das AÇÕES do §4.3, **reenviar acesso saiu em 31/jul/2026**, quando a camada de envio passou a
- * existir: é a mais pedida no suporte ("não recebi o acesso") e a única cuja falta deixava o aluno
- * sem entrar no produto. As outras três (trocar e-mail, liberar 2ª chamada, revogar ou estender)
- * seguem fora, e não por dependência externa: o §2 pede auditoria para ação sensível, e a tela de
- * Equipe já abriu essa dívida com log de servidor. Somar mais três ações sobre o mesmo rastro fraco
- * é a hora errada.
+ * Das AÇÕES do §4.3, duas saíram em 31/jul/2026: **reenviar acesso**, a mais pedida no suporte, e
+ * **liberar 2ª chamada**, que era prometida em dois textos nossos (a tela do reprovado e o e-mail de
+ * resultado) e não existia em lugar nenhum — o primeiro aluno a reprovar em produção geraria um ticket
+ * sem resposta possível.
+ *
+ * A segunda destravou junto com a **auditoria** (`admin_audit`, migration `0014`), que o §2 pedia desde
+ * o plano e as três telas anteriores foram empurrando com `console.log`. Liberar tentativa de prova é
+ * decisão caso a caso sobre uma prova de tentativa única: é a ação que mais precisa responder "quem
+ * liberou e por quê" meses depois.
+ *
+ * **Trocar e-mail, revogar e estender acesso seguem fora**, agora por outro motivo: elas mexem em
+ * acesso pago, e o que falta ali é decisão de produto sobre o que fazer com a matrícula, não rastro.
  *
  * Aqui a leitura é MISTA de propósito: `aluno_modulos` é função da `0006`, porque agrupar por módulo
  * é agregação; o resto vem do PostgREST direto, porque é uma linha por tabela para um aluno só, e
@@ -90,6 +98,16 @@ export default async function Aluno({
 
   const mods = (modulos.data ?? []) as Modulo[];
   const exames = (provas.data ?? []) as Exame[];
+  // A última tentativa decide se a 2ª chamada pode ser liberada, e a decisão é da
+  // `podeSegundaChamada`: a tela passa dado cru e não calcula "aprovado". A primeira versão calculava
+  // aqui de um jeito e na rota de outro, e a tela oferecia o botão que a rota deveria recusar.
+  const ultima = exames[exames.length - 1];
+  const decisao = podeSegundaChamada(
+    ultima
+      ? { status: ultima.status as "available" | "in_progress" | "submitted", nota: ultima.score }
+      : null,
+  );
+
   const gate = mods.filter((m) => m.conta_no_gate);
   const feitasGate = gate.reduce((s, m) => s + m.concluidas, 0);
   const totalGate = gate.reduce((s, m) => s + m.total, 0);
@@ -227,10 +245,35 @@ export default async function Aluno({
             </table>
           </Quadro>
         )}
-        <p className="mt-3 max-w-2xl border-l-2 border-gold-soft pl-4 text-[12px] text-medio">
-          Somente leitura. As ações do aluno (reenviar acesso, trocar e-mail, liberar 2ª chamada,
-          revogar ou estender acesso) são da Fase 3 do <code>PLANO-ADMIN</code>, que depende do Guru
-          e do SES.
+        {/* A LIBERAÇÃO DE 2ª CHAMADA, que era promessa em dois textos nossos e não existia em lugar
+            nenhum: a tela do aluno reprovado manda pedir no WhatsApp e o e-mail diz que é liberada
+            caso a caso. A decisão de quem pode receber vem da `podeSegundaChamada`, a mesma que a
+            rota reconfere, e quando ela recusa a tela mostra o MOTIVO em vez de esconder o botão:
+            aqui, ao contrário da tela de Equipe, o motivo é a informação que o suporte precisa para
+            responder o aluno. */}
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          {decisao.ok ? (
+            <SegundaChamada
+              userId={user.id}
+              nome={perfil.data?.nome || user.email || "Este aluno"}
+              nota={ultima?.score ?? null}
+            />
+          ) : (
+            <p className="max-w-2xl border-l-2 border-areia pl-3 text-[12px] text-medio">
+              <strong>2ª chamada:</strong> {decisao.motivo}
+            </p>
+          )}
+          {ok === "segunda-chamada" && (
+            <span className="text-[12px] text-sucesso">
+              Tentativa liberada. O aluno recomeça pelas instruções, com sorteio novo.
+            </span>
+          )}
+        </div>
+
+        <p className="mt-4 max-w-2xl border-l-2 border-gold-soft pl-4 text-[12px] text-medio">
+          As outras ações do aluno (trocar e-mail, revogar ou estender acesso) seguem fora: elas
+          mexem em acesso pago e o <code>PLANO-ADMIN</code> §2 pede rastro, que agora existe
+          (<code>admin_audit</code>) mas ainda não tem tela para consultar.
         </p>
       </section>
     </>

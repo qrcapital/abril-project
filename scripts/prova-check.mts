@@ -16,6 +16,7 @@ import {
   NOTA_MINIMA,
   TOTAL_QUESTOES,
   corrigir,
+  podeSegundaChamada,
   formatarTempo,
   fraseEmBranco,
   restanteMs,
@@ -335,6 +336,49 @@ const QUESTAO = tela("prova-questao");
   }
   assert.equal(trechoEmBranco(1), "1 questão em branco", "singular");
   assert.equal(trechoEmBranco(3), "3 questões em branco");
+}
+
+// ============================================================
+// Quem pode receber 2a chamada (lib/prova-correcao.ts)
+// ============================================================
+{
+  assert.equal(podeSegundaChamada({ status: "submitted", nota: 20 }).ok, true);
+  assert.equal(
+    podeSegundaChamada({ status: "submitted", nota: NOTA_MINIMA - 1 }).ok,
+    true,
+    "um ponto abaixo do corte e reprovado e pode refazer",
+  );
+  assert.equal(
+    podeSegundaChamada({ status: "submitted", nota: null }).ok,
+    true,
+    "entregue sem nota e anomalia: contar como reprovado e o lado gentil do erro",
+  );
+
+  assert.equal(podeSegundaChamada(null).ok, false, "sem tentativa nao ha o que refazer");
+  assert.equal(
+    podeSegundaChamada({ status: "in_progress", nota: null }).ok,
+    false,
+    "prova em andamento: somar outra daria duas tentativas validas ao mesmo tempo",
+  );
+  assert.equal(
+    podeSegundaChamada({ status: "available", nota: null }).ok,
+    false,
+    "2a chamada ja liberada e nao iniciada nao ganha uma terceira",
+  );
+  assert.equal(
+    podeSegundaChamada({ status: "submitted", nota: NOTA_MINIMA }).ok,
+    false,
+    "exatamente na nota de corte esta aprovado, e liberar tiraria o certificado dele",
+  );
+  // A que morde: o porteiro do certificado olha a tentativa MAIS RECENTE, entao liberar para quem
+  // passou tiraria o acesso ao certificado que ele ja tinha.
+  const aprovado = podeSegundaChamada({ status: "submitted", nota: 90 });
+  assert.equal(aprovado.ok, false);
+  assert.match(
+    aprovado.ok === false ? aprovado.motivo : "",
+    /certificado/,
+    "a recusa tem que dizer o motivo real: o aluno perderia o certificado",
+  );
 }
 
 // ============================================================

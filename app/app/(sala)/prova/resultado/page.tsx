@@ -27,6 +27,9 @@ export default async function ResultadoPage() {
 
   const t = await tentativaAtual(userId);
   if (!t) redirect("/app/prova");
+  // Com 2ª chamada liberada e não iniciada, a tentativa vigente não tem nota nem questões: o lugar
+  // dele é a tela de instruções, não a questão 1 de uma prova que ainda não foi sorteada.
+  if (t.status === "available") redirect("/app/prova");
   if (t.status !== "submitted") redirect("/app/prova/questao/1");
 
   const c = corrigir(t.questoes, t.respostas);

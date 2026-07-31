@@ -38,7 +38,7 @@ Estratégia homolog-first: antes de produção, um ambiente de homologação na 
 | Checkout Guru | sandbox / produto de teste | real |
 | Panda Video | vídeos de teste | reais |
 | SMTP do Supabase Auth (reset de senha, convite) | **Resend** configurado em 28/jul/2026, remetente de teste `onboarding@resend.dev`, entrega validada de ponta a ponta | a decidir junto com o domínio: pode continuar Resend com domínio verificado, ou passar para o SES |
-| Envio dos transacionais nossos (`lib/email.ts`) | **Resend por HTTP desde 31/jul/2026**, a mesma conta do SMTP acima. Precisa de `RESEND_API_KEY` no ambiente; sem ela o envio falha e a tentativa fica registrada em `email_log` | a decidir junto com o domínio: continuar Resend ou passar para o SES |
+| Envio dos transacionais nossos (`lib/email.ts`) | **Resend por HTTP desde 31/jul/2026**, a mesma conta do SMTP acima. Precisa de `RESEND_API_KEY` no ambiente; sem ela o envio falha e a tentativa fica registrada em `email_log`. **ATENÇÃO, medido em 31/jul: com o remetente de teste `onboarding@resend.dev` o Resend só entrega para o e-mail do dono da conta** (403 `validation_error` para qualquer outro destinatário). Em homolog, isso significa que só o Pedro recebe | a decidir junto com o domínio: continuar Resend ou passar para o SES |
 | Amazon SES | ainda não configurado, e **nada depende dele** | produção, domínio com reputação, SPF/DKIM/DMARC. A troca é uma chamada em `lib/email.ts`, mais o SDK da AWS (SigV4) |
 | WhatsApp | mesmo link de suporte | mesmo link de suporte |
 

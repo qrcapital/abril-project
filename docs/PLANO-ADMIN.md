@@ -52,8 +52,17 @@ _Rascunho para aprovação — 2026-07-20._
   resto (os dados que o painel mostra) é que vai pela service role.
 - Todas as leituras/escritas do admin passam pelo cliente **service role** apenas em
   rotas de servidor (nunca no browser), respeitando as políticas.
-- Ações sensíveis (revogar acesso, reenviar) registram quem fez e quando (auditoria
-  simples — coluna/《log》a definir).
+- Ações sensíveis registram quem fez e quando. **Definido em 31/jul/2026: a tabela `admin_audit`**
+  (migration `0014`), com autor, ação, alvo, `detalhe` em jsonb e data. Escrita só pela service role,
+  depois da checagem de papel da rota; RLS ligada e sem policy, então para anon e authenticated ela não
+  existe. O `autor_email` é congelado junto do id, e o id é `on delete set null`, porque auditoria que
+  desaparece com quem foi auditado não é auditoria.
+
+  Ficou "a definir" por três levas (papel de admin, apagar aula, apagar questão), todas resolvendo com
+  `console.log`, cujo teto estava anotado na rota de papel: log de servidor tem retenção curta e
+  ninguém consulta de propósito. A liberação de 2ª chamada foi a quarta, e a que mais pede rastro:
+  devolver a alguém o direito de refazer uma prova de tentativa única é decisão caso a caso de uma
+  pessoa. **Ainda não há tela para consultar o rastro** — hoje se lê por SQL.
 
 ## 3. Casca (layout do admin)
 

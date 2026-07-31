@@ -210,7 +210,7 @@ A home é uma **vitrine** (padrão validado na auditoria do CCA/Cademi), não um
 | Banner de retomada | Aparece só quando há progresso; aponta para a última aula não concluída |
 | Contador do módulo | X/N aulas concluídas; ✓ quando N/N |
 | Prova Final | Card sempre visível como meta, bloqueado até 16/16 aulas avaliadas concluídas |
-| Card de 2ª chamada | Oculto por padrão; renderiza apenas se o admin liberou a tentativa 2 para aquele aluno |
+| Card de 2ª chamada | **Construído em 31/jul/2026.** Oculto por padrão; renderiza quando existe tentativa `available` com `attempt > 1` para aquele aluno, e sai da home quando ele inicia. Leva direto às instruções, onde o cronômetro começa |
 | Módulo 0 | Conta como concluído com sua única aula (primeiro ✓ fácil), não entra no gate de 16/16 |
 
 ### Edge cases
@@ -283,7 +283,7 @@ Prova única, reprobatória, que cobre os quatro módulos. Instruções com ciê
 | Duração | 120 minutos, cronômetro na tela |
 | Início da contagem | Ao iniciar, grava `deadline` = agora + 120 min |
 | Desbloqueio | 16/16 aulas avaliadas concluídas |
-| Tentativas | 1 (attempt único). 2ª chamada liberada por admin |
+| Tentativas | 1 (attempt único). 2ª chamada liberada por admin **em `/admin/alunos/[id]` desde 31/jul/2026**, e só para quem entregou e reprovou: liberar para aprovado trocaria a tentativa vigente por uma sem nota e o aluno perderia o acesso ao certificado que já tinha. A tentativa nasce em `available` e é sorteada quando ele clica em Iniciar; toda liberação fica em `admin_audit`, com a nota que reprovou |
 | Submissão após deadline | Corrige apenas o que foi respondido |
 | Pós-2ª reprovação | Caso a caso pelo suporte, sem fluxo automático |
 | Snapshot | As 20 questões sorteadas para a tentativa são gravadas (`questions_snapshot`), para corrigir e auditar sempre contra o que o aluno viu |
@@ -296,7 +296,7 @@ Prova única, reprobatória, que cobre os quatro módulos. Instruções com ciê
 - **Deadline estoura sem envio**: cron de verificação corrige o respondido e registra o resultado (ver seção 12).
 - **Aluno fecha na tela de instruções**: nada é gravado; ainda não iniciou.
 - **Empate na nota de corte (exatamente 70%)**: aprova (≥ 70%).
-- **Admin libera 2ª chamada**: novo attempt disponível, novo snapshot de questões.
+- **Admin libera 2ª chamada**: novo attempt em `available`, com **sorteio novo** de questões no momento em que o aluno inicia. A tentativa anterior fica no histórico, e é isso que preserva o registro de que houve reprovação.
 
 ### Pontos a definir
 

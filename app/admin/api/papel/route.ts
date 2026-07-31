@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { papelAtual } from "@/lib/admin";
+import { auditar } from "@/lib/auditoria";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -125,17 +126,16 @@ export async function POST(req: NextRequest) {
     return voltar(req, { q, erro: "A gravação não teve efeito. Nada foi alterado." });
   }
 
-  // AUDITORIA, versão mínima: o §2 do PLANO-ADMIN pede registro de quem fez e quando para ações
-  // sensíveis, e não existe tabela de log no schema. Isto vai para o log do servidor (no Netlify,
-  // o log da função), que é um rastro de verdade e custa zero migração.
-  //
-  // TETO CONHECIDO: log de servidor tem retenção curta e ninguém consulta de propósito. Se a
-  // operação crescer, o caminho é uma tabela `admin_audit`, que é decisão do Pedro e não foi
-  // pedida aqui. O §8 dizia que auditoria podia esperar porque a Fase 1 só leria; esta tela
-  // mudou essa premissa, e o `PLANO-ADMIN` registra a mudança.
-  console.log(
-    `[admin] ${autor.email} ${promover ? "promoveu" : "revogou"} is_admin de ${alvo}`,
-  );
+  // AUDITORIA. O teto que estava anotado aqui (log de servidor, retenção curta, ninguém consulta)
+  // caiu em 31/jul/2026, quando a liberação de 2ª chamada virou a quarta escrita sensível e a tabela
+  // `admin_audit` foi criada (migration `0014`). O `auditar` continua logando no servidor além de
+  // gravar, então o pior caso é o de antes.
+  await auditar(db, {
+    autor,
+    acao: promover ? "papel.promover" : "papel.revogar",
+    alvo,
+    detalhe: { email: linha?.email ?? null, era_mestre: linha?.is_master ?? false },
+  });
 
   return voltar(req, { q, ok: promover ? "promovido" : "revogado" });
 }
