@@ -1,87 +1,57 @@
 ---
 name: lp-abril-estado-e-pendencias
-description: Estado e ponto de retomada do Abril (Estrategia Internacional) - ultima sessao 30/jul, fila de codigo vazia; ler o bloco PROXIMA SESSAO do docs/PENDENCIAS-LP.md antes de qualquer coisa.
+description: Estado e ponto de retomada do Abril (Estratégia Internacional) — última sessão 30/jul, o admin subiu com 5 telas; ler o bloco PRÓXIMA SESSÃO do docs/PENDENCIAS-LP.md antes de qualquer coisa.
 metadata: 
   node_type: memory
   type: project
   originSessionId: 4b72866b-75a2-4ccb-9364-0b22495f53bd
-  modified: 2026-07-26T02:04:57.735Z
+  modified: 2026-07-31T00:39:39.664Z
 ---
 
-Estado da **LP Estratégia Internacional** (repo `C:\Users\pedro\Claude\abril-estrategia-internacional`, branch `homolog`) após a sessão de **21/jul/2026 (noite)**. Ver [[critique-lp-abril]], [[estado-abril-plataforma]], [[projeto-abril-estrategia-internacional]], [[copy-md-obrigatorio]].
+Estado da **Estratégia Internacional**. Repo em **`~/projects/abril-project`** no MacBook, branch `homolog` (o caminho antigo do Windows, `C:\Users\pedro\Claude\abril-estrategia-internacional`, não existe mais — ver [[ambiente-mac-abril]]). Ver [[critique-lp-abril]], [[estado-abril-plataforma]], [[projeto-abril-estrategia-internacional]], [[copy-md-obrigatorio]].
+
+O corpo abaixo está em ordem cronológica **inversa**: o ponto de retomada é o próximo bloco, e o que vem depois é histórico de sessões anteriores, que só interessa se algo antigo voltar à tona.
 
 **MIGRAÇÃO DE MÁQUINA (25/jul/2026):** o Pedro comprou um MacBook e vai **transferir o desenvolvimento deste projeto do Windows para lá**. Foi criado o **`docs/HANDOFF.md`** (commit `712b0cb` em `homolog`, pushado), documento de continuidade que consolida tudo desta nota e mais: o que não vem no `git clone`, setup no macOS, armadilhas e decisões fechadas. **Ao trabalhar neste projeto em qualquer máquina, ler o `docs/HANDOFF.md` primeiro** — o `AGENTS.md` já aponta para ele. As memórias do Abril foram copiadas para **`docs/memoria-claude/`** (viajam no git; o README de lá tem o procedimento de reinstalação no Mac) e o `COPY.md` virou `docs/COPY.md`, versionado. Fora do git e a transferir na mão: `.env.local` (recriar do dashboard Supabase) e os insumos brutos de `referencias/cowork/` (~9 MB; um arquivo tem marca d'água Dreamstime, não commitar em bloco). **Os geradores do globo e o `checkpoint-canvas/` do scratchpad já foram apagados pelo sistema, não existem mais em lugar nenhum** — os dados de saída seguem versionados em `scripts/globo-*.txt`.
 
-**PONTO DE RETOMADA (30/jul/2026, fim da sessão — repo em `~/projects/abril-project`):**
+**PONTO DE RETOMADA (30/jul/2026, fim da sessão — repo em `~/projects/abril-project`, branch
+`homolog`):**
 
-Comece pelo bloco **"▶ PRÓXIMA SESSÃO"** no topo do `docs/PENDENCIAS-LP.md`. Não recontar
-história: ler o bloco e ir para o trabalho.
+Comece pelo bloco **"▶ PRÓXIMA SESSÃO"** do `docs/PENDENCIAS-LP.md`, remontado em 30/jul e enxugado
+de propósito. **Não recontar história**: ler o bloco e ir para o trabalho. O histórico está no
+`CHANGELOG.md`.
 
-**A fila de código voltou a ter trabalho: o ADMIN começou em 30/jul.** As duas tarefas antigas
-saíram (a **16**, rotina da prova abandonada, e a **17**, diálogo de envio e grade), e depois
-disso o Pedro **destravou a 18** decidindo as quatro perguntas do `PLANO-ADMIN.md` §8: porta única
-em `/app/login` com redirect por papel, **404** para não-admin logado, a conta dele como primeiro
-admin, e **dados reais em vez de mock** (as Fases 1 e 2 do plano colapsaram numa só, porque a
-tabela de fases foi escrita antes de o Supabase existir). Já de pé: `app/admin/` com guarda,
-sidebar e Painel de quatro cards reais.
+**O admin saiu do zero nesta sessão e está no ar em homolog**, com cinco telas: casca, Painel,
+Alunos, Detalhe do aluno e Equipe. Faltam Questões, Conteúdo e E-mails.
 
-**Três coisas dessa sessão que não estavam em documento nenhum:** (1) o banco tinha **zero
-admins**, e depois da `0003` só a service role concede o papel — resolvido por
-`scripts/admin-conta.mjs`, que **tem que rodar no `ei-prod`** ou o `/admin` de produção sobe
-inacessível; (2) o **`app/globals.css` que o `AGENTS.md` manda usar nunca existiu**, e o admin é o
-primeiro lugar do projeto onde o Tailwind roda de fato (tokens em `app/admin/admin.css`); (3) a
-armadilha do `redirect()` sair como 200 vale **só com streaming já iniciado** — na primeira linha
-de um layout é 307 de verdade, medido.
+**Estado do git:** árvore limpa, três commits pushados em 30/jul — `964bd80` (escalada de
+privilégio), `8b22869` (casca, Painel, Equipe, admin mestre) e `1bb23d9` (Alunos e detalhe).
+`build`, `lint`, `check` (6/6), `check:rls` e `check:mestre` passando.
 
-**Alunos e detalhe do aluno saíram em 30/jul** (§4.2 e §4.3, migration `0006`), somente leitura. A
-decisão de projeto dessa fatia: **o estado de acesso não é calculado em SQL** — a função devolve
-`status` e `expires_at` crus, e a tradução é a MESMA `estadoDaMatricula` que a guarda do aluno usa,
-extraída para `lib/matricula-estado.ts` com `npm run check:matricula`. Duas verdades sobre quem tem
-acesso apareceriam no suporte, não no build.
+**Migrations `0003` a `0006` aplicadas no `ei-homolog`** por `psql`, que vive em
+`/usr/local/opt/libpq/bin/psql` (fora do PATH). A conta `pedrohfontei@gmail.com` é **admin mestre**
+e tem a senha de teste conhecida em homolog.
 
-**A tela achou um problema no primeiro carregamento:** as 9 matrículas do homolog estão com
-`liberacao_total = true`, o que desliga a esteira semanal para todo mundo. Não revertido, porque
-pode ter sido deliberado para teste e muda o que os stakeholders veem. Pendência do Pedro.
+**Cinco coisas desta sessão que mudam como trabalhar aqui:**
 
-**Restam do admin:** Questões (§4.4, só significa algo depois das ~100 questões) e E-mails (§4.5,
-`email_log` vazio até o SES). Dele: as três decisões do §4.6, o banco de ~100
-questões (a prova hoje roda sobre
-24 `[EXEMPLO]`, e dois sorteios repetem 19 das 20), o template Invite user e a política de senha
-no painel do Supabase.
+1. **`npm run build` com o `next dev` de pé TRAVA o dev server** — e o sintoma chega como defeito de
+   produto. Ver [[dev-server-so-em-localhost]], que ganhou essa segunda seção.
+2. **Route handler não passa por layout.** Guarda em layout não protege endpoint, e com escrita por
+   service role o trigger do banco também não. Rota nova sob `app/admin/` refaz a checagem de papel.
+   É a **quarta** repetição do padrão "o guarda de um caminho não guarda o vizinho" —
+   ver [[abril-escalada-is-admin]].
+3. **Lógica que precisa de self-check não pode morar no módulo que importa Supabase**, porque
+   `next/headers` não roda em node puro. Daí os pares `prova-correcao`/`prova`,
+   `usuario-template`/`usuario` e `matricula-estado`/`matricula`.
+4. **O Tailwind só roda no admin.** O `app/globals.css` que o `AGENTS.md` mandava usar **nunca
+   existiu**; os tokens do Meridiano vivem em `app/admin/admin.css`.
+5. **Dois níveis de admin** (mestre e comum). O primeiro admin de cada ambiente nasce de
+   `scripts/admin-conta.mjs --mestre`, senão o `/admin` sobe inacessível — item 7 do `AMBIENTES.md`.
 
-**Duas armadilhas de ambiente que custaram tempo em 30/jul, as duas com o mesmo formato — o erro
-apontava para a causa errada:**
-
-- **O dev server só funciona em `localhost:3000`.** Por `127.0.0.1:3000` o Next bloqueia os
-  recursos de dev por cross-origin e a **hidratação morre em silêncio**: a página renderiza, os
-  chunks carregam, o console fica limpo, e nenhum `useEffect` roda. Na tela de login isso aparece
-  como os valores de exemplo do design (`pedro@email.com`) permanecendo nos campos, e clicar em
-  ENTRAR não faz nada, sem caixa de erro. O aviso está na **primeira linha** do output do dev
-  server. Medir em um comando: procurar chaves `__react` subindo a árvore a partir de um input;
-  nenhuma significa que não hidratou. Cuidado com um falso positivo: `nextjs-portal` existe
-  sempre em dev, não indica erro.
-- **A extensão do Chrome não pareia até reiniciar o Chrome por completo.** Clicar no ícone,
-  recarregar a extensão e conferir o login não resolvem.
-
-**Preparo de teste da área do aluno** (só homolog, e está na lista da tarefa 10 para remover
-antes do go-live): a conta `testinhos@joao.com.br` está com senha `Admin123`, matrícula ativa com
-`liberacao_total`, 17/17 de progresso e uma tentativa de prova **já enviada** (`submitted`, nota
-20, 17 respondidas e 3 em branco). O Pedro confirmou o envio no fim da sessão, o que exercitou o
-último caminho que faltava do diálogo: botão virando "Enviando..." e a tela de resultado.
-**Consequência para quem for testar a prova de novo:** `/app/prova` agora redireciona esta conta
-para `/app/prova/resultado`, porque a tentativa é única. Para reabrir, apagar a linha de `exams`
-desta conta (é o que o `scripts/aprovar-conta.mjs` faz antes de gravar a dele). O progresso se
-marca com `scripts/progresso-conta.mjs <email> --tudo`.
-
-**Estado do git (29/jul, fim do dia):** três commits em `homolog`, **todos pushados e no ar**.
-`f22e297` (tarefas 1 e 2), **`33f6469`** (camada de feedback inteira) e **`ecafa52`** (acesso por
-matrícula, liberação gradual, progresso e currículo no banco). Deploy conferido em
-https://abril-project.netlify.app. Árvore limpa, `build`, `lint` e `check` (5/5) passando.
-
-**Estado do git (30/jul):** a leva de hoje foi commitada e pushada em `homolog` com as tarefas 16
-e 17 juntas, mais os documentos. A cópia desta memória em `docs/memoria-claude/` sempre fica um
-passo atrás por construção, porque é atualizada depois do commit; se ela aparecer modificada na
-árvore, é isso, e vai junto no commit seguinte.
+**Pendente do Pedro, e a primeira trava construção nova:** as **três decisões do §4.6** (tela de
+conteúdo), o que fazer com **`liberacao_total = true` nas 9 matrículas do homolog** (achado pela
+tela de Alunos; desliga a esteira semanal para todo mundo), as **~100 questões** (13), o template
+**Invite user** (3), se quer **tabela de auditoria** no admin, e a URL do checkout do Guru.
 
 **O que a sessão de 29/jul fez.** Fechou as tarefas 1, 2, 3b, 4, 5, 6, 7, 8, 9, 10, 12, metade
 da 11, e depois **14 e 15** inteiras. Mais duas frentes que o Pedro abriu no caminho: o
@@ -109,11 +79,9 @@ reembolso dentro da janela de arrependimento.
 claro `#F7F5F2`), então todo padrão nasce com dois pares; e caixa de mensagem se pinta **no
 DOM**, nunca em JSX irmão do HTML injetado, senão vai parar no fim da página.
 
-**A fila válida agora** é o bloco "▶ PRÓXIMA SESSÃO" do `PENDENCIAS-LP.md`. Este parágrafo
-descrevia o estado de 29/jul, quando **16** e **17** ainda estavam abertas; as duas saíram em
-30/jul e **não sobrou código desbloqueado** — ver o PONTO DE RETOMADA no topo. Do lado do Pedro
-segue: **18** (acesso de admin, única que trava construção nova), 3, 20, 13, as três decisões da
-tela de conteúdo, e os insumos que faltam (URL do checkout, vídeos e materiais reais).
+**A fila válida agora** é o bloco "▶ PRÓXIMA SESSÃO" do `PENDENCIAS-LP.md`. De código sobraram as
+três telas de admin (Conteúdo, E-mails, Questões); as duas tarefas antigas de código, **16** e
+**17**, saíram em 30/jul, e a **18** foi destravada e construída.
 
 **Correção do signup (29/jul), para não reabrir:** o `upsert` em `profiles` não devolvia mais
 "uma linha de tratamento", como a pendência estimava. Só capturar o erro deixaria a conta pela

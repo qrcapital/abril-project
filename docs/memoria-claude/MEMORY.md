@@ -1,13 +1,27 @@
+- [Escopo e estado do projeto de sites i-Educar](projeto-sites-ieducar-escopo.md) — Hotsite pronto; próximo passo é o kickoff da Central de Documentos.
+- [Método de verificação nos sites i-Educar](metodo-verificacao-ieducar.md) — como medir fidelidade, copy e aderência ao design system.
+- [Ganho concreto antes de infraestrutura](ganho-antes-de-infraestrutura.md) — ele pergunta "qual o ganho?"; se for só futuro, adiar em vez de construir.
+- [Apresentar visualmente, sempre](apresentar-visualmente-sempre.md) — decisão de design se toma vendo espécime em tamanho real, não lendo hex.
+- [Copy do wireframe é imutável](copy-wireframe-imutavel.md) — nos sites i-Educar/Portábilis, nunca reescrever texto aprovado; sinalizar problemas em documento.
+- [O que portabilis.com.br usa de fato](marca-portabilis-site-oficial.md) — Livvic nos títulos, tertiary-800 como cor de título, botão pílula de 40px.
+- [Presets - Colors complementa o design system](presets-colors-complementa-design-system.md) — checar sempre os dois ao verificar cor; têm a mesma importância.
+- [Atualizações vão no PRD e no LEIA-ME](atualizacoes-vao-no-prd-e-leiame.md) — tudo que é relevante ao revisor entra nos dois documentos, sempre; sincronizar a cópia da entrega.
+- [Armadilhas do Astro 5 SSR](astro-segredos-e-origem.md) — segredo inlined pelo import.meta.env, e o 403 em todo POST sem security.allowedDomains.
+- [position: relative quebra o &lt;dialog&gt;](dialog-position-relative.md) — modal some do viewport, backdrop aparece, console limpo.
+- [Task "claude bt": conta Claude API da empresa](task-claude-bt-conta-api-empresa.md) — CONCLUÍDA 30/07; a chave vive em `btcc_api_key`, e sobraram 4 pontas soltas (limite de gasto, revogar a antiga, chave em texto puro, 3 cópias do plugin).
+- [Matérias duplicadas no BT Command](duplicacao-materias-bt-command.md) — adiado; NÃO é o cron (100 eventos conferidos), é dedup no nível do fato.
+- [Escalada de is_admin no Abril](abril-escalada-is-admin.md) — CONSERTADO pela 0003; a lição é padrão, não incidente: linha não restringe coluna. Traz o psql em /usr/local/opt/libpq/bin.
+- [Extensão do Chrome precisa de restart](chrome-extension-precisa-restart.md) — lista de browsers vazia só volta reiniciando o Chrome; clicar no ícone não resolve.
+- [Dev server do Abril só em localhost](dev-server-so-em-localhost.md) — por 127.0.0.1 a hidratação morre calada; ler o log do dev server antes de formular hipótese.
 - [Projeto Abril — Estratégia Internacional](projeto-abril-estrategia-internacional.md) — LP + área de membros de curso; copy livre e HTML manda sobre wireframe.
-- [Estado e retomada da LP do Abril](lp-abril-estado-e-pendencias.md) — PONTO DE RETOMADA (30/jul): fila de código VAZIA, tarefas 16 e 17 fechadas; o que resta trava na 18 (acesso de admin).
-- [Estado da plataforma Abril](estado-abril-plataforma.md) — área do aluno + auth no ar em homolog e o que falta.
-- [E-mail de boas-vindas: 3 pendências de lançamento](email-boas-vindas-antes-do-lancamento.md) — invisíveis em homolog (o `?s=primeiro` pula o e-mail); puxar na rodada pré-produção.
+- [Estado e retomada da LP do Abril](lp-abril-estado-e-pendencias.md) — RETOMADA de 31/jul: fila no bloco "▶ PRÓXIMA SESSÃO" do docs/PENDENCIAS-LP.md. O admin subiu com 5 telas; faltam Conteúdo, E-mails e Questões. Não recontar história.
+- [Estado da plataforma Abril](estado-abril-plataforma.md) — área do aluno + auth no ar em homolog; DESATUALIZADA (não conhece o admin nem prova/senha/currículo), conferir no HANDOFF.md.
+- [Commit e push só com ordem do Pedro](commit-push-so-com-ordem.md) — push em homolog publica; preparar tudo e aguardar a ordem.
+- [Ambiente do Abril no MacBook](ambiente-mac-abril.md) — fnm + Node 22, repo em ~/projects/abril-project, identidade local Pedro Teixeira; Mac Intel.
 - [Cor semântica tem um valor por fundo](cor-semantica-por-fundo.md) — nenhum verde passa AA no claro e no escuro; medir nos dois antes de nomear o token.
+- [COPY.md é obrigatório em todo copy](copy-md-obrigatorio.md) — rodar o checklist anti-slop no texto FINAL, não no rascunho.
 - [Pendências da LP do Abril](pendencias-lp-abril.md) — checklist em docs/PENDENCIAS-LP.md; puxar quando o Pedro perguntar as pendências.
 - [Critique de slop da LP do Abril](critique-lp-abril.md) — LP sem slop (33/40); backlog de fixes por localização.
-- [COPY.md é obrigatório em todo copy](copy-md-obrigatorio.md) — rodar o checklist anti-slop no texto FINAL, não no rascunho.
-- [Ambiente do Abril no MacBook](ambiente-mac-abril.md) — fnm + Node 22, repo em ~/projects/abril-project, identidade local Pedro Teixeira; Mac Intel.
-- [Commit e push só com ordem do Pedro](commit-push-so-com-ordem.md) — push em homolog publica; preparar tudo e aguardar a ordem.
+- [E-mail de boas-vindas: 3 pendências de lançamento](email-boas-vindas-antes-do-lancamento.md) — invisíveis em homolog (o `?s=primeiro` pula o e-mail); puxar na rodada pré-produção.
 - [Skills neste projeto: só a impeccable](skills-no-projeto-abril.md) — as taste skills ficam no perfil, para outros projetos; aqui brigam com o Meridiano.
 - [Churn do package-lock no npm 10.9](lock-churn-npm-libc.md) — npm install remove campos libc; reverter, não commitar. Corrige a seção 5 do HANDOFF.
-- [Dev server só em localhost](dev-server-so-em-localhost.md) — por 127.0.0.1 a hidratação morre calada; ler o output do dev server antes de formular hipótese.
