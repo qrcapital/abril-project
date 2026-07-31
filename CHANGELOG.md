@@ -8,6 +8,147 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **Admin mestre: dois níveis de admin** — 2026-07-30
+  - Pedido pelo Pedro depois de testar dar e revogar acesso: um **admin mestre**, e os outros
+    admins fazem tudo menos mexer no acesso dele. `PLANO-ADMIN` §4.7.1.
+  - **`supabase/migrations/0005_admin_mestre.sql`**: coluna `profiles.is_master`, função
+    `is_master()`, CHECK `profiles_master_implica_admin`, e o trigger `guarda_is_admin` da `0003`
+    reescrito para conhecer os dois níveis.
+  - **Coluna nova e não um enum `papel`:** `is_admin()` sustenta dez policies de RLS e o trigger;
+    trocar por enum obrigaria a reescrever a função e revalidar as dez, com risco alto e ganho
+    nenhum.
+  - **No código `papel` continua `"admin"` para os dois níveis**, com `mestre` num campo à parte.
+    Se mestre virasse um valor de `papel`, toda checagem na forma `papel !== "admin"` passaria a
+    trancar justamente o mestre para fora, e a guarda do layout do admin é uma dessas.
+  - **"Mestre implica admin" é CHECK no banco**, porque `(is_master=true, is_admin=false)` seria um
+    estado em que o mestre não entra no painel e ninguém consegue mexer nele. Descoberto ao testar
+    que o CHECK também vale como segunda camada: rebaixar um mestre sem limpar `is_master` falha
+    sozinho.
+  - **`npm run check:mestre`** (`scripts/mestre-check.sql` + wrapper em node): 7 asserções contra o
+    banco, em transação desfeita, com a sessão forjada via `request.jwt.claims` — redefinir
+    `auth.uid()` não é possível, a conexão não é dona do schema `auth`. Não fixa e-mail: pega três
+    perfis quaisquer, então roda em qualquer ambiente.
+  - **A asserção que faltava, e que só apareceu porque o teste foi escrito antes de dar por
+    pronto:** o ataque real limpa `is_admin` e `is_master` na MESMA instrução, que é a forma que a
+    própria rota usa para revogar. Sem ela o check passava com o caminho aberto, porque o CHECK do
+    banco só barra quando `is_master` fica pendurado sozinho.
+  - **O check foi rodado contra a versão antiga do trigger e ACUSOU** (admin comum derrubava o
+    mestre), então tem dentes. Duas asserções afirmam o que o admin comum **precisa** continuar
+    podendo, senão "consertar" apertando tudo passaria no teste e quebraria o produto.
+  - Duas correções minhas no caminho: um `\echo` que imprimia "passou" mesmo com a transação
+    abortada, e o wrapper do `psql` que aceitava a string `"psql"` sem checar nada e escolhia um
+    binário inexistente (`existsSync` não resolve PATH).
+
+- **Admin: tela de Equipe, com busca por e-mail e concessão do papel de admin** — 2026-07-30
+  - Pedido pelo Pedro no mesmo dia da casca: **um admin pode dar admin a outros**, com busca por
+    e-mail. Escopo novo, registrado como `PLANO-ADMIN` §4.7. Do segundo admin em diante é por
+    aqui; o primeiro de cada ambiente continua nascendo do script, porque num banco sem admin
+    nenhum não há quem entre para criar o primeiro.
+  - **`supabase/migrations/0004_buscar_usuarios.sql`**: `buscar_usuarios(termo, limite)` e
+    `listar_admins()`. Existem porque o e-mail vive em `auth.users`, schema que o PostgREST não
+    expõe, e `profiles` não guarda e-mail; sem elas a busca seria `listUsers()` trazendo o banco
+    em páginas de 1000 para achar uma linha. Termo vazio devolve **zero** linhas de propósito:
+    "sem filtro" não pode significar "liste todos os e-mails". As duas revogadas de PUBLIC, anon
+    e authenticated (só service role), conferido por `has_function_privilege` e não por
+    `information_schema`, pela armadilha já registrada no `0001`.
+  - **A armadilha desta leva, e é a quarta repetição do mesmo padrão:** **route handler não passa
+    por layout.** A guarda de admin mora no `app/admin/layout.tsx` e cobre telas; um `route.ts`
+    sob `app/admin/` não é embrulhado por ela, e qualquer pessoa logada pode dar POST no endereço
+    direto sem nunca abrir o painel. Pior: como a escrita sai pela service role, o trigger
+    `guarda_is_admin` também não segura, porque nela `auth.uid()` é null, que é o caminho que o
+    trigger libera. **A checagem em TypeScript é o único guarda dessa rota**, e sem ela a
+    escalada da `0003` voltaria servida em HTTP. Está comentada em caixa no arquivo e virou
+    entrada do `HANDOFF.md` §6, valendo também para Server Action.
+  - **Verificado:** POST direto sem sessão dá 404; POST direto **com sessão de aluno** dá 404
+    também, testado do navegador logado, com uuid inexistente para nada poder ser alterado nem se
+    a guarda falhasse. Banco conferido depois: seguia com um admin.
+  - Quatro travas na rota: papel do autor, não revogar a si mesmo, não revogar o último admin, e
+    conferir lendo de volta (update pode "passar" sem afetar linha, e numa tela de privilégio
+    sucesso falso é pior que erro). As duas do meio aparecem na tela como **ausência de botão**,
+    para o admin não descobrir o limite levando erro.
+  - Busca sem uma linha de JS: `<form method="get">` com o termo na URL, compartilhável e
+    recarregável. O único JS da tela é a confirmação, que reusa o padrão 5 do `DESIGN.md` §3
+    (`confirmar()`) e diz a consequência concreta: admin lê o banco de questões **com o
+    gabarito**. Sem hidratação o botão ainda funciona, só perde o diálogo.
+  - **Auditoria: a premissa do §8 mudou.** Lá dizia que auditoria podia esperar porque a Fase 1
+    só leria; esta tela escreve, e escreve privilégio. Por ora o registro é log de servidor, com
+    o teto anotado (retenção curta, ninguém consulta) e o caminho de saída nomeado (tabela
+    `admin_audit`, decisão do Pedro, não pedida).
+
+- **Admin: casca e Painel, e o primeiro admin do projeto** — 2026-07-30
+  - Destrava a tarefa 18 do `PENDENCIAS-LP.md`, que estava parada esperando quatro decisões. O
+    Pedro decidiu as quatro: **porta única** (`/app/login` com redirect por papel), **404** para
+    não-admin logado, **a conta dele** como primeiro admin, e **dados reais em vez de mock**.
+  - **`scripts/admin-conta.mjs`** é a resposta ao "bootstrap do papel" (`PLANO-ADMIN` §8). Uma
+    tela dentro do admin não resolveria o caso de partida: quando o `ei-prod` subir não vai
+    existir admin nenhum, e ninguém entra na tela para criar o primeiro. Simula por padrão,
+    grava só com `--aplicar`, e recusa revogar o último admin. **Não é atalho de teste**, ao
+    contrário do `aprovar-conta.mjs`: é procedimento de produção e fica depois do go-live.
+  - **O banco tinha zero admins**, o que nenhum documento registrava. Primeiro criado:
+    `pedrohfontei@gmail.com`.
+  - **A guarda ficou no `app/admin/layout.tsx`, não no `proxy.ts`** como o plano previa, pelo
+    mesmo motivo que já tirou a guarda de matrícula de lá: o proxy roda em toda requisição,
+    inclusive na LP, que não deveria pagar uma ida ao banco para responder "é admin?".
+  - **Duas respostas diferentes, verificadas:** anônimo em `/admin` recebe **307** com
+    `location: /app/login` (medido por curl); aluno logado recebe **404** (visto na tela). O 404
+    é o que não confirma a existência da rota; o redirect é para não deixar o admin legítimo de
+    fora só por estar deslogado. A prova do 404 fecha porque anônimo dá 307: um 404 só pode vir
+    de sessão existente e sem o papel.
+  - `is_admin()` é chamada com o cliente **anon**, contrariando de propósito o §2 do plano: a
+    service role não tem sessão, `auth.uid()` é null nela, e ela responderia "não é admin" para
+    todo mundo. Identidade se pergunta com a chave do usuário; os dados do painel é que vão
+    pela service role.
+  - **Primeira vez que o Tailwind roda de fato neste projeto.** O `AGENTS.md` mandava usar os
+    tokens de `app/globals.css`, **arquivo que nunca existiu** — a LP e a área do aluno são HTML
+    portado com CSS próprio, e o `app/layout.tsx` até registrava a intenção num comentário. Os
+    tokens do Meridiano viraram um bloco `@theme` em `app/admin/admin.css`, importado só pelo
+    layout do admin. `source(none)` + `@source "."` impede o Tailwind 4 de varrer o HTML portado
+    e gerar utilitário para cada string parecida com classe.
+  - Painel com quatro cards de número real: matrículas (e quantas com acesso ativo), conclusão
+    de aulas, aprovação na prova e certificados. **Sem NPS**: a pesquisa não existe, e card de
+    métrica com número inventado é o que alguém cita numa reunião como se fosse dado.
+  - **As Fases 1 e 2 do plano colapsaram numa só.** A tabela de fases foi escrita em 20/jul,
+    quando o Supabase não existia, e mandava usar mock; ele está provisionado desde 28/jul e o
+    currículo vive no banco desde 29/jul. Camada de mock agora seria construída para jogar fora.
+  - `scripts/env.mjs`: o parser de `.env.local` estava copiado em **seis** scripts. Em vez da
+    sétima cópia, virou função. Os seis anteriores ficaram como estão de propósito.
+
+### Corrigido
+- **Escalada de privilégio: qualquer aluno virava admin com uma chamada** — 2026-07-30
+  - Achado ao preparar a tarefa 18, **confirmado contra o banco vivo do homolog** antes de existir
+    conserto: com a chave anon, um aluno logado gravava `is_admin=true` na própria linha via
+    `PATCH /rest/v1/profiles?id=eq.<seu uid>`. Testado e revertido na hora.
+  - **É a terceira vez que este projeto leva o mesmo golpe**, e o `0001` já tinha escrito a lição
+    no bloco do `exams`: **RLS é por LINHA e não resolve COLUNA.** A policy `profiles_self_update`
+    restringia corretamente *qual* linha o aluno altera e não dizia nada sobre *quais* colunas; o
+    Supabase concede UPDATE no nível da tabela, e grant de tabela cobre todas as colunas,
+    presentes e futuras.
+  - **Por que era grave e não teórico:** hoje ninguém é admin, então era latente. No instante em
+    que o admin da Fase 1 subisse, `is_admin=true` faria o aluno passar nas **dez** policies que
+    chamam `is_admin()` — inclusive `questions_admin_only`, que é o banco de questões **com o
+    gabarito**. O aluno se promoveria e leria as respostas da própria prova.
+  - Conserto em `supabase/migrations/0003_guarda_admin.sql`, em duas camadas. A primeira versão
+    reconcedia `update (nome, telefone)` ao aluno; **estava errada por excesso** — o `PRD.md` §9
+    define "Minha conta" como tela enxuta de propósito, nome não é editável, e-mail muda via
+    suporte, e a única ação self-service é trocar senha, que é Auth e não `profiles`. Conferido
+    também no código: a única escrita em `profiles` no app é o upsert de `app/app/login/actions.ts`,
+    com service role. Então a garantia virou a mesma que o `0002` escolheu para `enrollments`: o
+    aluno não tem UPDATE nenhum ali.
+  - **Camada 2, um trigger** (`guarda_is_admin`), que barra mudança de `is_admin` por quem não é
+    admin. Existe porque o schema deste projeto já foi aplicado à mão por psql, e "à mão" é onde
+    um `grant all` reaparece num reset — e porque no dia em que alguém reabrir o UPDATE do aluno
+    para editar nome, a coluna de privilégio continua fechada.
+  - **`scripts/rls-check.mjs`** + `npm run check:rls`: cria um aluno descartável, tenta o ataque
+    com a chave anon e apaga a conta. Fica **fora** do `npm run check`, que é offline e
+    pré-requisito de commit; este precisa de rede e `.env.local`, porque a única prova que vale é
+    contra o banco. Três asserções, e a terceira é a que impede o conserto de virar regressão: a
+    service role tem que continuar escrevendo, senão o upsert do signup para e a conta nasce sem
+    perfil.
+  - **Rodado antes de consertar e falhou**, com as duas falhas esperadas; depois da migração passa
+    nas três. O trigger foi testado à parte, numa transação desfeita com `auth.uid()` forjado, e
+    barrou com `42501` — então a camada 2 não é decoração.
+
+### Adicionado
 - **Diálogo de envio da prova e grade de questões (tarefa 17)** — 2026-07-30
   - O envio usava o `window.confirm` cinza do sistema, no clique mais tenso do produto: tentativa
     única, irreversível, e a caixa do navegador não diz o que está em jogo. E não havia **grade

@@ -61,5 +61,52 @@ Pendências que dependem das contas do time. Assim que existirem, aplico migrati
    Ver `HANDOFF.md` §6, que traz também o backfill de `profiles` e a correção do `revoke`
    do `sortear_prova()`. Ao provisionar o `ei-prod`, aplicar a migration **já corrigida**
    e **não** aplicar o seed, pela regra desta seção.
+6. **Política de senha no painel do Supabase** (Authentication → Sign In / Providers → Email).
+   ~~Pendente.~~ **FEITO no homolog em 30/jul/2026:** mínimo **8** e requisitos **"Lowercase,
+   uppercase letters and digits"**.
+
+   **Isto não está em migration nenhuma**, é configuração do projeto, então **tem que ser
+   repetido à mão no `ei-prod`**. A regra do produto vive em `lib/senha.ts` (8 com maiúscula,
+   minúscula e número) e o app a valida nos três caminhos que tem, mas a plataforma não a
+   conhecia: com a chave anon, `auth.updateUser({password})` aceitava `abc123`, `abcdefgh`,
+   `ABCDEFGH` e `Abcdefgh`, por fora dos formulários. Demonstrado com conta descartável antes
+   e depois; agora recusa as quatro e aceita uma válida.
+
+   **Não escolher a quarta opção** do seletor ("...digits and symbols"), embora o Supabase a
+   rotule como recomendada: ela exige símbolo, o `validarSenha` não, e a plataforma ficaria mais
+   estrita que a tela — o aluno levaria recusa que a nossa UI não sabe explicar.
+
+   **Três coisas na mesma tela que ficaram deliberadamente como estavam:**
+   - **"Require current password when updating" (off).** Ligar quebraria o nosso próprio fluxo:
+     o `conta/actions.ts` confere a senha atual com `signInWithPassword` e depois chama
+     `updateUser` **sem** passá-la. Mexer aqui exige mudar o código primeiro.
+   - **"Secure password change" (off).** Estado conhecido e documentado no `PRD.md` §9 — é
+     justamente por vir desligada que o formulário exige a senha atual. Ligar duplicaria a
+     proteção e só somaria fricção.
+   - **"Prevent use of leaked passwords" (off).** Exige plano **Pro**; o projeto está no Free.
+
+7. **Criar o primeiro admin, e criá-lo como MESTRE**
+   (`node scripts/admin-conta.mjs <email> --mestre --aplicar`, apontando o `.env.local` para o
+   ambiente certo).
+   **FEITO no homolog em 30/jul/2026:** `pedrohfontei@gmail.com`, mestre. Antes disso o banco tinha
+   **zero** admins, e nenhum documento registrava isso.
+
+   **O `--mestre` não é opcional aqui.** Sem ele o primeiro admin nasce comum, e admin comum não
+   concede o nível de mestre (migration `0005`): o ambiente ficaria sem mestre nenhum, e a única
+   saída seria voltar ao script.
+
+   **Tem que ser repetido no `ei-prod`, e não dá para esquecer**, porque a migration `0003`
+   fechou o caminho: `profiles.is_admin` só muda pela **service role** ou por um **admin que já
+   era admin**. Num banco novo não existe nem um nem outro do lado do app, então o `/admin` de
+   produção sobe **inacessível** até alguém rodar este script. Uma tela dentro do próprio admin
+   não resolveria: ninguém entra nela para criar o primeiro.
+
+   Não é seed: o seed não roda em produção pela regra da seção "Infra", e o e-mail do primeiro
+   admin é diferente em cada ambiente.
+
+   **Só o primeiro precisa do script.** Do segundo em diante é pela tela `/admin/equipe`
+   (`PLANO-ADMIN` §4.7), com busca por e-mail. Os dois caminhos não são redundantes: o script é o
+   único que funciona num banco sem admin, e a tela é a única que funciona para quem não tem a
+   service role na mão.
 
 Milestone inicial sugerido: subir o homolog com o que já existe (shell da LP e da área do aluno) só para estabelecer o pipeline e dar a URL aos stakeholders cedo, e ir ligando as integrações em seguida.

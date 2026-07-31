@@ -39,7 +39,8 @@ TypeScript · Next.js 16 (App Router, RSC) · Tailwind v4 · Supabase (Postgres,
 
 ## Convenções
 
-- **Design:** só usar os tokens do Meridiano (`app/globals.css`, `@theme`). Cores por nome (`bg-verde`, `text-gold`), fontes `font-serif` (Playfair) e `font-sans` (Montserrat). Teto de radius 14px. Seguir o anti-slop checklist do `DESIGN.md`.
+- **Design:** só usar os tokens do Meridiano. Cores por nome (`bg-verde`, `text-gold`), fontes `font-serif` (Playfair) e `font-sans` (Montserrat). Teto de radius 14px. Seguir o anti-slop checklist do `DESIGN.md`.
+  **Onde os tokens moram de fato** (corrigido em 30/jul/2026): o `app/globals.css` que esta linha citava **nunca existiu**. A LP e a área do aluno são HTML portado, cada uma com o próprio CSS injetado, e não usam Tailwind. O único lugar onde o Tailwind roda é o **admin**, e o bloco `@theme` vive em `app/admin/admin.css`. Tela nova de admin herda os tokens dali; tela nova de LP ou de área do aluno passa pelo porte, não por classe Tailwind.
 - **Copy:** livre no texto, mas com o guia de estilo: **sem travessão**, tom editorial sóbrio, sem hype, números concretos. Vale para UI, e-mails, erros.
 - **Supabase:** RLS ligada em tudo. No app, usar o cliente anon (`lib/supabase/server.ts` / `client.ts`) que respeita a RLS. Escritas confiáveis (webhook, correção de prova, certificado, admin) usam a service role (`lib/supabase/admin.ts`), só no servidor.
 - **Segurança:** a tabela `questions` guarda a resposta correta e nunca é lida pelo aluno; o sorteio da prova é a função `sortear_prova()` (server-side). Certificado tem verificação pública via `verify_certificate()`.
@@ -67,11 +68,17 @@ três vezes em 29/jul. Se precisar de progresso para testar, use
 ## Rodar
 
 ```
-npm run dev      # dev server
-npm run build    # build de produção
+npm run dev           # dev server
+npm run build         # build de produção — NÃO rodar com o dev de pé (ver abaixo)
 npm run lint
-npm run check    # self-checks (prova, senha, usuário, liberação, currículo)
+npm run check         # self-checks offline (prova, senha, usuário, liberação, currículo)
+npm run check:rls     # contra o banco: aluno não vira admin (precisa de rede + .env.local)
+npm run check:mestre  # contra o banco: regras do admin mestre (idem)
 ```
+
+**`npm run build` com o `next dev` de pé trava o dev server.** Os dois escrevem no mesmo `.next`, e
+o dev não morre: fica com a porta escutando e para de responder, o que chega como defeito de
+produto. Detalhe e o diagnóstico de dez segundos no `HANDOFF.md` §6.
 Variáveis em `.env.local` (ver `.env.example`). Sem elas, o app sobe mas as integrações ficam inertes.
 
 O `npm run check` roda os scripts de `scripts/*-check.mts` em node puro, sem framework de teste.

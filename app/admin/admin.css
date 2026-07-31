@@ -1,0 +1,96 @@
+/* CSS do admin.
+ *
+ * Este é o ÚNICO lugar do projeto onde o Tailwind roda de fato. A LP e a área do aluno são
+ * HTML portado, cada uma com o próprio CSS injetado, e o `app/globals.css` com o bloco
+ * `@theme` que o AGENTS.md manda usar nunca existiu — o `app/layout.tsx` até registra a
+ * intenção num comentário ("o Tailwind/Meridiano volta num layout de grupo quando a área do
+ * aluno for construída"), mas a área veio portada e ele não voltou. Voltou aqui.
+ *
+ * Importado só pelo `app/admin/layout.tsx`, então nada disto alcança as outras duas
+ * superfícies, e elas não pagam bytes por ele.
+ *
+ * `source(none)` + `@source "."` restringe a varredura de classes a este diretório. Sem
+ * isso o Tailwind 4 varre o repositório a partir da raiz do git e gera utilitário para toda
+ * string parecida com classe dentro do HTML portado, que é grande e cheio de `style-hover`.
+ */
+@import "tailwindcss" source(none);
+@source ".";
+
+/* As duas famílias do Meridiano, apontando para os woff2 que JÁ estão em `public/app/`.
+ * São os arquivos do subset latino, e cada um cobre a faixa inteira de pesos (são fontes
+ * variáveis, 37K e 38K), por isso duas regras resolvem o que lá são 54.
+ *
+ * ACOPLAMENTO CONHECIDO: estes nomes de arquivo vêm do bundle de design e estão repetidos
+ * aqui à mão. As regras originais moram em `app/app/_ui/styles.css`, que é GERADO pelo
+ * `scripts/port-area.mjs`: importar o arquivo gerado traria o design inteiro da área junto,
+ * e copiar as 54 regras seria pior que copiar duas. Se um porte futuro trocar os hashes, o
+ * admin cai para a fonte de sistema — degradação visual, não quebra.
+ */
+@font-face {
+  font-family: "Playfair Display";
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url("/app/26d35370-0f3d-487c-8499-29b54c8cc945.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url("/app/65b747ad-93b8-49da-be1a-ac50e93086ac.woff2") format("woff2");
+}
+
+/* Tokens do Meridiano (DESIGN.md §2), na fatia que o admin usa. Nomes com o namespace do
+ * Tailwind 4: `--color-x` gera `bg-x`, `text-x` e `border-x` sozinho. */
+@theme {
+  --color-verde: #0b2d20;
+  --color-verde-2: #123b2b;
+  --color-verde-3: #0a2b1e;
+  --color-verde-card: #0f3526;
+  --color-offwhite: #f7f5f2;
+  --color-bege: #ede6dd;
+  --color-areia: #d6c3c2;
+  --color-pedra: #8f887e;
+  --color-grafite: #333333;
+  --color-medio: #6d6d6d;
+  --color-gold: #a98e4e;
+  --color-gold-dark: #7e6836;
+  --color-gold-lit: #d9be85;
+  --color-gold-soft: #f0e9d8;
+  --color-muted: #8fa398;
+  --color-muted2: #a9b8ae;
+
+  /* Semânticas. O verde tem um valor por fundo (DESIGN.md §2, regra do Pedro de 29/jul):
+   * `#1B7A50` dá 4,89:1 sobre claro e só 2,80:1 sobre o verde escuro; `#3FB07A` é o
+   * inverso. O admin é claro no miolo, então usa o primeiro, e o segundo fica nomeado para
+   * quando algo semântico precisar aparecer sobre a sidebar. */
+  --color-sucesso: #1b7a50;
+  --color-sucesso-escuro: #3fb07a;
+  --color-falha: #b0413e;
+
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Montserrat", system-ui, sans-serif;
+
+  /* Teto de radius do Meridiano é 14px, então `rounded-lg` não passa disso. */
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+/* O `app/layout.tsx` é compartilhado com a LP e não define fonte nem cor de fundo (a LP faz
+ * isso no CSS portado). O admin define no próprio contêiner, não no `body`, para não vazar. */
+@layer base {
+  .admin-root {
+    font-family: var(--font-sans);
+    color: var(--color-grafite);
+    background: var(--color-offwhite);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .admin-root h1,
+  .admin-root h2,
+  .admin-root h3 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+  }
+}

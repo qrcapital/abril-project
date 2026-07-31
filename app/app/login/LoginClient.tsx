@@ -27,7 +27,8 @@ const TEST_STATES: { label: string; s?: string }[] = [
  * Login / primeiro acesso com Supabase Auth (email + senha).
  * - modo "primeiro": signUp (cria a conta e a senha); em homolog simula a compra.
  * - modo "login": signInWithPassword.
- * Em sucesso → /app (a sessão é lida pela guarda no proxy). Erros mostrados inline.
+ * Em sucesso → /app, ou /admin se a conta for admin (a sessão é lida pela guarda no proxy).
+ * Erros mostrados inline.
  */
 export default function LoginClient({
   html,
@@ -124,7 +125,17 @@ export default function LoginClient({
         } else {
           const { error } = await supabase.auth.signInWithPassword({ email, password: p1 });
           if (error) return showError("E-mail ou senha incorretos.");
-          router.push("/app");
+          // Porta única para as duas áreas (decisão do Pedro, 30/jul/2026): quem entra aqui
+          // pode ser aluno ou admin, e o DESTINO decide pelo papel. Uma tela própria em
+          // /admin/login dobraria a superfície de autenticação e pediria o próprio fluxo de
+          // recuperação de senha.
+          //
+          // Custa uma ida ao banco a mais, só no login e só neste caminho: no "primeiro
+          // acesso" a conta acaba de nascer e nunca é admin, então lá não se pergunta. Se a
+          // chamada falhar, cai em /app, que é o destino de todo mundo menos de um punhado
+          // de pessoas.
+          const { data: admin } = await supabase.rpc("is_admin");
+          router.push(admin === true ? "/admin" : "/app");
           router.refresh();
         }
       } finally {

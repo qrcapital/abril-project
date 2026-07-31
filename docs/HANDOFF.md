@@ -243,6 +243,22 @@ npm run dev      # http://localhost:3000
 npm run build    # tem que passar limpo antes de qualquer push
 ```
 
+**Como aplicar migration neste Mac (descoberto em 30/jul/2026).** O `psql` **está** instalado,
+mas não aparece no `PATH`: veio do `libpq` do brew, que o brew instala **sem linkar**. Ele vive em
+`/usr/local/opt/libpq/bin/psql` (versão 18.4, datado de 28/jul, que é exatamente quando este
+documento diz que o schema foi aplicado). O CLI do Supabase **não** está instalado, e não é
+necessário.
+
+```bash
+export PGURL=$(sed -n 's/^SUPABASE_DB_URL=//p' .env.local)
+/usr/local/opt/libpq/bin/psql "$PGURL" -v ON_ERROR_STOP=1 --single-transaction \
+  -f supabase/migrations/0003_guarda_admin.sql
+```
+
+O `--single-transaction` com `ON_ERROR_STOP=1` é o que evita migration meio-aplicada. Antes de
+sair caçando ferramenta ou instalar coisa nova, procure em `/usr/local/opt/*/bin` — mais de um
+pacote do brew fica sem link.
+
 **Autenticação no GitHub. RESOLVIDO no Mac (28/jul/2026).** No Windows as credenciais
 viviam no Windows Credential Manager. No Mac isso não existe, e os dois caminhos que este
 documento mandava escolher já estão montados: chave SSH em `~/.ssh/id_ed25519`
@@ -313,10 +329,17 @@ ataque, a prova abriu com cookie forjado e banco vazio: a semente era uma porta 
 **plantar** o dado que eu acabara de tirar das mãos dele. Não existe versão segura disso. Se
 precisar de progresso para testar, use `scripts/progresso-conta.mjs`.
 
-**`redirect()` em Server Component sai como 200, não 307.** Com streaming, o começo da resposta
-já foi enviado quando o redirect acontece, então o status fica 200 e a navegação vai no payload.
-Isso me fez ler "a guarda não disparou" duas vezes no mesmo dia. Confira o **corpo** da resposta,
-ou o `location.pathname` no browser, nunca o status.
+**`redirect()` em Server Component sai como 200, não 307 — quando o streaming já começou.** Com
+streaming, o começo da resposta já foi enviado quando o redirect acontece, então o status fica
+200 e a navegação vai no payload. Isso me fez ler "a guarda não disparou" duas vezes no mesmo
+dia. Confira o **corpo** da resposta, ou o `location.pathname` no browser, nunca o status.
+
+**Precisão acrescentada em 30/jul/2026:** a condição importa, e escrever a regra sem ela leva ao
+erro simétrico (concluir que a guarda falhou porque veio 307). Quando o `redirect()` acontece na
+**primeira linha do layout**, antes de renderizar qualquer coisa, nada foi enviado e a resposta é
+um 307 de verdade, com o header `location`. Medido na guarda do `/admin`: anônimo em `/admin` dá
+`HTTP/1.1 307` + `location: /app/login`. Ou seja: 200 não prova que falhou, e 307 não prova que
+funcionou — o que decide é se a guarda roda antes ou depois do primeiro byte.
 
 **Contraste não é erro de sintaxe.** Nenhuma ferramenta do projeto reprova cor ilegível. Ao
 escolher qualquer cor de texto, meça nos dois fundos da área (o chrome escuro `#0B2D20` e o
@@ -395,12 +418,89 @@ O que fecha é `revoke execute on function ... from public`. Já aplicado no hom
 corrigido na migration, para o `ei-prod` não herdar o buraco. Hoje: `anon` false,
 `authenticated` false, `service_role` true, e a chamada anon devolve `42501`.
 
+**A MESMA ARMADILHA, TERCEIRA VEZ (30/jul/2026): qualquer aluno virava admin.** Com a chave anon,
+um aluno logado gravava `is_admin=true` na própria linha (`PATCH /rest/v1/profiles?id=eq.<uid>`).
+Confirmado contra o banco vivo antes de existir conserto, e revertido na hora. A policy
+`profiles_self_update` restringia *qual linha* e não dizia nada sobre *quais colunas*.
+
+Pare de tratar isto como três incidentes e trate como **um padrão**: no Postgres com Supabase,
+**restringir linha nunca restringe coluna, e revogar de papel nomeado nunca revoga o que vem de
+PUBLIC ou de um grant de tabela.** Antes de dar por segura qualquer coluna sensível nova, faça as
+três perguntas: existe grant de TABELA cobrindo ela? existe policy que deixa o dono escrever a
+linha? e o teste que prova o contrário roda contra o banco, não na cabeça?
+
+Consertado em `0003_guarda_admin.sql`, em duas camadas: o aluno perdeu UPDATE em `profiles` (o
+PRD §9 não prevê edição ali, e a única escrita do app é com service role), e um trigger
+`guarda_is_admin` barra mudança da coluna por quem não é admin, para o dia em que alguém reabrir
+o UPDATE para editar nome e esquecer o privilégio. **`npm run check:rls`** é o teste que prova, e
+foi rodado antes do conserto para confirmar que ele falha quando deve.
+
 Ao conferir privilégio de função, usar **`has_function_privilege('anon', oid, 'EXECUTE')`**,
 não uma consulta em `information_schema.role_routine_grants` filtrando por nome de role: a
 herança de PUBLIC não aparece como linha de grantee, e essa foi exatamente a consulta que
 me fez dar o schema por seguro na primeira passada. O `handle_new_user` também é chamável
 em teoria, mas não é explorável: o próprio Postgres recusa com "trigger functions can only
 be called as triggers". Deixado como está.
+
+**Não rode `npm run build` com o `next dev` de pé** (30/jul/2026, e custou um bug relatado que não
+existia). Os dois escrevem no mesmo `.next`. O dev server não morre: ele continua com o processo
+vivo e a porta escutando, e simplesmente **para de responder**. O sintoma chega como defeito de
+produto, e é o pior tipo de sintoma porque mente em duas direções:
+
+- a tela **parece** renderizada, porque o HTML que o navegador já tem continua lá;
+- clique em link não faz nada, e **nenhuma requisição nova aparece no log**, o que parece problema
+  de cliente ou de hidratação.
+
+Como distinguir em dez segundos, antes de suspeitar do código:
+`curl -m 5 -o /dev/null -w "%{http_code}" http://localhost:3000/`. Se der `000` por timeout com
+`lsof -nP -iTCP:3000 -sTCP:LISTEN` mostrando o processo, é isto, e não o seu último commit.
+
+Conserto: matar o dev, `rm -rf .next`, subir de novo. Para rodar build durante uma sessão de dev,
+pare o dev primeiro.
+
+**Route handler NÃO passa por layout, então guarda em layout não protege endpoint** (30/jul/2026,
+ao construir `/admin/equipe`). É a quarta versão do mesmo padrão que já apareceu três vezes neste
+schema, agora na camada HTTP em vez da do banco: **o guarda de um caminho não guarda o caminho
+vizinho.**
+
+A guarda de admin mora em `app/admin/layout.tsx` e cobre as **telas**. Um `route.ts` sob
+`app/admin/` **não é embrulhado por esse layout**: qualquer pessoa logada pode dar POST no
+endereço direto, sem nunca abrir uma tela do painel. E no caso de uma rota que escreve com a
+**service role**, o trigger `guarda_is_admin` também não segura, porque nela `auth.uid()` é null,
+que é exatamente o caminho que o trigger libera.
+
+Resultado: numa rota assim, a checagem em TypeScript é o **único** guarda, e sem ela a escalada de
+privilégio da `0003` volta servida em HTTP. Está comentada em caixa no
+`app/admin/api/papel/route.ts`. **Toda rota nova sob `app/admin/` refaz a checagem por conta
+própria**, e o mesmo vale para Server Action, que também é um POST endpoint alcançável direto.
+
+Como provar, e é barato: `curl -X POST` sem sessão (espera 404) e um `fetch` do próprio navegador
+logado como aluno (espera 404). No segundo, use um **uuid inexistente** como alvo: se a guarda
+tiver falhado você vê pelo status, e nada é alterado de todo jeito.
+
+**O `app/globals.css` do `AGENTS.md` não existe, e o Tailwind só roda no admin** (descoberto em
+30/jul/2026 ao construir a casca). O `AGENTS.md` manda usar "os tokens do Meridiano
+(`app/globals.css`, `@theme`)"; esse arquivo **nunca foi criado**. A LP e a área do aluno são HTML
+portado, cada uma injetando o próprio CSS, e nenhuma das duas usa Tailwind — o `app/layout.tsx`
+registrava a intenção num comentário ("o Tailwind/Meridiano volta num layout de grupo quando a
+área do aluno for construída"), mas a área veio portada e ele não voltou. O `AGENTS.md` já está
+corrigido.
+
+O bloco `@theme` vive hoje em **`app/admin/admin.css`**, importado só pelo layout do admin. Duas
+coisas ali não são decoração:
+
+- **`@import "tailwindcss" source(none);` + `@source ".";`** restringe a varredura de classes ao
+  diretório do admin. Sem isso o Tailwind 4 varre a partir da raiz do git e gera utilitário para
+  toda string parecida com classe dentro do HTML portado, que é grande e cheio de `style-hover`.
+- **As duas regras `@font-face`** apontam para os woff2 que já estão em `public/app/`, e os nomes
+  de arquivo estão repetidos à mão. As 54 regras originais moram em `app/app/_ui/styles.css`, que
+  é **gerado** pelo `port-area.mjs`: importar o gerado traria o design da área junto. Duas regras
+  bastam porque o subset latino é uma fonte variável por família. Se um porte trocar os hashes, o
+  admin cai para fonte de sistema, o que é degradação visual e não quebra.
+
+**Tailwind compilar sem erro não prova que gerou as classes.** Se o `@source` estiver errado, o
+CSS sai quase vazio, a tela vem sem estilo e nada reclama. A conferência é olhar o artefato:
+`grep` por uma classe do admin (`bg-verde-3`, `232px`) no `.css` de `.next/static/chunks/`.
 
 ---
 

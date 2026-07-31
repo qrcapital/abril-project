@@ -18,11 +18,35 @@ editava), e **a guarda de acesso mora no layout do `(sala)`**, não no proxy.
 A fila de amanhã está logo abaixo._
 
 _**Atualização de 2026-07-30.** Saíram as duas tarefas de código que restavam: a **16** (rotina
-da prova abandonada) e a **17** (diálogo de envio e grade de questões). Com isso **a fila de
-código fica vazia até você destravar a 18** — a tela de conteúdo do admin depende dela e das três
-decisões do §4.6. As duas levas de hoje acharam um furo cada uma, os dois no mesmo lugar
-conceitual: o porteiro do certificado aprovava prova sem questão (`0 >= 70 * 0`), e o glifo
-branco da bolinha sobre o dourado falhava AA na grade. Detalhe no `CHANGELOG.md`._
+da prova abandonada) e a **17** (diálogo de envio e grade de questões). As duas levas acharam um
+furo cada uma, os dois no mesmo lugar conceitual: o porteiro do certificado aprovava prova sem
+questão (`0 >= 70 * 0`), e o glifo branco da bolinha sobre o dourado falhava AA na grade._
+
+_**Atualização de 2026-07-30, fim do dia. A 18 foi destravada e o admin começou.** Você tomou as
+quatro decisões que faltavam, e a **casca, a guarda e o Painel** estão de pé — com números reais,
+não mock, porque a tabela de fases do `PLANO-ADMIN` foi escrita antes do Supabase existir e
+mandava usar mock por um motivo que já não vale. **A escalada de privilégio da `0003` criou um
+problema de partida que nenhum documento tinha:** o banco tinha **zero admins**, e depois do
+conserto só a service role concede o papel. Resolvido por `scripts/admin-conta.mjs`, que **tem
+que ser rodado no `ei-prod`** ou o `/admin` de produção sobe inacessível (`AMBIENTES.md`, item 7).
+Descoberto no caminho: **o `app/globals.css` que o `AGENTS.md` manda usar nunca existiu**, e o
+admin é o primeiro lugar do projeto onde o Tailwind roda de fato._
+
+_**Ainda em 30/jul: a tela de Equipe** (`/admin/equipe`, escopo novo que você pediu), com busca
+por e-mail e concessão do papel de admin. Migration `0004` aplicada no homolog. **A armadilha desta
+leva é a quarta repetição do mesmo padrão do projeto:** route handler **não passa por layout**,
+então a guarda de admin não protege endpoint, e como a escrita sai pela service role o trigger
+também não segura — a checagem em TypeScript é o único guarda dessa rota. Provado dos dois lados
+(sem sessão e com sessão de aluno, os dois 404). Ver `HANDOFF.md` §6._
+
+_**E o admin mestre**, que você pediu depois de testar dar e revogar: dois níveis, e admin comum faz
+tudo menos mexer no acesso de um mestre. Migration `0005`, com a regra no trigger além da rota, e
+`npm run check:mestre` provando as 7 asserções contra o banco. **Sua conta é a mestre.**_
+
+_**Uma armadilha de operação que custou um bug relatado que não existia:** `npm run build` com o
+`next dev` de pé **trava o dev server** — ele fica com a porta escutando e para de responder, então
+a tela parece renderizada, o clique não faz nada e nenhuma requisição aparece no log. Parece
+defeito de produto e não é. O diagnóstico de dez segundos está no `HANDOFF.md` §6._
 
 > Legenda: 🟢 dá para fazer agora (sem insumo externo) · 🔒 bloqueado por insumo/decisão.
 
@@ -56,14 +80,34 @@ Tudo o que estava na fila de 28/jul saiu, menos o que depende de você. O que re
    é o porteiro do certificado; consertado na raiz em `lib/prova-correcao.ts`. **O que falta é
    só o que exige deploy:** confirmar que o agendador dispara e que a rotina fecha uma tentativa
    real. Nada disso é verificável local.
-3. **Tela de conteúdo do admin** (`PLANO-ADMIN.md` §4.6), quando a 18 destravar. A migração que
+2b. ~~**18 · Definir acesso de admin.**~~ **DESTRAVADA por você em 30/jul/2026**, e a primeira
+   fatia já construída: casca, guarda e Painel. As quatro decisões: **porta única** (`/app/login`
+   com redirect por papel), **404** para não-admin logado, **sua conta** como primeiro admin,
+   **dados reais em vez de mock**. As duas respostas da guarda foram medidas — anônimo recebe 307
+   para o login, aluno logado recebe 404 — e a segunda fecha porque a primeira é 307. Detalhe no
+   `PLANO-ADMIN.md` §2 e §8.
+
+   **O que sobrou da 18 não trava nada:** 2FA/e-mail corporativo (endurecimento sobre a porta que
+   já existe) e auditoria (as ações que precisam dela são todas da Fase 3, bloqueada em Guru +
+   SES).
+
+   **A próxima fatia é escolha sua:** Alunos e E-mails já têm dado real no banco; Questões só
+   significa algo depois das ~100 questões reais (tarefa 13, sua).
+
+3. **Tela de conteúdo do admin** (`PLANO-ADMIN.md` §4.6), que agora depende **só** das três
+   decisões do §4.6, não mais da 18. A migração que
    ela exigia já está pronta: mudar título, descrição ou vídeo no banco já muda a tela sem
    deploy. Falta a tela.
 
 ### Suas, e a primeira trava construção nova
 
-- 🔒 **18 · Acesso de admin**, as quatro perguntas do `PLANO-ADMIN.md` §8. Continua sendo a
+- 🔒 **18 · Acesso de admin**, as perguntas do `PLANO-ADMIN.md` §8. Continua sendo a
   única que impede começar o admin. Todas são sobre **acesso**, não sobre conteúdo.
+  **Duas delas saíram em 30/jul:** "onde o papel vive" já estava respondido na prática
+  (`profiles.is_admin`, com dez policies dependendo), e "como o papel é protegido" era um
+  **furo aberto** — qualquer aluno se promovia a admin com uma chamada. Fechado pela
+  migration `0003_guarda_admin.sql`; ver o incidente no `HANDOFF.md` §6 e
+  `npm run check:rls`. O que resta são decisões de ergonomia e escopo, não de arquitetura.
 - 🔒 **3 · Template `Invite user`** no painel: colar uma linha.
 - 🔒 **20 · Política de senha** no painel: a nossa é 8 com classes, a plataforma garante 6 e
   nenhuma classe.
@@ -346,6 +390,12 @@ um consertando várias telas de uma vez, e é por isso que vêm antes dos de tel
       `scripts/aprovar-conta.mjs`, criado em 29/jul para revisar o design do certificado sem
       responder 20 questões: ele grava um resultado de prova que não aconteceu, o que em
       produção significaria emitir certificado para quem não fez a prova.
+      **Senhas fracas conhecidas:** `testinhos@joao.com.br` e, desde 30/jul, também
+      **`pedrohfontei@gmail.com`**, que é a conta de admin do homolog e está com `Admin123`.
+      Essa segunda é a que pesa: senha de oito caracteres previsível numa conta que passa nas
+      dez policies de `is_admin()` e lê o banco de questões com o gabarito. Vale só no homolog,
+      e o `ei-prod` nasce com admin próprio pelo item 7 do `AMBIENTES.md`.
+      **NÃO remover o `scripts/admin-conta.mjs`**: é procedimento de produção, não atalho.
 - [ ] **Código do certificado é fixo para todo mundo** — `EI-2026-4817`, em `lib/certificado.ts`,
       com nome fixo junto. Dois alunos teriam o mesmo código de verificação, e o
       `/verificar/:codigo` valida contra esse único código. A emissão real (tabela

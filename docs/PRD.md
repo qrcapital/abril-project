@@ -146,6 +146,14 @@ LP → CTA → Checkout Guru (nome, e-mail, CPF, WhatsApp, pagamento) → status
 
 Não há cadastro aberto: a conta nasce da compra. O aluno recebe o acesso por e-mail e define a senha no primeiro login. Reentrada por e-mail e senha. Dois papéis: **aluno** e **admin** (equipe interna).
 
+**O papel de admin também não tem cadastro aberto, e isso é garantido por estrutura** (migration `0003`, 30/jul/2026): `profiles.is_admin` só muda pela **service role** ou por um **admin que já era admin**, com um trigger barrando qualquer outro caminho. Não existe self-service: ninguém se promove.
+
+**Dois níveis de admin** (decisão do Pedro, 30/jul/2026): **admin mestre** e **admin comum**. O comum faz tudo o que o painel oferece, menos mexer no acesso de um mestre. Conceder o nível de mestre é só por script, fora do painel.
+
+**Um admin dá e tira acesso de admin pelo painel** (`/admin/equipe`, busca por e-mail), com travas para o painel não se trancar por fora: não se revoga a si mesmo, nem o último admin, nem o último mestre. O **primeiro** admin de cada ambiente nasce fora da tela, por `scripts/admin-conta.mjs --mestre`, porque num banco sem admin nenhum não há quem entre para criar o primeiro.
+
+**A porta de entrada é a mesma `/app/login`** para os dois papéis, e o redirect pós-login decide o destino; um aluno que acerte o endereço `/admin` recebe **404**, que não confirma a existência da rota. Detalhe em `PLANO-ADMIN.md` §2, §4.7 e §8.
+
 ### Estrutura
 
 - **Identidade**: Supabase Auth (e-mail + senha). Perfil com nome, telefone, `guru_customer_id`.

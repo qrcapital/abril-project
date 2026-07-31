@@ -17,11 +17,25 @@ Estado da **LP Estratégia Internacional** (repo `C:\Users\pedro\Claude\abril-es
 Comece pelo bloco **"▶ PRÓXIMA SESSÃO"** no topo do `docs/PENDENCIAS-LP.md`. Não recontar
 história: ler o bloco e ir para o trabalho.
 
-**A fila de código está VAZIA.** As duas tarefas que restavam saíram em 30/jul: a **16** (rotina
-da prova abandonada) e a **17** (diálogo de envio e grade de questões). O que sobra é tudo do
-Pedro, e a de maior alavanca é a **18** (acesso de admin, as quatro perguntas do
-`PLANO-ADMIN.md` §8), porque ela destrava a tela de conteúdo do admin, que é a maior frente
-aberta. Também dele: as três decisões do §4.6, o banco de ~100 questões (a prova hoje roda sobre
+**A fila de código voltou a ter trabalho: o ADMIN começou em 30/jul.** As duas tarefas antigas
+saíram (a **16**, rotina da prova abandonada, e a **17**, diálogo de envio e grade), e depois
+disso o Pedro **destravou a 18** decidindo as quatro perguntas do `PLANO-ADMIN.md` §8: porta única
+em `/app/login` com redirect por papel, **404** para não-admin logado, a conta dele como primeiro
+admin, e **dados reais em vez de mock** (as Fases 1 e 2 do plano colapsaram numa só, porque a
+tabela de fases foi escrita antes de o Supabase existir). Já de pé: `app/admin/` com guarda,
+sidebar e Painel de quatro cards reais.
+
+**Três coisas dessa sessão que não estavam em documento nenhum:** (1) o banco tinha **zero
+admins**, e depois da `0003` só a service role concede o papel — resolvido por
+`scripts/admin-conta.mjs`, que **tem que rodar no `ei-prod`** ou o `/admin` de produção sobe
+inacessível; (2) o **`app/globals.css` que o `AGENTS.md` manda usar nunca existiu**, e o admin é o
+primeiro lugar do projeto onde o Tailwind roda de fato (tokens em `app/admin/admin.css`); (3) a
+armadilha do `redirect()` sair como 200 vale **só com streaming já iniciado** — na primeira linha
+de um layout é 307 de verdade, medido.
+
+**A próxima fatia do admin é escolha do Pedro:** Alunos e E-mails já têm dado real; Questões só
+significa algo depois das ~100 questões. Dele também: as três decisões do §4.6, o banco de ~100
+questões (a prova hoje roda sobre
 24 `[EXEMPLO]`, e dois sorteios repetem 19 das 20), o template Invite user e a política de senha
 no painel do Supabase.
 
