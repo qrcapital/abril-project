@@ -34,9 +34,25 @@ const VAZIA: Matricula = {
  * o bloqueio e a tela de acesso consulta de novo para escrever a data. Sem ele seriam duas
  * idas ao banco por requisição.
  *
- * A leitura usa o cliente com a sessão do aluno, e não a service role: a policy
- * `enrollments_self_select` já restringe à própria linha, então a RLS é a garantia, não um
- * `where` que alguém pode esquecer.
+ * A leitura usa o cliente com a sessão do aluno, e não a service role.
+ *
+ * ┌─ O `.eq("user_id")` ABAIXO NÃO É REDUNDANTE ────────────────────────────────────────────┐
+ * │ Este comentário dizia, até 31/jul/2026, que a policy `enrollments_self_select` já        │
+ * │ restringia à própria linha e que a RLS era a garantia. **Ela não restringe.** A policy   │
+ * │ é `(user_id = auth.uid()) OR is_admin()`, e todo admin também é aluno: para ele o        │
+ * │ SELECT devolvia as matrículas de TODO MUNDO, e o `order by expires_at desc limit 1`      │
+ * │ escolhia a de outra pessoa.                                                             │
+ * │                                                                                         │
+ * │ O efeito, medido na conta do Pedro: a área do aluno mostrava o calendário, o prazo e a   │
+ * │ `liberacao_total` de `prova.motor@example.com`, que era quem tinha o `expires_at` mais   │
+ * │ distante. E como o `estado` desta função é o que a guarda do `(sala)` usa, um admin      │
+ * │ poderia ser barrado por causa da matrícula revogada de outro, ou entrar com a dele       │
+ * │ vencida.                                                                                │
+ * │                                                                                         │
+ * │ É o padrão que o `HANDOFF.md` §6 já registra em outra roupa: **a policy é mais larga do  │
+ * │ que o `where` que você não escreveu.** Filtro explícito no query, RLS como segunda       │
+ * │ camada, nunca como a única.                                                             │
+ * └─────────────────────────────────────────────────────────────────────────────────────────┘
  */
 export const getMatricula = cache(async (): Promise<Matricula> => {
   const user = await getUsuario();
@@ -47,6 +63,7 @@ export const getMatricula = cache(async (): Promise<Matricula> => {
   const { data, error } = await supabase
     .from("enrollments")
     .select("status,expires_at,inicio_em,liberacao_total")
+    .eq("user_id", user.id)
     .order("expires_at", { ascending: false })
     .limit(1)
     .maybeSingle();

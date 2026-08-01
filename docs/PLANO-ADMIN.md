@@ -62,13 +62,29 @@ _Rascunho para aprovação — 2026-07-20._
   `console.log`, cujo teto estava anotado na rota de papel: log de servidor tem retenção curta e
   ninguém consulta de propósito. A liberação de 2ª chamada foi a quarta, e a que mais pede rastro:
   devolver a alguém o direito de refazer uma prova de tentativa única é decisão caso a caso de uma
-  pessoa. **Ainda não há tela para consultar o rastro** — hoje se lê por SQL.
+  pessoa.
+
+  ~~**Ainda não há tela para consultar o rastro**~~ **FEITA no mesmo dia**, em `/admin/auditoria`,
+  com a `listar_auditoria` da migration `0015`. Ela é **somente leitura, sem exceção**: apagar linha
+  de auditoria pelo painel desfaria o motivo de ela existir. Qualquer admin lê, não só o mestre, e a
+  busca casa com autor, alvo ou nome da ação.
+
+  **Ela se pagou antes de ficar pronta.** Foi na primeira lista carregada que apareceu uma edição de
+  nome que ninguém tinha feito, causada pelo preenchimento automático do navegador em cima do
+  salvamento automático da tela do aluno (detalhe no `CHANGELOG.md`). É o argumento de auditoria em
+  uma frase: o registro pegou uma alteração que nenhuma pessoa teria notado.
 
 ## 3. Casca (layout do admin)
 
 - **Sidebar** fixa: Painel · Alunos · Questões · **Conteúdo** (§4.6) · E-mails, e depois de uma
-  régua, **Equipe** (§4.7). A régua separa quem **opera** de o que é **operado**. Rodapé com
-  "voltar ao site" e sair.
+  régua, **Equipe** (§4.7) e **Auditoria** (§2). A régua separa quem **opera** de o que é
+  **operado**. Rodapé com **"Área do aluno"**, "voltar ao site" e sair.
+
+  **"Área do aluno" entrou em 31/jul/2026, a pedido do Pedro.** Leva a `/app` com a conta do próprio
+  admin, e não é personificação: matrícula, progresso e esteira semanal são os dele. Abre em outra
+  aba porque o chrome do aluno não tem caminho de volta para o `/admin`. Quando a matrícula do admin
+  não está ativa (o caso de quem opera o suporte sem ter comprado), o item aparece sem link e marcado
+  "sem acesso", pelo mesmo motivo do "em breve" abaixo.
 
   Construída em 30/jul/2026. Item cuja tela ainda não existe aparece sem link e marcado "em
   breve": a alternativa era listar seis links e entregar quatro 404, e navegação é a promessa da
@@ -129,9 +145,32 @@ a tela avisa quando ele é atingido.
 > "conta no gate", que explica por que o Módulo 0 não entra no 16/16) e a tabela de tentativas da
 > prova com nota e horários.
 >
-> **As ações continuam fora, inclusive as duas que não dependem de integração** (liberar 2ª chamada
-> e estender acesso). O §2 pede auditoria para ação sensível, e a tela de Equipe já abriu essa
-> dívida com log de servidor; somar mais três ações sobre o mesmo rastro fraco é a hora errada.
+> **ATUALIZADO em 31/jul/2026, e a tela deixou de ser só leitura.** Entraram, nesta ordem: reenviar
+> acesso, liberar 2ª chamada e, a pedido do Pedro, a **edição de nome, e-mail, telefone e progresso
+> por módulo**. O que destravou tudo foi a auditoria (`admin_audit`, migration `0014`), que era a
+> dívida citada no parágrafo abaixo: agora cada ação grava quem fez, em quem, e o de/para.
+>
+> **A edição é no lugar:** "Editar" no alto, os três campos viram caixa de texto onde já estavam, e
+> cada um salva ao perder o foco ou no Enter, com Escape para desfazer. Sem botão "Salvar".
+>
+> **Quatro decisões da edição que não são óbvias:**
+>
+> - **Salva ao sair do campo, nunca por debounce de tecla.** O e-mail é o login: gravar um endereço
+>   pela metade a caminho do certo trocaria o acesso do aluno por algo que não existe.
+> - **O nome é gravado em dois lugares** (`profiles.nome` e `user_metadata.nome`), porque são duas
+>   moradas com leitores diferentes: a verificação **pública** do certificado lê a primeira, as telas
+>   do aluno e os e-mails leem a segunda, e o trigger só copia uma vez, no cadastro.
+> - **E-mail repetido é conferido antes de gravar**, pela `buscar_usuarios`: o erro do Admin API para
+>   esse caso vem como status 500 com `message` igual a `"{}"`, indistinguível de queda de rede.
+> - **Progresso por módulo, não por aula**, que é o caso real do suporte ("assisti tudo e não
+>   marcou"). Limpar pede confirmação e avisa quando fecha o acesso à prova.
+>
+> **Revogar e estender acesso seguem fora**, agora só por decisão de produto sobre a matrícula.
+>
+> _(Contexto de 30/jul, mantido:)_ As ações continuam fora, inclusive as duas que não dependem de
+> integração (liberar 2ª chamada e estender acesso). O §2 pede auditoria para ação sensível, e a tela
+> de Equipe já abriu essa dívida com log de servidor; somar mais três ações sobre o mesmo rastro
+> fraco é a hora errada.
 >
 > **Leitura mista, e a mistura é a escolha barata:** `aluno_modulos` é função da `0006` porque
 > agrupar por módulo é agregação; o resto vem do PostgREST direto, porque é uma linha por tabela

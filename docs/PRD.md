@@ -201,7 +201,9 @@ A home é uma **vitrine** (padrão validado na auditoria do CCA/Cademi), não um
 
 - **Banner hero**: vídeo de boas-vindas; com progresso existente, overlay "Continue de onde parou → Módulo X · Aula Y" e CTA de retomada.
 - **Prateleira 1 — A Formação**: cards de Módulo 0 (Bem-vindo) a IV, cada um com arte, contador de progresso (ex.: 2/4) e estado (concluído ✓, em andamento, não iniciado).
-- **Prateleira 2 — Materiais e Certificação**: Apostilas (1 por módulo), E-book bônus, Prova Final (bloqueada até 16/16), e card de 2ª chamada (oculto até liberado pelo admin).
+- **Prateleira 2 — Materiais e Certificação**: Apostilas (1 por módulo), E-book bônus, Prova Final e card de 2ª chamada (oculto até liberado pelo admin).
+
+  **O card da Prova Final tem seis estados desde 31/jul/2026**, e a linha de baixo mais o destino do clique mudam com eles: bloqueada até 16/16 (cadeado, modal explicando quantas aulas faltam), liberada, em andamento, **reprovado** (não leva mais à prova; diz "Você reprovou. Clique aqui e entre em contato com o Suporte." e o clique abre o WhatsApp, porque a prova é de tentativa única e não há para onde ir no produto), aprovado (leva ao certificado) e 2ª chamada liberada. Quem tem 2ª chamada esperando não aparece como reprovado, porque já ganhou a saída.
 
 ### Regras
 
@@ -284,7 +286,7 @@ Prova única, reprobatória, que cobre os quatro módulos. Instruções com ciê
 | Início da contagem | Ao iniciar, grava `deadline` = agora + 120 min |
 | Desbloqueio | 16/16 aulas avaliadas concluídas |
 | Tentativas | 1 (attempt único). 2ª chamada liberada por admin **em `/admin/alunos/[id]` desde 31/jul/2026**, e só para quem entregou e reprovou: liberar para aprovado trocaria a tentativa vigente por uma sem nota e o aluno perderia o acesso ao certificado que já tinha. A tentativa nasce em `available` e é sorteada quando ele clica em Iniciar; toda liberação fica em `admin_audit`, com a nota que reprovou |
-| Submissão após deadline | Corrige apenas o que foi respondido |
+| Submissão após deadline | Corrige apenas o que foi respondido. **A tela de resultado diz que foi o prazo que encerrou** (desde 31/jul/2026): o kicker vira "Prazo encerrado", o título "O tempo acabou, {nome}", e o subtítulo conta quantas ficaram em branco e que branco conta como erro. O gatilho é `submitted_at = deadline`, que só acontece em fechamento por tempo. Sem isso o abandono era indistinguível de uma entrega por clique, e o 0% dos módulos não respondidos parecia erro de correção |
 | Pós-2ª reprovação | Caso a caso pelo suporte, sem fluxo automático |
 | Snapshot | As 20 questões sorteadas para a tentativa são gravadas (`questions_snapshot`), para corrigir e auditar sempre contra o que o aluno viu |
 

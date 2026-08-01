@@ -146,6 +146,29 @@ Em ordem do que eu atacaria primeiro:
 O `docs/PENDENCIAS-LP.md` é o checklist formal, mas estava congelado em 20/jul e já
 divergia do real. Foi ressincronizado junto com este handoff.
 
+9. **O painel do admin tem sete telas e três delas escrevem no aluno** (31/jul/2026). Além de
+   Painel, Alunos, Questões, Conteúdo, E-mails e Equipe, entrou **Auditoria** (`/admin/auditoria`,
+   migration `0015`), que lê a `admin_audit`. E o **detalhe do aluno deixou de ser só leitura**:
+   edita nome, e-mail, telefone e progresso por módulo.
+
+   Três coisas que quem for mexer ali precisa saber, todas descobertas construindo:
+
+   - **O nome do aluno mora em dois lugares** e os dois precisam ser escritos: `profiles.nome`, que
+     a verificação **pública** do certificado lê, e `user_metadata.nome`, que as telas do aluno e os
+     e-mails leem. O trigger `handle_new_user` copia um do outro uma vez, no cadastro, e depois eles
+     andam sozinhos.
+   - **Trocar e-mail para um endereço já usado** volta do Admin API como `AuthRetryableFetchError`,
+     status 500 e `message` igual à string `"{}"`, indistinguível de queda de rede. Por isso a rota
+     confere antes, com a `buscar_usuarios`.
+   - **Campo com salvamento automático precisa de `autoComplete="off"`.** Salvar ao sair do campo
+     grava o que estiver nele, e o preenchimento automático do navegador chegou a alterar o nome de
+     um aluno sozinho. Quem pegou foi a tela de Auditoria.
+
+10. **Emissão de certificado e 2ª chamada existem desde 31/jul/2026.** O código do certificado é
+    sorteado com Web Crypto num alfabeto sem símbolo ambíguo, e mexer no formato quebra código já
+    publicado em perfil de LinkedIn. A 2ª chamada é liberada em `/admin/alunos/[id]`, só para quem
+    entregou e reprovou, e fica no rastro com a nota que reprovou.
+
 ---
 
 ## 3. Como o código é gerado (leia antes de editar a LP)
@@ -357,6 +380,19 @@ erro simétrico (concluir que a guarda falhou porque veio 307). Quando o `redire
 um 307 de verdade, com o header `location`. Medido na guarda do `/admin`: anônimo em `/admin` dá
 `HTTP/1.1 307` + `location: /app/login`. Ou seja: 200 não prova que falhou, e 307 não prova que
 funcionou — o que decide é se a guarda roda antes ou depois do primeiro byte.
+
+**A policy é mais larga do que o `where` que você não escreveu** (31/jul/2026, achado no QA visual).
+O `getMatricula` lia `enrollments` sem filtrar por `user_id`, confiando na RLS, e o comentário dizia que
+a policy restringia à própria linha. Ela é `(user_id = auth.uid()) OR is_admin()`: **todo admin também
+é aluno**, então para ele o SELECT devolvia as matrículas de todo mundo e o `order by expires_at desc
+limit 1` escolhia a de outra pessoa. A home do Pedro mostrava o calendário de `prova.motor@example.com`.
+
+Não era cosmético: o `estado` dessa função é o que a guarda do `(sala)` usa, então um admin poderia ser
+barrado pela matrícula revogada de outro. É a **quinta** repetição do padrão que este documento já
+registra em quatro roupas (revoke de PUBLIC, coluna dentro de grant de tabela, route handler fora do
+layout, linha que não restringe coluna): **RLS é segunda camada, nunca o filtro.** Ao ler tabela por
+sessão, escreva o `where` de todo jeito; e ao ler uma policy, some mentalmente o `or is_admin()` antes
+de concluir que ela isola.
 
 **Contraste não é erro de sintaxe.** Nenhuma ferramenta do projeto reprova cor ilegível. Ao
 escolher qualquer cor de texto, meça nos dois fundos da área (o chrome escuro `#0B2D20` e o

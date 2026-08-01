@@ -38,8 +38,9 @@ Nada de recontar história: leia este bloco e vá para o trabalho. O que acontec
 `CHANGELOG.md`; o que **decidir** está aqui.
 
 **Onde paramos:** o **painel está completo** — Painel, Alunos, Detalhe do aluno, Equipe, Conteúdo,
-E-mails, **Questões** e a casca, todas no ar em homolog. Entrou também a **camada de envio de e-mail**
-(que não existia) com o builder dos transacionais nossos. Migrations `0003` a `0011` aplicadas no
+E-mails, **Questões**, **Auditoria** e a casca, todas no ar em homolog. O detalhe do aluno **edita**
+nome, e-mail, telefone e progresso por módulo, com salvamento automático e rastro. Entrou também a **camada de envio de e-mail**
+(que não existia) com o builder dos transacionais nossos. Migrations `0003` a `0015` aplicadas no
 `ei-homolog`. A conta
 `pedrohfontei@gmail.com` é **admin mestre**, e a senha dela em homolog é a de teste conhecida. Duas
 travas caíram em 31/jul: as **três decisões do §4.6** (tela construída) e a **`liberacao_total`** do
@@ -73,12 +74,25 @@ domínio de e-mail) e as duas decisões pequenas do §4.4.
    snapshot), e **sim ao contador**, com duas réguas: o piso de 5 ativas por módulo, que se rompido
    faz a prova parar de abrir, e a meta de 25 do PRD.
 
-   **O painel está completo.** As seis telas do `PLANO-ADMIN` estão no ar.
+   **O painel está completo.** As telas do `PLANO-ADMIN` estão no ar, e desde o fim do dia são sete,
+   com a de Auditoria.
+
+4. **QA dos caminhos da prova, um a um no navegador** (pedido do Pedro em 31/jul). Andados até o fim:
+   conta nova até a prova, aprovação, reprovação, liberação da 2ª chamada pelo suporte, 2ª chamada
+   aprovada e **abandono** (nas duas metades: o aluno que volta atrasado e o que nunca volta). Cada
+   caminho achou defeito que build e lint não pegam — quatro no total, todos consertados no mesmo dia
+   e no `CHANGELOG.md`. **Falta um caminho:** entregar com questão em branco, para ver como a grade do
+   modal de envio pinta quem ficou vazia (item no "Guardado para pensar depois").
 
 **Uma consequência de 31/jul para quem for testar a área do aluno:** com a `liberacao_total`
 desligada e `inicio_em` em 29/jul, as contas de teste veem só os módulos que a esteira já abriu.
-Isso é o produto. Para inspecionar o curso inteiro, use `pedrohfontei@gmail.com`, que ficou com a
-liberação total, ou ligue a coluna para a conta que precisar.
+Isso é o produto. Para inspecionar o curso inteiro, use `pedrohfontei@gmail.com`.
+
+**Corrigido em 31/jul, ao fim do dia:** essa conta **não** tem mais `liberacao_total`. Conferido no
+banco: a coluna está `false` nas nove matrículas. O que abre o curso inteiro para ela é o
+`inicio_em` em **01/jul**, ou seja, a esteira semanal já rodou até o fim. Para uma conta nova ver
+tudo, o caminho é recuar o `inicio_em` ou ligar a coluna, e o segundo é o que se parece menos com o
+produto real.
 
 **Ao construir tela nova de admin, três coisas que já custaram tempo** (detalhe no `HANDOFF.md` §6):
 route handler **não passa por layout**, então rota que muta refaz a checagem de papel; peças de
@@ -89,11 +103,12 @@ tabela vêm de `app/admin/_ui/tabela.tsx`, não se inventa a sexta; e **não rod
 
 - 🔒 **13 · Quem escreve as ~100 questões.** Não bloqueia código, mas é o que falta para a prova
   deixar de rodar sobre as 24 de exemplo, onde dois sorteios repetem 19 das 20.
-- ~~🔒 **Auditoria do admin**~~ **FEITA em 31/jul**, decidida por mim quando você me deu a sequência:
-  a tabela `admin_audit` (migration `0014`) entrou junto com a liberação de 2ª chamada, que seria a
-  quarta escrita sensível sobre log de servidor. Grava papel de admin e liberação de prova. **Falta uma
-  tela para consultar** — hoje se lê por SQL, e isso só vira necessidade quando alguém precisar
-  auditar sem abrir o banco.
+- ~~🔒 **Auditoria do admin**~~ **COMPLETA em 31/jul**, tabela e tela. A `admin_audit` (migration
+  `0014`) entrou junto com a liberação de 2ª chamada, e a tela `/admin/auditoria` (migration `0015`)
+  no fim do mesmo dia, quando o rastro já guardava cinco tipos de ação, incluindo troca de e-mail.
+  Somente leitura, com busca por autor, alvo ou ação. **Achou um defeito na primeira lista carregada:**
+  o preenchimento automático do navegador tinha alterado o nome de um aluno sozinho, em cima do
+  salvamento automático da tela de edição.
 - 🔒 **URL do checkout do Guru** e os **materiais e vídeos reais**, que seguem pendentes.
 - 🔒 **Arte do banner dos e-mails**, se você quiser usar (o campo existe desde 31/jul, por template,
   com **upload** na tela). **1120 × 360 px** em PNG ou JPG, de preferência abaixo de 200 KB, que exibe
@@ -438,6 +453,78 @@ um consertando várias telas de uma vez, e é por isso que vêm antes dos de tel
       errava em dois pontos: a tabela `lessons` **não** estava vazia (o seed já tinha rodado) e o
       progresso saiu do cookie para a tabela `progress` no mesmo dia. Desde 31/jul quem edita esse
       conteúdo é `/admin/conteudo`.
+
+## 🔍 Achados do QA visual de 31/jul/2026
+
+Primeira passada visual nas telas construídas hoje, com o Chrome de volta. As três telas de admin
+(Conteúdo, E-mails, Questões), o detalhe do aluno com as duas ações novas e o card de 2ª chamada na
+home foram vistos ao vivo. Dois achados já foram corrigidos na hora (a copy do card, que não caberia na
+coluna da prateleira, e o `margin-bottom` inútil num item de grid). Os de baixo ficaram.
+
+- [x] ~~🔴 **O certificado imprime uma frase sem sujeito quando a conta não tem nome.**~~ **FECHADO por
+      decisão do Pedro em 31/jul: não é problema, porque o nome será entrada obrigatória no cadastro.**
+      Ele aparece vazio hoje na conta dele e em três telas (certificado, resultado "Você concluiu a
+      formação, ." e o "Olá," do chrome), e isso é artefato de conta de teste criada sem metadata. Não
+      construir guarda para um caso que o cadastro obrigatório elimina.
+      **Consequência a não esquecer:** quando o cadastro obrigatório existir, ele precisa valer também
+      para a conta criada pelo **webhook do Guru** (que hoje grava `nome` do payload) e para o
+      backfill de contas antigas, senão o caso volta pela porta de trás.
+- [x] ~~🟡 **O card da Prova Final na home não conhece o estado do aluno.**~~ **RESOLVIDO em 31/jul**,
+      no mesmo dia, a pedido do Pedro: seis estados, com a linha e o destino do clique mudando em cada
+      um. O reprovado não leva mais à prova e abre o WhatsApp.
+- [ ] 🟡 **"Validar em estrategiainternacional.com/verificar"** é texto do design, no cartão do código.
+      O link funciona (aponta para o `/verificar/<codigo>` real), mas o domínio escrito ali precisa
+      casar com o domínio de produção quando ele existir.
+- [ ] 🟡 **Duas assinaturas do certificado seguem "nome a definir"**, e o ano está fixo em 2026 no
+      canto. Insumo, não código.
+- [ ] 🟢 **O "certa" repetido nas quatro alternativas** da tela de Questões (`A certa`, `B certa`...)
+      polui a leitura: o rótulo do grupo já diz "Alternativas, e qual delas é a correta". Tirar o
+      "certa" de cada linha é uma linha de diff, e eu deixei para não misturar com o QA.
+
+### Achados do caminho da 2ª chamada (31/jul)
+
+- [ ] 🔴 **17 das 20 questões repetiram entre a 1ª e a 2ª chamada**, medido num ciclo completo de
+      verdade. É consequência direta do banco de 24: sorteando 5 de 6 por módulo, a segunda prova é
+      quase a mesma. **Isso esvazia o sentido da 2ª chamada**, porque o aluno refaz o mesmo exame. Não é
+      bug de código, é o número que torna concreta a pendência das ~100 questões (tarefa 13): com 25 por
+      módulo, a sobreposição esperada cai para 1 em 5.
+- [ ] 🟡 **Uma resposta se perdeu ao responder e navegar em menos de 1 segundo.** No teste automatizado
+      da 2ª chamada, a questão 2 ficou sem resposta: o contador mostrou 9 de 10 respondidas. Voltando
+      pela URL, a resposta gravou normalmente. **Não sei se é artefato do meu robô ou corrida real**
+      entre a server action que grava e a navegação do cliente. Um aluno humano clica mais devagar, mas
+      numa prova de tentativa única perder resposta é grave, então vale isolar: reproduzir com dois
+      cliques em sequência rápida e olhar se o `salvarResposta` chegou ao servidor.
+
+### Achados do caminho do abandono (31/jul)
+
+Caminho andado inteiro: 7 de 20 respondidas, aba fechada, prazo estourado no banco, e as **duas**
+metades testadas — o aluno que volta atrasado e o que nunca volta (a rotina). Um bug encontrado e
+consertado no mesmo dia (TDZ do cronômetro, no `CHANGELOG.md`). O que sobrou é copy:
+
+- [x] ~~🟢 **Nenhuma tela diz ao aluno que o tempo acabou.**~~ **FEITO em 31/jul**, copy aprovado pelo
+      Pedro no mesmo dia. Quatro textos trocam quando `submitted_at == deadline`, e dois deles são os
+      que mais enganavam (o "ONDE REVISAR" sobre módulos que ficaram em 0% por não terem sido
+      respondidos, e o mesmo conselho repetido no pé). Detalhe no `CHANGELOG.md`. O caso negativo foi
+      conferido em tela: mesma nota entregue por clique continua com "Faltou pouco".
+- [ ] 🟢 **"Faltou pouco, ."** — o nome vazio na tela de resultado, com a vírgula e o ponto órfãos. É
+      o mesmo caso que o Pedro fechou como não-problema em 31/jul (nome vira entrada obrigatória no
+      cadastro), registrado aqui só porque desta vez apareceu **em tela**, não em e-mail. Continua
+      valendo a ressalva: a garantia tem de alcançar as contas criadas pelo Guru e as antigas.
+
+### Guardado para pensar depois (31/jul)
+
+- [ ] 🟡 **O NPS do certificado não grava nada.** A régua de 0 a 10 embaixo do certificado é clicável e
+      pinta a escolha, e para aí: não existe tabela, rota nem coluna para a resposta. O `PRD.md` §4.1
+      já lista "NPS médio" como métrica do Painel do admin, então hoje essa métrica não tem fonte.
+      Decidir se entra no lançamento e como: uma tabela `nps` com nota e data por aluno resolve, e a
+      pergunta de produto é se a resposta é anônima ou identificada.
+- [ ] 🟡 **A grade do modal de envio não foi testada com questão em branco.** No teste de 31/jul as 20
+      estavam respondidas, então todas apareceram douradas; falta ver como ela pinta quem ficou vazia,
+      que é justamente quando essa grade serve para alguma coisa.
+- [ ] 🟢 **Copy dos estados do card da Prova Final:** o reprovado e o aprovado ficaram em frase
+      ("Você reprovou. Clique aqui...", "Aprovado. Baixe seu certificado."), e os outros três seguem no
+      estilo do design, minúsculo com "·" ("liberada · 20 questões em 120 minutos", "prova em andamento
+      · continue de onde parou", "2ª chamada liberada · comece quando quiser"). Decidir se harmoniza.
 
 ## 🔒 Bloqueado por insumo
 

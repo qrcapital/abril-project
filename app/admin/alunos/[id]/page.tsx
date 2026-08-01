@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import DadosEditaveis from "./DadosEditaveis";
+import LimparModulo from "./LimparModulo";
 import ReenviarAcesso from "./ReenviarAcesso";
 import SegundaChamada from "./SegundaChamada";
 
@@ -34,8 +36,15 @@ export const metadata: Metadata = { title: "Aluno" };
  * decisão caso a caso sobre uma prova de tentativa única: é a ação que mais precisa responder "quem
  * liberou e por quê" meses depois.
  *
- * **Trocar e-mail, revogar e estender acesso seguem fora**, agora por outro motivo: elas mexem em
- * acesso pago, e o que falta ali é decisão de produto sobre o que fazer com a matrícula, não rastro.
+ * **Editar nome, e-mail, telefone e o progresso por módulo** entrou em 31/jul/2026, a pedido do
+ * Pedro, e com isso a tela deixou de ser só leitura. Revogar e estender acesso seguem fora: elas
+ * mexem em acesso pago, e o que falta ali é decisão de produto sobre o que fazer com a matrícula.
+ *
+ * A edição dos dados é **no lugar**: um "Editar" no alto transforma nome, e-mail e telefone em campo,
+ * e cada um salva sozinho ao perder o foco (`DadosEditaveis`). A primeira versão era um `<details>`
+ * com botão "Salvar dados", que repetia num formulário à parte três campos já mostrados na tela; o
+ * Pedro achou travada e ela durou uma hora. O progresso continua em botão por linha, que é clique
+ * único e muda o contador do gate.
  *
  * Aqui a leitura é MISTA de propósito: `aluno_modulos` é função da `0006`, porque agrupar por módulo
  * é agregação; o resto vem do PostgREST direto, porque é uma linha por tabela para um aluno só, e
@@ -49,6 +58,14 @@ type Modulo = {
   total: number;
   concluidas: number;
   conta_no_gate: boolean;
+};
+
+/** O que cada `?ok=` diz na volta da rota. Um lugar só, porque agora são cinco. */
+const MENSAGENS: Record<string, string> = {
+  acesso: "E-mail de acesso reenviado, com link novo.",
+  "segunda-chamada": "Tentativa liberada. O aluno recomeça pelas instruções, com sorteio novo.",
+  "progresso-marcado": "Módulo marcado como concluído.",
+  "progresso-limpo": "Progresso do módulo apagado.",
 };
 
 type Exame = {
@@ -121,64 +138,48 @@ export default async function Aluno({
         Voltar para Alunos
       </Link>
 
-      <header className="mb-7">
-        <h1 className="text-[26px] text-verde">
-          {perfil.data?.nome || <span className="text-pedra">Conta sem nome</span>}
-        </h1>
-        <p className="mt-1 text-[13px] text-medio">{user.email}</p>
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <Selo tom={TOM_ESTADO[estado]}>{ROTULO_ESTADO[estado]}</Selo>
-          {perfil.data?.is_master ? (
-            <Selo tom="forte">admin mestre</Selo>
-          ) : perfil.data?.is_admin ? (
-            <Selo tom="destaque">admin</Selo>
-          ) : null}
-          {atual?.liberacao_total && <Selo tom="destaque">liberação total</Selo>}
-        </div>
-
-        {/* A ação de suporte mais pedida (PRD §16): "não recebi o acesso". Fica no cabeçalho da
-            conta, e não na tela de E-mails, porque quem chega aqui chega pelo nome da pessoa, e
-            quando o e-mail nunca saiu não existe linha no log para clicar. */}
-        {user.email && (
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <ReenviarAcesso userId={user.id} email={user.email} />
-            {ok === "acesso" && (
-              <span className="text-[12px] text-sucesso">
-                E-mail de acesso reenviado, com link novo.
-              </span>
-            )}
+      <DadosEditaveis
+        userId={user.id}
+        inicial={{
+          nome: perfil.data?.nome ?? "",
+          email: user.email ?? "",
+          telefone: perfil.data?.telefone ?? "",
+        }}
+        leitura={[
+          ["Cliente no Guru", perfil.data?.guru_customer_id || "—"],
+          ["Pedido no Guru", atual?.guru_order_id || "—"],
+          ["Conta criada em", data(user.created_at)],
+          ["Compra", data(atual?.purchased_at)],
+          ["Acesso expira", data(atual?.expires_at)],
+          ["Início do calendário", data(atual?.inicio_em)],
+          ["Último login", data(user.last_sign_in_at)],
+        ]}
+        acoes={
+          <>
+            <Selo tom={TOM_ESTADO[estado]}>{ROTULO_ESTADO[estado]}</Selo>
+            {perfil.data?.is_master ? (
+              <Selo tom="forte">admin mestre</Selo>
+            ) : perfil.data?.is_admin ? (
+              <Selo tom="destaque">admin</Selo>
+            ) : null}
+            {atual?.liberacao_total && <Selo tom="destaque">liberação total</Selo>}
+            {/* A ação de suporte mais pedida (PRD §16): "não recebi o acesso". Fica no cabeçalho da
+                conta, e não na tela de E-mails, porque quem chega aqui chega pelo nome da pessoa, e
+                quando o e-mail nunca saiu não existe linha no log para clicar. */}
+            {user.email && <ReenviarAcesso userId={user.id} email={user.email} />}
+            {/* Mensagens das ações que ainda navegam (progresso, 2ª chamada, reenviar acesso). A
+                edição dos dados não passa por aqui: ela avisa no próprio editor, sem recarregar. */}
+            {ok && MENSAGENS[ok] && <span className="text-[12px] text-sucesso">{MENSAGENS[ok]}</span>}
             {erro && <span className="text-[12px] text-falha">{erro}</span>}
-          </div>
-        )}
-      </header>
+          </>
+        }
+      />
 
-      <section className="mb-8">
-        <h2 className="mb-3 text-[15px] text-verde">Cadastro e acesso</h2>
-        <Quadro>
-          <dl className="grid gap-x-8 gap-y-3 px-5 py-4 text-[13px] sm:grid-cols-2">
-            {[
-              ["Telefone", perfil.data?.telefone || "—"],
-              ["Cliente no Guru", perfil.data?.guru_customer_id || "—"],
-              ["Pedido no Guru", atual?.guru_order_id || "—"],
-              ["Conta criada em", data(user.created_at)],
-              ["Compra", data(atual?.purchased_at)],
-              ["Acesso expira", data(atual?.expires_at)],
-              ["Início do calendário", data(atual?.inicio_em)],
-              ["Último login", data(user.last_sign_in_at)],
-            ].map(([rotulo, valor]) => (
-              <div key={rotulo}>
-                <dt className="text-[11px] tracking-[0.1em] text-pedra uppercase">{rotulo}</dt>
-                <dd className="mt-0.5 text-grafite">{valor}</dd>
-              </div>
-            ))}
-          </dl>
-        </Quadro>
-        {(matriculas.data ?? []).length > 1 && (
-          <p className="mt-2 text-[12px] text-medio">
-            Esta conta tem {matriculas.data!.length} matrículas. Os dados acima são da mais recente.
-          </p>
-        )}
-      </section>
+      {(matriculas.data ?? []).length > 1 && (
+        <p className="-mt-6 mb-8 text-[12px] text-medio">
+          Esta conta tem {matriculas.data!.length} matrículas. Os dados acima são da mais recente.
+        </p>
+      )}
 
       <section className="mb-8">
         <h2 className="mb-3 text-[15px] text-verde">
@@ -192,7 +193,7 @@ export default async function Aluno({
         ) : (
           <Quadro>
             <table className="w-full min-w-[520px] border-collapse text-left">
-              <Cabecalho colunas={["Módulo", "Aulas", "Conta no gate"]} />
+              <Cabecalho colunas={["Módulo", "Aulas", "Conta no gate", ""]} />
               <tbody>
                 {mods.map((m) => (
                   <Linha key={m.ord}>
@@ -207,6 +208,34 @@ export default async function Aluno({
                     </td>
                     <td className="px-4 py-3 text-[12px] text-medio">
                       {m.conta_no_gate ? "sim" : "não"}
+                    </td>
+                    {/* Por MÓDULO, e não por aula: é como o Pedro pediu e é o caso real do suporte
+                        ("assisti tudo e não marcou"). Cada botão só aparece quando tem o que fazer,
+                        senão a linha oferece duas ações e uma delas é sempre inócua. */}
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
+                      {m.total > 0 && m.concluidas < m.total && (
+                        <form method="post" action="/admin/api/aluno" className="inline">
+                          <input type="hidden" name="acao" value="progresso" />
+                          <input type="hidden" name="userId" value={user.id} />
+                          <input type="hidden" name="ord" value={m.ord} />
+                          <input type="hidden" name="modo" value="marcar" />
+                          <button
+                            type="submit"
+                            className="mr-2 rounded-md border border-areia px-3 py-1.5 text-[12px] text-gold-dark hover:border-gold"
+                          >
+                            Concluir
+                          </button>
+                        </form>
+                      )}
+                      {m.concluidas > 0 && (
+                        <LimparModulo
+                          userId={user.id}
+                          ord={m.ord}
+                          titulo={`${m.ord}. ${m.titulo}`}
+                          concluidas={m.concluidas}
+                          contaNoGate={m.conta_no_gate}
+                        />
+                      )}
                     </td>
                   </Linha>
                 ))}
@@ -263,17 +292,12 @@ export default async function Aluno({
               <strong>2ª chamada:</strong> {decisao.motivo}
             </p>
           )}
-          {ok === "segunda-chamada" && (
-            <span className="text-[12px] text-sucesso">
-              Tentativa liberada. O aluno recomeça pelas instruções, com sorteio novo.
-            </span>
-          )}
         </div>
 
         <p className="mt-4 max-w-2xl border-l-2 border-gold-soft pl-4 text-[12px] text-medio">
-          As outras ações do aluno (trocar e-mail, revogar ou estender acesso) seguem fora: elas
-          mexem em acesso pago e o <code>PLANO-ADMIN</code> §2 pede rastro, que agora existe
-          (<code>admin_audit</code>) mas ainda não tem tela para consultar.
+          Revogar e estender acesso seguem fora: mexem em acesso pago e falta decidir o que fazer
+          com a matrícula. Toda edição desta tela fica registrada em <code>admin_audit</code>, que
+          ainda não tem tela para consultar.
         </p>
       </section>
     </>

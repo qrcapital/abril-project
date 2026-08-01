@@ -267,8 +267,18 @@ export default function QuizClient({
         void enviar(true);
       }
     };
-    tick();
+    // O INTERVALO É ARMADO ANTES DA PRIMEIRA CHAMADA, e a ordem não é estética. O `tick` fecha
+    // sobre `iv` para se desarmar no zero; chamado antes do `const iv` existir, ele batia na TDZ
+    // ("Cannot access 'iv' before initialization"), a exceção subia para o error boundary da sala e
+    // o aluno recebia "Alguma coisa saiu do lugar".
+    //
+    // Só acontecia num caso, e é justo o do abandono: voltar à prova com o prazo JÁ vencido, quando
+    // `rem` é 0 na primeira chamada. Com a tela aberta o zero chega pelo intervalo, com `iv` pronto,
+    // e por isso o cronômetro parecia certo em todo teste anterior. Encontrado em 31/jul/2026 andando
+    // o caminho do abandono. Efeito colateral do defeito: o envio automático não acontecia, então a
+    // tentativa ficava `in_progress` até a rotina passar.
     const iv = setInterval(tick, 1000);
+    tick();
 
     return () => {
       clearInterval(iv);

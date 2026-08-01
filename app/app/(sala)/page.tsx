@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { tela } from "@/lib/telas";
 import HomeClient from "./HomeClient";
-import { fillHome } from "@/lib/home-template";
+import { fillHome, type EstadoCardProva } from "@/lib/home-template";
 import { getConcluidas } from "@/lib/progresso";
 import { href } from "@/lib/curso";
 import { getCurriculo } from "@/lib/curriculo";
@@ -9,6 +9,7 @@ import { getMatricula } from "@/lib/matricula";
 import { aberturaDoModulo, diasAte, liberacao } from "@/lib/liberacao";
 import { getUsuario } from "@/lib/usuario";
 import { tentativaAtual } from "@/lib/prova";
+import { corrigir } from "@/lib/prova-correcao";
 import { preencherUsuario } from "@/lib/usuario-template";
 
 export const metadata: Metadata = { title: "Início" };
@@ -31,6 +32,22 @@ export default async function HomePage({
   // nunca fez a prova seria mentira. O dado vem do banco, nunca da URL.
   const tentativa = user ? await tentativaAtual(user.id) : null;
   const segundaChamada = tentativa?.status === "available" && tentativa.attempt > 1;
+
+  // O ESTADO DO CARD DA PROVA FINAL. A ordem dos testes é a da precedência: quem tem 2ª chamada
+  // esperando não é "reprovado" (ele já ganhou a saída), e quem está com a prova aberta não é
+  // "liberada". A aprovação sai da correção do snapshot, que é a mesma fonte do porteiro do
+  // certificado — usar a coluna `score` aqui abriria duas verdades sobre quem passou.
+  const estadoProva: EstadoCardProva = segundaChamada
+    ? "segunda"
+    : tentativa?.status === "in_progress"
+      ? "andamento"
+      : tentativa?.status === "submitted"
+        ? corrigir(tentativa.questoes, tentativa.respostas).aprovado
+          ? "aprovado"
+          : "reprovado"
+        : curriculo.provaLiberada(concluidas)
+          ? "liberada"
+          : "bloqueada";
 
   // Quais módulos ainda não abriram, e em quantos dias. O cartão travado mostra a espera em
   // vez de sumir: o aluno precisa ver que o curso continua, e quando.
@@ -60,7 +77,7 @@ export default async function HomePage({
   return (
     <HomeClient
       html={preencherUsuario(
-        fillHome(template, curriculo, concluidas, travados, segundaChamada),
+        fillHome(template, curriculo, concluidas, travados, segundaChamada, estadoProva),
         user,
       )}
       // O cliente deixou de conhecer o currículo: recebe pronto o que precisaria calcular.

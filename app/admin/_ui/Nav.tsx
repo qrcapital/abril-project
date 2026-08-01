@@ -23,9 +23,12 @@ const ITENS = [
   // Equipe é escopo novo, pedido pelo Pedro em 30/jul/2026, e não estava no §3 do plano. Fica
   // separada por uma régua porque é a única que fala de quem OPERA, não do que é operado.
   { href: "/admin/equipe", rotulo: "Equipe", pronto: true, separar: true },
+  // Auditoria fica do lado de Equipe, abaixo da mesma régua, porque é a outra metade do assunto
+  // "quem opera": uma diz quem tem a chave, a outra diz o que fizeram com ela.
+  { href: "/admin/auditoria", rotulo: "Auditoria", pronto: true },
 ];
 
-export default function Nav({ email }: { email?: string }) {
+export default function Nav({ email, temAcesso }: { email?: string; temAcesso?: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -91,6 +94,38 @@ export default function Nav({ email }: { email?: string }) {
           <p className="truncate px-3 pb-2 text-[11px] text-muted" title={email}>
             {email}
           </p>
+        )}
+        {/* A FORMAÇÃO COM A PRÓPRIA CONTA, pedido do Pedro em 31/jul/2026. Não é "ver como o
+            aluno X": é o admin entrando no curso como ele mesmo, com a matrícula dele, então a
+            esteira semanal e o progresso são os da conta dele.
+
+            Abre em outra aba porque o caminho de volta não existe: o chrome do aluno não tem
+            link para o `/admin`, e sem a aba o admin voltaria digitando o endereço. A seta é o
+            que avisa isso, e é por ela que este item não se parece com o "Voltar ao site" logo
+            abaixo, que troca de tela na mesma aba.
+
+            Sem matrícula ativa vira texto morto, pelo mesmo motivo do `pronto: false` lá em
+            cima. */}
+        {temAcesso ? (
+          <Link
+            href="/app"
+            target="_blank"
+            rel="noopener"
+            className="block rounded-md px-3 py-2 text-[12px] text-muted2 hover:text-offwhite"
+          >
+            Área do aluno ↗
+          </Link>
+        ) : (
+          <span
+            className="flex cursor-default items-center justify-between rounded-md px-3 py-2 text-[12px] text-muted/70"
+            title="A matrícula desta conta não está ativa, então a área do aluno recusaria a entrada."
+          >
+            Área do aluno
+            {/* "sem acesso" e não "sem matrícula": a condição é `estado !== "ativa"`, que também
+                pega matrícula expirada e revogada, onde ela existe. E cabe na sidebar de 232px,
+                onde "sem matrícula" quebrava o item em duas linhas. */}
+            <span className="text-[10px] tracking-[0.1em] uppercase">sem acesso</span>
+          </span>
         )}
         <Link
           href="/"

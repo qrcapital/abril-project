@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 
 import Nav from "@/app/admin/_ui/Nav";
 import { papelAtual } from "@/lib/admin";
+import { getMatricula } from "@/lib/matricula";
 
 import "./admin.css";
 
@@ -37,10 +38,17 @@ export default async function AdminLayout({
   if (papel === "anonimo") redirect("/app/login");
   if (papel !== "admin") notFound();
 
+  // O atalho para a área do aluno só é link se a conta DESTE admin puder entrar lá. A regra é a
+  // mesma da guarda do `(sala)`, de propósito: admin é aluno como qualquer outro, e quem opera o
+  // suporte sem ter comprado o curso não tem matrícula. Sem esta consulta o item viraria promessa
+  // quebrada, mandando o suporte para "Não encontramos sua matrícula", que é texto escrito para
+  // aluno e pede o e-mail da compra que ele nunca fez.
+  const { estado } = await getMatricula();
+
   return (
     <div className="admin-root grid min-h-dvh grid-cols-[232px_1fr]">
       <aside className="sticky top-0 h-dvh">
-        <Nav email={email} />
+        <Nav email={email} temAcesso={estado === "ativa"} />
       </aside>
       <main className="min-w-0 px-8 py-8">{children}</main>
     </div>

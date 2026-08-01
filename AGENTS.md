@@ -71,7 +71,7 @@ três vezes em 29/jul. Se precisar de progresso para testar, use
 npm run dev           # dev server
 npm run build         # build de produção — NÃO rodar com o dev de pé (ver abaixo)
 npm run lint
-npm run check         # self-checks offline (prova, senha, usuário, liberação, currículo, matrícula, e-mail)
+npm run check         # 10 self-checks offline (prova, senha, usuário, liberação, currículo, matrícula, e-mail, certificado, aluno, auditoria)
 npm run check:rls     # contra o banco: aluno não vira admin (precisa de rede + .env.local)
 npm run check:mestre  # contra o banco: regras do admin mestre (idem)
 ```

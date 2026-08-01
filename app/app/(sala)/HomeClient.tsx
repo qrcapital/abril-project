@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import contato from "@/lib/contato.json";
+
 /** O que o modal está dizendo. `null` = fechado. */
 type Aviso = {
   titulo: string;
@@ -20,7 +22,9 @@ type Aviso = {
  *
  * - cards de módulo → primeira aula do módulo, se o módulo já abriu;
  * - card de 2ª chamada (só existe se um admin liberou) → /app/prova, direto;
- * - card da Prova Final → /app/prova SE liberada (16/16); senão abre o modal;
+ * - card da Prova Final → roteia pelo `data-prova`: reprovado abre o WhatsApp (tentativa única, não
+ *   há para onde ir no produto), aprovado vai ao certificado, bloqueada abre o modal, o resto vai
+ *   para /app/prova;
  * - "Continuar" → aula atual.
  * Delegação de evento (sobrevive à re-render ao abrir/fechar o modal).
  *
@@ -92,6 +96,22 @@ export default function HomeClient({
         // da prova final"), então ele é tratado ANTES e por atributo, não por texto: sem isto, ele
         // dependeria do gate de 16/16 que o aluno já cumpriu e daria no mesmo, mas por coincidência.
         if (card.dataset.segunda === "1") return router.push("/app/prova");
+
+        // O CARD DA PROVA FINAL ROTEIA POR ESTADO, e o estado vem em `data-prova` do servidor. Antes
+        // ele só sabia duas coisas (liberada ou não) e mandava todo mundo para /app/prova.
+        //
+        // O caso do reprovado é o que o Pedro pediu em 31/jul: a prova é de tentativa única, então
+        // depois de reprovar não existe para onde clicar dentro do produto. Em vez de levar a uma tela
+        // que devolve, o clique abre o WhatsApp, que é o único caminho real. `noopener` porque abrir
+        // aba externa sem ele dá acesso ao nosso `window` para a página de destino.
+        const prova = card.dataset.prova;
+        if (prova === "reprovado") {
+          window.open(contato.whatsapp, "_blank", "noopener");
+          return;
+        }
+        if (prova === "aprovado") return router.push("/app/certificado");
+        if (prova && prova !== "bloqueada") return router.push("/app/prova");
+
         if (/Prova|Certifica/i.test(card.textContent || "")) {
           if (provaLiberada) return router.push("/app/prova");
           setAviso({

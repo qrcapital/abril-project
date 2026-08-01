@@ -8,6 +8,194 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **`/admin/auditoria`: o rastro do painel ganhou leitor** — 2026-07-31
+  - A `admin_audit` nasceu de manhã (migration `0014`) e passou o dia **gravando sem ninguém poder
+    ler**: consultava-se por SQL. Auditoria que depende de acesso ao banco não responde a quem
+    precisa perguntar, e a lista de ações registradas já inclui troca de e-mail, que é troca de login.
+  - Migration `0015`, `listar_auditoria(termo, limite)`, no mesmo molde da `listar_emails` da `0008`:
+    `security definer` para alcançar `auth.users`, revogada de **PUBLIC** (a armadilha do schema, pela
+    sexta vez) e `left join` no alvo, porque `alvo_id` não tem FK e a conta pode ter sido apagada. Sem
+    o left join, apagar a conta viraria o jeito de apagar o histórico dela.
+  - **A tela não tem ação nenhuma**, e isso é a decisão principal: apagar linha de auditoria pelo
+    painel desfaria o motivo de ela existir. Busca casa com autor, alvo ou nome da ação, que são as
+    três perguntas que se faz a um rastro.
+  - **Ação sem rótulo aparece com o código cru, e não some.** A próxima rota que chamar `auditar` com
+    um nome novo vai aparecer no mesmo dia, feia mas visível; uma tela que só mostra o que conhece
+    esconde justamente a ação que ninguém previu. `check:auditoria` fixa isso, junto com os plurais e
+    com `nota_anterior: 0`, que um `??` descuidado trataria como ausente.
+  - `table-fixed` com larguras declaradas: com layout automático, um e-mail longo no de/para
+    empurrava "O que mudou" para fora do miolo de 854px, que é justamente a coluna que se veio ler.
+
+### Corrigido
+- **Preenchimento automático do navegador alterou o nome de um aluno sozinho** — 2026-07-31
+  - Encontrado **pela tela de Auditoria, no dia em que ela nasceu**, e por isso vale registrar: com a
+    tela do aluno aberta em modo de edição, o nome mudou de "João Testinho" para "João Testinhos" sem
+    ninguém digitar. O registro apareceu no rastro com autor, horário e o de/para.
+  - **A causa é a combinação:** salvar ao sair do campo grava o que estiver no campo, tenha sido um
+    humano a escrever ou não; o campo do nome tinha `autoFocus`, o vizinho é `type="email"`, e nada
+    dizia ao navegador para ficar de fora.
+  - Conserto: `autoComplete="off"` nos três campos, mais os opt-out do 1Password e do LastPass. O caso
+    ruim não é o navegador repetir um nome: é um gerenciador de senhas despejar o e-mail **do admin**
+    no campo de e-mail de um aluno, o que com salvamento automático troca o login dele.
+
+### Adicionado
+- **O admin passou a editar nome, e-mail, telefone e o progresso por módulo do aluno** — 2026-07-31
+  - Pedido do Pedro. Até aqui a tela de detalhe era só leitura, e corrigir um nome ou um e-mail
+    digitado errado na compra exigia SQL.
+  - **O NOME MORA EM DOIS LUGARES, e os dois são escritos na mesma ação.** `profiles.nome` é lido
+    pelo admin **e pela verificação pública do certificado** (`verify_certificate`);
+    `user_metadata.nome` é lido pelas telas do aluno e pelos e-mails de resultado. O trigger
+    `handle_new_user` copia um do outro **uma vez**, no cadastro, e depois eles andam sozinhos.
+    Gravar só um deixaria o certificado público com um nome e a tela do aluno com outro, sem erro em
+    lugar nenhum. Mesma família das armadilhas do `HANDOFF.md` §6: duas verdades para o mesmo fato.
+  - O `user_metadata` é reescrito a partir do que já estava lá, e não substituído: o webhook do Guru
+    grava chaves dele, e mandar um objeto novo com dois campos apagaria o resto (o `email_verified`
+    inclusive). Conferido depois da gravação.
+  - **A edição é no lugar, com salvamento automático.** Um "Editar" no alto transforma nome, e-mail e
+    telefone em campo, cada um salva ao perder o foco (ou no Enter) e o Escape desfaz. A primeira
+    versão era um `<details>` com botão "Salvar dados", um formulário à parte repetindo três campos
+    que a tela já mostrava; o Pedro achou travada e ela durou uma hora.
+  - **Salva ao sair do campo, e não enquanto se digita.** Debounce por tecla parece mais moderno e é
+    pior aqui: o e-mail é o login, e gravar `pedro@gmai` a caminho de `pedro@gmail.com` trocaria o
+    acesso do aluno por um endereço que não existe. Sair do campo é uma intenção; a pausa entre duas
+    teclas não é.
+  - **E-mail é login**, então a troca aplica na hora (`email_confirm: true`, sem pedir confirmação a
+    um endereço que o aluno talvez ainda não controle) e a tela avisa isso em duas posições: sob o
+    campo, antes, e na mensagem de "salvo", depois.
+  - A rota responde **JSON** para os dados (o editor não pode recarregar a tela a cada campo) e
+    mantém **form + 303** no progresso, que é clique único, muda o contador do gate e funciona sem
+    JS. `validarDados` roda nos dois lados: no navegador para não ir ao servidor dizer o que já se
+    sabe, e na rota porque POST não vem só desta tela.
+  - **Endereço repetido é conferido ANTES de gravar**, com a `buscar_usuarios` da `0004`, filtrando
+    acerto exato porque a busca é `ilike '%termo%'`. Motivo medido no teste de 31/jul: numa troca
+    para e-mail já usado, o Admin API devolve `AuthRetryableFetchError`, status 500 e `message` igual
+    à string `"{}"` — indistinguível de queda de rede, e a tela chegou a mostrar literalmente "Não
+    deu para trocar o e-mail: {}".
+  - **Progresso é por módulo**, com "Concluir" e "Limpar" por linha, e cada botão só aparece quando
+    tem o que fazer. "Limpar" pede confirmação pelo padrão 5 do `DESIGN.md` §3 e diz a consequência
+    que ninguém lembra na hora: quando o módulo conta para o gate, **o acesso à prova fecha**.
+    Verificado em tela: limpar o módulo 3 levou o aluno de 16/16 para 12/16.
+  - Tudo vai para `admin_audit` com de/para por campo (`aluno.dados`, `aluno.progresso-marcar`,
+    `aluno.progresso-limpar`). O rastro guarda só o que mudou: a pergunta de daqui a seis meses é
+    "quem trocou este e-mail, e de qual para qual".
+  - `lib/aluno-dados.ts` é puro, com `check:aluno` (o nono). O e-mail é validado de forma
+    deliberadamente frouxa, porque regex "completa" de e-mail recusa endereço válido e quem paga é o
+    aluno que para de receber tudo; quem decide de verdade é o Supabase na gravação.
+
+- **"Área do aluno" na sidebar do admin** — 2026-07-31
+  - Pedido do Pedro. O rodapé da sidebar só tinha "Voltar ao site", que vai para a LP; para entrar no
+    curso o admin digitava `/app` na barra de endereço.
+  - **É a conta dele, não uma personificação.** O admin entra como ele mesmo, com a matrícula, o
+    progresso e a esteira semanal da própria conta. "Ver como o aluno X" é outra coisa, não foi
+    pedida e não existe.
+  - **Abre em outra aba** (a seta no rótulo avisa), porque o caminho de volta não existe: o chrome do
+    aluno não tem link para o `/admin`. Sem a aba, voltar seria digitar o endereço de novo, que é o
+    problema que este item resolve.
+  - **Vira texto morto quando a matrícula não está ativa**, com "sem acesso" ao lado. Um admin do
+    suporte que nunca comprou o curso não tem matrícula, e a guarda do `(sala)` o mandaria para "Não
+    encontramos sua matrícula. Fale com a gente com o e-mail da compra em mãos", que é texto escrito
+    para aluno e pede uma compra que ele nunca fez. O `Nav.tsx` já tinha esse padrão para tela não
+    construída, e o comentário dele diz o motivo: promessa quebrada em painel interno vira ticket.
+  - Custa uma consulta de matrícula por carregamento do admin, no layout, com a mesma regra da guarda
+    do `(sala)` (`estado === "ativa"`).
+
+- **A tela de resultado passou a dizer que foi o prazo que encerrou a prova** — 2026-07-31
+  - Até aqui o abandono era **indistinguível** de uma entrega por clique: "Faltou pouco", nota baixa e
+    dois módulos em 0%. Quem respondeu 7 de 20 e voltou dias depois não lia em lugar nenhum que o
+    tempo tinha acabado, e o 0% nos módulos que ele nem viu parecia erro de correção.
+  - **O gatilho é `submitted_at === deadline`**, dado que já existia e não precisou de coluna nova.
+    Ele vale nos dois caminhos de fechamento por tempo (a rotina grava o deadline de propósito, e o
+    envio automático do cronômetro acontece no zero); quem entrega clicando tem `submitted_at` antes
+    do prazo, e continua vendo o texto de sempre.
+  - Quatro textos trocam, e **dois deles não são o aviso**: "DESEMPENHO POR MÓDULO · ONDE REVISAR"
+    mandava estudar módulo que ficou em 0% por não ter sido respondido, e o pé da página repetia o
+    mesmo conselho errado. Viraram "EM BRANCO CONTA COMO ERRO" e "As questões são sorteadas de novo",
+    esta última a mesma promessa do card de 2ª chamada na home.
+  - O que **não** muda: o selo vermelho, o `REPROVADO!` e a nota. O aluno não foi aprovado, e a tela
+    não amacia isso.
+  - `textoPrazoEncerrado` é pura e tem casos no `check:prova` por causa dos plurais, que é onde a
+    frase quebra sem ninguém ver: "As 1 em branco contam como erradas" e "com as 0 questões que você
+    já tinha respondido" passam por build, lint e revisão. Quatro variantes cobertas (nada
+    respondido, uma só, todas respondidas com o prazo estourando, e o caso comum), mais o marcador
+    `data-u="first"` sobrevivendo à troca do título: o `<h1>` é trocado por prefixo justamente para o
+    nome do aluno não virar o "Pedro" do design.
+  - O prazo na frase sai do `MINUTOS`, não de um "120" escrito à mão.
+
+### Corrigido
+- **Voltar à prova com o prazo já vencido dava tela de erro, e a prova não era enviada** — 2026-07-31
+  - Achado andando o caminho do **abandono**: o aluno respondeu 7 de 20, fechou a aba e voltou depois
+    dos 120 minutos. Em vez do resultado, recebeu **"Alguma coisa saiu do lugar"**, a tela de falha
+    genérica da sala.
+  - **Causa:** no `QuizClient`, o `tick()` do cronômetro era chamado uma vez antes do
+    `const iv = setInterval(...)`. O `tick` fecha sobre `iv` para se desarmar no zero, então com o
+    prazo vencido a primeira chamada batia na TDZ (`Cannot access 'iv' before initialization`) e a
+    exceção subia para o error boundary.
+  - **Só acontecia nesse caso**, e é o que explica ter passado por todos os testes anteriores: com a
+    tela aberta o zero chega pelo intervalo, quando `iv` já existe. Prazo vencido na montagem é a
+    única entrada em que `rem` é 0 na primeira chamada.
+  - **O efeito colateral era o pior dos dois:** o envio automático (`enviar(true)`) morria com a
+    exceção, então a tentativa ficava `in_progress` e o aluno não tinha resultado nem e-mail até a
+    rotina passar.
+  - Conserto: armar o intervalo antes da primeira chamada. Duas linhas trocadas de ordem. Sem check
+    novo — é ordenação dentro de um `useEffect`, e exercitá-la pediria DOM e um framework de teste que
+    o projeto não tem de propósito.
+  - Depois do conserto, voltar atrasado corrige o que foi respondido e mostra o resultado (35/100 nas
+    7 respondidas), com o `resultado-reprovado` no `email_log` três segundos depois.
+
+- **Tentativa liberada aparecia como "entregue, sem nota" no admin** — 2026-07-31
+  - Achado no teste do fluxo completo, minutos depois de a liberação de 2ª chamada existir: a tabela de
+    tentativas do detalhe do aluno mostrava a tentativa recém-liberada como **"entregue, sem nota"**, o
+    que faz o suporte ler que houve uma entrega anômala quando o aluno não abriu a prova.
+  - **Causa:** o `situacaoProva` testava `null` em `status`, `in_progress` e depois nota nula. O valor
+    `available` do enum caía no terceiro caso. Ele existia no schema desde a `0001` e **nunca havia
+    sido usado**, então nenhuma tela sabia nomeá-lo — usar um estado esquecido do enum cobra esse preço
+    em cada lugar que o lê.
+  - Agora diz **"liberada, não iniciada"**, em tom de atenção, e vale para as duas telas que usam o
+    helper (a lista de Alunos e o detalhe).
+
+- **Admin logado como aluno via a matrícula de OUTRA pessoa** — 2026-07-31
+  - Achado no QA visual, e não por leitura de código: a home do Pedro mostrava o calendário de
+    liberação de `prova.motor@example.com`, com "ABRE EM 5 DIAS" nos módulos, enquanto a matrícula dele
+    tem `liberacao_total = true`.
+  - **A causa:** o `getMatricula` não filtrava por `user_id`, confiando na RLS, e o comentário dele
+    afirmava que a policy `enrollments_self_select` restringia à própria linha. Ela não restringe: é
+    `(user_id = auth.uid()) OR is_admin()`. Todo admin também é aluno, então para ele o SELECT devolvia
+    **todas** as matrículas e o `order by expires_at desc limit 1` escolhia a de outra pessoa.
+  - **Não era só cosmético.** O `estado` que essa função devolve é o que a guarda do `(sala)` usa: um
+    admin poderia ser barrado da área do aluno pela matrícula revogada de outro, ou entrar com a dele
+    já vencida. O prazo de acesso em `/app/acesso` e a esteira semanal vinham do mesmo lugar errado.
+  - Conserto: `.eq("user_id", user.id)` no query, com a RLS como segunda camada em vez de única. É a
+    mesma família das três armadilhas de privilégio que o `HANDOFF.md` §6 já registra, agora do outro
+    lado: **a policy é mais larga do que o `where` que você não escreveu.**
+  - Varredura feita nas outras leituras do aluno: `progress` tem policy só de `auth.uid()` (sem
+    `is_admin`), e `exams`, `certificates` e `profiles` já filtram por id explicitamente. Era o único.
+
+### Adicionado
+- **O card da Prova Final passou a conhecer o estado do aluno** — 2026-07-31
+  - Pedido do Pedro depois de ver a home: **quem reprovou não pode mais clicar no card da prova**, e a
+    linha de baixo tem de dizer que o caminho é o suporte. A prova é de tentativa única, então ali não
+    existia para onde clicar dentro do produto: o clique levava a uma tela que devolvia o aluno.
+  - **O clique do reprovado abre o WhatsApp**, que é o único caminho real. `noopener` na abertura,
+    porque aba externa sem ele ganha acesso ao nosso `window`.
+  - O card era **estático**: dizia "desbloqueia com 16/16 aulas" com um cadeado para todo mundo,
+    inclusive para quem já tinha as 16, para quem estava com a prova aberta e para quem já havia
+    reprovado. Era a única informação desatualizada de uma tela que o aluno vê todo dia, e estava
+    anotada como achado do QA visual.
+  - Seis estados, uma linha e um destino cada, com a copy do reprovado e do aprovado escrita pelo Pedro: bloqueada (cadeado, modal), liberada, em andamento,
+    reprovado (WhatsApp), aprovado (vai para o certificado) e 2ª chamada liberada. **A precedência
+    importa:** quem tem 2ª chamada esperando não é "reprovado", porque já ganhou a saída.
+  - **O clique roteia por `data-prova`, não por ler o texto do card.** Amarrar o destino do WhatsApp a
+    uma frase que alguém vai reescrever no painel de copy um dia é armadilha esperando data.
+  - A aprovação sai da correção do snapshot, a mesma fonte do porteiro do certificado. Usar a coluna
+    `score` aqui criaria duas verdades sobre quem passou, que é o bug que eu já cometi hoje na 2ª
+    chamada.
+  - **A copy do reprovado é do Pedro, em duas rodadas:** ele pediu que a home diga o veredito (eu havia
+    posto só o caminho, argumentando que "reprovado" ele já leu na tela de resultado) e depois encurtou
+    a frase, porque a versão longa quebrava em duas linhas dentro do card. Ficou "Você reprovou. Clique
+    aqui e entre em contato com o Suporte.", que cabe em uma linha. **A decisão de ver antes de decidir
+    é o que pegou a quebra:** ela não aparece em nenhum check, só na tela.
+  - Verificado no browser, na conta do Pedro: com a tentativa reprovada o card mostra a frase, e o
+    clique abriu `api.whatsapp.com/message/W2USYZZK75FMC1`.
 - **O card de 2ª chamada na área do aluno** — 2026-07-31
   - A liberação existia e era **invisível para o aluno**: o card da prova continuava dizendo
     "desbloqueia com 16/16 aulas", e quem acabou de reprovar não tem motivo para clicar nele de novo. A
@@ -18,6 +206,11 @@ e é validado no ambiente de **homolog** (branch `homolog`).
   - Reaproveita a moldura do card da Prova Final em vez de inventar uma, porque é a mesma família
     visual e o aluno já sabe o que aquele bloco significa. Injetado pelo `fillHome`, e não por edição
     do HTML gerado, que o próximo porte apagaria.
+  - **A posição e a copy fecharam com o Pedro olhando a tela, em duas rodadas.** O card ficou por
+    **último** na prateleira (bônus, prova final, segunda chamada), porque ali ele lê como consequência
+    do card da prova em vez de disputar a primeira posição com ele. E as duas frases foram encurtadas
+    até caber em **uma linha cada**: numa fileira de três colunas (~340px), linha a mais deixa o card
+    mais alto que os vizinhos e a fileira fica torta. Ao mexer nessas frases, contar os caracteres.
   - O clique é tratado por `data-segunda` e **antes** do card da prova: o texto dele casa com o mesmo
     teste de "Prova" do outro card, e sem o atributo funcionaria por coincidência.
   - Verificação do fluxo inteiro que o Pedro descreveu, com sessão de aluno e de admin: home sem card →

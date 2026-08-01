@@ -47,6 +47,13 @@ Assim que os docs estiverem no lugar, me avisa que eu leio tudo e a gente segue 
 | `docs/PENDENCIAS-LP.md` | Checklist vivo do que falta antes do "pronto para produção". O bloco "▶ PRÓXIMA SESSÃO" no topo é a fila de trabalho ordenada. |
 | `docs/FEEDBACK-UX.md` | Mapa de feedback ao usuário: tela por tela, onde o aluno precisa de resposta do sistema, o que já existe e o que falta, com prioridade. |
 | `docs/DESIGN.md` §3 | Os **quatro padrões de feedback** (caixa de erro, caixa de sucesso e aviso, botão em trabalho, lista de exigências de senha), aprovados em 29/jul, com contraste medido nos dois temas. Implementação em `app/app/_ui/feedback.tsx`. Quem for consertar uma tela estende daqui. |
+| `docs/PLANO-ADMIN.md` | Planta do painel. **Deixou de ser plano em 31/jul/2026:** as sete telas estão no ar em homolog (Painel, Alunos, Detalhe, Questões, Conteúdo, E-mails, Equipe e Auditoria). |
+
+**Onde o dia 31/jul/2026 mexeu no projeto,** para quem voltar depois: nasceram a **camada de
+e-mail** (o projeto não mandava nenhum), a **emissão de certificado** com código único, a **2ª
+chamada**, a **auditoria** com tela, e a tela do aluno no admin virou **editável**. Migrations
+`0003` a `0015` aplicadas no homolog. O detalhe de cada uma está no `CHANGELOG.md`, e o que falta,
+no `docs/PENDENCIAS-LP.md`.
 
 ## Histórico de mudanças
 

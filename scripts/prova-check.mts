@@ -11,7 +11,12 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { fillQuestao, fillResultado } from "../lib/prova-template.ts";
+import {
+  fillQuestao,
+  fillResultado,
+  marcarPrazoEncerrado,
+  textoPrazoEncerrado,
+} from "../lib/prova-template.ts";
 import {
   NOTA_MINIMA,
   TOTAL_QUESTOES,
@@ -278,6 +283,65 @@ const QUESTAO = tela("prova-questao");
   assert.ok(l80.includes("#1B7A50"), "80% num reprovado ainda e sucesso de modulo");
   const l0 = out2.slice(out2.indexOf(">0%</span>") - 200, out2.indexOf(">0%</span>") + 11);
   assert.ok(l0.includes("#F7E3BE"), "0% leva pill ambar");
+}
+
+// ============================================================
+// Tela de resultado quando foi o PRAZO que fechou a prova
+// ============================================================
+
+// --- os plurais, que é onde a frase quebra sem ninguém ver ---
+{
+  const caso = (respondidas: number, emBranco: number) =>
+    textoPrazoEncerrado(respondidas, emBranco).subtitulo;
+
+  assert.ok(
+    caso(7, 13).includes("com as 7 questões que você já tinha respondido"),
+    "o caso comum do abandono",
+  );
+  assert.ok(caso(7, 13).includes("As 13 em branco contam como erradas."), "plural do em branco");
+  assert.ok(caso(19, 1).includes("A questão em branco conta como errada."), "singular do em branco");
+  assert.ok(!caso(19, 1).includes("As 1"), "'As 1 em branco' e o erro que este caso existe para pegar");
+
+  // Respondeu tudo e deixou o prazo estourar sem clicar em enviar: a segunda frase não tem assunto.
+  assert.equal(
+    caso(20, 0),
+    "Os 120 minutos terminaram, e a prova seguiu para correção com as 20 questões que você já tinha respondido.",
+  );
+
+  // Abriu, respondeu uma e desapareceu. "com as 1 questões" é o outro jeito de errar o plural.
+  assert.ok(caso(1, 19).includes("com a única questão que você já tinha respondido"), "uma resposta");
+
+  // Nunca respondeu nada: dizer que 20 ficaram em branco depois de dizer que ele não respondeu
+  // nada é repetir a mesma informação, e a nota grande já mostra 0.
+  assert.equal(caso(0, 20), "Os 120 minutos terminaram e você não respondeu nenhuma questão.");
+
+  // O prazo sai da constante, não escrito na frase.
+  assert.ok(caso(7, 13).startsWith(`Os ${120} minutos`), "os minutos vem do MINUTOS");
+}
+
+// --- a troca em cima do HTML portado, incluindo os dois textos que enganavam ---
+{
+  const out = marcarPrazoEncerrado(tela("resultado-reprovado"), 7, 13);
+  assert.ok(out.includes(">Prazo encerrado<"), "kicker trocado");
+  assert.ok(!out.includes("Não aprovado desta vez"), "kicker antigo saiu");
+  assert.ok(out.includes("O tempo acabou, "), "titulo trocado");
+  assert.ok(!out.includes("Faltou pouco"), "'Faltou pouco' nao pode sobrar num abandono de 7 de 20");
+  // O marcador do nome é o que o `preencherUsuario` preenche depois. Trocar o <h1> inteiro o
+  // derrubaria sem erro nenhum, e a tela voltaria a servir "Pedro" do design para todo aluno.
+  assert.ok(out.includes('data-u="first"'), "o marcador do nome sobrevive a troca do titulo");
+  assert.ok(out.includes("O tempo acabou, <span data-u=\"first\">"), "o nome continua depois da virgula");
+  assert.ok(out.includes("EM BRANCO CONTA COMO ERRO"), "cabecalho do desempenho");
+  assert.ok(!out.includes("ONDE REVISAR"), "'onde revisar' manda estudar modulo que nao foi respondido");
+  assert.ok(out.includes("As questões são sorteadas de novo."), "pe da pagina");
+  assert.ok(
+    !out.includes("Aproveite para revisar os módulos com menor desempenho."),
+    "o conselho errado do pe da pagina saiu",
+  );
+  // A nota e o veredito continuam de pé: o aluno não foi aprovado, e a tela não amacia isso.
+  assert.ok(out.includes("REPROVADO!"), "o veredito fica");
+  // E o resto da tela continua preenchível: as duas funções rodam em sequência na página.
+  const cheio = fillResultado(out, corrigir(prova(), respostas(7)), [1, 2, 3, 4]);
+  assert.ok(cheio.includes(">35<span"), "a nota real entra depois da troca de copy");
 }
 
 // ============================================================

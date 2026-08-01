@@ -13,6 +13,7 @@
 // especificador sem extensão.
 import {
   LETRAS,
+  MINUTOS,
   NOTA_MINIMA,
   formatarTempo,
   type Correcao,
@@ -123,6 +124,83 @@ const FRACO_BARRA = "#AA7010"; // 3,37:1 sobre o trilho. Âmbar vivo (#e0a54e) d
  * A mesma regra vale nas duas variantes: o vermelho da reprovação continua onde ele significa
  * algo, no veredito grande, e não nas linhas de diagnóstico.
  */
+/**
+ * O parágrafo da tela de resultado quando o PRAZO fechou a prova, e não o clique do aluno.
+ *
+ * Existe porque a tela do abandono era idêntica à de quem entregou: "Faltou pouco", nota baixa e
+ * dois módulos em 0%. Quem respondeu 7 de 20 e voltou dias depois lia aquilo como erro de correção,
+ * sem nada dizendo que o tempo tinha acabado (achado em 31/jul/2026, andando o caminho do abandono).
+ *
+ * Puro e com casos no `check:prova` por causa dos plurais, que é onde este texto quebra: uma questão
+ * em branco não pode virar "As 1 em branco contam como erradas", e o aluno que não respondeu nada
+ * não pode ler "com as 0 questões que você já tinha respondido". Os dois passam por build e lint.
+ *
+ * Os minutos saem do `MINUTOS`, a mesma constante do cronômetro e do deadline: prazo é regra de
+ * produto e não pode virar um "120" escrito à mão dentro de uma frase.
+ */
+export function textoPrazoEncerrado(
+  respondidas: number,
+  emBranco: number,
+): { kicker: string; titulo: string; subtitulo: string } {
+  const abertura = `Os ${MINUTOS} minutos terminaram`;
+  const corpo =
+    respondidas === 0
+      ? `${abertura} e você não respondeu nenhuma questão.`
+      : respondidas === 1
+        ? `${abertura}, e a prova seguiu para correção com a única questão que você já tinha respondido.`
+        : `${abertura}, e a prova seguiu para correção com as ${respondidas} questões que você já tinha respondido.`;
+
+  // Com nada respondido a segunda frase seria redundante: a primeira já disse que está tudo em
+  // branco, e a nota grande diz 0.
+  const branco =
+    respondidas === 0 || emBranco === 0
+      ? ""
+      : emBranco === 1
+        ? " A questão em branco conta como errada."
+        : ` As ${emBranco} em branco contam como erradas.`;
+
+  return {
+    kicker: "Prazo encerrado",
+    titulo: "O tempo acabou, ",
+    subtitulo: `${corpo}${branco}`,
+  };
+}
+
+/**
+ * Troca os quatro textos da tela de reprovado pela versão de prazo encerrado.
+ *
+ * Dois deles não são o aviso em si, e são justamente os que enganavam mais: "ONDE REVISAR" manda
+ * estudar módulos que ficaram em 0% por não terem sido respondidos, e "revisar os módulos com menor
+ * desempenho" repete o mesmo conselho errado no pé da página.
+ *
+ * O título é trocado por PREFIXO, não inteiro, para o marcador `data-u="first"` e o ponto final
+ * continuarem intactos: o nome do aluno entra depois, no `preencherUsuario`, e reescrever o `<h1>`
+ * inteiro aqui derrubaria o marcador sem erro nenhum.
+ */
+export function marcarPrazoEncerrado(html: string, respondidas: number, emBranco: number): string {
+  const t = textoPrazoEncerrado(respondidas, emBranco);
+  let out = exigir(html, ">Não aprovado desta vez<", `>${t.kicker}<`, "kicker do resultado");
+  out = exigir(out, "Faltou pouco, ", t.titulo, "titulo do resultado");
+  out = exigir(
+    out,
+    "Você ficou abaixo da nota mínima, mas isso é parte do processo. Reveja os pontos abaixo e solicite a segunda chamada quando se sentir pronto.",
+    esc(t.subtitulo),
+    "subtitulo do resultado",
+  );
+  out = exigir(
+    out,
+    "DESEMPENHO POR MÓDULO · ONDE REVISAR",
+    "DESEMPENHO POR MÓDULO · EM BRANCO CONTA COMO ERRO",
+    "cabecalho do desempenho",
+  );
+  return exigir(
+    out,
+    "Aproveite para revisar os módulos com menor desempenho.",
+    "As questões são sorteadas de novo.",
+    "pe da pagina do resultado",
+  );
+}
+
 export function fillResultado(html: string, c: Correcao, modulos: number[]): string {
   // Nota grande: 85 na variante aprovada, 55 na reprovada. Mesmo cuidado do `exigir`:
   // conferir presença, porque uma nota real de 85 produziria saída idêntica à do design.
