@@ -293,6 +293,26 @@ deixa buraco na numeração.
 deixa [Salvar] [↑] [↓] num formulário só em vez de três. O único componente de cliente é o
 diálogo de apagar aula.
 
+### 4.6.1 `/admin/liberacao` — Políticas de liberação de conteúdo
+
+> **Escopo NOVO, pedido pelo Pedro em 17/ago/2026.** Construída no mesmo dia, migration `0016`
+> (`release_policies` + `release_rules`, uma ativa por índice único parcial, seed "Esteira
+> semanal" reproduzindo a cadência de 29/jul).
+
+- **Uma política ativa vale para o curso inteiro e todos os alunos**; as demais são rascunho.
+  A exceção individual continua sendo a `liberacao_total`, no detalhe do aluno.
+- Cada política é **uma regra por módulo**, de quatro tipos: acesso livre, em breve
+  (indisponível, sem data), dias após a compra, data programada (grava meia-noite de Brasília).
+- **Avisa e não trava**, em dois casos: política que deixa o curso concluível dentro da
+  garantia de 7 dias, e módulo avaliado (I a IV) em breve. Os avisos entram também no diálogo
+  de confirmação do ativar, que é a escrita de maior raio do painel — e por isso as quatro
+  ações são auditadas (`liberacao.criar/salvar/ativar/apagar`).
+- A ativa não se apaga (o curso cairia inteiro no "em breve" padrão). Módulo sem regra na
+  política ativa fica **em breve**: rascunho não vaza.
+- Sem JS além dos diálogos de confirmação, como as outras telas: um `<form method="post">` por
+  política, ação no `name`/`value`, rota `app/admin/api/liberacao/route.ts` com a checagem de
+  papel própria (route handler não passa por layout).
+
 ### 4.7 `/admin/equipe` — Quem tem acesso ao painel
 
 > **Escopo NOVO, pedido pelo Pedro em 30/jul/2026**, no mesmo dia da casca. Este plano previa que

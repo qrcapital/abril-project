@@ -86,11 +86,57 @@
     background: var(--color-offwhite);
     font-size: 14px;
     line-height: 1.5;
+    /* Mesma correção da LP (app/page.tsx): o Playfair vem com algarismos oldstyle (3,4,5,7,9
+     * descem da baseline). Força figuras lining; herda para todo o admin. */
+    font-variant-numeric: lining-nums;
   }
   .admin-root h1,
   .admin-root h2,
   .admin-root h3 {
     font-family: var(--font-serif);
     font-weight: 600;
+  }
+
+  /* Feedback dos controles (Pedro, 17/ago: "botões pouco responsivos"). Camada única em vez de
+   * classe por botão: cor de hover cada botão já tem; o que faltava (transição, pressionado,
+   * foco visível) é igual para todos, inclusive os que ainda não existem. Dial de motion baixo
+   * do DESIGN.md: 0.2s nas cores, 0.12s no transform, 1px de curso. */
+  .admin-root :is(button, [role="button"], a) {
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      box-shadow 0.2s ease,
+      opacity 0.2s ease,
+      transform 0.12s ease;
+  }
+  .admin-root :is(button, [role="button"]):not(:disabled, [aria-busy="true"]):hover {
+    transform: translateY(-1px);
+  }
+  .admin-root :is(button, [role="button"]):not(:disabled, [aria-busy="true"]):active {
+    transform: translateY(0.5px);
+    transition-duration: 0.06s;
+  }
+  /* Inputs de texto ficam de fora: eles já têm foco próprio (focus:border-gold + outline-none,
+   * utility ganha da base). Rádio e checkbox entram, porque não tinham nada. O anel é
+   * gold-dark no miolo claro e gold-lit no chrome escuro, um valor por fundo (DESIGN.md §2). */
+  .admin-root :is(button, [role="button"], a, summary, input, select):focus-visible {
+    outline: 2px solid var(--color-gold-dark);
+    outline-offset: 2px;
+  }
+  .admin-root nav :is(button, [role="button"], a):focus-visible {
+    outline-color: var(--color-gold-lit);
+  }
+  .admin-root :is(button:disabled, [aria-busy="true"]) {
+    cursor: not-allowed;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .admin-root :is(button, [role="button"], a) {
+      transition: none;
+    }
+    .admin-root :is(button, [role="button"]):hover,
+    .admin-root :is(button, [role="button"]):active {
+      transform: none;
+    }
   }
 }

@@ -168,8 +168,11 @@ Não há cadastro aberto: a conta nasce da compra. O aluno recebe o acesso por e
 | Primeiro acesso | Link do e-mail de boas-vindas leva a definir senha |
 | Política de senha | Mínimo de **8** caracteres, com ao menos uma letra maiúscula, uma minúscula e um número (decidido em 28/jul/2026; o mínimo nasceu 6 e subiu para 8 no mesmo dia). Vale igual nas duas portas que criam senha: primeiro acesso e redefinição. Validador único em `lib/senha.ts`, aplicado no cliente e no servidor |
 | Validade | `expires_at` = `purchased_at` + 1 ano |
-| Liberação do conteúdo | **Um módulo por semana** a partir de `inicio_em` (29/jul/2026). Módulos 0 e I no ato da compra, II em 7 dias, III em 14, IV em 21 |
-| Chave de liberação total | `enrollments.liberacao_total`, **só nas mãos do admin**, para casos específicos. Garantida por estrutura: a tabela não tem policy de UPDATE |
+| Liberação do conteúdo | **Política configurável pelo admin** (17/ago/2026, migration `0016`): uma regra por módulo, de quatro tipos — acesso livre, em breve (indisponível, sem data), N dias após a compra e data programada. **Uma política ativa por vez, valendo para todos os alunos.** A política de estreia, "Esteira semanal", reproduz a regra anterior de 29/jul (módulos 0 e I no ato, II em 7 dias, III em 14, IV em 21) |
+| Garantia vs. liberação | Política que deixe o curso concluível dentro dos 7 dias de arrependimento gera **aviso** na tela do admin, não recusa (decisão de 17/ago; era trava de build). O risco: certificado emitido e reembolso pedido dentro do prazo |
+| Módulo em breve | **Não trava a prova** (17/ago): uso previsto é material complementar. Fica fora do gate de conclusão e não abre nem com liberação total, porque é conteúdo que ainda não existe |
+| Gate de conclusão | Lê `lessons.conta_no_gate`, editável pelo checkbox da tela de Conteúdo (17/ago; antes o app derivava por posição e o checkbox era letra morta). Toda copy de contagem acompanha o total do banco |
+| Chave de liberação total | `enrollments.liberacao_total`, **só nas mãos do admin**, para casos específicos. Garantida por estrutura: a tabela não tem policy de UPDATE. Continua valendo por cima da política ativa, exceto para módulo em breve |
 | Aviso de expiração | E-mail 30 dias antes do vencimento |
 | Pós-expiração | Tela de renovação (contato via suporte) |
 | Troca de e-mail | Não é self-service na v1; feita pelo suporte com validação |

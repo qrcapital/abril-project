@@ -22,6 +22,10 @@ export const ROTULO_ACAO: Record<string, string> = {
   "aluno.dados": "Editou dados",
   "aluno.progresso-marcar": "Marcou módulo",
   "aluno.progresso-limpar": "Apagou progresso",
+  "liberacao.criar": "Criou política",
+  "liberacao.salvar": "Editou política",
+  "liberacao.ativar": "Ativou política",
+  "liberacao.apagar": "Apagou política",
 };
 
 /**

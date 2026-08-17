@@ -17,9 +17,10 @@ function card(
   c: Curriculo,
   idx: number,
   concluidas: Set<number>,
-  travadoEm: number | null,
+  travadoEm: number | "breve" | null,
 ): string {
-  // `travadoEm` é o número de dias que faltam; `null` quer dizer aberto.
+  // `travadoEm` é o número de dias que faltam; `"breve"` é fechado sem data (política em
+  // breve, 0016); `null` quer dizer aberto.
   const travado = travadoEm !== null;
   const m = c.modulos[idx];
   const aulas = c.aulas.filter((a) => a.modulo === idx);
@@ -29,9 +30,11 @@ function card(
     (done > 0 && done < total) || aulas.some((a) => a.n === c.aulaAtual(concluidas).n);
 
   const badgeText = travado
-    ? travadoEm === 1
-      ? "ABRE AMANHÃ"
-      : `ABRE EM ${travadoEm} DIAS`
+    ? travadoEm === "breve"
+      ? "EM BREVE"
+      : travadoEm === 1
+        ? "ABRE AMANHÃ"
+        : `ABRE EM ${travadoEm} DIAS`
     : idx === 0
       ? "BOAS-VINDAS"
       : emAndamento
@@ -139,7 +142,8 @@ export function fillHome(
   html: string,
   c: Curriculo,
   concluidas: Set<number>,
-  travados: Map<number, number> = new Map(),
+  /** Dias que faltam por módulo; `null` no valor = em breve, sem data (política, 0016). */
+  travados: Map<number, number | null> = new Map(),
   /** Tentativa de 2ª chamada liberada e não iniciada. Vem do banco, nunca da URL. */
   segundaChamada = false,
   /** Em que ponto da prova este aluno está. Decide a linha e o clique do card da Prova Final. */
@@ -159,9 +163,15 @@ export function fillHome(
   // vai. O atributo existe para o clique NÃO depender de ler o texto do card: a rota do reprovado é o
   // WhatsApp, e amarrar isso a uma frase que alguém vai reescrever no futuro é armadilha.
   const linhaProva = LINHA_PROVA[estadoProva];
+  // O total do estado bloqueado sai do currículo, não da frase: o gate lê `conta_no_gate`
+  // desde 17/ago, então o número acompanha o checkbox do admin em vez de morar na copy.
+  const textoProva =
+    estadoProva === "bloqueada"
+      ? `Desbloqueia com ${c.totalAvaliadas}/${c.totalAvaliadas} aulas`
+      : linhaProva.texto;
   out = out.replace(
     /<div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#7E6836">.*?desbloqueia com 16\/16 aulas<\/div>/,
-    `<div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#7E6836">${linhaProva.icone} ${linhaProva.texto}</div>`,
+    `<div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#7E6836">${linhaProva.icone} ${textoProva}</div>`,
   );
   {
     const provaIdx = out.indexOf("PROVA FINAL");
@@ -194,7 +204,14 @@ export function fillHome(
     const openIdx = out.lastIndexOf("<div", railIdx);
     const { start, end } = innerOfDiv(out, openIdx);
     out = out.slice(0, start) +
-      c.modulos.map((_, i) => card(c, i, concluidas, travados.get(i) ?? null)).join("") +
+      c.modulos
+        .map((_, i) => {
+          // O Map fala a língua da tela (null = em breve); o card fala a do template
+          // (null = aberto). A tradução vive aqui, num lugar só.
+          const t = travados.has(i) ? (travados.get(i) ?? "breve") : null;
+          return card(c, i, concluidas, t);
+        })
+        .join("") +
       out.slice(end);
   }
   return out;

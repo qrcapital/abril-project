@@ -7,6 +7,7 @@ import { getConcluidas } from "@/lib/progresso";
 import { getMateriais } from "@/lib/materiais";
 import { getMatricula } from "@/lib/matricula";
 import { liberacao } from "@/lib/liberacao";
+import { getRegrasAtivas } from "@/lib/politicas";
 import { tela } from "@/lib/telas";
 
 export const metadata: Metadata = { title: "Aula" };
@@ -25,9 +26,12 @@ export default async function AulaPage({
 
   // Aula de módulo ainda fechado não abre. Sem esta guarda o gotejamento seria decorativo: as
   // aulas são alcançáveis pela URL, e bastaria digitar o endereço para pular a esteira.
-  const { inicioEm, liberacaoTotal } = await getMatricula();
+  const [{ inicioEm, liberacaoTotal }, regras] = await Promise.all([
+    getMatricula(),
+    getRegrasAtivas(),
+  ]);
   const aberto =
-    inicioEm && liberacao(inicioEm, liberacaoTotal, curriculo.modulos.length).abertos.has(found.aula.modulo);
+    inicioEm && liberacao(inicioEm, liberacaoTotal, regras).abertos.has(found.aula.modulo);
   // Leva na URL QUAL módulo ele tentou, não a afirmação de que está travado: a home reconfere
   // no banco antes de dizer qualquer coisa. Sem esse parâmetro o aluno cairia na home sem
   // motivo nenhum e acharia que errou o clique.

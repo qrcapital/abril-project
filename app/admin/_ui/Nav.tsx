@@ -19,6 +19,9 @@ const ITENS = [
   { href: "/admin/alunos", rotulo: "Alunos", pronto: true },
   { href: "/admin/questoes", rotulo: "Questões", pronto: true },
   { href: "/admin/conteudo", rotulo: "Conteúdo", pronto: true },
+  // Liberação mora ao lado de Conteúdo porque é a outra pergunta sobre a mesma coisa: Conteúdo
+  // diz O QUE existe, Liberação diz QUANDO cada módulo abre (migration 0016).
+  { href: "/admin/liberacao", rotulo: "Liberação", pronto: true },
   { href: "/admin/emails", rotulo: "E-mails", pronto: true },
   // Equipe é escopo novo, pedido pelo Pedro em 30/jul/2026, e não estava no §3 do plano. Fica
   // separada por uma régua porque é a única que fala de quem OPERA, não do que é operado.
@@ -52,9 +55,28 @@ export default function Nav({ email, temAcesso }: { email?: string; temAcesso?: 
 
   return (
     <nav className="flex h-full flex-col bg-verde-3 px-4 py-6 text-offwhite">
+      {/* Wordmark igual ao do topbar da LP (app/_lp/body.html, .tb-logo): Playfair espaçado em
+          cima, "INTERNACIONAL" miúdo entre duas linhas douradas embaixo. 18px em vez dos 20px da
+          LP porque a sidebar tem 232px e o ESTRATÉGIA com .26em de tracking não cabe a 20. */}
       <div className="px-2 pb-7">
-        <span className="font-serif text-[17px] text-offwhite">Estratégia Internacional</span>
-        <span className="mt-0.5 block text-[11px] tracking-[0.14em] text-gold-lit uppercase">
+        {/* w-fit: o lockup abraça a largura do ESTRATÉGIA, como na LP, em vez de esticar as
+            linhas douradas até a borda da sidebar. */}
+        {/* Os -mr anulam o rastro do letter-spacing depois da última letra; sem eles o bloco
+            "termina" 0.26em depois do A e as linhas douradas não fecham alinhadas com ele. */}
+        <div className="mx-auto w-fit">
+          <span className="-mr-[0.26em] block font-serif text-[18px] leading-none font-medium tracking-[0.26em] whitespace-nowrap text-offwhite">
+            ESTRATÉGIA
+          </span>
+          {/* w-0 + min-w-full: a linha não participa do cálculo de largura do lockup (senão ela,
+              mais larga que a palavra a 18px, esticava o bloco e o A fechava curto); ela só
+              preenche a largura que o ESTRATÉGIA ditou. */}
+          <span className="mt-[5px] flex w-0 min-w-full items-center gap-2.5 text-[8px] font-semibold tracking-[0.44em] whitespace-nowrap text-bege">
+            <i className="h-px flex-1 bg-gold" aria-hidden />
+            <span className="-mr-[0.44em]">INTERNACIONAL</span>
+            <i className="h-px flex-1 bg-gold" aria-hidden />
+          </span>
+        </div>
+        <span className="mt-3 block text-center text-[11px] tracking-[0.14em] text-gold-lit uppercase">
           Administração
         </span>
       </div>

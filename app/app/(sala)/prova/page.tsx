@@ -6,6 +6,7 @@ import { getConcluidas } from "@/lib/progresso";
 import { getCurriculo } from "@/lib/curriculo";
 import { getMatricula } from "@/lib/matricula";
 import { liberacao } from "@/lib/liberacao";
+import { getRegrasAtivas } from "@/lib/politicas";
 import { tentativaAtual } from "@/lib/prova";
 import ProvaClient from "./ProvaClient";
 
@@ -38,10 +39,12 @@ export default async function ProvaPage() {
   // cookie no dia 1, passar na prova e emitir o certificado dentro da janela de arrependimento,
   // que é exatamente o abuso que a esteira existe para evitar. Esta trava vem da matrícula, no
   // servidor, e não tem como ser forjada pelo navegador.
+  const [{ inicioEm, liberacaoTotal }, regras] = await Promise.all([
+    getMatricula(),
+    getRegrasAtivas(),
+  ]);
+  if (!inicioEm || !liberacao(inicioEm, liberacaoTotal, regras).completo) redirect("/app");
   const curriculo = await getCurriculo();
-  const { inicioEm, liberacaoTotal } = await getMatricula();
-  if (!inicioEm || !liberacao(inicioEm, liberacaoTotal, curriculo.modulos.length).completo)
-    redirect("/app");
 
   const concluidas = await getConcluidas();
   if (!curriculo.provaLiberada(concluidas)) redirect("/app");

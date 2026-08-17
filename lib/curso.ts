@@ -31,13 +31,15 @@ export type Aula = {
   descricao: string;
   /** `lessons.panda_video_id`. Nulo enquanto o vídeo real não existe. */
   video: string | null;
+  /** `lessons.conta_no_gate`: entra na conta que libera a prova. É o checkbox do admin. */
+  avaliada: boolean;
 };
 
 /** O currículo carregado, com a lógica já amarrada a ele. */
 export type Curriculo = {
   modulos: Modulo[];
   aulas: Aula[];
-  /** Aulas que contam para o gate da prova (as de módulo I a IV). */
+  /** Aulas que contam para o gate da prova (`conta_no_gate` do banco). */
   totalAvaliadas: number;
   primeiraAulaDoModulo(idx: number): Aula;
   aulaAtual(concluidas: Set<number>): Aula;
@@ -60,7 +62,11 @@ export function href(a: Aula): string {
  * argumento por dezenas de linhas sem ganhar nada.
  */
 export function montarCurriculo(modulos: Modulo[], aulas: Aula[]): Curriculo {
-  const avaliadas = aulas.filter((a) => a.n >= 1);
+  // Até 17/ago/2026 isto era `a.n >= 1` ("tudo menos a boas-vindas"), e o `conta_no_gate` que o
+  // admin edita era letra morta: o checkbox gravava no banco e ninguém lia. O Pedro marcou a
+  // boas-vindas pelo painel esperando efeito, e o efeito não veio — desde então o gate lê a
+  // coluna, que é o que a tela promete.
+  const avaliadas = aulas.filter((a) => a.avaliada);
 
   return {
     modulos,

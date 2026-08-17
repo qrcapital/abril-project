@@ -40,6 +40,7 @@ export default function HomeClient({
   destinoAtual,
   provaLiberada,
   restantes,
+  totalAulas,
   travado,
 }: {
   html: string;
@@ -49,7 +50,10 @@ export default function HomeClient({
   destinoAtual: string;
   provaLiberada: boolean;
   restantes: number;
-  travado?: { label: string; dias: number; data: string };
+  /** Total de aulas que contam para o gate (`conta_no_gate`): a copy acompanha o admin. */
+  totalAulas: number;
+  /** `dias`/`data` nulos = módulo em breve: fechado sem data marcada (política, 0016). */
+  travado?: { label: string; dias: number | null; data: string | null };
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -61,15 +65,23 @@ export default function HomeClient({
     travado
       ? {
           titulo: `${travado.label} ainda não abriu`,
-          corpo: (
-            <>
-              O curso é liberado um módulo por semana. Este abre{" "}
-              <b style={{ color: "#7E6836" }}>
-                {travado.dias === 1 ? "amanhã" : `em ${travado.dias} dias`}
-              </b>
-              , no dia {travado.data}. Seu acesso às aulas já liberadas continua normal.
-            </>
-          ),
+          // Sem data (em breve), a mensagem não inventa prazo: diz que o conteúdo está a
+          // caminho. Com data, mantém a contagem de sempre.
+          corpo:
+            travado.dias === null || travado.data === null ? (
+              <>
+                Este conteúdo está em preparação e será liberado em breve, sem data marcada.
+                Seu acesso às aulas já liberadas continua normal.
+              </>
+            ) : (
+              <>
+                Este módulo abre{" "}
+                <b style={{ color: "#7E6836" }}>
+                  {travado.dias === 1 ? "amanhã" : `em ${travado.dias} dias`}
+                </b>
+                , no dia {travado.data}. Seu acesso às aulas já liberadas continua normal.
+              </>
+            ),
           acao: {
             rotulo: "Continuar de onde parei",
             ir: () => router.push(destinoAtual),
@@ -118,7 +130,7 @@ export default function HomeClient({
             titulo: "Prova Final ainda bloqueada",
             corpo: (
               <>
-                Conclua as 16 aulas da formação para liberar a Prova Final.{" "}
+                Conclua as {totalAulas} aulas da formação para liberar a Prova Final.{" "}
                 {restantes > 0 && (
                   <>
                     Falta{restantes > 1 ? "m" : ""}{" "}
@@ -141,7 +153,7 @@ export default function HomeClient({
 
     root.addEventListener("click", onClick);
     return () => root.removeEventListener("click", onClick);
-  }, [router, destinos, destinoAtual, provaLiberada, restantes]);
+  }, [router, destinos, destinoAtual, provaLiberada, restantes, totalAulas]);
 
   useEffect(() => {
     if (!aviso) return;

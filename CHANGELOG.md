@@ -8,6 +8,30 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **`/admin/liberacao`: políticas de liberação de conteúdo** — 2026-08-17
+  - Pedido do Pedro no dia: a cadência fixa de um módulo por semana virou **política configurável**,
+    com quatro tipos de regra por módulo (acesso livre, em breve, dias após a compra, data
+    programada). Migration `0016`: `release_policies` + `release_rules`, **uma ativa por vez**
+    (índice único parcial), seed "Esteira semanal" ativa reproduzindo a regra de 29/jul — nenhum
+    aluno percebe a migração.
+  - **Três decisões do Pedro na construção:** política única ativa para o curso inteiro (não por
+    matrícula); violação da janela de arrependimento vira **aviso** em vez de trava (era assert de
+    build no `check:liberacao`, que agora garante que a esteira padrão respeita a janela e que o
+    `violaGarantia` detecta quem não respeita); e **módulo em breve não trava a prova**, porque o
+    uso previsto é material complementar. Em breve também não abre com `liberacao_total`: conteúdo
+    que não existe não aparece com chave nenhuma.
+  - Na área do aluno, o card de módulo ganhou o estado **"EM BREVE"** (fechado sem data) e o modal
+    de módulo travado explica sem inventar prazo; a frase "o curso é liberado um módulo por semana"
+    saiu, porque com política configurável ela viraria mentira. As quatro ações da tela são
+    auditadas: trocar a política ativa muda o curso de todos os alunos de uma vez.
+- **O gate de conclusão passou a ler `conta_no_gate`** — 2026-08-17
+  - Achado no meio da construção acima: o checkbox "Conta para o gate de conclusão" da tela de
+    Conteúdo gravava no banco e **ninguém lia** — o app derivava o gate por posição (`n >= 1`,
+    "tudo menos boas-vindas"). O Pedro marcou a boas-vindas pelo painel esperando efeito, o check de
+    currículo acusou a divergência, e a decisão dele foi que a marcação vale: o gate agora vem da
+    coluna, o total nas copies ("16/16", "Conclua as 16 aulas") virou dinâmico, e o
+    `check:curriculo` deixou de exigir que boas-vindas fique de fora — a composição do gate é
+    escolha da tela, não regra de código.
 - **`/admin/auditoria`: o rastro do painel ganhou leitor** — 2026-07-31
   - A `admin_audit` nasceu de manhã (migration `0014`) e passou o dia **gravando sem ninguém poder
     ler**: consultava-se por SQL. Auditoria que depende de acesso ao banco não responde a quem

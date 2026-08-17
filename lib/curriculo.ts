@@ -19,7 +19,7 @@ export const getCurriculo = cache(async (): Promise<Curriculo> => {
   const db = createAdminClient();
   const [{ data: mods, error: erroMods }, { data: linhas, error: erroAulas }] = await Promise.all([
     db.from("modules").select("id,ord,titulo,docente").order("ord"),
-    db.from("lessons").select("id,module_id,ord,titulo,descricao,panda_video_id"),
+    db.from("lessons").select("id,module_id,ord,titulo,descricao,panda_video_id,conta_no_gate"),
   ]);
   if (erroMods) throw erroMods;
   if (erroAulas) throw erroAulas;
@@ -44,6 +44,7 @@ export const getCurriculo = cache(async (): Promise<Curriculo> => {
       titulo: l.titulo as string,
       descricao: (l.descricao as string | null) ?? "",
       video: (l.panda_video_id as string | null) ?? null,
+      avaliada: Boolean(l.conta_no_gate),
     }))
     .sort((x, y) => x.modulo - y.modulo || x.ord - y.ord)
     .map((l, i) => ({
@@ -55,6 +56,7 @@ export const getCurriculo = cache(async (): Promise<Curriculo> => {
       titulo: l.titulo,
       descricao: l.descricao,
       video: l.video,
+      avaliada: l.avaliada,
     }));
 
   return montarCurriculo(modulos, aulas);

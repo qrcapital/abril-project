@@ -78,10 +78,10 @@ for (const a of aulas)
 // --- o gate da prova ---
 const noGate = aulas.filter((a) => a.conta_no_gate).length;
 assert.ok(noGate > 0, "nenhuma aula conta para o gate: a prova nunca abriria");
-assert.ok(
-  noGate < aulas.length,
-  "todas as aulas contam para o gate: as boas-vindas deveriam ficar de fora",
-);
+// O piso é a única invariante que restou aqui. A composição do gate deixou de ser regra de
+// código em 17/ago/2026: o Pedro marcou a boas-vindas pelo painel de propósito, e o
+// `conta_no_gate` passou a ser lido pelo app (antes o checkbox gravava e ninguém lia). Quantas
+// e quais aulas contam agora é escolha da tela de Conteúdo, não deste check.
 
 // --- o banco de questões sustenta um sorteio completo ---
 // Acrescentado em 31/jul/2026, junto com a tela de Questões. O `sortear_prova` tira POR_MODULO de

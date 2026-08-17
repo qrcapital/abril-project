@@ -144,8 +144,11 @@ export default async function Questoes({
           gabarito só existe aqui: o aluno nunca lê esta tabela, e a prova dele guarda uma cópia das
           questões de quando respondeu.
         </p>
+        {/* "Meta, e não é teto": a frase anterior ("X de 100 na meta") foi lida como máximo
+            pelo Pedro em 17/ago. O banco não tem limite; acima da meta só melhora o sorteio. */}
         <p className="mt-2 text-[12px] text-pedra">
-          {totalAtivas} de {metaTotal} questões ativas na meta ({META_POR_MODULO} por módulo).
+          {totalAtivas} questões ativas. A meta é {metaTotal}, {META_POR_MODULO} por módulo, e não
+          é teto: quanto maior o banco, menos repetição entre dois sorteios.
         </p>
       </header>
 

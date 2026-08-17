@@ -6,7 +6,8 @@ import { getConcluidas } from "@/lib/progresso";
 import { href } from "@/lib/curso";
 import { getCurriculo } from "@/lib/curriculo";
 import { getMatricula } from "@/lib/matricula";
-import { aberturaDoModulo, diasAte, liberacao } from "@/lib/liberacao";
+import { aberturaDoModulo, diasAte, liberacao, REGRA_PADRAO } from "@/lib/liberacao";
+import { getRegrasAtivas } from "@/lib/politicas";
 import { getUsuario } from "@/lib/usuario";
 import { tentativaAtual } from "@/lib/prova";
 import { corrigir } from "@/lib/prova-correcao";
@@ -50,13 +51,17 @@ export default async function HomePage({
           : "bloqueada";
 
   // Quais módulos ainda não abriram, e em quantos dias. O cartão travado mostra a espera em
-  // vez de sumir: o aluno precisa ver que o curso continua, e quando.
-  const { inicioEm, liberacaoTotal } = await getMatricula();
-  const travados = new Map<number, number>();
+  // vez de sumir: o aluno precisa ver que o curso continua, e quando. `null` é módulo em
+  // breve (política da migration 0016): fechado sem data, e a copy diz isso.
+  const [{ inicioEm, liberacaoTotal }, regras] = await Promise.all([
+    getMatricula(),
+    getRegrasAtivas(),
+  ]);
+  const travados = new Map<number, number | null>();
   if (inicioEm) {
-    const { abertos } = liberacao(inicioEm, liberacaoTotal, curriculo.modulos.length);
+    const { abertos } = liberacao(inicioEm, liberacaoTotal, regras);
     curriculo.modulos.forEach((_, i) => {
-      if (!abertos.has(i)) travados.set(i, diasAte(inicioEm, i));
+      if (!abertos.has(i)) travados.set(i, diasAte(inicioEm, regras[i] ?? REGRA_PADRAO));
     });
   }
 
@@ -65,12 +70,15 @@ export default async function HomePage({
   // não inventa um bloqueio que não existe.
   const { travado } = await searchParams;
   const idx = Number(travado);
+  const abreEm = inicioEm
+    ? aberturaDoModulo(inicioEm, regras[idx] ?? REGRA_PADRAO)
+    : null;
   const explicacao =
     inicioEm && travados.has(idx)
       ? {
           label: curriculo.modulos[idx].label,
           dias: travados.get(idx)!,
-          data: aberturaDoModulo(inicioEm, idx).toLocaleDateString("pt-BR"),
+          data: abreEm ? abreEm.toLocaleDateString("pt-BR") : null,
         }
       : undefined;
 
@@ -85,6 +93,7 @@ export default async function HomePage({
       destinoAtual={href(curriculo.aulaAtual(concluidas))}
       provaLiberada={curriculo.provaLiberada(concluidas)}
       restantes={curriculo.aulasRestantes(concluidas)}
+      totalAulas={curriculo.totalAvaliadas}
       travado={explicacao}
     />
   );
