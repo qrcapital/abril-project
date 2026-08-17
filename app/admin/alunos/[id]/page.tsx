@@ -66,6 +66,7 @@ const MENSAGENS: Record<string, string> = {
   "segunda-chamada": "Tentativa liberada. O aluno recomeça pelas instruções, com sorteio novo.",
   "progresso-marcado": "Módulo marcado como concluído.",
   "progresso-limpo": "Progresso do módulo apagado.",
+  politica: "Política de liberação trocada. Vale na próxima tela que o aluno abrir.",
 };
 
 type Exame = {
@@ -90,12 +91,12 @@ export default async function Aluno({
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   const db = createAdminClient();
-  const [conta, perfil, matriculas, modulos, provas] = await Promise.all([
+  const [conta, perfil, matriculas, modulos, provas, politicas] = await Promise.all([
     db.auth.admin.getUserById(id),
     db.from("profiles").select("nome, telefone, guru_customer_id, is_admin, is_master").eq("id", id).maybeSingle(),
     db
       .from("enrollments")
-      .select("status, purchased_at, expires_at, inicio_em, liberacao_total, guru_order_id")
+      .select("status, purchased_at, expires_at, inicio_em, liberacao_total, guru_order_id, release_policy_id")
       .eq("user_id", id)
       .order("expires_at", { ascending: false }),
     db.rpc("aluno_modulos", { alvo: id }),
@@ -104,6 +105,7 @@ export default async function Aluno({
       .select("attempt, status, score, started_at, submitted_at, deadline")
       .eq("user_id", id)
       .order("attempt", { ascending: true }),
+    db.from("release_policies").select("id, nome, ativa").order("created_at"),
   ]);
 
   const user = conta.data?.user;
@@ -179,6 +181,48 @@ export default async function Aluno({
         <p className="-mt-6 mb-8 text-[12px] text-medio">
           Esta conta tem {matriculas.data!.length} matrículas. Os dados acima são da mais recente.
         </p>
+      )}
+
+      {/* Política de liberação DESTE aluno (0017). O padrão de todos é a política ativa da tela
+          de Liberação; aqui só a exceção. Sem confirmação, ao contrário do ativar de lá: o raio
+          é um aluno, e desfazer é escolher de novo. */}
+      {atual && (
+        <section className="mb-8">
+          <h2 className="mb-3 text-[15px] text-verde">Liberação de conteúdo</h2>
+          <form
+            method="post"
+            action="/admin/api/aluno"
+            className="flex flex-wrap items-center gap-3"
+          >
+            <input type="hidden" name="acao" value="politica" />
+            <input type="hidden" name="userId" value={user.id} />
+            <select
+              name="politica"
+              defaultValue={atual.release_policy_id ?? ""}
+              aria-label="Política de liberação deste aluno"
+              className="rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite focus:border-gold focus:outline-none"
+            >
+              <option value="">Padrão de todos (a política ativa)</option>
+              {(politicas.data ?? []).map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.nome}
+                  {p.ativa ? " · ativa" : ""}
+                </option>
+              ))}
+            </select>
+            <button
+              type="submit"
+              className="rounded-md bg-verde px-4 py-2 text-[12px] font-semibold text-offwhite hover:bg-verde-2"
+            >
+              Trocar liberação
+            </button>
+            <span className="text-[12px] text-pedra">
+              {atual.release_policy_id
+                ? "Este aluno segue uma política própria."
+                : "Este aluno segue o padrão. Escolher uma política aqui vale só para ele."}
+            </span>
+          </form>
+        </section>
       )}
 
       <section className="mb-8">

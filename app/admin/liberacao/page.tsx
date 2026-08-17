@@ -194,9 +194,9 @@ export default async function Liberacao({
       <header className="mb-6">
         <h1 className="text-[26px] text-verde">Liberação</h1>
         <p className="mt-1 max-w-2xl text-[13px] text-medio">
-          Como o conteúdo abre para o aluno. Uma política fica ativa por vez e vale para todos;
-          as outras são rascunho ou reserva. A exceção individual continua no detalhe do aluno,
-          pela liberação total.
+          Como o conteúdo abre para o aluno. Uma política fica ativa por vez e é o padrão de
+          todos; as outras servem de rascunho ou de exceção. No detalhe do aluno dá para
+          apontar qualquer uma delas só para ele, além da liberação total de sempre.
         </p>
       </header>
 
@@ -263,7 +263,7 @@ export default async function Liberacao({
                     rotulo="Apagar"
                     rotuloTrabalhando="Apagando..."
                     titulo={`Apagar “${p.nome}”?`}
-                    corpo="Só o rascunho some; nenhum aluno é afetado, porque esta política não está ativa."
+                    corpo="Aluno que aponte para ela volta ao padrão (a política ativa); fora isso, só o rascunho some."
                     confirmarRotulo="Apagar política"
                     perigo
                   />

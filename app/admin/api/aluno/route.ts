@@ -64,10 +64,62 @@ export async function POST(req: NextRequest) {
 
   const form = await req.formData();
   const alvo = String(form.get("userId") ?? "");
-  if (String(form.get("acao")) !== "progresso" || !UUID.test(alvo)) {
-    return new NextResponse(null, { status: 404 });
-  }
-  return salvarProgresso(req, db, autor, alvo, form);
+  const acao = String(form.get("acao"));
+  if (!UUID.test(alvo)) return new NextResponse(null, { status: 404 });
+  if (acao === "progresso") return salvarProgresso(req, db, autor, alvo, form);
+  if (acao === "politica") return salvarPolitica(req, db, autor, alvo, form);
+  return new NextResponse(null, { status: 404 });
+}
+
+/**
+ * Troca a política de liberação DESTE aluno (0017). Vazio = volta ao padrão (a política ativa).
+ * Grava na matrícula mais recente, que é a que o `getMatricula` lê: as antigas são histórico.
+ */
+async function salvarPolitica(
+  req: NextRequest,
+  db: Db,
+  autor: Autor,
+  alvo: string,
+  form: FormData,
+): Promise<NextResponse> {
+  const escolhida = String(form.get("politica") ?? "");
+  if (escolhida && !UUID.test(escolhida)) return voltar(req, alvo, { erro: "Política inválida." });
+
+  const { data: matricula } = await db
+    .from("enrollments")
+    .select("id, release_policy_id")
+    .eq("user_id", alvo)
+    .order("expires_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (!matricula) return voltar(req, alvo, { erro: "Esta conta não tem matrícula." });
+
+  // O nome entra no rastro pelos DOIS lados: id de política não responde "o que valia".
+  const nomes = new Map<string | null, string>([[null, "padrão (política ativa)"]]);
+  const { data: pols } = await db.from("release_policies").select("id, nome");
+  for (const p of pols ?? []) nomes.set(p.id as string, p.nome as string);
+  if (escolhida && !nomes.has(escolhida)) return voltar(req, alvo, { erro: "Política não encontrada." });
+
+  const nova = escolhida || null;
+  const { error } = await db
+    .from("enrollments")
+    .update({ release_policy_id: nova })
+    .eq("id", matricula.id);
+  if (error) return voltar(req, alvo, { erro: "Não deu para trocar a política." });
+
+  await auditar(db, {
+    autor,
+    acao: "aluno.politica",
+    alvo,
+    detalhe: {
+      politica: [
+        nomes.get((matricula.release_policy_id as string | null) ?? null) ?? "?",
+        nomes.get(nova) ?? "?",
+      ],
+    },
+  });
+
+  return voltar(req, alvo, { ok: "politica" });
 }
 
 type Db = ReturnType<typeof createAdminClient>;

@@ -26,20 +26,23 @@ export function paraRegra(l: Pick<LinhaRegra, "tipo" | "dias" | "abre_em">): Reg
 }
 
 /**
- * As regras da política ativa, na ordem dos módulos (`regras[i]` = módulo de `ord` i).
- * Sem política ativa ou módulo sem regra: `REGRA_PADRAO` (em breve) — o erro seguro é não
- * vazar conteúdo, nunca abrir por acidente.
+ * As regras de uma política, na ordem dos módulos (`regras[i]` = módulo de `ord` i).
+ *
+ * `politicaId` nulo lê a política ATIVA, que é o padrão de todos os alunos; um id lê a política
+ * daquele aluno (0017), esteja ela ativa ou não. Sem política ou módulo sem regra:
+ * `REGRA_PADRAO` (em breve), porque o erro seguro é não vazar conteúdo, nunca abrir por
+ * acidente. Id apontando para política apagada não acontece: a FK é `on delete set null`.
  */
-export const getRegrasAtivas = cache(async (): Promise<Regra[]> => {
+export const getRegras = cache(async (politicaId: string | null = null): Promise<Regra[]> => {
   const db = createAdminClient();
-  const [{ data: mods, error: erroMods }, { data: linhas, error: erroRegras }] =
-    await Promise.all([
-      db.from("modules").select("id,ord").order("ord"),
-      db
+  const consulta = politicaId
+    ? db.from("release_rules").select("module_id,tipo,dias,abre_em").eq("policy_id", politicaId)
+    : db
         .from("release_rules")
         .select("module_id,tipo,dias,abre_em,release_policies!inner(ativa)")
-        .eq("release_policies.ativa", true),
-    ]);
+        .eq("release_policies.ativa", true);
+  const [{ data: mods, error: erroMods }, { data: linhas, error: erroRegras }] =
+    await Promise.all([db.from("modules").select("id,ord").order("ord"), consulta]);
   if (erroMods) throw erroMods;
   if (erroRegras) throw erroRegras;
 

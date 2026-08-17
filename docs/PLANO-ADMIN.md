@@ -96,11 +96,27 @@ _Rascunho para aprovação — 2026-07-20._
 ## 4. Telas
 
 ### 4.1 `/admin` — Painel
-- **Métricas** (cards): total de alunos (`profiles`/`enrollments`), taxa de conclusão
-  (`progress` vs total de aulas), taxa de aprovação (`exams`), NPS médio
-  (`certificates`/pesquisa).
-- **Atalhos**: últimos e-mails (`email_log`), alunos recentes.
-- _Dados_: agregações sobre `enrollments`, `progress`, `exams`, `certificates`.
+
+> **Redesenhado em 17/ago/2026** ("muito cru e com poucas informações", nas palavras do Pedro).
+> Cinco blocos, na ordem das perguntas de quem abre:
+
+- **Os quatro cards** de sempre: matrículas, conclusão, aprovação, certificados. NPS segue
+  fora até a pesquisa existir.
+- **Precisa de você**: só o que exige ação, com link da tela que resolve — e-mails falhando
+  (24 h), módulo abaixo do piso de questões, prova com prazo estourado, matrículas expirando em
+  30 dias, alunos parados há 7+ dias, banco abaixo da meta. Nada pendente vira uma linha.
+- **Funil da formação**: do acesso ativo ao certificado, em barras; é onde se vê ONDE os
+  alunos param. Conta só matrículas ativas.
+- **Últimas ações da auditoria** (decisão do Pedro: auditoria aqui, não feed com nome de
+  aluno), com link para a tela.
+- **Saúde do sistema**: política de liberação ativa (com os avisos dela), régua do banco de
+  questões, e-mails das últimas 24 h.
+- **Relatórios em CSV** (`api/relatorios`): alunos e progresso, log de e-mails e auditoria.
+  Ponto e vírgula + BOM (Excel pt-BR abre com dois cliques), em cima das RPCs que as telas já
+  usam (`listar_alunos`, `listar_emails`, `listar_auditoria`, teto de 1000 linhas). **Toda
+  exportação é auditada** (`relatorio.exportar`): é dado de aluno saindo do sistema.
+- _Dados_: agregações sobre `enrollments`, `progress`, `exams`, `certificates`, `email_log`,
+  `questions`, `release_policies` e `admin_audit`.
 
 ### 4.2 `/admin/alunos` — Lista + busca
 
@@ -299,8 +315,10 @@ diálogo de apagar aula.
 > (`release_policies` + `release_rules`, uma ativa por índice único parcial, seed "Esteira
 > semanal" reproduzindo a cadência de 29/jul).
 
-- **Uma política ativa vale para o curso inteiro e todos os alunos**; as demais são rascunho.
-  A exceção individual continua sendo a `liberacao_total`, no detalhe do aluno.
+- **A política ativa é o padrão de todos os alunos**; as demais são rascunho ou exceção. O
+  detalhe do aluno aponta qualquer política só para ele (`enrollments.release_policy_id`,
+  migration `0017`, pedido do Pedro no mesmo dia), além da `liberacao_total` de sempre.
+  Apagar uma política devolve quem apontava para ela ao padrão.
 - Cada política é **uma regra por módulo**, de quatro tipos: acesso livre, em breve
   (indisponível, sem data), dias após a compra, data programada (grava meia-noite de Brasília).
 - **Avisa e não trava**, em dois casos: política que deixa o curso concluível dentro da

@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getUsuario } from "@/lib/usuario";
 import { getMatricula } from "@/lib/matricula";
 import { liberacao } from "@/lib/liberacao";
-import { getRegrasAtivas } from "@/lib/politicas";
+import { getRegras } from "@/lib/politicas";
 import { getCurriculo } from "@/lib/curriculo";
 
 /**
@@ -31,10 +31,8 @@ export async function marcarAula(
   const found = curriculo.acharAula(n);
   if (!found) return { ok: false, erro: "Aula não encontrada." };
 
-  const [{ inicioEm, liberacaoTotal }, regras] = await Promise.all([
-    getMatricula(),
-    getRegrasAtivas(),
-  ]);
+  const { inicioEm, liberacaoTotal, politicaId } = await getMatricula();
+  const regras = await getRegras(politicaId);
   if (!inicioEm || !liberacao(inicioEm, liberacaoTotal, regras).abertos.has(found.aula.modulo))
     return { ok: false, erro: "Este módulo ainda não foi liberado." };
 

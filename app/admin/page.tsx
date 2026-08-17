@@ -1,74 +1,113 @@
+import Link from "next/link";
+
+import { dataHora, Selo } from "./_ui/tabela";
+import { rotularAcao } from "@/lib/auditoria-texto";
+import { violaGarantia } from "@/lib/liberacao";
+import { getRegras } from "@/lib/politicas";
 import { NOTA_MINIMA } from "@/lib/prova-correcao";
+import { META_POR_MODULO, ORDS_AVALIADOS, POR_MODULO } from "@/lib/questoes";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
- * Painel do admin (PLANO-ADMIN §4.1).
+ * Painel do admin (PLANO-ADMIN §4.1, redesenhado em 17/ago/2026 a pedido do Pedro: "muito cru
+ * e com poucas informações"). A ordem dos blocos é a ordem das perguntas de quem abre:
  *
- * Números REAIS do banco, não mock: o plano previa mock na Fase 1 porque foi escrito quando
- * o Supabase ainda não existia, e ele existe desde 28/jul. O Pedro decidiu em 30/jul pular o
- * mock onde o dado já está lá.
+ * 1. **Os quatro números** de sempre (como estamos).
+ * 2. **Precisa de você** (o que exige ação hoje) — só aparece o que está pendente, com o link
+ *    da tela que resolve. Nada pendente também é informação, e vira uma linha.
+ * 3. **Formação** — o funil do acesso ao certificado (ONDE os alunos param) e as últimas
+ *    entradas da auditoria (decisão do Pedro: auditoria aqui, não um feed com nome de aluno).
+ * 4. **Saúde do sistema** — política de liberação, banco de questões, e-mails de 24 h.
+ * 5. **Relatórios** — os CSVs (rota `api/relatorios`, exportação auditada).
  *
- * Leitura pela service role, como manda o §2: o admin precisa ver o agregado de TODOS os
- * alunos, e a RLS, corretamente, só deixa cada um ver o próprio. Isto roda em Server
- * Component, então a chave nunca chega ao navegador.
- *
- * O que ficou de fora, de propósito:
- * - **NPS.** O §8 pergunta se entra como mock; a pesquisa não existe ainda, e card de
- *   métrica com número inventado é o tipo de coisa que alguém cita numa reunião.
- * - **Atalhos** (últimos e-mails, alunos recentes). São atalhos PARA telas que ainda não
- *   existem; entram junto com elas.
+ * Leitura pela service role, como manda o §2: o admin vê o agregado de TODOS os alunos, e a
+ * RLS, corretamente, só deixa cada um ver o próprio. Server Component: a chave não desce.
  */
 
-// `head: true` traz só o `count`: nenhuma linha atravessa a rede para virar um número.
 type Contador = { count: number | null };
+const n = (r: Contador) => r.count ?? 0;
+
+type LinhaAudit = { id: string; autor_email: string | null; acao: string; alvo_email: string | null; alvo_nome: string | null; created_at: string };
+
+const DIA_MS = 86_400_000;
 
 export default async function AdminPainel() {
   const db = createAdminClient();
-  const agora = new Date().toISOString();
+  const agora = new Date();
+  const iso = agora.toISOString();
+  const ha24h = new Date(agora.getTime() - DIA_MS).toISOString();
+  const ha7d = new Date(agora.getTime() - 7 * DIA_MS).toISOString();
+  const em30d = new Date(agora.getTime() + 30 * DIA_MS).toISOString();
 
-  const [matriculas, ativas, aulasGate, concluidas, provas, aprovadas, certificados] =
-    await Promise.all([
-      db.from("enrollments").select("id", { count: "exact", head: true }),
-      db
-        .from("enrollments")
-        .select("id", { count: "exact", head: true })
-        .eq("status", "active")
-        .gt("expires_at", agora),
-      db.from("lessons").select("id", { count: "exact", head: true }).eq("conta_no_gate", true),
-      // `lessons!inner` filtra pela aula embutida: só progresso de aula que conta no gate,
-      // senão o Módulo 0 entraria no denominador de um lado e não do outro.
-      db
-        .from("progress")
-        .select("id, lessons!inner(conta_no_gate)", { count: "exact", head: true })
-        .eq("status", "completed")
-        .eq("lessons.conta_no_gate", true),
-      db.from("exams").select("id", { count: "exact", head: true }).eq("status", "submitted"),
-      db
-        .from("exams")
-        .select("id", { count: "exact", head: true })
-        .eq("status", "submitted")
-        .gte("score", NOTA_MINIMA),
-      db.from("certificates").select("id", { count: "exact", head: true }),
-    ]);
+  const [
+    matriculas,
+    ativos,
+    aulasGate,
+    concluidasGate,
+    provas,
+    aprovadas,
+    certificados,
+    emails24,
+    falhas24,
+    expirando,
+    estouradas,
+    questoes,
+    mods,
+    // ponytail: as quatro abaixo trazem linhas (não count) para agregar por aluno em JS.
+    // Com ~centenas de alunos é barato; se a base crescer a ponto de doer, vira uma RPC.
+    ativosIds,
+    progressoTudo,
+    progressoGate,
+    exames,
+    auditoria,
+    politicaAtiva,
+    comPoliticaPropria,
+  ] = await Promise.all([
+    db.from("enrollments").select("id", { count: "exact", head: true }),
+    db.from("enrollments").select("id", { count: "exact", head: true }).eq("status", "active").gt("expires_at", iso),
+    db.from("lessons").select("id", { count: "exact", head: true }).eq("conta_no_gate", true),
+    db
+      .from("progress")
+      .select("id, lessons!inner(conta_no_gate)", { count: "exact", head: true })
+      .eq("status", "completed")
+      .eq("lessons.conta_no_gate", true),
+    db.from("exams").select("id", { count: "exact", head: true }).eq("status", "submitted"),
+    db.from("exams").select("id", { count: "exact", head: true }).eq("status", "submitted").gte("score", NOTA_MINIMA),
+    db.from("certificates").select("id", { count: "exact", head: true }),
+    db.from("email_log").select("id", { count: "exact", head: true }).gte("sent_at", ha24h),
+    db.from("email_log").select("id", { count: "exact", head: true }).gte("sent_at", ha24h).ilike("status", "falha%"),
+    db
+      .from("enrollments")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "active")
+      .gt("expires_at", iso)
+      .lte("expires_at", em30d),
+    db.from("exams").select("id", { count: "exact", head: true }).eq("status", "in_progress").lt("deadline", iso),
+    db.from("questions").select("module_id, ativo"),
+    db.from("modules").select("id, ord"),
+    db.from("enrollments").select("user_id").eq("status", "active").gt("expires_at", iso),
+    db.from("progress").select("user_id, updated_at"),
+    db
+      .from("progress")
+      .select("user_id, lessons!inner(conta_no_gate)")
+      .eq("status", "completed")
+      .eq("lessons.conta_no_gate", true),
+    db.from("exams").select("user_id, status, score"),
+    db.rpc("listar_auditoria", { termo: "", limite: 5 }),
+    db.from("release_policies").select("nome").eq("ativa", true).maybeSingle(),
+    db.from("enrollments").select("id", { count: "exact", head: true }).not("release_policy_id", "is", null),
+  ]);
 
-  const n = (r: Contador) => r.count ?? 0;
-
-  // Denominador da conclusão: cada matrícula ativa pode concluir cada aula do gate. Zero
-  // aluno ou zero aula dá zero possível, e dividir aí devolveria NaN na tela.
-  const possiveis = n(ativas) * n(aulasGate);
+  // ---- os quatro números de sempre --------------------------------------------------------
+  const possiveis = n(ativos) * n(aulasGate);
   const pct = (parte: number, total: number) =>
     total > 0 ? `${Math.round((parte / total) * 100)}%` : "—";
-
   const cards = [
-    {
-      rotulo: "Matrículas",
-      valor: n(matriculas),
-      nota: `${n(ativas)} com acesso ativo`,
-    },
+    { rotulo: "Matrículas", valor: n(matriculas), nota: `${n(ativos)} com acesso ativo` },
     {
       rotulo: "Conclusão de aulas",
-      valor: pct(n(concluidas), possiveis),
-      nota: `${n(concluidas)} de ${possiveis} possíveis (${n(aulasGate)} aulas no gate)`,
+      valor: pct(n(concluidasGate), possiveis),
+      nota: `${n(concluidasGate)} de ${possiveis} possíveis (${n(aulasGate)} aulas no gate)`,
     },
     {
       rotulo: "Aprovação na prova",
@@ -78,12 +117,119 @@ export default async function AdminPainel() {
           ? `${n(aprovadas)} de ${n(provas)} provas entregues, corte ${NOTA_MINIMA}%`
           : "nenhuma prova entregue ainda",
     },
-    {
-      rotulo: "Certificados",
-      valor: n(certificados),
-      nota: "emitidos até agora",
-    },
+    { rotulo: "Certificados", valor: n(certificados), nota: "emitidos até agora" },
   ];
+
+  // ---- fila de atenção --------------------------------------------------------------------
+  const idsAtivos = new Set((ativosIds.data ?? []).map((r) => r.user_id as string));
+  const ativosComAtividade7d = new Set(
+    (progressoTudo.data ?? [])
+      .filter((r) => r.updated_at && String(r.updated_at) > ha7d)
+      .map((r) => r.user_id as string),
+  );
+  const paradosHa7d = [...idsAtivos].filter((id) => !ativosComAtividade7d.has(id)).length;
+
+  const ordDoModulo = new Map((mods.data ?? []).map((m) => [m.id as string, m.ord as number]));
+  const ativasPorOrd = new Map<number, number>();
+  for (const q of questoes.data ?? []) {
+    if (!q.ativo) continue;
+    const ord = ordDoModulo.get(q.module_id as string);
+    if (ord !== undefined) ativasPorOrd.set(ord, (ativasPorOrd.get(ord) ?? 0) + 1);
+  }
+  const abaixoDoPiso = ORDS_AVALIADOS.filter((ord) => (ativasPorOrd.get(ord) ?? 0) < POR_MODULO);
+  const totalAtivas = ORDS_AVALIADOS.reduce((s, ord) => s + (ativasPorOrd.get(ord) ?? 0), 0);
+  const metaTotal = META_POR_MODULO * ORDS_AVALIADOS.length;
+
+  type ItemFila = { grave: boolean; texto: string; href: string; chamada: string };
+  const fila: ItemFila[] = [];
+  if (abaixoDoPiso.length > 0)
+    fila.push({
+      grave: true,
+      texto: `Módulo${abaixoDoPiso.length > 1 ? "s" : ""} ${abaixoDoPiso.join(", ")} abaixo do piso de ${POR_MODULO} questões ativas: a prova não abre para ninguém`,
+      href: "/admin/questoes",
+      chamada: "Ver Questões",
+    });
+  if (n(falhas24) > 0)
+    fila.push({
+      grave: true,
+      texto: `${n(falhas24)} e-mail${n(falhas24) > 1 ? "s" : ""} falhou${n(falhas24) > 1 ? "" : ""} nas últimas 24 h`,
+      href: "/admin/emails",
+      chamada: "Ver no log",
+    });
+  if (n(estouradas) > 0)
+    fila.push({
+      grave: false,
+      texto: `${n(estouradas)} prova${n(estouradas) > 1 ? "s" : ""} em andamento com prazo estourado, esperando o fechamento`,
+      href: "/admin/alunos",
+      chamada: "Ver Alunos",
+    });
+  if (n(expirando) > 0)
+    fila.push({
+      grave: false,
+      texto: `${n(expirando)} matrícula${n(expirando) > 1 ? "s" : ""} expira${n(expirando) > 1 ? "m" : ""} nos próximos 30 dias`,
+      href: "/admin/alunos",
+      chamada: "Ver Alunos",
+    });
+  if (paradosHa7d > 0)
+    fila.push({
+      grave: false,
+      texto: `${paradosHa7d} aluno${paradosHa7d > 1 ? "s" : ""} com acesso ativo e nenhuma atividade há mais de 7 dias`,
+      href: "/admin/alunos",
+      chamada: "Ver Alunos",
+    });
+  if (abaixoDoPiso.length === 0 && totalAtivas < metaTotal)
+    fila.push({
+      grave: false,
+      texto: `Banco de questões em ${totalAtivas} de ${metaTotal}: com banco pequeno, dois alunos veem quase a mesma prova`,
+      href: "/admin/questoes",
+      chamada: "Ver Questões",
+    });
+
+  // ---- funil ------------------------------------------------------------------------------
+  const gatePorAluno = new Map<string, number>();
+  for (const r of progressoGate.data ?? []) {
+    const id = r.user_id as string;
+    if (idsAtivos.has(id)) gatePorAluno.set(id, (gatePorAluno.get(id) ?? 0) + 1);
+  }
+  const comecaram = new Set(
+    (progressoTudo.data ?? []).map((r) => r.user_id as string).filter((id) => idsAtivos.has(id)),
+  ).size;
+  const totalGate = n(aulasGate);
+  const metadeGate = [...gatePorAluno.values()].filter((c) => c >= Math.ceil(totalGate / 2)).length;
+  const gateCompleto = [...gatePorAluno.values()].filter((c) => totalGate > 0 && c >= totalGate).length;
+  const entregaram = new Set(
+    (exames.data ?? [])
+      .filter((e) => e.status === "submitted" && idsAtivos.has(e.user_id as string))
+      .map((e) => e.user_id as string),
+  );
+  const aprovaram = new Set(
+    (exames.data ?? [])
+      .filter(
+        (e) =>
+          e.status === "submitted" &&
+          (e.score ?? 0) >= NOTA_MINIMA &&
+          idsAtivos.has(e.user_id as string),
+      )
+      .map((e) => e.user_id as string),
+  );
+
+  const funil = [
+    { rotulo: "Com acesso ativo", valor: n(ativos) },
+    { rotulo: "Começaram uma aula", valor: comecaram },
+    { rotulo: "Metade do gate", valor: metadeGate },
+    { rotulo: `Gate completo (${totalGate}/${totalGate})`, valor: gateCompleto },
+    { rotulo: "Prova entregue", valor: entregaram.size },
+    { rotulo: "Aprovados", valor: aprovaram.size },
+    { rotulo: "Certificado emitido", valor: n(certificados) },
+  ];
+  const topoFunil = Math.max(1, n(ativos));
+
+  // ---- saúde ------------------------------------------------------------------------------
+  const regras = await getRegras(null);
+  const avisosPolitica =
+    (violaGarantia(regras) ? 1 : 0) +
+    ORDS_AVALIADOS.filter((ord) => regras[ord]?.tipo === "em_breve").length;
+  const audit = (auditoria.data ?? []) as LinhaAudit[];
 
   return (
     <>
@@ -96,10 +242,7 @@ export default async function AdminPainel() {
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((c) => (
-          <article
-            key={c.rotulo}
-            className="rounded-lg border border-areia bg-white px-5 py-4"
-          >
+          <article key={c.rotulo} className="rounded-lg border border-areia bg-white px-5 py-4">
             <p className="text-[11px] tracking-[0.12em] text-pedra uppercase">{c.rotulo}</p>
             <p className="mt-2 font-serif text-[32px] leading-none text-verde">{c.valor}</p>
             <p className="mt-2 text-[12px] text-medio">{c.nota}</p>
@@ -107,11 +250,142 @@ export default async function AdminPainel() {
         ))}
       </div>
 
-      <p className="mt-8 max-w-2xl border-l-2 border-gold-soft pl-4 text-[12px] text-medio">
-        Alunos, Questões, Conteúdo e E-mails entram em seguida. O banco de questões ainda tem o
-        seed, então a taxa de aprovação só passa a significar algo depois das ~100 questões
-        reais.
+      <h2 className="mt-8 mb-3 text-[15px] text-verde">Precisa de você</h2>
+      {fila.length === 0 ? (
+        <p className="rounded-lg border border-areia bg-white px-4 py-3 text-[13px] text-medio">
+          Nada pendente. E-mails saindo, banco de questões no piso, nenhuma matrícula vencendo.
+        </p>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {fila.map((item) => (
+            <div
+              key={item.texto}
+              className={`flex items-center gap-3 rounded-lg border border-areia bg-white py-2.5 pr-4 pl-4 text-[13px] text-grafite ${
+                item.grave ? "border-l-[3px] border-l-falha" : "border-l-[3px] border-l-gold"
+              }`}
+            >
+              <span>{item.texto}</span>
+              <Link
+                href={item.href}
+                className="ml-auto text-[12px] font-semibold whitespace-nowrap text-gold-dark hover:text-verde"
+              >
+                {item.chamada} →
+              </Link>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <h2 className="mt-8 mb-3 text-[15px] text-verde">Formação, do acesso ao certificado</h2>
+      <div className="grid items-start gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+        <div className="rounded-lg border border-areia bg-white px-5 py-4">
+          {funil.map((f) => (
+            <div key={f.rotulo} className="my-2 grid grid-cols-[150px_1fr_50px] items-center gap-3">
+              <span className="text-[12.5px] text-grafite">{f.rotulo}</span>
+              <div className="h-4 overflow-hidden rounded-[3px] bg-bege">
+                <i
+                  className="block h-full bg-verde"
+                  style={{ width: `${Math.round((f.valor / topoFunil) * 100)}%` }}
+                />
+              </div>
+              <span className="text-right text-[12.5px] font-semibold text-gold-dark">{f.valor}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="rounded-lg border border-areia bg-white px-5 py-2">
+          {audit.length === 0 ? (
+            <p className="py-3 text-[13px] text-medio">Nenhuma ação registrada ainda.</p>
+          ) : (
+            audit.map((a) => (
+              <div
+                key={a.id}
+                className="flex items-baseline gap-2 border-b border-bege py-2.5 text-[12.5px] last:border-b-0"
+              >
+                <span className="text-grafite">
+                  <b className="font-semibold">{rotularAcao(a.acao)}</b>
+                  {a.alvo_nome || a.alvo_email ? ` · ${a.alvo_nome ?? a.alvo_email}` : ""}
+                  <span className="text-pedra"> · {a.autor_email ?? "?"}</span>
+                </span>
+                <span className="ml-auto text-[11px] whitespace-nowrap text-pedra">
+                  {dataHora(a.created_at)}
+                </span>
+              </div>
+            ))
+          )}
+          <div className="border-t border-bege py-2.5 text-right">
+            <Link href="/admin/auditoria" className="text-[12px] font-semibold text-gold-dark hover:text-verde">
+              Ver auditoria →
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <h2 className="mt-8 mb-3 text-[15px] text-verde">Saúde do sistema</h2>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div className="rounded-lg border border-areia bg-white px-5 py-4 text-[12.5px]">
+          <p className="mb-2 text-[11px] tracking-[0.12em] text-pedra uppercase">Política de liberação</p>
+          <b className="font-semibold">{politicaAtiva.data?.nome ?? "nenhuma ativa"}</b>{" "}
+          {avisosPolitica === 0 ? (
+            <Selo tom="ok">sem avisos</Selo>
+          ) : (
+            <Selo tom="atencao">{avisosPolitica === 1 ? "1 aviso" : `${avisosPolitica} avisos`}</Selo>
+          )}
+          <p className="mt-1 text-medio">
+            {n(comPoliticaPropria) === 0
+              ? "todos os alunos no padrão"
+              : `${n(comPoliticaPropria)} aluno${n(comPoliticaPropria) > 1 ? "s" : ""} com política própria`}
+          </p>
+        </div>
+        <div className="rounded-lg border border-areia bg-white px-5 py-4 text-[12.5px]">
+          <p className="mb-2 text-[11px] tracking-[0.12em] text-pedra uppercase">Banco de questões</p>
+          <div className="my-2 h-1.5 overflow-hidden rounded-[3px] bg-bege">
+            <i
+              className="block h-full bg-gold"
+              style={{ width: `${Math.min(100, Math.round((totalAtivas / metaTotal) * 100))}%` }}
+            />
+          </div>
+          {totalAtivas} de {metaTotal} na meta{" "}
+          {abaixoDoPiso.length > 0 ? (
+            <Selo tom="ruim">abaixo do piso</Selo>
+          ) : totalAtivas < metaTotal ? (
+            <Selo tom="atencao">piso ok, meta longe</Selo>
+          ) : (
+            <Selo tom="ok">na meta</Selo>
+          )}
+        </div>
+        <div className="rounded-lg border border-areia bg-white px-5 py-4 text-[12.5px]">
+          <p className="mb-2 text-[11px] tracking-[0.12em] text-pedra uppercase">E-mails · 24 h</p>
+          <b className="font-semibold">
+            {n(emails24) - n(falhas24)} enviado{n(emails24) - n(falhas24) === 1 ? "" : "s"}
+          </b>
+          , {n(falhas24)} falha{n(falhas24) === 1 ? "" : "s"}
+          <p className="mt-1 text-medio">
+            {n(emails24) === 0 ? "nenhum envio no período" : "detalhe por mensagem no log"}
+          </p>
+        </div>
+      </div>
+
+      <h2 className="mt-8 mb-3 text-[15px] text-verde">Relatórios</h2>
+      <p className="mb-3 max-w-2xl text-[12px] text-medio">
+        CSV com ponto e vírgula, abre direto no Excel. Cada exportação fica na auditoria, porque
+        é dado de aluno saindo do sistema.
       </p>
+      <div className="flex flex-wrap gap-3">
+        {[
+          ["alunos", "Alunos e progresso"],
+          ["emails", "Log de e-mails"],
+          ["auditoria", "Auditoria"],
+        ].map(([tipo, rotulo]) => (
+          <a
+            key={tipo}
+            href={`/admin/api/relatorios?tipo=${tipo}`}
+            className="rounded-md border border-areia bg-white px-3 py-1.5 text-[12px] text-grafite hover:border-pedra"
+          >
+            ↓ {rotulo}
+          </a>
+        ))}
+      </div>
     </>
   );
 }

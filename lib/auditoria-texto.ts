@@ -22,10 +22,12 @@ export const ROTULO_ACAO: Record<string, string> = {
   "aluno.dados": "Editou dados",
   "aluno.progresso-marcar": "Marcou módulo",
   "aluno.progresso-limpar": "Apagou progresso",
+  "aluno.politica": "Trocou liberação",
   "liberacao.criar": "Criou política",
   "liberacao.salvar": "Editou política",
   "liberacao.ativar": "Ativou política",
   "liberacao.apagar": "Apagou política",
+  "relatorio.exportar": "Exportou relatório",
 };
 
 /**
@@ -71,6 +73,13 @@ export function descrever(acao: string, detalhe: Record<string, unknown> | null)
       `Módulo ${d.ord} · ${String(d.modulo ?? "")}`,
       n === 1 ? "1 aula" : `${n} aulas`,
     ];
+  }
+
+  if (acao === "aluno.politica") {
+    // O mesmo "antes → depois" dos dados: a pergunta da auditoria é o que valia quando o aluno
+    // reclamou, e id de política não responde isso — os nomes já vêm gravados no detalhe.
+    const v = d.politica;
+    return ehPar(v) ? [`${aspas(v[0])} → ${aspas(v[1])}`] : [];
   }
 
   if (acao === "prova.segunda-chamada") {

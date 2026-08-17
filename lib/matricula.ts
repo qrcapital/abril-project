@@ -17,6 +17,8 @@ export type Matricula = {
   inicioEm: Date | null;
   /** Chave do admin: abre o curso inteiro para este aluno. */
   liberacaoTotal: boolean;
+  /** Política de liberação específica deste aluno (0017). `null` = a ativa, padrão de todos. */
+  politicaId: string | null;
 };
 
 /** Sem matrícula não há calendário: tudo fechado, e o estado explica o porquê. */
@@ -25,6 +27,7 @@ const VAZIA: Matricula = {
   expiraEm: null,
   inicioEm: null,
   liberacaoTotal: false,
+  politicaId: null,
 };
 
 /**
@@ -62,7 +65,7 @@ export const getMatricula = cache(async (): Promise<Matricula> => {
   // A mais recente manda: renovação futura cria linha nova em vez de editar a antiga.
   const { data, error } = await supabase
     .from("enrollments")
-    .select("status,expires_at,inicio_em,liberacao_total")
+    .select("status,expires_at,inicio_em,liberacao_total,release_policy_id")
     .eq("user_id", user.id)
     .order("expires_at", { ascending: false })
     .limit(1)
@@ -81,5 +84,6 @@ export const getMatricula = cache(async (): Promise<Matricula> => {
     expiraEm: data.expires_at,
     inicioEm: data.inicio_em ? new Date(data.inicio_em) : null,
     liberacaoTotal: Boolean(data.liberacao_total),
+    politicaId: (data.release_policy_id as string | null) ?? null,
   };
 });

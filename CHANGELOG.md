@@ -8,6 +8,26 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Adicionado
+- **Painel redesenhado, e relatórios em CSV** — 2026-08-17
+  - O Painel tinha quatro contadores e um rodapé prometendo telas que já existiam. Ganhou os
+    blocos na ordem das perguntas de quem abre: **Precisa de você** (só o que exige ação, com
+    link da tela que resolve: e-mails falhando, piso de questões, provas com prazo estourado,
+    matrículas expirando, alunos parados), o **funil da formação** (do acesso ativo ao
+    certificado, onde se vê onde os alunos param), as **últimas ações da auditoria** (decisão do
+    Pedro: auditoria no painel, não feed com nome de aluno) e a **saúde do sistema** (política
+    ativa com avisos, régua de questões, e-mails de 24 h). Os quatro cards continuam no topo.
+  - **Relatórios em CSV** (`/admin/api/relatorios`): alunos e progresso, log de e-mails e
+    auditoria, em cima das RPCs que as telas já usam, sem consulta nova. Ponto e vírgula com
+    BOM, que é o que o Excel em português abre certo. **Exportação é auditada**
+    (`relatorio.exportar`): é dado de aluno em massa saindo do sistema.
+- **Política de liberação por aluno** — 2026-08-17
+  - Complemento pedido pelo Pedro no mesmo dia da tela de Liberação: a política ativa vira o
+    **padrão** de todos, e o detalhe do aluno ganha um seletor que aponta qualquer política só para
+    aquela matrícula (migration `0017`, `enrollments.release_policy_id`, NULL = padrão). Apagar uma
+    política devolve quem apontava para ela ao padrão pelo próprio banco (`on delete set null`).
+  - Auditada como `aluno.politica`, com o antes → depois **por nome** de política, porque id não
+    responde "o que valia quando o aluno reclamou". Sem diálogo de confirmação, ao contrário do
+    ativar global: o raio é um aluno, e desfazer é escolher de novo.
 - **`/admin/liberacao`: políticas de liberação de conteúdo** — 2026-08-17
   - Pedido do Pedro no dia: a cadência fixa de um módulo por semana virou **política configurável**,
     com quatro tipos de regra por módulo (acesso livre, em breve, dias após a compra, data

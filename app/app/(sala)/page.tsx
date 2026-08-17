@@ -7,7 +7,7 @@ import { href } from "@/lib/curso";
 import { getCurriculo } from "@/lib/curriculo";
 import { getMatricula } from "@/lib/matricula";
 import { aberturaDoModulo, diasAte, liberacao, REGRA_PADRAO } from "@/lib/liberacao";
-import { getRegrasAtivas } from "@/lib/politicas";
+import { getRegras } from "@/lib/politicas";
 import { getUsuario } from "@/lib/usuario";
 import { tentativaAtual } from "@/lib/prova";
 import { corrigir } from "@/lib/prova-correcao";
@@ -53,10 +53,8 @@ export default async function HomePage({
   // Quais módulos ainda não abriram, e em quantos dias. O cartão travado mostra a espera em
   // vez de sumir: o aluno precisa ver que o curso continua, e quando. `null` é módulo em
   // breve (política da migration 0016): fechado sem data, e a copy diz isso.
-  const [{ inicioEm, liberacaoTotal }, regras] = await Promise.all([
-    getMatricula(),
-    getRegrasAtivas(),
-  ]);
+  const { inicioEm, liberacaoTotal, politicaId } = await getMatricula();
+  const regras = await getRegras(politicaId);
   const travados = new Map<number, number | null>();
   if (inicioEm) {
     const { abertos } = liberacao(inicioEm, liberacaoTotal, regras);
