@@ -5,7 +5,7 @@
 
 ## 1. Visão geral
 
-**Estratégia Internacional** é uma formação on-demand em dolarização de patrimônio e investimento internacional, produzida pela **BlockTrends** com chancela institucional da **VEJA Negócios (Grupo Abril)**. O público é o investidor bancarizado brasileiro, sem experiência no mercado internacional, do zero ao avançado. O objetivo primário é **receita** (venda direta do curso), com a área do aluno servindo à entrega, à conclusão e à certificação.
+**Estratégia Internacional** é uma formação on-demand em dolarização de patrimônio e investimento internacional, produzida pelo **BlockTrends** com chancela institucional da **VEJA Negócios (Grupo Abril)**. O público é o investidor bancarizado brasileiro, sem experiência no mercado internacional, do zero ao avançado. O objetivo primário é **receita** (venda direta do curso), com a área do aluno servindo à entrega, à conclusão e à certificação.
 
 O produto tem dois entregáveis num mesmo projeto Next.js: uma **LP de vendas pública** (rota `/`, SSG, tema claro) e uma **plataforma/área do aluno autenticada** (rotas `/app/*`, tema dark). Quatro pilares o sustentam:
 
@@ -316,16 +316,16 @@ Peça de marca gerada em PDF na aprovação, com código único e página públi
 
 ### Estrutura
 
-- **Preview** na tela: wordmark, olho, gravuras, nome do aluno, carga de 30h, assinaturas (BlockTrends como emissora, VEJA Negócios como chancela institucional cossignatária).
+- **Preview** na tela: wordmark, olho, gravuras, nome do aluno, carga de 30h, assinaturas (BlockTrends como emissor, VEJA Negócios como chancela institucional cossignatária).
 - **Ações**: baixar PDF, compartilhar no LinkedIn, avaliar a formação (NPS).
 - **Código**: formato `EI-XXXX-XXXX`, oito símbolos aleatórios (decisão do Pedro, 31/jul/2026: sem ano e sem sequência).
 - **Verificação pública**: `/verificar/:codigo`.
 
-> **Chancela da VEJA Negócios (direção recomendada, 20/jul/2026):** VEJA Negócios é marca editorial, não entidade certificadora (diferente da ANCORD no CCA, que dá nome à "Certificação de Criptoativos ANCORD"). Portanto **não usar "Certificação VEJA Negócios"**. O certificado é **emitido pela BlockTrends**, com a VEJA Negócios como **assinatura/chancela editorial** cossignatária (marca presente, sem se amarrar ao nome da certificação). Na LP, trocar "Certificação VEJA Negócios" por formulações como "certificado de 30h com chancela institucional VEJA Negócios" ou "assinado por BlockTrends e VEJA Negócios". A redação final depende do aval do jurídico/Grupo Abril.
+> **Chancela da VEJA Negócios (direção recomendada, 20/jul/2026):** VEJA Negócios é marca editorial, não entidade certificadora (diferente da ANCORD no CCA, que dá nome à "Certificação de Criptoativos ANCORD"). Portanto **não usar "Certificação VEJA Negócios"**. O certificado é **emitido pelo BlockTrends**, com a VEJA Negócios como **assinatura/chancela editorial** cossignatária (marca presente, sem se amarrar ao nome da certificação). Na LP, trocar "Certificação VEJA Negócios" por formulações como "certificado de 30h com chancela institucional VEJA Negócios" ou "assinado por BlockTrends e VEJA Negócios". A redação final depende do aval do jurídico/Grupo Abril.
 >
 > **Aplicação na área do aluno (25/jul/2026):** o card da Prova Final na home anunciava "Certificação VEJA Negócios" e passou a **"Certificado de 30 horas"**, nomeando o que o aluno recebe em vez de amarrar a certificação à marca da VEJA. O termo é provisório: fica para a rodada de revisão de copy antes do launch, junto com os nomes que assinam o certificado (ver `BACKLOG.md`).
 >
-> **Ajuste de nomenclatura (23/jul/2026):** "chancela **editorial**" passou a "chancela **institucional**" em toda a página, para separar melhor os dois papéis da seção Quem Assina: a BlockTrends assina a **técnica** e a VEJA Negócios, a **instituição**. O racional jurídico acima não muda (a VEJA continua não sendo certificadora). O rodapé só foi alinhado em 24/jul, quando a revisão geral pegou o "editorial" que tinha ficado para trás.
+> **Ajuste de nomenclatura (23/jul/2026):** "chancela **editorial**" passou a "chancela **institucional**" em toda a página, para separar melhor os dois papéis da seção Quem Assina: o BlockTrends assina a **técnica** e a VEJA Negócios, a **instituição**. O racional jurídico acima não muda (a VEJA continua não sendo certificadora). O rodapé só foi alinhado em 24/jul, quando a revisão geral pegou o "editorial" que tinha ficado para trás.
 
 ### Regras
 
