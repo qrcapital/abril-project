@@ -66,7 +66,9 @@ export async function POST(req: NextRequest) {
       if (politica.ativa) return erro("A política ativa não pode ser apagada. Ative outra antes.");
       const { error } = await db.from("release_policies").delete().eq("id", id);
       if (error) return erro("Não deu para apagar. Tente de novo.");
-      await auditar(db, { autor, acao: "liberacao.apagar", alvo: id, detalhe: { nome: politica.nome } });
+      // Sem `alvo` de propósito (rodada 4): a tela de Auditoria o resolve como PESSOA, e um
+      // id de política ali vira "conta apagada". Quem identifica é o nome, no detalhe.
+      await auditar(db, { autor, acao: "liberacao.apagar", detalhe: { nome: politica.nome } });
       return voltar(req, { ok: "apagada" });
     }
 
@@ -81,7 +83,7 @@ export async function POST(req: NextRequest) {
       if (e1) return erro("Não deu para ativar. Tente de novo.");
       const { error: e2 } = await db.from("release_policies").update({ ativa: true }).eq("id", id);
       if (e2) return erro("A ativa anterior foi desligada, mas a nova não ligou. Ative de novo.");
-      await auditar(db, { autor, acao: "liberacao.ativar", alvo: id, detalhe: { nome: politica.nome } });
+      await auditar(db, { autor, acao: "liberacao.ativar", detalhe: { nome: politica.nome } });
     }
     return voltar(req, { ok: "ativada" });
   }
@@ -149,7 +151,6 @@ export async function POST(req: NextRequest) {
   await auditar(db, {
     autor,
     acao: acao === "criar" ? "liberacao.criar" : "liberacao.salvar",
-    alvo: policyId,
     // O detalhe carrega a política inteira: é pequena (5 regras) e é a resposta da auditoria
     // para "o que exatamente valia quando o aluno reclamou".
     detalhe: { nome, regras: regras.map((r) => `${r.tipo}${r.dias !== null ? `:${r.dias}` : ""}${r.abre_em ? `:${r.abre_em.slice(0, 10)}` : ""}`) },

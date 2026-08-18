@@ -8,6 +8,28 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Corrigido
+- **Rodada 4 do plano de correções — higiene** — 2026-08-18
+  - **Middleware fora do caminho estático e público**: o matcher exclui fontes e vídeo
+    (`woff2`, `ttf`, `otf`, `mp4`), e rota que não é `/app`, `/auth` ou `/admin` sai antes do
+    `getUser()` — a LP deixou de custar uma ida ao Auth por request (e por fonte).
+  - **Banco** (migration **0021**, aplicada): índices nas FKs `progress.lesson_id`,
+    `email_log.user_id` e `admin_audit.autor_id`; CHECK 0–100 em `exams.score`; e o revoke
+    de PUBLIC que faltava em `handle_new_user` (residual teórico — `returns trigger` não é
+    chamável por RPC — fechado pela regra da casa).
+  - **Aviso de garantia com uma conta só**: `avisosDaPolitica` foi para
+    `lib/politica-avisos.ts` e o painel conta os MESMOS avisos que a tela de Liberação
+    mostra; antes cada lado somava por conta própria. De carona, o `modules` do painel
+    ganhou o `order("ord")` de que o alinhamento regra-módulo depende.
+  - **`AGENTS.md` corrigido** sobre o check de liberação: virou detector da regra pura,
+    não trava mais o build (a proteção da garantia é aviso na tela desde 17/ago).
+  - **Achado do QA: `alvo` da auditoria é PESSOA.** As rotas de Questões, Conteúdo e
+    Liberação passavam ids de questão/aula/política como `alvo`, e a tela de Auditoria os
+    resolvia como conta — o registro saía com "conta apagada" no "sobre". O `alvo` saiu
+    dessas rotas; quem identifica é o detalhe (título, enunciado, nome). Um registro de
+    18/ago no homolog ficou com o defeito, de propósito: auditoria não se apaga.
+  - Fora do escopo desta rodada: item 23 (links de Termos/LGPD da LP) segue aguardando as
+    URLs do Pedro.
+
 - **Rodada 3 do plano de correções — críticos de produção** — 2026-08-18
   - **`criarConta` recusa em produção** (`NEXT_PUBLIC_APP_ENV`): a action cria usuário
     confirmado e matrícula ativa sem compra, e era o curso de graça; lá quem matricula é o

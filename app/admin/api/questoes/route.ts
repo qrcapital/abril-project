@@ -25,7 +25,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * Toda ação é auditada (plano de correções de 17/ago, item 19): esta rota muda o GABARITO, e
  * gabarito mudando sem rastro é o tipo de coisa que só aparece na nota de alguém, meses depois.
  * O detalhe leva o começo do enunciado e a letra correta — o suficiente para responder "o que
- * valia quando o aluno reclamou" sem duplicar a tabela no rastro.
+ * valia quando o aluno reclamou" sem duplicar a tabela no rastro. O `alvo` fica de fora de
+ * propósito: a tela de Auditoria o resolve como PESSOA, e um id de questão ali vira "conta
+ * apagada". Quem identifica a questão é o detalhe.
  */
 
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -77,24 +79,19 @@ export async function POST(req: NextRequest) {
       const alt = lerAlternativas(form);
       if (typeof alt === "string") return falha(alt);
 
-      const { data, error } = await db
-        .from("questions")
-        .insert({
-          module_id: id,
-          enunciado,
-          alternativas: alt.alternativas,
-          correta: alt.correta,
-          // Nasce ativa: quem escreveu a questão quer ela no sorteio, e o contador do módulo é o que
-          // mostra se ela ainda cabe na meta.
-          ativo: true,
-        })
-        .select("id")
-        .single();
+      const { error } = await db.from("questions").insert({
+        module_id: id,
+        enunciado,
+        alternativas: alt.alternativas,
+        correta: alt.correta,
+        // Nasce ativa: quem escreveu a questão quer ela no sorteio, e o contador do módulo é o que
+        // mostra se ela ainda cabe na meta.
+        ativo: true,
+      });
       if (error) return falha("A gravação falhou.");
       await auditar(db, {
         autor,
         acao: "questao.criar",
-        alvo: data?.id ?? null,
         detalhe: { enunciado: enunciado.slice(0, 80), correta: LETRAS[alt.correta] },
       });
       return voltar(req, { ok: "nova", abrir: m });
@@ -122,7 +119,6 @@ export async function POST(req: NextRequest) {
       await auditar(db, {
         autor,
         acao: "questao.salvar",
-        alvo: id,
         detalhe: { enunciado: enunciado.slice(0, 80), correta: LETRAS[alt.correta], ativo },
       });
       return voltar(req, { ok: "salva", abrir: m });
@@ -138,7 +134,6 @@ export async function POST(req: NextRequest) {
       await auditar(db, {
         autor,
         acao: "questao.apagar",
-        alvo: id,
         detalhe: { enunciado: String(antiga?.enunciado ?? "").slice(0, 80) },
       });
       return voltar(req, { ok: "apagada", abrir: m });

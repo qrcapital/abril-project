@@ -8,6 +8,15 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
+  // Só as áreas com sessão precisam do resto: a LP (`/`), o `/verificar` e o webhook não têm
+  // cookie para renovar nem guarda para aplicar, e o getUser() abaixo é uma ida ao Auth por
+  // request. O `/admin` FICA na lista mesmo com a guarda morando no layout: server component
+  // não grava cookie, então a RENOVAÇÃO da sessão do admin só acontece aqui.
+  const path = request.nextUrl.pathname;
+  if (!path.startsWith("/app") && !path.startsWith("/auth") && !path.startsWith("/admin")) {
+    return response;
+  }
+
   // Lido ANTES do getUser: quando o refresh token não vale mais, o cliente do Supabase
   // limpa os cookies da sessão pelo `setAll` abaixo, e a checagem depois daria sempre falso.
   // Serve para separar "a sessão acabou" de "nunca entrou", que é a diferença entre explicar
@@ -44,7 +53,6 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const path = request.nextUrl.pathname;
   // Telas de acesso público dentro de /app (login, primeiro acesso, recuperação).
   const isAccessScreen =
     path.startsWith("/app/login") ||

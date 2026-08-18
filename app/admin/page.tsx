@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { dataHora, Selo } from "./_ui/tabela";
 import { rotularAcao } from "@/lib/auditoria-texto";
-import { violaGarantia } from "@/lib/liberacao";
+import { avisosDaPolitica } from "@/lib/politica-avisos";
 import { getRegras } from "@/lib/politicas";
 import { NOTA_MINIMA } from "@/lib/prova-correcao";
 import { META_POR_MODULO, ORDS_AVALIADOS, POR_MODULO } from "@/lib/questoes";
@@ -83,7 +83,9 @@ export default async function AdminPainel() {
         .gt("expires_at", iso)
         .lte("expires_at", em30d),
       db.from("exams").select("id", { count: "exact", head: true }).eq("status", "in_progress").lt("deadline", iso),
-      db.from("modules").select("id, ord"),
+      // `.order("ord")` importa: o `avisosDaPolitica` alinha `regras[i]` com `ords[i]`, e o
+      // `getRegras` devolve as regras na ordem dos módulos por ord.
+      db.from("modules").select("id, ord").order("ord"),
       db.rpc("listar_auditoria", { termo: "", limite: 5 }),
       db.from("release_policies").select("nome").eq("ativa", true).maybeSingle(),
       db.from("enrollments").select("id", { count: "exact", head: true }).not("release_policy_id", "is", null),
@@ -258,10 +260,11 @@ export default async function AdminPainel() {
   const topoFunil = Math.max(1, n(ativos));
 
   // ---- saúde ------------------------------------------------------------------------------
+  // A MESMA conta da tela de Liberação (`lib/politica-avisos.ts`): antes cada lado somava os
+  // avisos por conta própria, e o card diria "sem avisos" para uma política que a tela marca.
   const regras = await getRegras(null);
-  const avisosPolitica =
-    (violaGarantia(regras) ? 1 : 0) +
-    ORDS_AVALIADOS.filter((ord) => regras[ord]?.tipo === "em_breve").length;
+  const ordsModulos = (mods.data ?? []).map((m) => m.ord as number);
+  const avisosPolitica = avisosDaPolitica(regras, ordsModulos).length;
   const audit = (auditoria.data ?? []) as LinhaAudit[];
 
   return (

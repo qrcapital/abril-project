@@ -84,9 +84,11 @@ Variáveis em `.env.local` (ver `.env.example`). Sem elas, o app sobe mas as int
 O `npm run check` roda os scripts de `scripts/*-check.mts` em node puro, sem framework de teste.
 Cobrem as regras que doem quando quebram: a correção da prova (nota de corte, questão em
 branco, desempenho por módulo), a política de senha, os **marcadores de usuário** do markup
-portado, o **calendário de liberação** (que falha o build se o curso ficar concluível dentro da
-janela de arrependimento), as **invariantes do currículo** no banco e o **estado de acesso** derivado
-da matrícula. Rodam também as âncoras de HTML dos templates, para uma mudança no porte estourar ali
+portado, o **calendário de liberação** (a regra pura das políticas da 0016; desde 17/ago a
+proteção da janela de arrependimento é AVISO na tela de Liberação, não trava de build — o
+check exercita a regra, é detector e não porteiro), as **invariantes do currículo** no banco, o
+**estado de acesso** derivado da matrícula e as **regras de borda** de `lib/seguranca.ts` (cadastro
+fechado em produção, destino de redirect). Rodam também as âncoras de HTML dos templates, para uma mudança no porte estourar ali
 em vez de servir placeholder do design como se fosse conteúdo real. **Ao mexer em nota, senha,
 nos dados do aluno ou nos templates de tela, rode antes de commitar.**
 

@@ -8,13 +8,13 @@ achado está no histórico da sessão e nos arquivos citados.
 Legenda: **[hoje]** entrou nos commits de 17/ago · **[antigo]** pré-existente ·
 🔒 depende de insumo/decisão do Pedro.
 
-> **Estado em 18/ago:** Rodadas 1, 2 e **3** FEITAS. As duas primeiras commitadas em
-> `c757f12` com QA manual em localhost (item 8 resolvido SEM mudança: decisão do Pedro, a
-> política padrão é semanal mesmo; item 5 já estava correto no código). A Rodada 3 está com
-> lint + 11 checks + build limpos; as migrations **0019** (progresso só servidor) e **0020**
-> (responder_prova) estão escritas mas **AINDA NÃO aplicadas no ei-homolog** — o classificador
-> de permissões barrou o psql que revoga grants, o Pedro aplica com o comando do HANDOFF §6.
-> Depois de aplicar: QA do marcar/desmarcar aula e uma resposta de prova. Resta a Rodada 4.
+> **Estado em 18/ago, fim do dia: as 4 rodadas FEITAS.** Rodadas 1+2 em `c757f12`, Rodada 3
+> em `5c42324` (migrations 0019/0020 aplicadas pelo Pedro e conferidas com
+> `has_table_privilege`/`has_function_privilege`; QA do marcar/desmarcar pós-0019 nos dois
+> ramos), Rodada 4 por commitar (migration 0021 aplicada). O que sobrou do plano inteiro:
+> **item 23** (🔒 URLs de Termos/LGPD, insumo do Pedro) e o item 8, morto sem mudança por
+> decisão dele. O caminho `salvarResposta`/`enviar` da 0020 não foi exercitado ao vivo
+> (precisa de prova in_progress); privilégios e build conferidos.
 
 ---
 

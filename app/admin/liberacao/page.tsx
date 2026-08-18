@@ -3,15 +3,9 @@ import type { Metadata } from "next";
 import BotaoConfirmar from "./BotaoConfirmar";
 import { Selo } from "@/app/admin/_ui/tabela";
 import { rotuloModulo } from "@/lib/curso";
-import {
-  DIAS_GARANTIA,
-  REGRA_PADRAO,
-  regraEsteira,
-  violaGarantia,
-  type Regra,
-} from "@/lib/liberacao";
+import { REGRA_PADRAO, regraEsteira, type Regra } from "@/lib/liberacao";
+import { avisosDaPolitica } from "@/lib/politica-avisos";
 import { paraRegra } from "@/lib/politicas";
-import { ORDS_AVALIADOS } from "@/lib/questoes";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = { title: "Liberação" };
@@ -65,24 +59,8 @@ function regrasDaPolitica(politicaId: string, linhas: LinhaRegra[], mods: Mod[])
   return mods.map((m) => porModulo.get(m.id) ?? REGRA_PADRAO);
 }
 
-/** Os avisos que a política merece. Avisar, não travar: decisão de 17/ago. */
-function avisosDaPolitica(regras: Regra[], mods: Mod[]): string[] {
-  const avisos: string[] = [];
-  if (violaGarantia(regras))
-    avisos.push(
-      `Com esta política o curso fica concluível dentro da garantia de ${DIAS_GARANTIA} dias: ` +
-        "um aluno pode terminar, emitir o certificado e pedir reembolso no prazo de arrependimento.",
-    );
-  const avaliadosEmBreve = mods
-    .filter((m, i) => ORDS_AVALIADOS.includes(m.ord) && regras[i].tipo === "em_breve")
-    .map((m) => rotuloModulo(m.ord));
-  if (avaliadosEmBreve.length)
-    avisos.push(
-      `${avaliadosEmBreve.join(", ")} em breve: a prova sorteia questões desse conteúdo, e o ` +
-        "gate de 16 aulas fica inalcançável enquanto ele não abrir.",
-    );
-  return avisos;
-}
+// Os avisos moram em `lib/politica-avisos.ts` (rodada 4, item 24): o painel conta os mesmos
+// avisos no card de saúde, e duas contas divergiriam sem ninguém notar.
 
 /** O formulário de uma política: nome + uma linha por módulo. Serve editar e criar. */
 function Formulario({
@@ -221,7 +199,7 @@ export default async function Liberacao({
       <div className="flex flex-col gap-3">
         {politicas.map((p) => {
           const regrasDela = regrasDaPolitica(p.id, regras, modulos);
-          const avisos = avisosDaPolitica(regrasDela, modulos);
+          const avisos = avisosDaPolitica(regrasDela, modulos.map((m) => m.ord));
           return (
             <details key={p.id} open={p.ativa} className="rounded-lg border border-areia bg-white">
               <summary className="cursor-pointer px-5 py-4 text-[14px] text-verde">
