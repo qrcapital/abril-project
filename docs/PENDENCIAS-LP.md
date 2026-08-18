@@ -4,7 +4,7 @@ Checklist vivo do que falta antes do "pronto para produção" (V1/homolog). Atua
 conforme os insumos chegam. Quando o Pedro perguntar "quais as pendências?", este é o
 documento a puxar. (O admin é V2 — ver `PLANO-ADMIN.md`.)
 
-_Última atualização: **2026-07-31, fim do dia**. A fila de amanhã está no bloco
+_Última atualização: **2026-08-18, fim do dia**. A fila da próxima sessão está no bloco
 **"▶ PRÓXIMA SESSÃO"** logo abaixo, e é por ali que se começa._
 
 **O que mudou de lugar e vale saber antes de mexer em qualquer coisa:**
@@ -36,9 +36,15 @@ documento é a lista do que **falta**.
 
 **Revisão geral de 17/ago:** 28 achados (3 críticos de produção), plano de ataque em 4
 rodadas no **`docs/PLANO-CORRECOES.md`** — é a fila de código da vez, junto com este bloco.
-**As 4 rodadas FEITAS em 18/ago** (estado no topo do plano; 1+2 em `c757f12`, 3 em
-`5c42324`, 4 por commitar; migrations 0018–0021 aplicadas no ei-homolog). Do plano inteiro
-sobrou só o **item 23** (🔒 URLs de Termos/LGPD — insumo do Pedro).
+**Sessão de 18/ago FECHADA, tudo pushado até `ce4d86c`** (7 commits): as **4 rodadas do
+plano** feitas e QA'd (1+2 em `c757f12`, 3 em `5c42324`, 4 em `31307ff`; migrations
+**0018–0022** aplicadas no ei-homolog), **varredura de segurança** sem vulnerabilidade
+alta/média com os fechos de baixa em `e5a35fe` (relatório na entrada "Segurança" do
+CHANGELOG), e a copy **"BlockTrends é masculino"** em `43d5c92`+`ce4d86c` (regra no
+AGENTS.md). Do plano sobrou só o **item 23** (🔒 URLs de Termos/LGPD — insumo do Pedro; a
+correção entra pelo `port-lp.mjs`). Oferecido sem resposta: copy que degrada mal com nome
+vazio ("Olá," na topbar). O resto desta fila abaixo segue valendo (insumos externos:
+checkout do Guru, vídeos, materiais, domínio de e-mail).
 
 Nada de recontar história: leia este bloco e vá para o trabalho. O que aconteceu está no
 `CHANGELOG.md`; o que **decidir** está aqui.

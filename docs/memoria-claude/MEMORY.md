@@ -14,7 +14,8 @@
 - [Extensão do Chrome precisa de restart](chrome-extension-precisa-restart.md) — lista de browsers vazia só volta reiniciando o Chrome; clicar no ícone não resolve.
 - [Dev server do Abril só em localhost](dev-server-so-em-localhost.md) — por 127.0.0.1 a hidratação morre calada; ler o log do dev server antes de formular hipótese.
 - [Projeto Abril — Estratégia Internacional](projeto-abril-estrategia-internacional.md) — LP + área de membros de curso; copy livre e HTML manda sobre wireframe.
-- [Estado e retomada da LP do Abril](lp-abril-estado-e-pendencias.md) — RETOMADA de 31/jul: fila no bloco "▶ PRÓXIMA SESSÃO" do docs/PENDENCIAS-LP.md. O admin subiu com 5 telas; faltam Conteúdo, E-mails e Questões. Não recontar história.
+- [Estado e retomada da LP do Abril](lp-abril-estado-e-pendencias.md) — RETOMADA de 18/ago: plano de correções inteiro executado e pushado (7 commits, migrations 0018–0022); sobrou o item 23 (URLs de Termos/LGPD). Não recontar história.
+- [\b no grep falha em silêncio neste Mac](grep-boundary-falha-no-mac.md) — varredura "limpa" com ocorrências vivas; usar `( |>|^)` e testar o padrão contra um caso conhecido.
 - [Estado da plataforma Abril](estado-abril-plataforma.md) — área do aluno + auth no ar em homolog; DESATUALIZADA (não conhece o admin nem prova/senha/currículo), conferir no HANDOFF.md.
 - [Commit e push só com ordem do Pedro](commit-push-so-com-ordem.md) — push em homolog publica; preparar tudo e aguardar a ordem.
 - [Ambiente do Abril no MacBook](ambiente-mac-abril.md) — fnm + Node 22, repo em ~/projects/abril-project, identidade local Pedro Teixeira; Mac Intel.

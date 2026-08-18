@@ -1,36 +1,185 @@
 ---
 name: lp-abril-estado-e-pendencias
-description: Estado e ponto de retomada do Abril (Estratégia Internacional) — última sessão 30/jul, o admin subiu com 5 telas; ler o bloco PRÓXIMA SESSÃO do docs/PENDENCIAS-LP.md antes de qualquer coisa.
+description: Estado e ponto de retomada do Abril (Estratégia Internacional) — 18/ago: o PLANO-CORRECOES.md inteiro executado, QA'd, commitado (c757f12, 5c42324, 31307ff) e PUSHADO em homolog; migrations 0018–0021 aplicadas. Sobrou só o item 23 (URLs de Termos/LGPD, insumo do Pedro).
 metadata: 
   node_type: memory
   type: project
   originSessionId: 4b72866b-75a2-4ccb-9364-0b22495f53bd
-  modified: 2026-07-31T00:39:39.664Z
+  modified: 2026-08-18T17:27:40.972Z
 ---
 
 Estado da **Estratégia Internacional**. Repo em **`~/projects/abril-project`** no MacBook, branch `homolog` (o caminho antigo do Windows, `C:\Users\pedro\Claude\abril-estrategia-internacional`, não existe mais — ver [[ambiente-mac-abril]]). Ver [[critique-lp-abril]], [[estado-abril-plataforma]], [[projeto-abril-estrategia-internacional]], [[copy-md-obrigatorio]].
 
 O corpo abaixo está em ordem cronológica **inversa**: o ponto de retomada é o próximo bloco, e o que vem depois é histórico de sessões anteriores, que só interessa se algo antigo voltar à tona.
 
+**PONTO DE RETOMADA (18/ago/2026, fim da sessão — branch `homolog`, TUDO pushado até
+`ce4d86c`, working tree limpo, migrations 0018–0022 aplicadas e conferidas no `ei-homolog`):**
+
+A sessão fechou TRÊS frentes, em 7 commits:
+
+1. **O `docs/PLANO-CORRECOES.md` inteiro** (28 achados da revisão de 17/ago): Rodadas 1+2 em
+   `c757f12`, Rodada 3 (críticos de produção: criarConta recusa produção, open redirect,
+   progresso só servidor/0019, auditoria de questões+conteúdo, concorrência da prova/0020)
+   em `5c42324`, Rodada 4 (middleware fora da LP/fontes, 0021, `lib/politica-avisos.ts`
+   unificado) em `31307ff`. QA manual COMPLETO com o Chrome do Pedro logado em localhost,
+   incluindo a prova de ponta a ponta via 2ª chamada na conta dele (que terminou reprovada
+   com 5/100 na tentativa 2 — estado esperado, e o e-mail de resultado saiu UM só; o log de
+   31/07 guarda o par duplicado do bug antigo como contraste). `lib/seguranca.ts` +
+   `check:seguranca` novos (12º check da suíte).
+2. **Varredura de segurança** (duas frentes, banco + app): veredito SEM vulnerabilidade
+   alta/média; 3 fechos de baixa severidade em `e5a35fe` (migration **0022**: revoke de
+   PUBLIC **e anon** em is_admin/is_master/has_active_access, revoke de escrita em
+   exams/enrollments; `escapar` do CSV cobrindo `\t=`). Anotado sem ação: verify_certificate
+   enumerável por design; `guarda_is_admin` vira INSERT OR UPDATE se `profiles` um dia
+   ganhar policy de INSERT. Relatório completo na entrada "Segurança" do CHANGELOG.
+3. **Copy "BlockTrends é masculino"** (decisão do Pedro, regra no guia de copy do AGENTS.md):
+   `43d5c92` (LP + PRD) e `ce4d86c` (a leva que o grep quebrado escondeu — 4 telas de login,
+   RODAPÉ DOS E-MAILS em `lib/email-render.ts`, HANDOFF, BACKLOG; as telas portadas foram
+   corrigidas no gerado E no `port-area.mjs`, senão o próximo porte reverte).
+
+**Lições novas que valem para sempre:** [[grep-boundary-falha-no-mac]] (o `\b` que relatou
+varredura limpa com 6 ocorrências vivas); **revoke de PUBLIC não fecha função no Supabase** —
+anon/authenticated têm grant DIRETO por default privileges, revogar dos dois e conferir com
+`has_function_privilege`; clique de browser SEMPRE com screenshot fresco e conferido com
+reload (a janela muda de tamanho e o clique cai fora do botão em silêncio).
+
+**Estado de homolog:** `RESEND_API_KEY` ATIVA (e-mails saem de verdade); conta do Pedro
+`pedrohfontei@gmail.com` é admin mestre, 17/17 no gate, reprovada na tentativa 2.
+
+**Fila da próxima sessão:** (1) **item 23** do plano, único aberto — URLs de Termos de uso e
+Privacidade/LGPD da LP, insumo do Pedro (a correção entra pelo `port-lp.mjs`); (2) oferecido
+sem resposta: copy que degrada mal com nome vazio ("Olá," / "O tempo acabou, ." — a conta
+dele não tem `nome` no metadata); (3) o resto do pré-produção segue no bloco "▶ PRÓXIMA
+SESSÃO" do `PENDENCIAS-LP.md` (insumos externos: checkout Guru, vídeos, materiais, domínio
+de e-mail) e nos itens antigos de [[pendencias-lp-abril]]. Item 8 do plano morreu sem
+mudança (decisão dele: a política padrão é semanal mesmo).
+
+Colateral achado no QA: a conta `pedrohfontei@gmail.com` não tem `nome` no metadata, e as
+telas mostram "Olá," e "O tempo acabou, ." — a copy não degrada bem com nome vazio; ofereci
+como item da Rodada 4, sem resposta ainda.
+
+Descobertas de 18/ago: o **item 5 do plano já estava correto** no código (faltava só a regra
+"gate vale para começar, não para continuar" no `iniciarProva`, coberta no item 4); política
+nova nasce com tudo em breve e o preset da esteira é ação explícita
+(`/admin/liberacao?preset=esteira`).
+
+**PONTO DE RETOMADA (17/ago/2026, fim da sessão — branch `homolog`, tudo pushado até
+`3cd1c65`; ficaram POR COMMITAR só `docs/PLANO-CORRECOES.md` e o ponteiro dele no
+`PENDENCIAS-LP.md`):**
+
+A sessão entregou, em dois commits no ar em homolog: **políticas de liberação de conteúdo**
+(migrations `0016`/`0017`, aplicadas no `ei-homolog` por psql — tela `/admin/liberacao`, política
+ativa como padrão de todos + política própria por aluno no detalhe), **painel redesenhado**
+(fila "Precisa de você", funil, auditoria recente, saúde) com **relatórios CSV** auditados, o
+pacote visual (wordmark da LP na sidebar, algarismos lining em admin+área, camada única de
+feedback de botão no `admin.css`), e a mudança de que **o gate da prova passou a ler
+`conta_no_gate`** (decisão do Pedro: boas-vindas conta, gate hoje é 17/17 em homolog; antes o
+checkbox do admin era letra morta).
+
+**Depois disso, uma revisão geral (5 revisores) achou 28 defeitos reais, 3 críticos de
+produção** (criarConta sem guarda de ambiente, progresso gravável via API direta contornando a
+esteira, open redirect por `\` no /auth/confirm). **A fila de código da retomada é
+`docs/PLANO-CORRECOES.md`** (4 rodadas, começar pela 1), aprovado como plano mas com o Pedro
+adiando a execução ("vou atacar outra pendência, depois voltamos"). Dois insumos dele lá
+dentro: copy nova do e-mail de boas-vindas (item 8) e URLs de Termos/LGPD (item 23).
+
+Coisas desta sessão que mudam como trabalhar aqui: **decisão de produto nova = perguntar com
+AskUserQuestion antes de construir** (as 3 da liberação renderam, e uma mudou no meio: em breve
+NÃO trava a prova); **checks que leem o banco podem falhar por dado que o Pedro mudou pela tela**
+(o curriculo-check acusou o conta_no_gate da boas-vindas — era intencional, o check é que
+mudou); espécimes visuais servidos por `python3 -m http.server` no scratchpad + aba do Chrome
+(file:// é bloqueado); e o Resend/`EMAIL_FROM` seguem pendentes como antes.
+
 **MIGRAÇÃO DE MÁQUINA (25/jul/2026):** o Pedro comprou um MacBook e vai **transferir o desenvolvimento deste projeto do Windows para lá**. Foi criado o **`docs/HANDOFF.md`** (commit `712b0cb` em `homolog`, pushado), documento de continuidade que consolida tudo desta nota e mais: o que não vem no `git clone`, setup no macOS, armadilhas e decisões fechadas. **Ao trabalhar neste projeto em qualquer máquina, ler o `docs/HANDOFF.md` primeiro** — o `AGENTS.md` já aponta para ele. As memórias do Abril foram copiadas para **`docs/memoria-claude/`** (viajam no git; o README de lá tem o procedimento de reinstalação no Mac) e o `COPY.md` virou `docs/COPY.md`, versionado. Fora do git e a transferir na mão: `.env.local` (recriar do dashboard Supabase) e os insumos brutos de `referencias/cowork/` (~9 MB; um arquivo tem marca d'água Dreamstime, não commitar em bloco). **Os geradores do globo e o `checkpoint-canvas/` do scratchpad já foram apagados pelo sistema, não existem mais em lugar nenhum** — os dados de saída seguem versionados em `scripts/globo-*.txt`.
 
-**PONTO DE RETOMADA (30/jul/2026, fim da sessão — repo em `~/projects/abril-project`, branch
+**PONTO DE RETOMADA (31/jul/2026, fim da sessão — repo em `~/projects/abril-project`, branch
 `homolog`):**
 
-Comece pelo bloco **"▶ PRÓXIMA SESSÃO"** do `docs/PENDENCIAS-LP.md`, remontado em 30/jul e enxugado
-de propósito. **Não recontar história**: ler o bloco e ir para o trabalho. O histórico está no
-`CHANGELOG.md`.
+Comece pelo bloco **"▶ PRÓXIMA SESSÃO"** do `docs/PENDENCIAS-LP.md`, remontado em 31/jul. **Não
+recontar história**: ler o bloco e ir para o trabalho. O histórico está no `CHANGELOG.md`.
 
-**O admin saiu do zero nesta sessão e está no ar em homolog**, com cinco telas: casca, Painel,
-Alunos, Detalhe do aluno e Equipe. Faltam Questões, Conteúdo e E-mails.
+**O PAINEL ESTÁ COMPLETO** em homolog: casca, Painel, Alunos, Detalhe do aluno, Equipe, Conteúdo,
+E-mails e **Questões** (as três últimas de 31/jul). O detalhe do aluno ganhou **"Reenviar acesso"**,
+que gera link novo (o anterior morre).
 
-**Estado do git:** árvore limpa, três commits pushados em 30/jul — `964bd80` (escalada de
-privilégio), `8b22869` (casca, Painel, Equipe, admin mestre) e `1bb23d9` (Alunos e detalhe).
-`build`, `lint`, `check` (6/6), `check:rls` e `check:mestre` passando.
+**2ª CHAMADA DA PROVA E AUDITORIA (31/jul).** A liberação era prometida na tela do reprovado e no
+e-mail, e não existia em código nenhum: o primeiro aluno a reprovar geraria ticket sem resposta. Usa o
+estado `available` do enum (que existia e nunca foi usado), o `abrirTentativa` passou a **armar** a
+tentativa liberada, e três telas do aluno ganharam guarda para esse estado. Junto entrou a tabela
+`admin_audit` (`0014`), que o §2 pedia desde 20/jul. **Regra: só quem entregou e REPROVOU** — liberar
+para aprovado tiraria o acesso ao certificado dele, porque o porteiro olha a tentativa mais recente.
 
-**Migrations `0003` a `0006` aplicadas no `ei-homolog`** por `psql`, que vive em
+**O bug que o teste pegou e vale como lição:** eu pedi um booleano `aprovado` para a função pura, e os
+dois chamadores calcularam diferente (tela pela coluna `score`, rota recorrigindo o snapshot) — a tela
+oferecia o botão e a rota liberava para aprovado. É [[abril-escalada-is-admin]] em outra roupa: duas
+verdades sobre o mesmo fato. **Função pura recebe dado cru e decide sozinha; quem chama não calcula.**
+
+**CERTIFICADO COM EMISSÃO REAL (31/jul).** Era o maior buraco depois do painel: `lib/certificado.ts`
+tinha UM código fixo (`EI-2026-4817`) e o nome "Pedro Teixeira", então todo aluno aprovado teria o
+mesmo código e a página pública mostrava o nome errado para qualquer consulta. Agora: `EI-XXXX-XXXX`
+com 8 símbolos aleatórios (decisão dele: sem ano, sem sequência), alfabeto de 30 sem `I O L U 0 1`
+porque o código é **ditado por telefone e digitado de PDF**, sorteio por Web Crypto com descarte de
+viés, emissão na aprovação nos dois caminhos + resgate na tela, migration `0012` com um certificado
+por aluno, e `/verificar/:codigo` consultando `verify_certificate` com o cliente **anon**.
+`lib/certificado.ts` é importado por componente de CLIENTE, então nada de `node:*` nele.
+
+**A tela de Questões** foi pedida antes das ~100 questões existirem e não precisou de migration
+nenhuma. Duas decisões que ficaram: **apagar E desativar** (desativar é questão que pode voltar,
+apagar é questão que nasceu errada; nenhum dos dois corrompe prova feita, por causa do
+`questions_snapshot`), e **duas réguas por módulo** — o piso de 5 ativas, que rompido faz a prova
+parar de abrir para todo mundo, e a meta de 25 do PRD. O piso virou asserção no `check:curriculo`,
+então **desativar questão demais faz `npm run check` falhar de propósito**.
+
+**A `/admin/emails` tem duas metades**: o log e o **builder dos transacionais nossos**, que o Pedro
+pediu ao ver o log vazio. Decisões que não se repropõem: `left join` em `auth.users` porque
+`email_log.user_id` é `on delete set null` e o log sobrevive à conta apagada; nome de template **cru**
+e tom de status **neutro por padrão**, porque pintar de vermelho o desconhecido faz de cada status novo
+um incidente falso.
+
+**A CAMADA DE ENVIO NÃO EXISTIA ATÉ 31/JUL, e isso é o achado da sessão:** o webhook gerava o link de
+acesso e **não mandava nada**, porque `generateLink` gera sem enviar (quem envia é `inviteUserByEmail`).
+O `queued` que ele escrevia no log era falso, e quem comprava recebia silêncio. Hoje: `lib/email.ts`
+(envio, provedor atrás de uma função, nunca lança, registra toda tentativa), `lib/email-render.ts`
+(puro, com `npm run check:email`) e `email_templates` no banco.
+
+**Cinco regras do e-mail que valem para sempre:** assunto e corpo no banco, **layout e destino do botão
+em código** (URL no editor seria a forma mais barata de mandar a turma para o lugar errado); cada
+template tem um **contrato de variáveis** em código e a tela recusa ao salvar o que estiver fora dele;
+**nenhuma imagem no e-mail**, nem logo, porque cliente bloqueia imagem e cabeçalho-imagem chega em
+branco; botão **verde com texto claro**, porque dourado com branco dá 2,9:1; e **aprovado recebe um
+e-mail só**, o do certificado, senão são duas mensagens no mesmo segundo dizendo a mesma coisa.
+
+**Provedor: Resend por HTTP com `fetch`, zero dependência.** É o mesmo Resend do SMTP do Auth. O SES
+segue previsto para produção junto com a decisão do domínio, e a troca é uma chamada em `lib/email.ts`
+(SigV4 pede o SDK). **Falta a `RESEND_API_KEY` no `.env.local` e no Netlify** para o primeiro e-mail
+sair: ver [[email-boas-vindas-antes-do-lancamento]].
+
+**A tela de Conteúdo (`/admin/conteudo`) é a única que muda o curso sem deploy**, e as três
+decisões do Pedro que a definiram não se repropõem: material é **URL colada** (não existe bucket de
+Storage no projeto), **reordenar aula é permitido** e muda o número da aula na URL, e **apagar aula
+é permitido** com confirmação que diz quantos alunos perdem progresso. `lessons.duracao` e
+`modules.arte` ficaram de fora porque **nenhuma tela do app lê essas colunas**.
+
+**`liberacao_total` do homolog: resolvida em 31/jul.** Desligada em 8 das 9 matrículas; só
+`pedrohfontei@gmail.com` mantém liberação total. Consequência para quem testa: com outra conta, a
+área do aluno mostra só os módulos que a esteira já abriu, contando de `inicio_em` (29/jul).
+
+**Estado do git:** `25b35b1` pushado e **`dd33052` commitado sem push** (ele pediu só o commit); a
+leva do certificado está por commitar. Antes: **`25b35b1`** ("Admin: tela de Conteudo, log de e-mails e a camada de envio que nao existia"),
+30 arquivos, migrations `0007` a `0011`. Antes dela, `964bd80`, `8b22869` e `1bb23d9`, de 30/jul.
+`build`, `lint` e `check` (7/7) passando. Commit em uma leva só porque as três frentes se cruzam nos
+mesmos arquivos (a tela de E-mails nasceu log e virou builder no mesmo dia).
+
+**Convenção de mensagem de commit deste repo, que eu quase quebrei: SEM ACENTO.** Todo o histórico é
+assim, herança do Windows. Título curto + parágrafos longos explicando as decisões, e o trailer
+`Co-Authored-By`.
+
+**Migrations `0003` a `0014` aplicadas no `ei-homolog`** por `psql`, que vive em
 `/usr/local/opt/libpq/bin/psql` (fora do PATH). A conta `pedrohfontei@gmail.com` é **admin mestre**
-e tem a senha de teste conhecida em homolog.
+e tem a senha de teste conhecida em homolog — **que eu não sei**. Para conferir tela autenticada por
+`curl` sem ela, o caminho que funcionou: criar admin temporário pela service role, gerar o cookie do
+`@supabase/ssr` (`sb-<ref>-auth-token` = `base64-` + base64url do JSON da sessão) e apagar a conta
+no fim.
 
 **Cinco coisas desta sessão que mudam como trabalhar aqui:**
 
@@ -48,10 +197,10 @@ e tem a senha de teste conhecida em homolog.
 5. **Dois níveis de admin** (mestre e comum). O primeiro admin de cada ambiente nasce de
    `scripts/admin-conta.mjs --mestre`, senão o `/admin` sobe inacessível — item 7 do `AMBIENTES.md`.
 
-**Pendente do Pedro, e a primeira trava construção nova:** as **três decisões do §4.6** (tela de
-conteúdo), o que fazer com **`liberacao_total = true` nas 9 matrículas do homolog** (achado pela
-tela de Alunos; desliga a esteira semanal para todo mundo), as **~100 questões** (13), o template
-**Invite user** (3), se quer **tabela de auditoria** no admin, e a URL do checkout do Guru.
+**Pendente do Pedro:** a **`RESEND_API_KEY`** (é a única que trava entrega de e-mail), as **~100
+questões** (13), se quer **tabela de auditoria** no admin, a URL do checkout do Guru, os materiais e
+vídeos reais, e o **domínio de envio** (hoje o remetente é `onboarding@resend.dev`). O template
+**Invite user** saiu da lista: o link de acesso vai no nosso e-mail agora.
 
 **O que a sessão de 29/jul fez.** Fechou as tarefas 1, 2, 3b, 4, 5, 6, 7, 8, 9, 10, 12, metade
 da 11, e depois **14 e 15** inteiras. Mais duas frentes que o Pedro abriu no caminho: o
