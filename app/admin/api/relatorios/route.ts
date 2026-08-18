@@ -30,8 +30,11 @@ const TETO: Record<string, number> = { alunos: 500, emails: 1000, auditoria: 100
 const escapar = (v: unknown): string => {
   let s = String(v ?? "");
   // Injeção de fórmula: célula começando com `=`, `+`, `-` ou `@` executa no Excel, e nome de
-  // aluno é texto que o próprio aluno digita. O apóstrofo força a célula a ser texto.
-  if (/^[=+\-@]/.test(s)) s = `'${s}`;
+  // aluno é texto que o próprio aluno digita. O `\s` no começo cobre o desvio clássico
+  // (`\t=cmd...`): planilha apara o espaço em branco ANTES de decidir se é fórmula, então
+  // célula que começa com whitespace é suspeita por definição — o nome vindo do webhook do
+  // Guru entra sem normalização. O apóstrofo força a célula a ser texto.
+  if (/^[\s=+\-@]/.test(s)) s = `'${s}`;
   return /[";\n]/.test(s) ? `"${s.replaceAll('"', '""')}"` : s;
 };
 

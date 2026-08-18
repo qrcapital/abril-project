@@ -7,6 +7,25 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 
 ## Não lançado
 
+### Segurança
+- **Varredura de segurança completa** (banco + aplicação, duas frentes) — 2026-08-18
+  - **Veredito: nenhuma vulnerabilidade alta ou média.** RLS default-deny nas 13 tabelas,
+    gabarito inalcançável (lista de colunas de `exams` conferida com `has_column_privilege`),
+    guardas de papel nas 8 rotas do admin, HMAC do webhook com `timingSafeEqual`, `esc()` em
+    toda interpolação dos templates, redirects e bucket de e-mail corretos.
+  - **Três fechos de baixa severidade aplicados** (migration **0022**, no ei-homolog):
+    `is_admin()`/`is_master()`/`has_active_access()` revogadas de PUBLIC **e de anon** — o
+    Supabase concede EXECUTE por default privileges, grant direto, então revogar só de
+    PUBLIC não fecha (conferido com `has_function_privilege`; `authenticated` fica, as
+    policies avaliam as funções no papel de quem consulta); grants de escrita de `exams` e
+    `enrollments` revogados (proteção era só a ausência de policy, camada única); e o
+    `escapar` do CSV passou a neutralizar célula começando com whitespace (`\t=cmd...`, o
+    desvio clássico — o nome vindo do webhook do Guru entra sem normalização).
+  - Anotado sem ação: `verify_certificate` é pública e enumerável por design (espaço de
+    30⁸ torna impraticável; rate limit na borda se um dia preocupar), e o trigger
+    `guarda_is_admin` cobre só UPDATE — vira `INSERT OR UPDATE` no dia em que existir
+    policy de INSERT em `profiles`.
+
 ### Corrigido
 - **Rodada 4 do plano de correções — higiene** — 2026-08-18
   - **Middleware fora do caminho estático e público**: o matcher exclui fontes e vídeo
