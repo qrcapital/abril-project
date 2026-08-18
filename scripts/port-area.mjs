@@ -80,10 +80,10 @@ for (const [uuid, p] of Object.entries(paths)) {
 
 // 3c) nomenclatura da chancela (PRD §8): a VEJA Negocios e marca editorial, nao
 //     entidade certificadora, entao **"Certificação VEJA Negócios" nao se usa** — quem
-//     emite o certificado e a BlockTrends, com a VEJA como cossignataria. O card da
+//     emite o certificado e o BlockTrends, com a VEJA como cossignataria. O card da
 //     prova na home vinha com esse nome; passa a anunciar o que o aluno recebe de fato
 //     (o selo do proprio card ja traz as duas marcas). E "chancela editorial" virou
-//     "institucional" em 23/jul, quando os dois papeis foram separados: a BlockTrends
+//     "institucional" em 23/jul, quando os dois papeis foram separados: o BlockTrends
 //     assina a tecnica e a VEJA a instituicao. O bundle da area e anterior aos dois.
 {
   const termos = [
@@ -256,7 +256,10 @@ const V = {
 };
 // Login e suas variantes de estado. Cada estado é um sc-if do template; aqui
 // viramos o hint do estado desejado para true (e o "regular" para false no 1º acesso).
-const loginRaw = extractScreen(body, 'isLogin');
+// Correção de copy sobre o bundle (decisão do Pedro, 18/ago/2026, no AGENTS.md):
+// BlockTrends é masculino, e o design trouxe "finanças da BlockTrends".
+const loginRaw = extractScreen(body, 'isLogin')
+  .replace('finanças da BlockTrends', 'finanças do BlockTrends');
 const flip = (s, key, from, to) =>
   s.split(`value="{{ ${key} }}" hint-placeholder-val="{{ ${from} }}"`)
    .join(`value="{{ ${key} }}" hint-placeholder-val="{{ ${to} }}"`);

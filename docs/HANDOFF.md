@@ -586,7 +586,7 @@ H2 do CTA final ("Investir no mundo é proteger o que você constrói"). Minhas 
 estão registradas e foram recusadas, o assunto está encerrado.
 
 **Marca.** Nunca usar "Certificação VEJA Negócios": a VEJA é chancela institucional
-cossignatária, quem emite é a BlockTrends. A razão social do rodapé da LP é
+cossignatária, quem emite é o BlockTrends. A razão social do rodapé da LP é
 **Abril Comunicações S.A., CNPJ 44.597.052/0001-62**, porque a LP vai para um subdomínio
 da Abril (a razão social "1971 Comunicações e Sistemas LTDA." aparece em documento antigo
 e está superada).

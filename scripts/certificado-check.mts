@@ -110,7 +110,7 @@ import {
   assert.equal(url.searchParams.get("certUrl"), "https://ei.test/verificar/EI-ABCD-EFGH");
   assert.equal(url.searchParams.get("issueYear"), "2026");
   assert.equal(url.searchParams.get("issueMonth"), "9", "mes do LinkedIn e 1..12, nao o 0..11 do JS");
-  assert.equal(url.searchParams.get("organizationName"), "BlockTrends", "quem emite e a BlockTrends");
+  assert.equal(url.searchParams.get("organizationName"), "BlockTrends", "quem emite e o BlockTrends");
 }
 
 console.log(`certificado-check: ok (alfabeto de ${ALFABETO.length} simbolos, ${SIMBOLOS} posicoes)`);

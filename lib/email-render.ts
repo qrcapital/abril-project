@@ -225,7 +225,7 @@ ${banner}<tr><td style="padding:28px 32px 0">
 ${corpoHtml}
 </td></tr>
 <tr><td style="padding:18px 32px 28px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;line-height:1.6;color:#8F887E;border-top:1px solid ${BORDA}">
-Formação da BlockTrends, com chancela institucional de VEJA Negócios.<br>
+Formação do BlockTrends, com chancela institucional de VEJA Negócios.<br>
 Abril Comunicações S.A. · CNPJ 44.597.052/0001-62<br>
 Esta mensagem é sobre a sua matrícula, então ela não tem descadastro.
 </td></tr>
@@ -272,7 +272,7 @@ export function renderizar(template: Template, dados: Dados): Renderizado {
   const texto =
     paragrafos(interpolar(template.corpo, dados, false)).join("\n\n") +
     (cta && link ? `\n\n${cta}: ${link}` : "") +
-    "\n\nFormação da BlockTrends, com chancela institucional de VEJA Negócios.";
+    "\n\nFormação do BlockTrends, com chancela institucional de VEJA Negócios.";
 
   return {
     // Assunto é cabeçalho: sem escape e sem quebra de linha, senão o cliente trunca ou parte.
