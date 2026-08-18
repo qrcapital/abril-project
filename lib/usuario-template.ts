@@ -32,7 +32,13 @@ function trocar(html: string, marcador: string, valor: string): string {
  * um problema de dado visível; nome de outra pessoa é um problema de dado que se disfarça de
  * conteúdo real.
  */
-export function preencherUsuario(html: string, user: User | null): string {
+export function preencherUsuario(
+  html: string,
+  user: User | null,
+  /** `enrollments.expires_at`, quando o caller tem a matrícula em mãos. É o prazo REAL:
+   *  o proxy de `created_at + 1 ano` erra para matrícula estendida, revogada ou renovada. */
+  expiraEm?: string | null,
+): string {
   const completo = ((user?.user_metadata?.nome as string | undefined) ?? "").trim();
   const primeiro = completo.split(/\s+/)[0] ?? "";
   const inicial = (primeiro[0] ?? "").toUpperCase();
@@ -42,8 +48,14 @@ export function preencherUsuario(html: string, user: User | null): string {
   out = trocar(out, 'data-u="first"', primeiro);
   out = trocar(out, 'data-u="initial"', inicial);
   out = trocar(out, "data-email", user?.email ?? "");
-  out = trocar(out, "data-acesso", fimDoAcesso(user?.created_at));
+  out = trocar(out, "data-acesso", expiraEm ? dataBR(expiraEm) : fimDoAcesso(user?.created_at));
   return out;
+}
+
+/** Data ISO em dd/mm/aaaa; vazio quando malformada. */
+function dataBR(iso: string): string {
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? "" : d.toLocaleDateString("pt-BR");
 }
 
 /**

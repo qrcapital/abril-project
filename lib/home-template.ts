@@ -3,7 +3,7 @@
 // muda o progresso, muda a Home. Mantém os estilos exatos do design.
 
 import type { Curriculo } from "./curso";
-import { innerOfDiv } from "./html-slice.ts";
+import { esc, innerOfDiv } from "./html-slice.ts";
 
 const BADGE_BASE =
   "position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:800;letter-spacing:.14em;border-radius:4px;padding:3px 7px";
@@ -21,16 +21,19 @@ function card(
 ): string {
   // `travadoEm` é o número de dias que faltam; `"breve"` é fechado sem data (política em
   // breve, 0016); `null` quer dizer aberto.
-  const travado = travadoEm !== null;
   const m = c.modulos[idx];
   const aulas = c.aulas.filter((a) => a.modulo === idx);
   const total = aulas.length;
+  // Módulo sem aula nenhuma (recém-criado no admin) se comporta como travado: não há para
+  // onde ir, e o fallback do destino mandaria o clique para a boas-vindas. O `data-travado`
+  // é o que o HomeClient já usa para não navegar.
+  const travado = travadoEm !== null || total === 0;
   const done = aulas.filter((a) => concluidas.has(a.n)).length;
   const emAndamento =
     (done > 0 && done < total) || aulas.some((a) => a.n === c.aulaAtual(concluidas).n);
 
   const badgeText = travado
-    ? travadoEm === "breve"
+    ? total === 0 || travadoEm === "breve"
       ? "EM BREVE"
       : travadoEm === 1
         ? "ABRE AMANHÃ"
@@ -41,14 +44,15 @@ function card(
         ? "EM ANDAMENTO"
         : "AULAS";
   const badge = travado ? BADGE_TRAVADO : emAndamento ? BADGE_ATIVO : BADGE_NEUTRO;
-  const label = (m.docente ? `${m.label} · ${m.docente}` : m.label).toUpperCase();
-  const pct = Math.round((done / total) * 100);
+  // Título e docente vêm do banco e o admin edita os dois: sem `esc()` é XSS armazenado.
+  const label = esc((m.docente ? `${m.label} · ${m.docente}` : m.label).toUpperCase());
+  const pct = total === 0 ? 0 : Math.round((done / total) * 100);
   const count = done === total ? `${done}/${total} ✓` : `${done}/${total}`;
   const countColor = done > 0 ? "#7E6836" : "#8F887E";
   const aulasTxt = total === 1 ? "1 aula" : `${total} aulas`;
 
   const trava = travado ? "opacity:.72;cursor:default" : "cursor:pointer";
-  return `<div class="mcard"${travado ? ' data-travado="1"' : ""} style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;${trava};position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(11,45,32,.05)"><span style="${badge}">${badgeText}</span><div style="position:relative;aspect-ratio:3/3.5;flex:0 0 auto;background:linear-gradient(160deg,#F0EADF,#E7DECF)"><div class="art-slot">Arte do módulo</div></div><div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1"><span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">${label}</span><h3 style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;margin:3px 0 9px;line-height:1.2;color:#0B2D20">${m.titulo}</h3><div style="height:4px;border-radius:2px;background:#EDE6DD;overflow:hidden"><i style="display:block;height:100%;width:${pct}%;background:#A98E4E;border-radius:2px"></i></div><div style="display:flex;justify-content:space-between;font-size:9.5px;color:#8F887E;margin-top:7px"><span>${aulasTxt}</span><span style="color:${countColor};font-weight:600">${count}</span></div></div></div>`;
+  return `<div class="mcard"${travado ? ' data-travado="1"' : ""} style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;${trava};position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(11,45,32,.05)"><span style="${badge}">${badgeText}</span><div style="position:relative;aspect-ratio:3/3.5;flex:0 0 auto;background:linear-gradient(160deg,#F0EADF,#E7DECF)"><div class="art-slot">Arte do módulo</div></div><div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1"><span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">${label}</span><h3 style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;margin:3px 0 9px;line-height:1.2;color:#0B2D20">${esc(m.titulo)}</h3><div style="height:4px;border-radius:2px;background:#EDE6DD;overflow:hidden"><i style="display:block;height:100%;width:${pct}%;background:#A98E4E;border-radius:2px"></i></div><div style="display:flex;justify-content:space-between;font-size:9.5px;color:#8F887E;margin-top:7px"><span>${aulasTxt}</span><span style="color:${countColor};font-weight:600">${count}</span></div></div></div>`;
 }
 
 /**
@@ -151,12 +155,14 @@ export function fillHome(
 ): string {
   const atual = c.aulaAtual(concluidas);
   const mod = c.modulos[atual.modulo];
+  // `esc` no título (o admin edita) e replacement por função (um `$&` no título viraria
+  // referência de grupo numa string de replacement).
   const linha = atual.numero
-    ? `${mod.label} · Aula ${atual.n} · ${atual.titulo}`
-    : `${mod.label} · ${atual.titulo}`;
+    ? `${mod.label} · Aula ${atual.n} · ${esc(atual.titulo)}`
+    : `${mod.label} · ${esc(atual.titulo)}`;
 
   let out = html
-    .replace("Módulo II · Aula 7 · Comprando ações nos EUA", linha)
+    .replace("Módulo II · Aula 7 · Comprando ações nos EUA", () => linha)
     .replace("Continuar Aula 7", atual.numero ? `Continuar Aula ${atual.n}` : "Começar formação");
 
   // A linha de baixo do card da Prova Final e o `data-prova` que diz ao cliente para onde o clique

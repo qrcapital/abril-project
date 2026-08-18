@@ -52,6 +52,11 @@ alter table release_rules enable row level security;
 
 -- A política de estreia reproduz o comportamento que estava em código: boas-vindas e Módulo I
 -- no ato, um por semana dali em diante. Ativa desde já, então nenhum aluno percebe a migração.
+--
+-- NOTA (18/ago): num banco NOVO esta migration roda antes do seed, quando `modules` está
+-- vazia — a política nasce ativa e SEM regras (tudo em breve). Quem semeia as regras nesse
+-- caso é o `supabase/seed.sql`, idempotente. Produção não roda seed: lá a política se monta
+-- pela tela do admin, que é o caminho normal.
 with politica as (
   insert into release_policies (nome, ativa)
   values ('Esteira semanal', true)

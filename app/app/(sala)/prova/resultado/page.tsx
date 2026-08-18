@@ -34,11 +34,16 @@ export default async function ResultadoPage() {
 
   const c = corrigir(t.questoes, t.respostas);
 
-  // PRAZO ENCERRADO: `submitted_at` igual ao `deadline` é a assinatura de prova fechada pelo tempo,
-  // e não pelo clique do aluno. Vale para os dois caminhos de fechamento, porque a rotina de
-  // expiradas grava o deadline de propósito (ver `lib/prova-expiradas.ts`) e o envio automático do
-  // cronômetro acontece no zero. Quem entrega clicando tem `submitted_at` ANTES do prazo.
-  const porPrazo = !c.aprovado && !!t.submitted_at && t.submitted_at === t.deadline;
+  // PRAZO ENCERRADO: `submitted_at` NO deadline ou depois dele é prova fechada pelo tempo, e
+  // não pelo clique do aluno. A rotina de expiradas grava o deadline exato (igualdade), mas o
+  // envio automático do cronômetro grava o instante REAL do zero, milissegundos depois — o
+  // `===` original nunca casava nesse caminho e a tela era inalcançável. Quem entrega
+  // clicando tem `submitted_at` antes do prazo.
+  const porPrazo =
+    !c.aprovado &&
+    !!t.submitted_at &&
+    !!t.deadline &&
+    new Date(t.submitted_at).getTime() >= new Date(t.deadline).getTime();
 
   let base = c.aprovado ? aprovado : reprovado;
   if (porPrazo) {

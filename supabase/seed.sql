@@ -3,10 +3,8 @@
 -- só para testar o motor de sorteio da prova. As questões reais são trabalho nosso.
 -- Idempotente: pode rodar de novo.
 --
--- Títulos e descrições espelham `lib/curso.ts`, que é a fonte de verdade enquanto o
--- curso vive em código. Ao mexer num, mexer no outro.
--- ponytail: duplicação consciente entre SQL e TS. Morre quando a migração do curso
--- para o banco acontecer (HANDOFF §2, item 5) e o curso.ts passar a ler de `lessons`.
+-- Desde 29/jul/2026 o banco é a fonte única do currículo (`lib/curriculo.ts` lê daqui);
+-- este seed é a carga inicial, não uma cópia de código.
 
 -- ------------------------------------------------------------
 -- Módulos (0 = boas-vindas, 1..4 = I..IV)
@@ -51,6 +49,19 @@ insert into lessons (module_id, ord, titulo, descricao, conta_no_gate)
 select m.id, d.lord, d.titulo, d.descricao, true
 from dados d join modules m on m.ord = d.mord
 on conflict (module_id, ord) do update set titulo = excluded.titulo, descricao = excluded.descricao;
+
+-- ------------------------------------------------------------
+-- Regras da política de estreia (plano de correções de 17/ago, item 3)
+-- ------------------------------------------------------------
+-- Num banco NOVO a migration 0016 roda antes deste seed, quando `modules` está vazia: a
+-- política "Esteira semanal" nasce ativa e sem regra nenhuma, e tudo cai no "em breve".
+-- Quem semeia as regras é este arquivo, que é quem cria os módulos. `do nothing` preserva
+-- o que o admin já tiver editado pela tela.
+insert into release_rules (policy_id, module_id, tipo, dias)
+select p.id, m.id, 'dias', greatest(0, m.ord - 1) * 7
+from release_policies p, modules m
+where p.nome = 'Esteira semanal'
+on conflict (policy_id, module_id) do nothing;
 
 -- ------------------------------------------------------------
 -- Banco de questões de EXEMPLO (6 por módulo I..IV = 24), só para testar o sorteio.

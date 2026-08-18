@@ -34,6 +34,12 @@ documento é a lista do que **falta**.
 
 ## ▶ PRÓXIMA SESSÃO (fila montada em 31/jul, ao fim da leva de Conteúdo e E-mails)
 
+**Revisão geral de 17/ago:** 28 achados (3 críticos de produção), plano de ataque em 4
+rodadas no **`docs/PLANO-CORRECOES.md`** — é a fila de código da vez, junto com este bloco.
+**Rodadas 1 e 2 FEITAS em 18/ago** (estado detalhado no topo do plano; migration 0018 no
+ei-homolog). A vez agora é a **Rodada 3**; o item 8 (copy do e-mail de boas-vindas) espera
+aprovação do Pedro.
+
 Nada de recontar história: leia este bloco e vá para o trabalho. O que aconteceu está no
 `CHANGELOG.md`; o que **decidir** está aqui.
 

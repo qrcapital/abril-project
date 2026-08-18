@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { tela } from "@/lib/telas";
+import { getMatricula } from "@/lib/matricula";
 import { getUsuario } from "@/lib/usuario";
 import { preencherUsuario } from "@/lib/usuario-template";
 import ContaClient from "./ContaClient";
@@ -14,6 +15,8 @@ const template = tela("conta");
  * design e trocar depois no navegador era o pior lugar possível para esse atraso.
  */
 export default async function ContaPage() {
-  const user = await getUsuario();
-  return <ContaClient html={preencherUsuario(template, user)} />;
+  // O prazo sai do `expires_at` REAL da matrícula (o proxy de `created_at + 1 ano` errava
+  // para matrícula estendida ou renovada). `getMatricula` é cache(): o layout já a leu.
+  const [user, { expiraEm }] = await Promise.all([getUsuario(), getMatricula()]);
+  return <ContaClient html={preencherUsuario(template, user, expiraEm)} />;
 }

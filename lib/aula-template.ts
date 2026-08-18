@@ -22,7 +22,10 @@ const LDOT = {
   todo: "width:8px;height:8px;border-radius:50%;background:transparent;border:1.5px solid #C9BCA8;flex:0 0 auto",
 };
 
-const aulaLabel = (a: Aula) => (a.numero ? `${a.numero} · ${a.titulo}` : a.titulo);
+// `esc` no título: ele é editado pelo admin em `/admin/conteudo`, então é entrada de gente,
+// não constante nossa — sem escape, um título com `<script>` vira XSS armazenado para a
+// base inteira de alunos.
+const aulaLabel = (a: Aula) => (a.numero ? `${a.numero} · ${esc(a.titulo)}` : esc(a.titulo));
 
 function summary(
   c: Curriculo,
@@ -35,7 +38,7 @@ function summary(
   const dot = done === total ? MDOT.done : done > 0 || hasCurrent ? MDOT.progress : MDOT.todo;
   const countColor = done === 0 && !hasCurrent ? "#8F887E" : "#7E6836";
   const count = done === total ? `${done}/${total} ✓` : `${done}/${total}`;
-  return `<summary style="list-style:none;cursor:pointer;padding:13px 15px;font-size:11.5px;font-weight:700;color:#0B2D20;display:flex;align-items:center;gap:10px" style-hover="background:#FAF7F1"><span style="${dot}"></span><span style="flex:1">${m.label} · ${m.titulo}</span><span style="font-size:9px;color:${countColor};font-weight:700">${count}</span>${CHEV}</summary>`;
+  return `<summary style="list-style:none;cursor:pointer;padding:13px 15px;font-size:11.5px;font-weight:700;color:#0B2D20;display:flex;align-items:center;gap:10px" style-hover="background:#FAF7F1"><span style="${dot}"></span><span style="flex:1">${m.label} · ${esc(m.titulo)}</span><span style="font-size:9px;color:${countColor};font-weight:700">${count}</span>${CHEV}</summary>`;
 }
 
 function row(a: Aula, currentN: number, concluidas: Set<number>): string {
@@ -152,7 +155,8 @@ export function fillAula(
   const proxima = c.aulas[pos + 1];
   const breadLabel = aula.numero ? `Aula ${aula.n}` : "Boas-vindas";
   const pct = c.progressoPct(concluidas);
-  const count = concluidas.size;
+  // Só as avaliadas: `concluidas.size` inclui a boas-vindas e estourava o "17 de 16".
+  const count = c.totalAvaliadas - c.aulasRestantes(concluidas);
 
   return html
     // player: troca o placeholder por um vídeo de exemplo
@@ -166,16 +170,18 @@ export function fillAula(
       /(MATERIAIS DESTA AULA<\/b>)[\s\S]*?(?=<\/div>)/,
       (_m, rotulo) => rotulo + linhasDeMaterial(materiais),
     )
-    // breadcrumb
-    .replace("Módulo II · Renda Fixa e Ações nos EUA", `${mod.label} · ${mod.titulo}`)
+    // breadcrumb — replacement por FUNÇÃO em todo texto vindo do banco: numa string de
+    // replacement um `$&` no título editado pelo admin viraria referência de grupo, e sem
+    // `esc()` um `<script>` viraria XSS armazenado (plano de correções de 17/ago, item 12).
+    .replace("Módulo II · Renda Fixa e Ações nos EUA", () => `${mod.label} · ${esc(mod.titulo)}`)
     .replace(">Aula 7</span>", `>${breadLabel}</span>`)
     // rótulo da apostila (materiais) segue o módulo atual
-    .replace("Módulo II — Renda Fixa e Ações nos EUA", `${mod.label} — ${mod.titulo}`)
+    .replace("Módulo II — Renda Fixa e Ações nos EUA", () => `${mod.label} — ${esc(mod.titulo)}`)
     // título + descrição
-    .replace(">Comprando ações nos EUA</h1>", `>${aula.titulo}</h1>`)
+    .replace(">Comprando ações nos EUA</h1>", () => `>${esc(aula.titulo)}</h1>`)
     .replace(
       /(<p style="font-size:14px;color:#565049;max-width:660px;margin:0 0 26px">)[\s\S]*?(<\/p>)/,
-      `$1${aula.descricao}$2${concluirBtn(aula, concluidas)}`
+      (_m, abre, fecha) => `${abre}${esc(aula.descricao)}${fecha}${concluirBtn(aula, concluidas)}`
     )
     // navegação
     .replace(/<button [^>]*>← Aula 6<\/button>/, prevBtn(anterior))

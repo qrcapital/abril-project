@@ -89,10 +89,12 @@ function Formulario({
   mods,
   politica,
   regras,
+  preset,
 }: {
   mods: Mod[];
   politica?: Politica;
   regras?: LinhaRegra[];
+  preset?: boolean;
 }) {
   const linhaDoModulo = (id: string) => regras?.find((r) => r.module_id === id);
   return (
@@ -114,10 +116,12 @@ function Formulario({
 
       <div className="flex flex-col gap-2">
         {mods.map((m, i) => {
-          // Política nova nasce preenchida com a esteira clássica: é o preset que reproduz o
-          // comportamento de sempre, e mudar a partir dele é menos digitação que partir do zero.
+          // Módulo sem linha mostra a regra EFETIVA (em breve, a REGRA_PADRAO): até 18/ago o
+          // buraco vinha preenchido com o preset da esteira, e salvar gravava o preset — a
+          // política mudava de comportamento só de passar pelo formulário. O preset agora é
+          // ação explícita (`?preset=esteira`), só na criação.
           const linha = linhaDoModulo(m.id);
-          const padrao = regraEsteira(i);
+          const padrao = preset ? regraEsteira(i) : REGRA_PADRAO;
           const tipo = linha?.tipo ?? padrao.tipo;
           const dias = linha?.dias ?? (padrao.tipo === "dias" ? padrao.dias : 0);
           const data = linha?.abre_em ? linha.abre_em.slice(0, 10) : "";
@@ -170,9 +174,10 @@ function Formulario({
 export default async function Liberacao({
   searchParams,
 }: {
-  searchParams: Promise<{ ok?: string; erro?: string }>;
+  searchParams: Promise<{ ok?: string; erro?: string; preset?: string }>;
 }) {
-  const { ok, erro } = await searchParams;
+  const { ok, erro, preset } = await searchParams;
+  const comEsteira = preset === "esteira";
   const db = createAdminClient();
   const [{ data: pols }, { data: linhas }, { data: mods }] = await Promise.all([
     db.from("release_policies").select("id,nome,ativa,created_at").order("created_at"),
@@ -273,11 +278,20 @@ export default async function Liberacao({
           );
         })}
 
-        <details className="rounded-lg border border-dashed border-areia bg-white">
+        <details open={comEsteira} className="rounded-lg border border-dashed border-areia bg-white">
           <summary className="cursor-pointer px-5 py-4 text-[14px] font-semibold text-verde">
             Nova política
           </summary>
-          <Formulario mods={modulos} />
+          {!comEsteira && (
+            <p className="mx-5 mb-3 text-[12px] text-pedra">
+              Ela nasce com tudo em breve, o padrão fechado.{" "}
+              <a href="?preset=esteira" className="font-semibold text-gold-dark hover:text-verde">
+                Preencher com a esteira clássica
+              </a>{" "}
+              (Módulo I no ato, um por semana dali em diante).
+            </p>
+          )}
+          <Formulario mods={modulos} preset={comEsteira} />
         </details>
       </div>
     </>

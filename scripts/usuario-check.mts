@@ -53,6 +53,12 @@ assert.ok(conta.includes("Marina Tavares"), "conta sem o nome completo");
 assert.ok(conta.includes("marina@exemplo.com.br"), "conta sem o e-mail");
 assert.ok(conta.includes("10/03/2027"), "conta sem o prazo de acesso de compra + 1 ano");
 
+// Com o `expires_at` da matrícula em mãos, é ELE que manda no prazo, não o proxy da criação:
+// o proxy erra para matrícula estendida ou renovada (plano de correções de 17/ago, item 13).
+const contaReal = preencherUsuario(ler("screens/conta.html"), ALUNO, "2028-06-01T12:00:00Z");
+assert.ok(contaReal.includes("01/06/2028"), "conta ignorou o expires_at real da matrícula");
+assert.ok(!contaReal.includes("10/03/2027"), "conta ainda mostra o proxy com o prazo real em mãos");
+
 const topo = preencherUsuario(ler("chrome-top.html"), ALUNO);
 assert.ok(topo.includes(">Marina<"), "topbar sem o primeiro nome");
 assert.ok(topo.includes(">M<"), "topbar sem a inicial");

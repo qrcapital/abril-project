@@ -32,13 +32,15 @@ export default async function ProvaPage() {
   // `available` NÃO cai aqui de propósito: é a 2ª chamada que o admin liberou e o aluno não começou,
   // e ela precisa passar pelas instruções (o cronômetro só nasce no "Iniciar prova"). Antes de
   // 31/jul/2026 este `if` era `if (t)`, e mandaria o aluno para uma questão sem prova sorteada.
+  //
+  // O redirect de `in_progress` vem ANTES da trava de calendário abaixo de propósito: o gate
+  // vale para COMEÇAR, não para continuar. Trocar a política ativa no meio de uma tentativa
+  // não pode trancar quem já está dentro (plano de correções de 17/ago, item 5).
   if (t?.status === "in_progress") redirect("/app/prova/questao/1");
 
-  // Trava de CALENDÁRIO, e ela é a que tem dente. O gate de 16/16 abaixo é conferido contra um
-  // cookie que o próprio aluno edita, então sozinho ele não impede nada: bastaria forjar o
-  // cookie no dia 1, passar na prova e emitir o certificado dentro da janela de arrependimento,
-  // que é exatamente o abuso que a esteira existe para evitar. Esta trava vem da matrícula, no
-  // servidor, e não tem como ser forjada pelo navegador.
+  // Trava de CALENDÁRIO da política de liberação, vinda da matrícula, no servidor. O gate de
+  // aulas abaixo também é servidor desde 29/jul (tabela `progress`); os dois são conferidos de
+  // novo no `iniciarProva`, porque a action recebe POST direto sem passar por esta página.
   const { inicioEm, liberacaoTotal, politicaId } = await getMatricula();
   const regras = await getRegras(politicaId);
   if (!inicioEm || !liberacao(inicioEm, liberacaoTotal, regras).completo) redirect("/app");

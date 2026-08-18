@@ -33,7 +33,9 @@ type Cert = { nome: string; codigo: string; emissao: Date };
  * um certificado verdadeiro.
  */
 async function buscar(entrada: string): Promise<Cert | null> {
-  const codigo = normalizarCodigo(decodeURIComponent(entrada));
+  // Sem decodeURIComponent: o param do Next JÁ chega decodificado, e decodificar de novo
+  // estourava URIError (500) para qualquer `%` malformado na URL, tipo `/verificar/EI%ZZ`.
+  const codigo = normalizarCodigo(entrada);
   if (!codigo) return null;
 
   const supabase = await createClient();
@@ -188,7 +190,7 @@ export default async function VerificarPage({
             </h1>
             <p style={{ fontSize: 14, lineHeight: 1.6, color: "#C9D3CC", margin: 0 }}>
               Não localizamos um certificado com o código{" "}
-              <b style={{ color: "#F7F5F2" }}>{decodeURIComponent(codigo)}</b>. Confira o código informado no certificado e tente novamente.
+              <b style={{ color: "#F7F5F2" }}>{codigo}</b>. Confira o código informado no certificado e tente novamente.
             </p>
           </div>
         )}

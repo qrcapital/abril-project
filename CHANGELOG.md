@@ -7,6 +7,29 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 
 ## Não lançado
 
+### Corrigido
+- **Rodadas 1 e 2 do plano de correções de 17/ago** (`docs/PLANO-CORRECOES.md`) — 2026-08-18
+  - **Políticas de liberação:** o formulário mostra a regra EFETIVA de módulo sem linha (em
+    breve), e o preset da esteira virou ação explícita na criação (`?preset=esteira`); campo
+    "dias" vazio é recusado em vez de virar 0; banco novo ganha as regras da esteira pelo
+    `seed.sql` (a 0016 rodava antes dos módulos existirem e a política nascia ativa e vazia).
+  - **Prova:** o gate não abre com zero aulas avaliadas (`[].every()` é true); `iniciarProva`
+    confere também a trava de calendário (valia só na página, e action recebe POST direto);
+    a mensagem "16 aulas" acompanha o currículo; a tela "Prazo encerrado" ficou alcançável
+    (`submitted_at >= deadline` pega o envio automático, que grava depois do zero).
+  - **Painel:** leituras cruas paginadas (o PostgREST corta em 1000 linhas sem avisar); o
+    card de conclusão usa a mesma coorte de ativos no numerador e no denominador; o card de
+    e-mails só conta `enviado` como enviado (não mais `desligado`).
+  - **CSV:** célula começando com `=`, `+`, `-`, `@` sai neutralizada (injeção de fórmula);
+    a coluna estado usa o estado derivado (`expirado` em vez de `active`); o corte no teto
+    da RPC fica declarado na última linha do arquivo.
+  - **Área do aluno:** desmarcar aula funciona (migration **0018**, policy de DELETE em
+    `progress`, aplicada no ei-homolog); contador e barra de progresso contam só as
+    avaliadas (era "17 de 16" / 106%); título e descrição de aula/módulo entram escapados
+    nos templates (XSS armazenado via admin); "Minha conta" mostra o `expires_at` real da
+    matrícula; `/verificar` não dá mais 500 com `%` malformado na URL; módulo sem aulas
+    rende card "EM BREVE" sem NaN% e sem clique para o lugar errado.
+
 ### Adicionado
 - **Painel redesenhado, e relatórios em CSV** — 2026-08-17
   - O Painel tinha quatro contadores e um rodapé prometendo telas que já existiam. Ganhou os

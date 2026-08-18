@@ -73,15 +73,20 @@ export function montarCurriculo(modulos: Modulo[], aulas: Aula[]): Curriculo {
     aulas,
     totalAvaliadas: avaliadas.length,
 
-    // Primeira aula de um módulo (destino do card da Home).
+    // Primeira aula de um módulo (destino do card da Home). O fallback para `aulas[0]` só
+    // acontece com módulo sem aula nenhuma, e nesse caso o card nem navega (o template o
+    // marca travado): fica como rede de segurança, não como destino real.
     primeiraAulaDoModulo: (idx) => aulas.find((a) => a.modulo === idx) ?? aulas[0],
 
     // Aula atual = primeira ainda não concluída (destino do "Continuar").
     aulaAtual: (concluidas) =>
       aulas.find((a) => !concluidas.has(a.n)) ?? aulas[aulas.length - 1],
 
-    // Prova Final libera só com as aulas avaliadas todas concluídas.
-    provaLiberada: (concluidas) => avaliadas.every((a) => concluidas.has(a.n)),
+    // Prova Final libera só com as aulas avaliadas todas concluídas. Zero avaliadas NÃO
+    // libera: `[].every()` é true, e um admin que desmarcasse todo `conta_no_gate` abriria
+    // a prova para a base inteira sem tocar em prova nenhuma.
+    provaLiberada: (concluidas) =>
+      avaliadas.length > 0 && avaliadas.every((a) => concluidas.has(a.n)),
     aulasRestantes: (concluidas) => avaliadas.filter((a) => !concluidas.has(a.n)).length,
 
     acharAula: (n) => {
@@ -89,8 +94,13 @@ export function montarCurriculo(modulos: Modulo[], aulas: Aula[]): Curriculo {
       return pos < 0 ? null : { aula: aulas[pos], pos };
     },
 
-    // % sobre a mesma base da contagem exibida (no design: "7 de 16").
-    progressoPct: (concluidas) =>
-      avaliadas.length === 0 ? 0 : Math.round((concluidas.size / avaliadas.length) * 100),
+    // % sobre a mesma base da contagem exibida (no design: "7 de 16"). Numerador e
+    // denominador contam SÓ as avaliadas: `concluidas.size` inclui a boas-vindas, e com ela
+    // no numerador o contador dizia "17 de 16" e a barra passava de 100%.
+    progressoPct: (concluidas) => {
+      if (avaliadas.length === 0) return 0;
+      const feitas = avaliadas.filter((a) => concluidas.has(a.n)).length;
+      return Math.round((feitas / avaliadas.length) * 100);
+    },
   };
 }

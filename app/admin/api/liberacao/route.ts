@@ -106,7 +106,9 @@ export async function POST(req: NextRequest) {
     let dias: number | null = null;
     let abre_em: string | null = null;
     if (tipo === "dias") {
-      dias = Number(texto(`dias_${m.id}`));
+      const bruto = texto(`dias_${m.id}`);
+      // `Number("") === 0`: campo apagado viraria "no ato" em silêncio.
+      dias = bruto === "" ? Number.NaN : Number(bruto);
       if (!Number.isInteger(dias) || dias < 0 || dias > 3650)
         return erro(`Dias do módulo ${m.ord}: use um inteiro entre 0 e 3650.`);
     }

@@ -51,7 +51,9 @@ export async function marcarAula(
         },
         { onConflict: "user_id,lesson_id" },
       )
-    : await supabase.from("progress").delete().eq("lesson_id", lessonId);
+    : // O `user_id` explícito é redundante com a policy (0018), e fica mesmo assim: se a
+      // policy mudar, este delete continua incapaz de apagar progresso de outro aluno.
+      await supabase.from("progress").delete().eq("lesson_id", lessonId).eq("user_id", user.id);
 
   if (error) {
     console.error("[progresso] falha ao gravar:", error.message);

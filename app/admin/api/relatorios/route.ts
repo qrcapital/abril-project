@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { papelAtual } from "@/lib/admin";
 import { auditar } from "@/lib/auditoria";
 import { descrever, rotularAcao } from "@/lib/auditoria-texto";
+import { ROTULO_ESTADO, estadoDaMatricula } from "@/lib/matricula-estado";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -19,12 +20,18 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * Formato: separador `;` e BOM UTF-8, que é o que o Excel em português abre certo com dois
  * cliques; vírgula sem BOM vira uma coluna só com acento quebrado.
  *
- * ponytail: teto de 1000 linhas, que é o limite das três RPCs. Quando a base passar disso,
- * os relatórios precisam de paginação nas RPCs, não aqui.
+ * ponytail: cada relatório para no teto da RPC dele (`TETO` abaixo: alunos 500, os outros
+ * 1000), e o CSV declara o corte na última linha quando bate no teto. Quando a base passar
+ * disso, os relatórios precisam de paginação nas RPCs, não aqui.
  */
 
+const TETO: Record<string, number> = { alunos: 500, emails: 1000, auditoria: 1000 };
+
 const escapar = (v: unknown): string => {
-  const s = String(v ?? "");
+  let s = String(v ?? "");
+  // Injeção de fórmula: célula começando com `=`, `+`, `-` ou `@` executa no Excel, e nome de
+  // aluno é texto que o próprio aluno digita. O apóstrofo força a célula a ser texto.
+  if (/^[=+\-@]/.test(s)) s = `'${s}`;
   return /[";\n]/.test(s) ? `"${s.replaceAll('"', '""')}"` : s;
 };
 
@@ -45,7 +52,7 @@ export async function GET(req: NextRequest) {
   let linhas = 0;
 
   if (tipo === "alunos") {
-    const { data, error } = await db.rpc("listar_alunos", { termo: "", limite: 1000 });
+    const { data, error } = await db.rpc("listar_alunos", { termo: "", limite: TETO.alunos });
     if (error) return new NextResponse("O relatório falhou. Tente de novo.", { status: 500 });
     const rows = data ?? [];
     linhas = rows.length;
@@ -66,7 +73,9 @@ export async function GET(req: NextRequest) {
       rows.map((a: Record<string, unknown>) => [
         a.nome,
         a.email,
-        a.status,
+        // O estado DERIVADO, o mesmo que a tela de Alunos mostra: a coluna `status` diz
+        // "active" para matrícula com prazo já vencido, e o CSV mentiria "ativo".
+        ROTULO_ESTADO[estadoDaMatricula(a.status as string, a.expires_at as string)],
         dataBR(a.expires_at),
         dataBR(a.inicio_em),
         a.liberacao_total ? "sim" : "não",
@@ -80,7 +89,7 @@ export async function GET(req: NextRequest) {
   }
 
   if (tipo === "emails") {
-    const { data, error } = await db.rpc("listar_emails", { termo: "", limite: 1000 });
+    const { data, error } = await db.rpc("listar_emails", { termo: "", limite: TETO.emails });
     if (error) return new NextResponse("O relatório falhou. Tente de novo.", { status: 500 });
     const rows = data ?? [];
     linhas = rows.length;
@@ -97,7 +106,7 @@ export async function GET(req: NextRequest) {
   }
 
   if (tipo === "auditoria") {
-    const { data, error } = await db.rpc("listar_auditoria", { termo: "", limite: 1000 });
+    const { data, error } = await db.rpc("listar_auditoria", { termo: "", limite: TETO.auditoria });
     if (error) return new NextResponse("O relatório falhou. Tente de novo.", { status: 500 });
     const rows = data ?? [];
     linhas = rows.length;
@@ -114,6 +123,11 @@ export async function GET(req: NextRequest) {
   }
 
   if (conteudo === null) return new NextResponse(null, { status: 404 });
+
+  // O corte no teto fica DITO no arquivo: relatório truncado que parece completo é o tipo de
+  // dado que decide coisa errada sem ninguém desconfiar.
+  if (linhas >= TETO[tipo])
+    conteudo += `\r\n${escapar(`Relatório cortado no teto de ${TETO[tipo]} linhas; o restante ficou de fora.`)}`;
 
   await auditar(db, {
     autor,

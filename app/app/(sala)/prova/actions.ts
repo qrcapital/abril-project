@@ -3,6 +3,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { getConcluidas } from "@/lib/progresso";
 import { getCurriculo } from "@/lib/curriculo";
+import { liberacao } from "@/lib/liberacao";
+import { getMatricula } from "@/lib/matricula";
+import { getRegras } from "@/lib/politicas";
 import { abrirTentativa, enviar, salvarResposta } from "@/lib/prova";
 import { LETRAS, type Letra } from "@/lib/prova-correcao";
 
@@ -20,26 +23,36 @@ async function usuarioAtual(): Promise<string | null> {
   return user?.id ?? null;
 }
 
-/**
- * O gate de 16/16 aulas.
- *
- * Desde 29/jul isto é garantia de verdade, e não mais o teto de confiança do cliente: o
- * progresso saiu do cookie para a tabela `progress`, então o aluno não escreve mais o dado
- * que abre a própria prova. A trava de calendário da esteira, na página, é independente
- * desta e continua valendo.
- */
-async function gateLiberado(): Promise<boolean> {
-  const [curriculo, concluidas] = await Promise.all([getCurriculo(), getConcluidas()]);
-  return curriculo.provaLiberada(concluidas);
-}
-
 export type RespostaAcao = { ok: true } | { ok: false; erro: string };
 
+/**
+ * COMEÇAR a prova exige os dois gates que a página confere: as aulas avaliadas todas
+ * concluídas (garantia de verdade desde 29/jul, quando o progresso saiu do cookie para a
+ * tabela `progress`) e a trava de CALENDÁRIO da política de liberação — sem ela aqui, o POST
+ * direto da action pulava a esteira que a página impõe. Só o começar: `responder` e
+ * `enviarProva` não conferem gate nenhum, porque trocar a política no meio de uma tentativa
+ * não pode trancar quem já está dentro.
+ */
 export async function iniciarProva(): Promise<RespostaAcao> {
   const userId = await usuarioAtual();
   if (!userId) return { ok: false, erro: "Sessão expirada. Entre de novo." };
-  if (!(await gateLiberado()))
-    return { ok: false, erro: "Conclua as 16 aulas da formação para liberar a prova." };
+
+  const [curriculo, concluidas, { inicioEm, liberacaoTotal, politicaId }] = await Promise.all([
+    getCurriculo(),
+    getConcluidas(),
+    getMatricula(),
+  ]);
+  if (!curriculo.provaLiberada(concluidas))
+    return {
+      ok: false,
+      erro: `Conclua as ${curriculo.totalAvaliadas} aulas da formação para liberar a prova.`,
+    };
+  const regras = await getRegras(politicaId);
+  if (!inicioEm || !liberacao(inicioEm, liberacaoTotal, regras).completo)
+    return {
+      ok: false,
+      erro: "A prova abre quando todos os módulos do cronograma estiverem liberados.",
+    };
 
   try {
     await abrirTentativa(userId);

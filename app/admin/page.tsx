@@ -31,6 +31,23 @@ type LinhaAudit = { id: string; autor_email: string | null; acao: string; alvo_e
 
 const DIA_MS = 86_400_000;
 
+/**
+ * Todas as linhas de uma consulta, em páginas de 1000: o PostgREST corta em 1000 por padrão e
+ * não avisa, e o corte silencioso virava subcontagem no funil e nos cards com a base grande
+ * (plano de correções de 17/ago, item 6).
+ */
+async function todas<T>(
+  pagina: (de: number, ate: number) => PromiseLike<{ data: T[] | null }>,
+): Promise<T[]> {
+  const PASSO = 1000;
+  const linhas: T[] = [];
+  for (let de = 0; ; de += PASSO) {
+    const { data } = await pagina(de, de + PASSO - 1);
+    linhas.push(...(data ?? []));
+    if ((data?.length ?? 0) < PASSO) return linhas;
+  }
+}
+
 export default async function AdminPainel() {
   const db = createAdminClient();
   const agora = new Date();
@@ -39,64 +56,86 @@ export default async function AdminPainel() {
   const ha7d = new Date(agora.getTime() - 7 * DIA_MS).toISOString();
   const em30d = new Date(agora.getTime() + 30 * DIA_MS).toISOString();
 
+  // ponytail: as leituras de `todas` trazem linhas (não count) para agregar por aluno em JS.
+  // Com ~milhares de alunos ainda é barato; se a base crescer a ponto de doer, vira uma RPC.
   const [
-    matriculas,
-    ativos,
-    aulasGate,
-    concluidasGate,
-    provas,
-    aprovadas,
-    certificados,
-    emails24,
-    falhas24,
-    expirando,
-    estouradas,
+    contagens,
     questoes,
-    mods,
-    // ponytail: as quatro abaixo trazem linhas (não count) para agregar por aluno em JS.
-    // Com ~centenas de alunos é barato; se a base crescer a ponto de doer, vira uma RPC.
     ativosIds,
     progressoTudo,
     progressoGate,
     exames,
+  ] = await Promise.all([
+    Promise.all([
+      db.from("enrollments").select("id", { count: "exact", head: true }),
+      db.from("enrollments").select("id", { count: "exact", head: true }).eq("status", "active").gt("expires_at", iso),
+      db.from("lessons").select("id", { count: "exact", head: true }).eq("conta_no_gate", true),
+      db.from("exams").select("id", { count: "exact", head: true }).eq("status", "submitted"),
+      db.from("exams").select("id", { count: "exact", head: true }).eq("status", "submitted").gte("score", NOTA_MINIMA),
+      db.from("certificates").select("id", { count: "exact", head: true }),
+      db.from("email_log").select("id", { count: "exact", head: true }).gte("sent_at", ha24h),
+      db.from("email_log").select("id", { count: "exact", head: true }).gte("sent_at", ha24h).eq("status", "enviado"),
+      db.from("email_log").select("id", { count: "exact", head: true }).gte("sent_at", ha24h).ilike("status", "falha%"),
+      db
+        .from("enrollments")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "active")
+        .gt("expires_at", iso)
+        .lte("expires_at", em30d),
+      db.from("exams").select("id", { count: "exact", head: true }).eq("status", "in_progress").lt("deadline", iso),
+      db.from("modules").select("id, ord"),
+      db.rpc("listar_auditoria", { termo: "", limite: 5 }),
+      db.from("release_policies").select("nome").eq("ativa", true).maybeSingle(),
+      db.from("enrollments").select("id", { count: "exact", head: true }).not("release_policy_id", "is", null),
+    ] as const),
+    todas<{ module_id: string; ativo: boolean }>((de, ate) =>
+      db.from("questions").select("module_id, ativo").range(de, ate),
+    ),
+    todas<{ user_id: string }>((de, ate) =>
+      db.from("enrollments").select("user_id").eq("status", "active").gt("expires_at", iso).range(de, ate),
+    ),
+    todas<{ user_id: string; updated_at: string | null }>((de, ate) =>
+      db.from("progress").select("user_id, updated_at").range(de, ate),
+    ),
+    todas<{ user_id: string }>((de, ate) =>
+      db
+        .from("progress")
+        .select("user_id, lessons!inner(conta_no_gate)")
+        .eq("status", "completed")
+        .eq("lessons.conta_no_gate", true)
+        .range(de, ate),
+    ),
+    todas<{ user_id: string; status: string; score: number | null }>((de, ate) =>
+      db.from("exams").select("user_id, status, score").range(de, ate),
+    ),
+  ]);
+  const [
+    matriculas,
+    ativos,
+    aulasGate,
+    provas,
+    aprovadas,
+    certificados,
+    emails24,
+    enviados24,
+    falhas24,
+    expirando,
+    estouradas,
+    mods,
     auditoria,
     politicaAtiva,
     comPoliticaPropria,
-  ] = await Promise.all([
-    db.from("enrollments").select("id", { count: "exact", head: true }),
-    db.from("enrollments").select("id", { count: "exact", head: true }).eq("status", "active").gt("expires_at", iso),
-    db.from("lessons").select("id", { count: "exact", head: true }).eq("conta_no_gate", true),
-    db
-      .from("progress")
-      .select("id, lessons!inner(conta_no_gate)", { count: "exact", head: true })
-      .eq("status", "completed")
-      .eq("lessons.conta_no_gate", true),
-    db.from("exams").select("id", { count: "exact", head: true }).eq("status", "submitted"),
-    db.from("exams").select("id", { count: "exact", head: true }).eq("status", "submitted").gte("score", NOTA_MINIMA),
-    db.from("certificates").select("id", { count: "exact", head: true }),
-    db.from("email_log").select("id", { count: "exact", head: true }).gte("sent_at", ha24h),
-    db.from("email_log").select("id", { count: "exact", head: true }).gte("sent_at", ha24h).ilike("status", "falha%"),
-    db
-      .from("enrollments")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "active")
-      .gt("expires_at", iso)
-      .lte("expires_at", em30d),
-    db.from("exams").select("id", { count: "exact", head: true }).eq("status", "in_progress").lt("deadline", iso),
-    db.from("questions").select("module_id, ativo"),
-    db.from("modules").select("id, ord"),
-    db.from("enrollments").select("user_id").eq("status", "active").gt("expires_at", iso),
-    db.from("progress").select("user_id, updated_at"),
-    db
-      .from("progress")
-      .select("user_id, lessons!inner(conta_no_gate)")
-      .eq("status", "completed")
-      .eq("lessons.conta_no_gate", true),
-    db.from("exams").select("user_id, status, score"),
-    db.rpc("listar_auditoria", { termo: "", limite: 5 }),
-    db.from("release_policies").select("nome").eq("ativa", true).maybeSingle(),
-    db.from("enrollments").select("id", { count: "exact", head: true }).not("release_policy_id", "is", null),
-  ]);
+  ] = contagens;
+
+  // ---- agregados por aluno (base de cards e funil) ----------------------------------------
+  const idsAtivos = new Set(ativosIds.map((r) => r.user_id));
+  const gatePorAluno = new Map<string, number>();
+  for (const r of progressoGate) {
+    if (idsAtivos.has(r.user_id)) gatePorAluno.set(r.user_id, (gatePorAluno.get(r.user_id) ?? 0) + 1);
+  }
+  // Numerador e denominador na MESMA coorte (só ativos): antes o numerador contava aula de
+  // aluno expirado/revogado e o card passava de 100% sem mentir em nenhuma parcela.
+  const concluidasAtivos = [...gatePorAluno.values()].reduce((s, c) => s + c, 0);
 
   // ---- os quatro números de sempre --------------------------------------------------------
   const possiveis = n(ativos) * n(aulasGate);
@@ -106,8 +145,8 @@ export default async function AdminPainel() {
     { rotulo: "Matrículas", valor: n(matriculas), nota: `${n(ativos)} com acesso ativo` },
     {
       rotulo: "Conclusão de aulas",
-      valor: pct(n(concluidasGate), possiveis),
-      nota: `${n(concluidasGate)} de ${possiveis} possíveis (${n(aulasGate)} aulas no gate)`,
+      valor: pct(concluidasAtivos, possiveis),
+      nota: `${concluidasAtivos} de ${possiveis} possíveis (${n(aulasGate)} aulas no gate)`,
     },
     {
       rotulo: "Aprovação na prova",
@@ -121,19 +160,18 @@ export default async function AdminPainel() {
   ];
 
   // ---- fila de atenção --------------------------------------------------------------------
-  const idsAtivos = new Set((ativosIds.data ?? []).map((r) => r.user_id as string));
   const ativosComAtividade7d = new Set(
-    (progressoTudo.data ?? [])
+    progressoTudo
       .filter((r) => r.updated_at && String(r.updated_at) > ha7d)
-      .map((r) => r.user_id as string),
+      .map((r) => r.user_id),
   );
   const paradosHa7d = [...idsAtivos].filter((id) => !ativosComAtividade7d.has(id)).length;
 
   const ordDoModulo = new Map((mods.data ?? []).map((m) => [m.id as string, m.ord as number]));
   const ativasPorOrd = new Map<number, number>();
-  for (const q of questoes.data ?? []) {
+  for (const q of questoes) {
     if (!q.ativo) continue;
-    const ord = ordDoModulo.get(q.module_id as string);
+    const ord = ordDoModulo.get(q.module_id);
     if (ord !== undefined) ativasPorOrd.set(ord, (ativasPorOrd.get(ord) ?? 0) + 1);
   }
   const abaixoDoPiso = ORDS_AVALIADOS.filter((ord) => (ativasPorOrd.get(ord) ?? 0) < POR_MODULO);
@@ -186,31 +224,26 @@ export default async function AdminPainel() {
     });
 
   // ---- funil ------------------------------------------------------------------------------
-  const gatePorAluno = new Map<string, number>();
-  for (const r of progressoGate.data ?? []) {
-    const id = r.user_id as string;
-    if (idsAtivos.has(id)) gatePorAluno.set(id, (gatePorAluno.get(id) ?? 0) + 1);
-  }
   const comecaram = new Set(
-    (progressoTudo.data ?? []).map((r) => r.user_id as string).filter((id) => idsAtivos.has(id)),
+    progressoTudo.map((r) => r.user_id).filter((id) => idsAtivos.has(id)),
   ).size;
   const totalGate = n(aulasGate);
   const metadeGate = [...gatePorAluno.values()].filter((c) => c >= Math.ceil(totalGate / 2)).length;
   const gateCompleto = [...gatePorAluno.values()].filter((c) => totalGate > 0 && c >= totalGate).length;
   const entregaram = new Set(
-    (exames.data ?? [])
-      .filter((e) => e.status === "submitted" && idsAtivos.has(e.user_id as string))
-      .map((e) => e.user_id as string),
+    exames
+      .filter((e) => e.status === "submitted" && idsAtivos.has(e.user_id))
+      .map((e) => e.user_id),
   );
   const aprovaram = new Set(
-    (exames.data ?? [])
+    exames
       .filter(
         (e) =>
           e.status === "submitted" &&
           (e.score ?? 0) >= NOTA_MINIMA &&
-          idsAtivos.has(e.user_id as string),
+          idsAtivos.has(e.user_id),
       )
-      .map((e) => e.user_id as string),
+      .map((e) => e.user_id),
   );
 
   const funil = [
@@ -356,8 +389,10 @@ export default async function AdminPainel() {
         </div>
         <div className="rounded-lg border border-areia bg-white px-5 py-4 text-[12.5px]">
           <p className="mb-2 text-[11px] tracking-[0.12em] text-pedra uppercase">E-mails · 24 h</p>
+          {/* Só `status = 'enviado'` conta como enviado: "desligado" (sem RESEND_API_KEY) é
+              tentativa que não saiu, e subtrair falhas do total escondia isso. */}
           <b className="font-semibold">
-            {n(emails24) - n(falhas24)} enviado{n(emails24) - n(falhas24) === 1 ? "" : "s"}
+            {n(enviados24)} enviado{n(enviados24) === 1 ? "" : "s"}
           </b>
           , {n(falhas24)} falha{n(falhas24) === 1 ? "" : "s"}
           <p className="mt-1 text-medio">
