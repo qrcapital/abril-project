@@ -1,5 +1,6 @@
 "use server";
 
+import { cadastroAberto } from "@/lib/seguranca";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { validarSenha } from "@/lib/senha";
 
@@ -17,6 +18,11 @@ export async function criarConta(
   password: string,
   nome?: string
 ): Promise<{ ok?: true; error?: string }> {
+  // Em produção esta action seria o curso de graça: ela cria usuário confirmado E matrícula
+  // ativa de um ano, sem compra. Lá, quem matricula é só o webhook do Guru. Server action é
+  // porta própria (recebe POST direto), então a guarda é aqui, não na tela.
+  if (!cadastroAberto(process.env.NEXT_PUBLIC_APP_ENV))
+    return { error: "A conta nasce da compra. Use o link de acesso do e-mail de boas-vindas." };
   if (!email) return { error: "Informe o e-mail." };
   // Mesma regra da tela de redefinição: as duas portas que criam senha usam o mesmo
   // validador, senão o produto passa a ter duas exigências diferentes.

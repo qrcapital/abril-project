@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { papelAtual } from "@/lib/admin";
+import { auditar } from "@/lib/auditoria";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -22,6 +23,11 @@ import { createAdminClient } from "@/lib/supabase/admin";
  *
  * Responde 404 e não 403 para não-admin, pelo mesmo motivo da guarda do layout: não confirmar que
  * a rota existe.
+ *
+ * Toda ação é auditada (plano de correções de 17/ago, item 19): esta rota muda o que o aluno
+ * vê e o que conta para o gate da prova, sem deploy — mudança de conteúdo sem rastro é a
+ * pergunta "quem apagou a aula 12?" sem resposta. Apagar lê o título antes, porque depois do
+ * delete o id não aponta mais para nada.
  */
 
 const DESTINO = "/admin/conteudo";
@@ -66,24 +72,31 @@ export async function POST(req: NextRequest) {
         .from("modules")
         .update({ titulo, docente: texto("docente") || null })
         .eq("id", id);
-      return error ? erro("A gravação falhou.") : voltar(req, { m, ok: "modulo" });
+      if (error) return erro("A gravação falhou.");
+      await auditar(db, { autor, acao: "conteudo.modulo", alvo: id, detalhe: { titulo } });
+      return voltar(req, { m, ok: "modulo" });
     }
 
     case "aula": {
       if (!UUID.test(id)) return erro("Pedido inválido.");
       const titulo = texto("titulo");
       if (!titulo) return erro("O título da aula não pode ficar vazio.");
+      // Checkbox ausente do POST é checkbox desmarcado: o navegador só envia quando marcada.
+      const gate = form.get("gate") === "on";
       const { error } = await db
         .from("lessons")
         .update({
           titulo,
           descricao: texto("descricao") || null,
           panda_video_id: texto("video") || null,
-          // Checkbox ausente do POST é checkbox desmarcado: o navegador só envia quando marcada.
-          conta_no_gate: form.get("gate") === "on",
+          conta_no_gate: gate,
         })
         .eq("id", id);
-      return error ? erro("A gravação falhou.") : voltar(req, { m, ok: "aula" });
+      if (error) return erro("A gravação falhou.");
+      // O `gate` entra no detalhe porque é a parte da edição que mexe na prova: desmarcar uma
+      // aula muda o 16/16 de todo mundo.
+      await auditar(db, { autor, acao: "conteudo.aula", alvo: id, detalhe: { titulo, gate } });
+      return voltar(req, { m, ok: "aula" });
     }
 
     case "subir":
@@ -93,7 +106,9 @@ export async function POST(req: NextRequest) {
         p_lesson: id,
         p_delta: acao === "subir" ? -1 : 1,
       });
-      return error ? erro("Não deu para mover a aula.") : voltar(req, { m, ok: "movida" });
+      if (error) return erro("Não deu para mover a aula.");
+      await auditar(db, { autor, acao: "conteudo.mover", alvo: id, detalhe: { direcao: acao } });
+      return voltar(req, { m, ok: "movida" });
     }
 
     case "nova-aula": {
@@ -111,23 +126,37 @@ export async function POST(req: NextRequest) {
         .limit(1)
         .maybeSingle();
 
-      const { error } = await db.from("lessons").insert({
-        module_id: id,
-        ord: (ultima?.ord ?? -1) + 1,
-        titulo,
-        // Nasce contando para o gate, que é o default da coluna e o caso comum: aula nova de
-        // módulo de conteúdo conta, e as boas-vindas já existem.
-        conta_no_gate: true,
-      });
-      return error ? erro("A gravação falhou.") : voltar(req, { m, ok: "aula-nova" });
+      const { data: nova, error } = await db
+        .from("lessons")
+        .insert({
+          module_id: id,
+          ord: (ultima?.ord ?? -1) + 1,
+          titulo,
+          // Nasce contando para o gate, que é o default da coluna e o caso comum: aula nova de
+          // módulo de conteúdo conta, e as boas-vindas já existem.
+          conta_no_gate: true,
+        })
+        .select("id")
+        .single();
+      if (error) return erro("A gravação falhou.");
+      await auditar(db, { autor, acao: "conteudo.aula-criar", alvo: nova?.id ?? null, detalhe: { titulo } });
+      return voltar(req, { m, ok: "aula-nova" });
     }
 
     case "apagar-aula": {
       if (!UUID.test(id)) return erro("Pedido inválido.");
+      const { data: aula } = await db.from("lessons").select("titulo").eq("id", id).maybeSingle();
       // O progresso e os materiais da aula vão embora com ela, pelo `on delete cascade` das duas
       // tabelas. Quem confirma na tela vê a contagem de alunos afetados antes de clicar.
       const { error } = await db.from("lessons").delete().eq("id", id);
-      return error ? erro("A exclusão falhou.") : voltar(req, { m, ok: "aula-apagada" });
+      if (error) return erro("A exclusão falhou.");
+      await auditar(db, {
+        autor,
+        acao: "conteudo.aula-apagar",
+        alvo: id,
+        detalhe: { titulo: String(aula?.titulo ?? "") },
+      });
+      return voltar(req, { m, ok: "aula-apagada" });
     }
 
     case "material": {
@@ -137,13 +166,25 @@ export async function POST(req: NextRequest) {
       if (!titulo) return erro("O material precisa de um título.");
       if (!ARQUIVO_OK.test(arquivo)) return erro("O endereço precisa começar com https:// ou /.");
       const { error } = await db.from("materials").update({ titulo, arquivo }).eq("id", id);
-      return error ? erro("A gravação falhou.") : voltar(req, { m, ok: "material" });
+      if (error) return erro("A gravação falhou.");
+      // O `arquivo` entra no detalhe: material é URL que vai direto para o href do aluno, e a
+      // auditoria precisa dizer PARA ONDE passou a apontar.
+      await auditar(db, { autor, acao: "conteudo.material", alvo: id, detalhe: { titulo, arquivo } });
+      return voltar(req, { m, ok: "material" });
     }
 
     case "apagar-material": {
       if (!UUID.test(id)) return erro("Pedido inválido.");
+      const { data: mat } = await db.from("materials").select("titulo").eq("id", id).maybeSingle();
       const { error } = await db.from("materials").delete().eq("id", id);
-      return error ? erro("A exclusão falhou.") : voltar(req, { m, ok: "material-apagado" });
+      if (error) return erro("A exclusão falhou.");
+      await auditar(db, {
+        autor,
+        acao: "conteudo.material-apagar",
+        alvo: id,
+        detalhe: { titulo: String(mat?.titulo ?? "") },
+      });
+      return voltar(req, { m, ok: "material-apagado" });
     }
 
     case "novo-material": {
@@ -161,12 +202,23 @@ export async function POST(req: NextRequest) {
       // módulo é apostila, e é essa a distinção que o `lib/materiais.ts` já faz ao juntar os dois
       // numa lista só para o aluno. Nada lê a coluna hoje, e um campo a mais no formulário seria
       // uma escolha sem consequência.
-      const { error } = await db.from("materials").insert(
-        vinculo[0] === "l"
-          ? { lesson_id: alvo, tipo: "resumo", titulo, arquivo }
-          : { module_id: alvo, tipo: "apostila", titulo, arquivo },
-      );
-      return error ? erro("A gravação falhou.") : voltar(req, { m, ok: "material-novo" });
+      const { data: novoMat, error } = await db
+        .from("materials")
+        .insert(
+          vinculo[0] === "l"
+            ? { lesson_id: alvo, tipo: "resumo", titulo, arquivo }
+            : { module_id: alvo, tipo: "apostila", titulo, arquivo },
+        )
+        .select("id")
+        .single();
+      if (error) return erro("A gravação falhou.");
+      await auditar(db, {
+        autor,
+        acao: "conteudo.material-criar",
+        alvo: novoMat?.id ?? null,
+        detalhe: { titulo, arquivo },
+      });
+      return voltar(req, { m, ok: "material-novo" });
     }
 
     default:

@@ -8,6 +8,26 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 ## Não lançado
 
 ### Corrigido
+- **Rodada 3 do plano de correções — críticos de produção** — 2026-08-18
+  - **`criarConta` recusa em produção** (`NEXT_PUBLIC_APP_ENV`): a action cria usuário
+    confirmado e matrícula ativa sem compra, e era o curso de graça; lá quem matricula é o
+    webhook do Guru. Regra pura em `lib/seguranca.ts`, provada pelo `check:seguranca` (novo).
+  - **Open redirect no `/auth/confirm` fechado**: `\` vira `/` antes da guarda de destino
+    (`/\evil.com` resolvia como `//evil.com`); `destinoSeguro` foi para `lib/seguranca.ts`
+    com os casos no check.
+  - **Escrita de progresso saiu do cliente** (migration **0019**): o grant de INSERT/UPDATE/
+    DELETE do aluno em `progress` deixava marcar aula de módulo fechado pelo PostgREST e
+    completar o gate por fora; agora só o `marcarAula` escreve (service role, `user_id` da
+    sessão), e as policies de escrita caíram junto. SELECT do aluno continua.
+  - **Gabarito e conteúdo com rastro**: `auditar()` nas rotas de Questões (criar, salvar,
+    apagar — com enunciado e letra correta no detalhe) e de Conteúdo (as 9 ações), com os
+    rótulos novos no `auditoria-texto` e casos no check.
+  - **Concorrência da prova**: o e-mail de resultado sai só de quem GANHOU a transição
+    `in_progress → submitted` (duas abas no zero mandavam dois); e a resposta é gravada por
+    merge atômico no banco (RPC `responder_prova`, migration **0020**) em vez de
+    read-modify-write, que perdia a resposta da aba mais lenta.
+
+
 - **Rodadas 1 e 2 do plano de correções de 17/ago** (`docs/PLANO-CORRECOES.md`) — 2026-08-18
   - **Políticas de liberação:** o formulário mostra a regra EFETIVA de módulo sem linha (em
     breve), e o preset da esteira virou ação explícita na criação (`?preset=esteira`); campo

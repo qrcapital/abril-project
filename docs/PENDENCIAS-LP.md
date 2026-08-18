@@ -36,9 +36,10 @@ documento é a lista do que **falta**.
 
 **Revisão geral de 17/ago:** 28 achados (3 críticos de produção), plano de ataque em 4
 rodadas no **`docs/PLANO-CORRECOES.md`** — é a fila de código da vez, junto com este bloco.
-**Rodadas 1 e 2 FEITAS em 18/ago** (estado detalhado no topo do plano; migration 0018 no
-ei-homolog). A vez agora é a **Rodada 3**; o item 8 (copy do e-mail de boas-vindas) espera
-aprovação do Pedro.
+**Rodadas 1, 2 e 3 FEITAS em 18/ago** (estado detalhado no topo do plano; 1 e 2 commitadas
+em `c757f12` com QA manual). Da Rodada 3 falta só: o Pedro aplicar as migrations **0019** e
+**0020** no ei-homolog (o psql que revoga grants foi barrado pelo classificador) e o QA dos
+dois caminhos. Item 8 morreu sem mudança (decisão do Pedro). Resta a **Rodada 4** (higiene).
 
 Nada de recontar história: leia este bloco e vá para o trabalho. O que aconteceu está no
 `CHANGELOG.md`; o que **decidir** está aqui.

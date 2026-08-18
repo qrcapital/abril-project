@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { destinoSeguro } from "@/lib/seguranca";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -20,11 +21,8 @@ import { createClient } from "@/lib/supabase/server";
 
 const TIPOS = new Set(["recovery", "invite"]);
 
-/** Só destino interno. Barra URL absoluta e "//host", que viram redirect aberto. */
-function destinoSeguro(valor: string | null): string {
-  if (!valor || !valor.startsWith("/") || valor.startsWith("//")) return "/app/redefinir-senha";
-  return valor;
-}
+// A guarda de destino (`destinoSeguro`) mora em `lib/seguranca.ts`, puro, porque este route
+// handler não roda no node do self-check — e ela ganhou um caso que dói: `/\evil.com`.
 
 export async function GET(req: NextRequest) {
   const { searchParams, origin } = req.nextUrl;
@@ -49,5 +47,7 @@ export async function GET(req: NextRequest) {
     return paraRecuperar("expirado");
   }
 
-  return NextResponse.redirect(new URL(destinoSeguro(searchParams.get("next")), origin));
+  return NextResponse.redirect(
+    new URL(destinoSeguro(searchParams.get("next"), "/app/redefinir-senha"), origin),
+  );
 }

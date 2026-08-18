@@ -28,6 +28,17 @@ export const ROTULO_ACAO: Record<string, string> = {
   "liberacao.ativar": "Ativou política",
   "liberacao.apagar": "Apagou política",
   "relatorio.exportar": "Exportou relatório",
+  "questao.criar": "Criou questão",
+  "questao.salvar": "Editou questão",
+  "questao.apagar": "Apagou questão",
+  "conteudo.modulo": "Editou módulo",
+  "conteudo.aula": "Editou aula",
+  "conteudo.aula-criar": "Criou aula",
+  "conteudo.aula-apagar": "Apagou aula",
+  "conteudo.mover": "Moveu aula",
+  "conteudo.material": "Editou material",
+  "conteudo.material-criar": "Criou material",
+  "conteudo.material-apagar": "Apagou material",
 };
 
 /**
@@ -98,6 +109,24 @@ export function descrever(acao: string, detalhe: Record<string, unknown> | null)
     const linhas = [String(d.email ?? "")].filter(Boolean);
     if (d.era_mestre === true) linhas.push("era admin mestre");
     return linhas;
+  }
+
+  if (acao.startsWith("questao.")) {
+    // O começo do enunciado identifica a questão melhor que qualquer id, e a letra correta é
+    // o gabarito — a razão de esta rota ser auditada.
+    const linhas = d.enunciado ? [aspas(d.enunciado)] : [];
+    if (d.correta) linhas.push(`correta: ${d.correta}`);
+    if (d.ativo === false) linhas.push("desativada");
+    return linhas;
+  }
+
+  if (acao.startsWith("conteudo.")) {
+    return [
+      d.titulo ? aspas(d.titulo) : "",
+      d.direcao ? `para ${d.direcao === "subir" ? "cima" : "baixo"}` : "",
+      d.gate === false ? "fora do gate da prova" : "",
+      d.arquivo ? String(d.arquivo) : "",
+    ].filter(Boolean);
   }
 
   // Ação nova, formato desconhecido: mostra os pares como estão. Feio de propósito, e melhor que

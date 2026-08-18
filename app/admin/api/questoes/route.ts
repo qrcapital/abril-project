@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { papelAtual } from "@/lib/admin";
+import { auditar } from "@/lib/auditoria";
 import { ALTERNATIVAS, LETRAS } from "@/lib/questoes";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -20,6 +21,11 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * Apagar não corrompe histórico: cada tentativa guarda `exams.questions_snapshot` com o enunciado e
  * o gabarito de quando o aluno respondeu, então prova já feita continua correta depois de a questão
  * sair do banco. É por isso que apagar existe além de desativar.
+ *
+ * Toda ação é auditada (plano de correções de 17/ago, item 19): esta rota muda o GABARITO, e
+ * gabarito mudando sem rastro é o tipo de coisa que só aparece na nota de alguém, meses depois.
+ * O detalhe leva o começo do enunciado e a letra correta — o suficiente para responder "o que
+ * valia quando o aluno reclamou" sem duplicar a tabela no rastro.
  */
 
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -71,16 +77,27 @@ export async function POST(req: NextRequest) {
       const alt = lerAlternativas(form);
       if (typeof alt === "string") return falha(alt);
 
-      const { error } = await db.from("questions").insert({
-        module_id: id,
-        enunciado,
-        alternativas: alt.alternativas,
-        correta: alt.correta,
-        // Nasce ativa: quem escreveu a questão quer ela no sorteio, e o contador do módulo é o que
-        // mostra se ela ainda cabe na meta.
-        ativo: true,
+      const { data, error } = await db
+        .from("questions")
+        .insert({
+          module_id: id,
+          enunciado,
+          alternativas: alt.alternativas,
+          correta: alt.correta,
+          // Nasce ativa: quem escreveu a questão quer ela no sorteio, e o contador do módulo é o que
+          // mostra se ela ainda cabe na meta.
+          ativo: true,
+        })
+        .select("id")
+        .single();
+      if (error) return falha("A gravação falhou.");
+      await auditar(db, {
+        autor,
+        acao: "questao.criar",
+        alvo: data?.id ?? null,
+        detalhe: { enunciado: enunciado.slice(0, 80), correta: LETRAS[alt.correta] },
       });
-      return error ? falha("A gravação falhou.") : voltar(req, { ok: "nova", abrir: m });
+      return voltar(req, { ok: "nova", abrir: m });
     }
 
     case "salvar": {
@@ -90,6 +107,7 @@ export async function POST(req: NextRequest) {
       const alt = lerAlternativas(form);
       if (typeof alt === "string") return falha(alt);
 
+      const ativo = form.get("ativo") === "on";
       const { error } = await db
         .from("questions")
         .update({
@@ -97,16 +115,33 @@ export async function POST(req: NextRequest) {
           alternativas: alt.alternativas,
           correta: alt.correta,
           // Checkbox ausente do POST é checkbox desmarcado: o navegador só envia quando marcada.
-          ativo: form.get("ativo") === "on",
+          ativo,
         })
         .eq("id", id);
-      return error ? falha("A gravação falhou.") : voltar(req, { ok: "salva", abrir: m });
+      if (error) return falha("A gravação falhou.");
+      await auditar(db, {
+        autor,
+        acao: "questao.salvar",
+        alvo: id,
+        detalhe: { enunciado: enunciado.slice(0, 80), correta: LETRAS[alt.correta], ativo },
+      });
+      return voltar(req, { ok: "salva", abrir: m });
     }
 
     case "apagar": {
       if (!UUID.test(id)) return falha("Pedido inválido.");
+      // O enunciado é lido ANTES do delete porque é a única resposta que a auditoria tem para
+      // "qual questão sumiu": depois do delete, o id não aponta mais para nada.
+      const { data: antiga } = await db.from("questions").select("enunciado").eq("id", id).maybeSingle();
       const { error } = await db.from("questions").delete().eq("id", id);
-      return error ? falha("A exclusão falhou.") : voltar(req, { ok: "apagada", abrir: m });
+      if (error) return falha("A exclusão falhou.");
+      await auditar(db, {
+        autor,
+        acao: "questao.apagar",
+        alvo: id,
+        detalhe: { enunciado: String(antiga?.enunciado ?? "").slice(0, 80) },
+      });
+      return voltar(req, { ok: "apagada", abrir: m });
     }
 
     default:

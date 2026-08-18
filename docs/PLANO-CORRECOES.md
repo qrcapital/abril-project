@@ -8,13 +8,13 @@ achado está no histórico da sessão e nos arquivos citados.
 Legenda: **[hoje]** entrou nos commits de 17/ago · **[antigo]** pré-existente ·
 🔒 depende de insumo/decisão do Pedro.
 
-> **Estado em 18/ago:** Rodadas 1 e 2 **FEITAS** (código pronto, lint + 10 checks + build
-> limpos, migration 0018 aplicada no ei-homolog, `check:rls` ok). Exceções: o item 8 (🔒)
-> aguarda o Pedro aprovar a copy; o item 5 já estava correto no código (o redirect de
-> `in_progress` vinha antes da trava desde o commit de 17/ago) — ficou só o comentário
-> registrando a regra e a garantia de que a checagem nova do `iniciarProva` (item 4) vale
-> para começar, não para continuar. Falta o QA manual dos caminhos tocados. Próximo
-> trabalho de código: Rodada 3.
+> **Estado em 18/ago:** Rodadas 1, 2 e **3** FEITAS. As duas primeiras commitadas em
+> `c757f12` com QA manual em localhost (item 8 resolvido SEM mudança: decisão do Pedro, a
+> política padrão é semanal mesmo; item 5 já estava correto no código). A Rodada 3 está com
+> lint + 11 checks + build limpos; as migrations **0019** (progresso só servidor) e **0020**
+> (responder_prova) estão escritas mas **AINDA NÃO aplicadas no ei-homolog** — o classificador
+> de permissões barrou o psql que revoga grants, o Pedro aplica com o comando do HANDOFF §6.
+> Depois de aplicar: QA do marcar/desmarcar aula e uma resposta de prova. Resta a Rodada 4.
 
 ---
 

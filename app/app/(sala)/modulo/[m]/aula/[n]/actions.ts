@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getUsuario } from "@/lib/usuario";
 import { getMatricula } from "@/lib/matricula";
 import { liberacao } from "@/lib/liberacao";
@@ -12,9 +12,15 @@ import { getCurriculo } from "@/lib/curriculo";
 /**
  * Marca ou desmarca uma aula como concluída.
  *
- * Escreve com o cliente da SESSÃO, nunca com a service role: a policy `progress_self_write`
- * amarra a linha ao `auth.uid()`, então o banco é quem garante que ninguém marca aula por
- * outro. Com service role, essa garantia dependeria de eu lembrar do `where`.
+ * Escreve pela SERVICE ROLE desde a 0019, e o motivo é o inverso do que este comentário dizia
+ * antes: enquanto o aluno tinha grant de escrita em `progress`, a policy amarrava só o
+ * `user_id` — segurava CONTRA QUEM ele escreve, não O QUE. Pelo PostgREST dava para marcar
+ * aula de módulo fechado e completar o gate da prova sem passar por aqui. O grant caiu, esta
+ * action virou a única porta de escrita, e a checagem de liberação abaixo virou garantia em
+ * vez de cortesia.
+ *
+ * Com a service role, o `user_id` explícito (do upsert e do delete) é O guarda contra gravar
+ * no progresso de outro aluno — ele vem da sessão resolvida no servidor, nunca de parâmetro.
  *
  * A checagem de liberação é repetida aqui de propósito. A página da aula já barra módulo
  * fechado, mas server action é uma porta própria: quem chamar direto, sem passar pela tela,
@@ -38,9 +44,9 @@ export async function marcarAula(
 
   const lessonId = found.aula.id;
 
-  const supabase = await createClient();
-  const { error } = concluida
-    ? await supabase.from("progress").upsert(
+  const db = createAdminClient();
+  const { error } = await (concluida
+    ? db.from("progress").upsert(
         {
           user_id: user.id,
           lesson_id: lessonId,
@@ -51,9 +57,7 @@ export async function marcarAula(
         },
         { onConflict: "user_id,lesson_id" },
       )
-    : // O `user_id` explícito é redundante com a policy (0018), e fica mesmo assim: se a
-      // policy mudar, este delete continua incapaz de apagar progresso de outro aluno.
-      await supabase.from("progress").delete().eq("lesson_id", lessonId).eq("user_id", user.id);
+    : db.from("progress").delete().eq("lesson_id", lessonId).eq("user_id", user.id));
 
   if (error) {
     console.error("[progresso] falha ao gravar:", error.message);

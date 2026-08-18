@@ -78,6 +78,33 @@ import { descrever, rotularAcao } from "../lib/auditoria-texto.ts";
   ]);
 }
 
+// --- questões e conteúdo (item 19 do plano de 17/ago): o gabarito é o porquê do rastro ---
+{
+  assert.equal(rotularAcao("questao.salvar"), "Editou questão");
+  assert.deepEqual(
+    descrever("questao.salvar", { enunciado: "Qual o papel do dólar?", correta: "B", ativo: true }),
+    ["“Qual o papel do dólar?”", "correta: B"],
+  );
+  // Desativar precisa aparecer: questão fora do sorteio muda a prova de todo mundo.
+  assert.equal(
+    descrever("questao.salvar", { enunciado: "X", correta: "A", ativo: false })[2],
+    "desativada",
+  );
+  assert.deepEqual(descrever("questao.apagar", { enunciado: "" }), []);
+
+  assert.equal(rotularAcao("conteudo.aula-apagar"), "Apagou aula");
+  assert.deepEqual(descrever("conteudo.mover", { direcao: "subir" }), ["para cima"]);
+  // Tirar uma aula do gate muda o 16/16 de todo mundo; tem que aparecer no detalhe.
+  assert.deepEqual(descrever("conteudo.aula", { titulo: "ETFs", gate: false }), [
+    "“ETFs”",
+    "fora do gate da prova",
+  ]);
+  assert.deepEqual(descrever("conteudo.material", { titulo: "Apostila", arquivo: "https://x/a.pdf" }), [
+    "“Apostila”",
+    "https://x/a.pdf",
+  ]);
+}
+
 // --- formato desconhecido e detalhe vazio não estouram ---
 {
   assert.deepEqual(descrever("financeiro.estornar", { valor: 199, moeda: "BRL" }), [

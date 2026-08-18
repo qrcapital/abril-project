@@ -235,7 +235,14 @@ export function semGabarito(questoes: QuestaoSnapshot[]): QuestaoCliente[] {
 
 export type ResultadoSalvar = { ok: true } | { ok: false; motivo: "expirada" | "encerrada" };
 
-/** Grava uma resposta. Depois do deadline não aceita mais nada. */
+/**
+ * Grava uma resposta. Depois do deadline não aceita mais nada.
+ *
+ * A gravação é um MERGE no banco (`responder_prova`, 0020), não um objeto reescrito: a versão
+ * read-modify-write perdia a resposta da aba mais lenta quando duas respondiam perto uma da
+ * outra. Os guards de estado e prazo estão no WHERE da própria função; os testes daqui em
+ * cima são só o caminho amigável (o motivo certo sem ida extra ao banco).
+ */
 export async function salvarResposta(
   userId: string,
   posicao: number,
@@ -247,10 +254,19 @@ export async function salvarResposta(
     return { ok: false, motivo: "expirada" };
   if (posicao < 1 || posicao > t.questoes.length) return { ok: false, motivo: "encerrada" };
 
-  const respostas: Respostas = { ...t.respostas, [String(posicao)]: letra };
   const db = createAdminClient();
-  const { error } = await db.from("exams").update({ answers: respostas }).eq("id", t.id);
+  const { data: gravou, error } = await db.rpc("responder_prova", {
+    p_exam: t.id,
+    p_posicao: posicao,
+    p_letra: letra,
+  });
   if (error) throw error;
+  if (!gravou) {
+    // Fechou entre a leitura e a escrita: envio em outra aba, rotina de expiradas, ou o
+    // prazo estourou. Relê para dar o motivo certo.
+    const agora = await tentativaAtual(userId);
+    return { ok: false, motivo: agora?.status === "submitted" ? "encerrada" : "expirada" };
+  }
   return { ok: true };
 }
 
@@ -265,7 +281,7 @@ export async function enviar(userId: string): Promise<Correcao> {
 
   const c = corrigir(t.questoes, t.respostas);
   const db = createAdminClient();
-  const { error } = await db
+  const { data: fechou, error } = await db
     .from("exams")
     .update({
       status: "submitted",
@@ -273,12 +289,22 @@ export async function enviar(userId: string): Promise<Correcao> {
       submitted_at: new Date().toISOString(),
     })
     .eq("id", t.id)
-    .eq("status", "in_progress"); // não sobrescreve uma correção que já aconteceu
+    .eq("status", "in_progress") // não sobrescreve uma correção que já aconteceu
+    .select("id")
+    .maybeSingle();
   if (error) throw error;
 
-  // O resultado por e-mail (PRD §14, templates 9 e 10). Depois do update e dentro do caminho que
-  // só roda na TRANSIÇÃO: a saída antecipada de `status === "submitted"` lá em cima é o que garante
-  // que duplo clique não manda dois e-mails.
+  // Quem manda o e-mail é quem GANHOU a corrida: o update acima só casa linha na transição
+  // `in_progress → submitted`, e `fechou` vazio quer dizer que outra aba (ou a rotina de
+  // expiradas) fechou primeiro — o vencedor já corrigiu, emitiu e avisou. A saída antecipada
+  // de `status === "submitted"` lá em cima não cobria duas abas que LERAM `in_progress` ao
+  // mesmo tempo: as duas passavam por ela e o aluno recebia o resultado em dobro.
+  if (!fechou) {
+    const definitiva = await tentativaAtual(userId);
+    return definitiva ? corrigir(definitiva.questoes, definitiva.respostas) : c;
+  }
+
+  // O resultado por e-mail (PRD §14, templates 9 e 10). Depois do update, e só na transição.
   //
   // Aprovado recebe o e-mail do certificado e reprovado o do resultado, um por aluno. O PRD lista
   // os dois como e-mails separados, e disparar os dois na aprovação seria duas mensagens no mesmo
