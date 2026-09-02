@@ -55,11 +55,29 @@ body { margin: 0; padding: 0; background: #0b2d20 }
   mask-image: linear-gradient(to bottom, black, transparent 92%);
 }
 /* Véu de leitura. O min() é o que mantém o globo visível no celular: largura
-   fixa no desktop, fração da viewport no mobile. */
+   fixa no desktop, fração da viewport no mobile.
+
+   O ângulo é 90deg, e o design pedia 96deg. Os 6º de inclinação criavam uma
+   costura vertical visível na metade de cima da tela, e a conta explica: num
+   gradiente inclinado o eixo é mais longo que a largura da caixa (aqui
+   780·sen96 + altura·cos96), então a parada de 100% só é alcançada num canto. Em
+   1920×1080 o canto superior direito fica em 87% do percurso, ou seja o véu
+   ainda tem 38% de opacidade onde a caixa acaba — e corta seco. Embaixo ele
+   chega a zero e não corta, o que deixa o degrau só na metade de cima.
+
+   Adiantar a parada transparente não resolve para toda altura: quanto mais alta
+   e estreita a caixa, mais o eixo cresce e mais cedo o corte pega. No celular, com
+   242px de largura e 1600px de página, o canto de cima fica em 59% do percurso.
+   Em 90deg o eixo é exatamente a largura, o alfa chega a zero na borda em
+   qualquer proporção, e a costura deixa de ser possível.
+
+   O que se perde: a inclinação alargava o véu ~113px da base ao topo. Se ela
+   fizer falta, o caminho é alargar o elemento e recolher as paradas para o fade
+   terminar dentro dele, em vez de na borda. */
 .le-veu {
   position: absolute; left: 0; top: 0; bottom: 0;
   width: min(780px, 62%); pointer-events: none;
-  background: linear-gradient(96deg, #0b2d20 0%, rgba(11,45,32,.92) 40%, rgba(11,45,32,.66) 78%, rgba(11,45,32,0) 100%);
+  background: linear-gradient(90deg, #0b2d20 0%, rgba(11,45,32,.92) 40%, rgba(11,45,32,.66) 78%, rgba(11,45,32,0) 100%);
 }
 
 .le-globo { position: absolute; inset: 0; pointer-events: none }
