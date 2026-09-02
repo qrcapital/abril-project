@@ -187,18 +187,32 @@ export default function GloboEspera({ centroX = 0.63, centroY = 0.46, escala = 0
       }
       ctxB!.stroke();
 
-      // interior das massas de terra, em duas faixas de profundidade: é textura
-      // de fundo, e cada ponto testa o limbo por si (sem recorte de polígono).
-      const terraFrente: number[] = [], terraFundo: number[] = [];
+      // interior das massas de terra: textura de fundo, cada ponto testando o
+      // limbo por si (sem recorte de polígono).
+      //
+      // O original usava DUAS faixas de alfa, .09 e .16, para trocar o fillStyle
+      // duas vezes em vez de uma por ponto — o custo importava num laço de 60fps.
+      // Aqui a camada pinta uma vez, então o custo sumiu e as duas faixas viraram
+      // só um defeito: a fronteira entre elas é um circulo na esfera, e um salto
+      // de 75% na opacidade atravessando o globo. Girando ela passa despercebida;
+      // parado, fica cravada na tela como uma linha onde o verde clareia. Com o
+      // alfa em rampa a fronteira deixa de existir, e continuam sendo poucas
+      // trocas de fillStyle: uma por degrau, não uma por ponto.
+      const FAIXAS_TERRA = 12;
+      const terraFaixas: number[][] = Array.from({ length: FAIXAS_TERRA }, () => []);
       for (let i = 0; i < terra.length; i += 2) {
         proj(terra[i], terra[i + 1]);
         if (pz <= limbo) continue;
         const zn = (pz - limbo) / (raio - limbo);
-        (zn > 0.5 ? terraFrente : terraFundo).push(px, py, pk);
+        const f = Math.min(FAIXAS_TERRA - 1, (zn * FAIXAS_TERRA) | 0);
+        terraFaixas[f].push(px, py, pk);
       }
-      for (const [arr, a] of [[terraFundo, 0.09], [terraFrente, 0.16]] as const) {
+      for (let f = 0; f < FAIXAS_TERRA; f++) {
+        const arr = terraFaixas[f];
         if (!arr.length) continue;
-        ctxB!.fillStyle = `rgba(169,142,78,${a})`;
+        // mesmos extremos do original (.09 no fundo, .16 na frente), interpolados
+        const a = 0.09 + (0.16 - 0.09) * (f / (FAIXAS_TERRA - 1));
+        ctxB!.fillStyle = `rgba(169,142,78,${a.toFixed(4)})`;
         ctxB!.beginPath();
         for (let i = 0; i < arr.length; i += 3) {
           const r = 0.9 * arr[i + 2];
@@ -207,25 +221,30 @@ export default function GloboEspera({ centroX = 0.63, centroY = 0.46, escala = 0
         ctxB!.fill();
       }
 
-      // litoral em quatro faixas de opacidade por profundidade: volume sem
-      // trocar de fillStyle a cada ponto.
-      const faixas: number[][] = [[], [], [], []];
+      // litoral: opacidade por profundidade, pelo mesmo motivo e com a mesma
+      // rampa da terra. O original tinha quatro faixas (.26/.42/.56/.68); os
+      // extremos ficam, o meio deixa de ter degrau.
+      const FAIXAS_COSTA = 16;
+      const faixas: number[][] = Array.from({ length: FAIXAS_COSTA }, () => []);
       for (let i = 0; i < costa.length; i += 2) {
         proj(costa[i], costa[i + 1]);
         if (pz <= limbo) continue;
         const zn = (pz - limbo) / (raio - limbo);   // 0 no horizonte, 1 de frente
-        faixas[Math.min(3, (zn * 4) | 0)].push(px, py, pk, Math.min(1, zn / 0.14));
+        const f = Math.min(FAIXAS_COSTA - 1, (zn * FAIXAS_COSTA) | 0);
+        faixas[f].push(px, py, pk, Math.min(1, zn / 0.14));
       }
-      const alfa = [0.26, 0.42, 0.56, 0.68];
-      for (let f = 0; f < 4; f++) {
+      for (let f = 0; f < FAIXAS_COSTA; f++) {
         const arr = faixas[f];
         if (!arr.length) continue;
-        ctxB!.fillStyle = `rgba(169,142,78,${alfa[f]})`;
+        const a = 0.26 + (0.68 - 0.26) * (f / (FAIXAS_COSTA - 1));
+        ctxB!.fillStyle = `rgba(169,142,78,${a.toFixed(4)})`;
         ctxB!.beginPath();
         for (let i = 0; i < arr.length; i += 4) {
-          // na faixa mais rasa o raio cresce de 0 até cheio, para os pontos
-          // nascerem como um respiro em vez de surgir com tamanho cheio.
-          const r = 1.25 * arr[i + 2] * (f === 0 ? arr[i + 3] : 1);
+          // Junto do horizonte o raio cresce de 0 até cheio, para os pontos
+          // nascerem como um respiro em vez de surgir com tamanho cheio. O fator
+          // já vale 1 para zn ≥ 0.14, então aplicar sempre é igual ao `f === 0`
+          // do original e sem o degrau que ele criava na borda da primeira faixa.
+          const r = 1.25 * arr[i + 2] * arr[i + 3];
           ctxB!.rect(arr[i] - r, arr[i + 1] - r, r * 2, r * 2);
         }
         ctxB!.fill();
