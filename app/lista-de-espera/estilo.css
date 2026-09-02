@@ -326,16 +326,6 @@ body { margin: 0; padding: 0; background: #0b2d20 }
 }
 .le-cta:disabled { cursor: progress; opacity: .72 }
 
-/* Caixa de erro do DESIGN.md §3, par do tema claro: tinta a 8% e texto #8E3330
-   (6,47:1) sobre o branco do card. role="alert" fica no markup. */
-.le-erro {
-  margin: 0; padding: 11px 13px; border-radius: 4px;
-  background: rgba(176,65,62,.08); border: 1px solid #b0413e;
-  color: #8e3330; font-size: 12.5px; line-height: 1.5;
-}
-
-.le-micro { margin: 0; text-align: center; font-size: 11px; line-height: 1.55; color: #8f887e }
-
 /* Confirmação: mesmo lugar e mesmas medidas do card, sem o glow. */
 .le-card-ok { gap: 14px; padding: 40px 34px; box-shadow: 0 20px 50px rgba(10,43,30,.32) }
 .le-h2-ok { font-size: 31px; line-height: 1.12 }

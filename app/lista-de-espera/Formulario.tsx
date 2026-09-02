@@ -1,18 +1,19 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import CartaoConfirmado from "./CartaoConfirmado";
 
 /**
  * Formulário da pré-lista. Uma conversão só: nome, e-mail, WhatsApp e uma
  * pergunta de qualificação opcional.
  *
- * O envio é do RD Station (decisão do cliente), mas o token ainda não chegou.
- * Enquanto não chegar, o POST vai para `/api/lista-de-espera`, que registra o
- * lead no log do servidor e responde `integrado: false` — mesma convenção do
- * e-mail transacional do projeto, onde sem `RESEND_API_KEY` tudo funciona menos a
- * entrega e o motivo fica registrado. **A página não pode ir ao ar antes do RD
- * estar plugado**: até lá o lead existe só no log da função.
+ * **Quem grava o lead é o RD Station, pela captura automática de Leads.** Não há
+ * envio nosso: o código de monitoramento (em `Tela.tsx`) escuta o submit deste
+ * `<form>` e sobe os campos. Daí três coisas que parecem decoração e não são —
+ * o `id`, que é como o RD batiza o formulário no painel; o hidden de
+ * `investe_fora`, porque os chips são `<button>` e a captura só enxerga campo de
+ * formulário; e o hidden de `lgpd`, que registra a base legal depois que a caixa
+ * de aceite saiu.
  *
  * O container `#rd-form-lista-de-espera` é a costura marcada no design, para o
  * caminho alternativo (embed oficial do RD dentro do container, sobrescrevendo o
@@ -20,9 +21,6 @@ import CartaoConfirmado from "./CartaoConfirmado";
  */
 
 const OPCOES = ["Ainda não", "Só um pouco", "Sim, já invisto"] as const;
-
-/** Destino em produção. Vazio: o card de confirmação assume, no mesmo lugar. */
-const OBRIGADO = process.env.NEXT_PUBLIC_LISTA_ESPERA_OBRIGADO_URL ?? "";
 
 /** Pendência do cliente (item 23 do PENDENCIAS-LP). Vazio: o texto do aceite sai
  *  sem link, que é melhor que um link morto numa tela que coleta dado pessoal. */
@@ -40,49 +38,35 @@ function mascararTelefone(v: string) {
 export default function Formulario() {
   const [enviado, setEnviado] = useState(false);
   const [enviando, setEnviando] = useState(false);
-  const [erro, setErro] = useState("");
   const [investidor, setInvestidor] = useState("");
   const [telefone, setTelefone] = useState("");
-  const form = useRef<HTMLFormElement>(null);
 
   if (enviado) return <CartaoConfirmado />;
 
-  async function enviar(e: React.FormEvent<HTMLFormElement>) {
+  /**
+   * `preventDefault` cancela a navegação, e só ela: os outros ouvintes do submit
+   * continuam disparando, porque não chamamos `stopPropagation`. É por isso que o
+   * RD captura mesmo sendo este handler o que "trata" o envio.
+   *
+   * A espera de 400ms antes de trocar o card não é enfeite. Trocar o estado
+   * desmonta o `<form>`, e o RD lê os campos DEPOIS do evento; desmontar no mesmo
+   * quadro corre o risco de arrancar o formulário debaixo dele. O teste que
+   * validou a captura rodava com um POST nosso no meio, que dava exatamente essa
+   * janela — ela ficou de propósito quando o POST saiu. **Encurtar ou remover
+   * isto pode fazer o lead deixar de chegar no RD, sem erro nenhum na tela.**
+   * O rótulo em gerúndio faz a espera se ler como resposta, não como travada.
+   */
+  function enviar(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (enviando) return;
-    setErro("");
     setEnviando(true);
-    const dados = new FormData(e.currentTarget);
-    try {
-      const r = await fetch("/api/lista-de-espera", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nome: String(dados.get("nome") ?? "").trim(),
-          email: String(dados.get("email") ?? "").trim(),
-          telefone,
-          investeFora: investidor,
-          // O envio é o ato de consentimento: chegar aqui já significa que o
-          // aviso de LGPD estava na tela e a pessoa apertou o botão.
-          aceite: dados.get("lgpd") === "aceito-no-envio",
-        }),
-      });
-      if (!r.ok) throw new Error(String(r.status));
-      if (OBRIGADO) { window.location.href = OBRIGADO; return; }
-      setEnviado(true);
-    } catch {
-      // Nada de "tente novamente" e ponto: o WhatsApp do suporte já é o caminho
-      // de escape do resto do produto.
-      setErro("Não conseguimos registrar sua inscrição agora. Tente de novo em alguns instantes.");
-      setEnviando(false);
-    }
+    setTimeout(() => setEnviado(true), 400);
   }
 
   return (
     // O id é como a captura automática do RD batiza o formulário no painel: sem
     // ele o lead cai num nome genérico e fica difícil de achar.
     <form
-      ref={form}
       id="form-lista-de-espera"
       className="le-card le-card-glow"
       onSubmit={enviar}
@@ -177,8 +161,6 @@ export default function Formulario() {
         .
       </p>
       <input type="hidden" name="lgpd" value="aceito-no-envio" />
-
-      {erro && <p className="le-erro" role="alert">{erro}</p>}
 
       {/* Botão em trabalho (DESIGN.md §3): o rótulo vira gerúndio, o botão
           desabilita e anuncia aria-busy. Sem spinner, e sem travar largura —

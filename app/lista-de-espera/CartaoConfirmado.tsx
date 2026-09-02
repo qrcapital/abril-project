@@ -1,10 +1,10 @@
 /**
  * Card de confirmação da pré-lista.
  *
- * Ocupa o lugar e as medidas do formulário. Dois consumidores: o estado local do
- * `Formulario` (quando não há página de obrigado configurada) e a própria
- * `/lista-de-espera/obrigado`, que é o destino do redirect em produção. Um só
- * componente porque a copy é a mesma e divergir os dois é questão de tempo.
+ * Ocupa o lugar e as medidas do formulário, no mesmo card. Decisão de 02/set: a
+ * confirmação acontece aqui, sem redirect para página de obrigado — é o fallback
+ * do design, promovido a caminho único. Fica como componente para o dia em que
+ * uma página de obrigado for pedida: ela nasce com dez linhas em volta disto.
  *
  * A copy promete convite da live, exclusividade da lista e o aviso da abertura.
  * Nada de vaga garantida, número de professores ou data (ver "Copy: o que não

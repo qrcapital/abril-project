@@ -3,10 +3,11 @@ import { join } from "node:path";
 import GloboEspera from "./GloboEspera";
 
 /**
- * Envelope das duas rotas da pré-lista: as camadas de fundo, o globo e a coluna
- * de conteúdo à esquerda. A coluna da direita vem por `children` — é o
- * formulário em `/lista-de-espera` e o card de confirmação em
- * `/lista-de-espera/obrigado`.
+ * Envelope da tela: as camadas de fundo, o globo e a coluna de conteúdo à
+ * esquerda. A coluna da direita vem por `children`, que hoje é só o formulário —
+ * a confirmação acontece dentro dele, no mesmo card, sem segunda rota. O
+ * `children` ficou porque é o que torna uma página de obrigado barata, se um dia
+ * for pedida.
  *
  * Não toca em nada da LP de vendas: rota própria, CSS próprio, componente de
  * globo próprio. Do que já existe no repo ela só *lê* — os dados do globo e os
@@ -129,7 +130,7 @@ export default function Tela({ children }: { children: React.ReactNode }) {
               <ul className="le-checks">
                 <li>
                   <span className="le-check" aria-hidden="true">✓</span>
-                  Convite para a live de lançamento.
+                  Convite para a live.
                 </li>
                 <li>
                   <span className="le-check" aria-hidden="true">✓</span>

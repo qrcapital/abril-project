@@ -561,33 +561,35 @@ o `id="form-lista-de-espera"`, que é como o RD batiza o formulário no painel; 
 enxerga campo de formulário; e o `<input type="hidden" name="lgpd" value="aceito-no-envio">`,
 que registra a base legal depois que a caixa de aceite saiu.
 
-**Não precisa de token, nem de `RD_STATION_API_KEY`.** O `POST /api/lista-de-espera` continua
-existindo como rede de proteção e valida o lead, mas hoje não persiste em lugar nenhum: quem
-grava é o RD. Ver a decisão em aberto abaixo.
+**Não precisa de token.** Não há envio nosso: a rota `/api/lista-de-espera` existiu por meia
+sessão como rede de proteção e **foi removida em 02/set**, junto com a `/lista-de-espera/obrigado`,
+pela decisão do Pedro de confiar no RD e manter a confirmação no próprio card. O `CartaoConfirmado`
+continua sendo componente, então uma página de obrigado, se um dia for pedida, nasce com dez linhas
+em volta dele.
 
-### Trava para publicar (uma)
+**Uma armadilha no `Formulario.tsx`, marcada em comentário:** o handler espera **400ms** antes de
+trocar o formulário pelo card. Não é enfeite. Trocar o estado desmonta o `<form>`, e o RD lê os
+campos depois do evento de submit; o teste que validou a captura rodava com um POST nosso no meio,
+que dava exatamente essa janela, e ela ficou de propósito quando o POST saiu. Encurtar ou remover
+faz o lead deixar de chegar no RD **sem erro nenhum na tela**.
 
-- [ ] 🔒 **URL da política de privacidade** (`NEXT_PUBLIC_POLITICA_PRIVACIDADE_URL`). É o
-      mesmo item 23 do `PLANO-CORRECOES.md`, aqui com consequência maior: a tela coleta dado
-      pessoal, e desde 02/set o consentimento é o próprio envio, não uma caixa marcada. Sem a
-      variável o trecho "Política de Privacidade · LGPD" sai **sem link**, que é melhor que um
-      link morto, mas não é publicável.
+### Trava para divulgar (uma, e não bloqueia o homolog)
 
-### Decisões em aberto, nenhuma bloqueante
+- [ ] 🔒 **URL da política de privacidade** (`NEXT_PUBLIC_POLITICA_PRIVACIDADE_URL`). É o mesmo
+      item 23 do `PLANO-CORRECOES.md`, aqui com consequência maior: a tela coleta dado pessoal,
+      e desde 02/set o consentimento é o próprio envio, não uma caixa marcada. Sem a variável o
+      trecho "Política de Privacidade · LGPD" sai **sem link**. Decisão do Pedro em 02/set:
+      dispensável enquanto for homolog, necessária antes de divulgar.
 
-- [ ] **O que fazer com o `/api/lista-de-espera`.** Hoje ele valida e registra no log, e o
-      lead só existe de verdade no RD. Ou ele passa a gravar numa tabela do Supabase antes
-      (uma migration, ~30 linhas, e nenhuma inscrição some se o RD falhar), ou sai. O
-      meio-termo atual é o pior dos dois.
-- [ ] **Redirect ou card no lugar** (`NEXT_PUBLIC_LISTA_ESPERA_OBRIGADO_URL`). Vazia, o card
-      de confirmação assume onde estava o formulário, sem redirect, que é o fallback do
-      design. A `/lista-de-espera/obrigado` existe e serve o mesmo card, mas hoje ninguém
-      chega nela.
-- [ ] **SPF, DKIM e DMARC do domínio do BlockTrends**, que é de onde o e-mail do RD vai sair.
-      Com o WhatsApp fora da promessa, o e-mail virou canal único, e o card já orienta a
-      procurar no spam. Configuração de DNS e RD, não código.
-- [ ] **"live de lançamento" aparece quatro vezes** na tela (lide, primeiro bullet, rótulo da
-      rota, microcopy do botão). O corte limpo é encurtar o bullet para "Convite para a live.".
+### Decidido em 02/set, para não voltar à fila
+
+- **O `/api/lista-de-espera` saiu.** Quem grava é o RD, e um endpoint que valida sem persistir
+  só dava a impressão de rede de proteção.
+- **A confirmação fica no card**, sem redirect. A `/lista-de-espera/obrigado` saiu junto.
+- **SPF, DKIM e DMARC do domínio do BlockTrends: feito.** É de lá que o e-mail do RD sai, e com
+  o WhatsApp fora da promessa o e-mail é canal único.
+- **"live de lançamento" caiu de quatro para três aparições**: o primeiro bullet virou "Convite
+  para a live.", já que o lide e o rótulo da rota estabelecem qual live é.
 
 ### Decisões de design tomadas aqui, para não se perderem
 
