@@ -538,6 +538,96 @@ consertado no mesmo dia (TDZ do cronômetro, no `CHANGELOG.md`). O que sobrou é
       estilo do design, minúsculo com "·" ("liberada · 20 questões em 120 minutos", "prova em andamento
       · continue de onde parou", "2ª chamada liberada · comece quando quiser"). Decidir se harmoniza.
 
+## 🆕 Pré-lista `/lista-de-espera` (construída em 02/set/2026, branch `lista-de-espera`)
+
+Tela de captura da lista de espera, do handoff de design "LP de lista de espera — Estratégia
+Internacional". Rota própria, CSS próprio (`app/lista-de-espera/estilo.css`) e componente de
+globo próprio (`GloboEspera.tsx`, parado e em dois canvas). **Não encosta na LP de vendas:**
+do que já existe ela só lê os dados do globo (`app/_lp/globo-dados.ts`) e os `@font-face` de
+`app/_lp/styles.css`, e não passa pelo `port-lp.mjs`. Estática no build, junto com
+`/lista-de-espera/obrigado`.
+
+### Como o lead chega no RD (decidido em 02/set, testado com a conta real)
+
+Pela **captura automática de Leads**, não pela API de conversões e não pelo formulário
+embedado. O código de monitoramento do RD está no `<body>` das duas rotas (`Tela.tsx`), com
+`defer` e não `async`, pelas duas exigências deles: o script vai no corpo e o `<form>` precisa
+existir quando ele roda. A página é estática, então o formulário vem pronto na primeira
+resposta e o aviso do RD sobre SPA não se aplica.
+
+Três coisas que o formulário carrega por causa disso, e que somem se alguém mexer sem saber:
+o `id="form-lista-de-espera"`, que é como o RD batiza o formulário no painel; o
+`<input type="hidden" name="investe_fora">`, porque os chips são `<button>` e a captura só
+enxerga campo de formulário; e o `<input type="hidden" name="lgpd" value="aceito-no-envio">`,
+que registra a base legal depois que a caixa de aceite saiu.
+
+**Não precisa de token.** Não há envio nosso: a rota `/api/lista-de-espera` existiu por meia
+sessão como rede de proteção e **foi removida em 02/set**, junto com a `/lista-de-espera/obrigado`,
+pela decisão do Pedro de confiar no RD e manter a confirmação no próprio card. O `CartaoConfirmado`
+continua sendo componente, então uma página de obrigado, se um dia for pedida, nasce com dez linhas
+em volta dele.
+
+**Uma armadilha no `Formulario.tsx`, marcada em comentário:** o handler espera **400ms** antes de
+trocar o formulário pelo card. Não é enfeite. Trocar o estado desmonta o `<form>`, e o RD lê os
+campos depois do evento de submit; o teste que validou a captura rodava com um POST nosso no meio,
+que dava exatamente essa janela, e ela ficou de propósito quando o POST saiu. Encurtar ou remover
+faz o lead deixar de chegar no RD **sem erro nenhum na tela**.
+
+### Trava para divulgar (uma, e não bloqueia o homolog)
+
+- [ ] 🔒 **URL da política de privacidade** (`NEXT_PUBLIC_POLITICA_PRIVACIDADE_URL`). É o mesmo
+      item 23 do `PLANO-CORRECOES.md`, aqui com consequência maior: a tela coleta dado pessoal,
+      e desde 02/set o consentimento é o próprio envio, não uma caixa marcada. Sem a variável o
+      trecho "Política de Privacidade · LGPD" sai **sem link**. Decisão do Pedro em 02/set:
+      dispensável enquanto for homolog, necessária antes de divulgar.
+
+### Decidido em 02/set, para não voltar à fila
+
+- **O `/api/lista-de-espera` saiu.** Quem grava é o RD, e um endpoint que valida sem persistir
+  só dava a impressão de rede de proteção.
+- **A confirmação fica no card**, sem redirect. A `/lista-de-espera/obrigado` saiu junto.
+- **SPF, DKIM e DMARC do domínio do BlockTrends: feito.** É de lá que o e-mail do RD sai, e com
+  o WhatsApp fora da promessa o e-mail é canal único.
+- **"live de lançamento" caiu de quatro para três aparições**: o primeiro bullet virou "Convite
+  para a live.", já que o lide e o rótulo da rota estabelecem qual live é.
+
+### Decisões de design tomadas aqui, para não se perderem
+
+- **Onde o handoff escrito e o protótipo divergem, vale o protótipo**, que é o artefato que o
+  cliente viu. São quatro valores: chip selecionado (`#F0E9D8` / `#7E6836` / peso 700, contra
+  `rgba(169,142,78,.16)` / `#0B2D20` / 600), placeholder (`#8F887E` contra `#A8A49B`),
+  transição do chip (`.2s` contra `.15s`) e as paradas do `vsGlow`.
+- **A copy da tela não é mais a do handoff.** Headline, lide, bullets, teaser, aceite e card de
+  confirmação foram reescritos com o Pedro em 02/set. O que sobreviveu do handoff é a estrutura
+  e os limites do "o que não prometer": nada de vaga garantida, número de professores ou data
+  de abertura.
+- **Os 01..04 do teaser viraram uma rota**, com praça, trilho e uma corcova de luz percorrendo,
+  nas mesmas cores e no mesmo período (5200ms) das rotas do globo. A ordem virou `<ol>`, para
+  não se perder com os números fora da tela.
+- **Três pontos de quebra, todos por container query e não por media query**, porque o que
+  importa é a largura da coluna, que muda sem a janela mudar de faixa: a rota vira fileira de
+  quatro em 540px de coluna (medido: o rótulo mais largo dá 119px), a assinatura empilha
+  abaixo de 420px, e o globo repete o corte de 990px do `auto-fit` em JS (`CORTE` em
+  `GloboEspera.tsx`) — esse último anda junto com a grade externa, mexer num sem o outro
+  descola os dois.
+- **Empilhadas, VEJA e BlockTrends casam por largura (200px), não por altura.** Deitadas valem
+  os 30px e 19px do design. Numa pilha o olho compara a extensão da linha, e 122px contra
+  207px fazia a VEJA parecer metade.
+- **O globo compacto cruza a headline entre ~600px e o corte de 990px, e fica assim.**
+  Verificado a 960px: o que passa por trás é stipple a 9–16% e linha de rota a 12%, e o texto
+  continua legível. Abaixo de 400px fica limpo.
+
+### Medido, não olhado
+
+Varredura em 390, 768, 1024, 1280, 1440 e 1920px, com a viewport fixada por CDP (a
+`--window-size` do Chrome inclui a moldura e não serve como viewport — dois prints meus
+mentiram por isso): **estouro horizontal zero em todas**, e de 1024px para cima a tela cabe
+inteira sem rolagem. Abaixo disso rola, e é inerente ao empilhamento.
+
+**O que não foi verificado no navegador:** `prefers-reduced-motion`. O código está nos dois
+lados (o globo pinta um quadro só, a luz da rota e o glow do card saem), mas nunca foi
+exercido de fato.
+
 ## 🔒 Bloqueado por insumo
 
 - [x] ~~**Template de e-mail do convite (primeiro acesso)**~~ **DEIXOU DE SER PENDÊNCIA em

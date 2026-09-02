@@ -1,0 +1,356 @@
+/* Tela de captura da pré-lista (/lista-de-espera).
+   Uma tela só, sem scroll e sem navegação: coluna de conteúdo à esquerda sobre o
+   globo, card de formulário à direita. Tokens do Meridiano (docs/DESIGN.md).
+
+   Escopo: tudo sob .le-raiz. Este CSS é injetado por Tela.tsx só nas rotas da
+   pré-lista, no mesmo padrão do app/page.tsx, e não passa pelo Tailwind (que só
+   roda no admin).
+
+   Os @font-face NÃO vivem aqui: Tela.tsx os extrai de app/_lp/styles.css, que é
+   gerado pelo porte e é o único que sabe os nomes dos .woff2 em /public/lp.
+
+   A grade externa não usa media query: clamp(), min() e auto-fit fazem o
+   trabalho, e o único ponto de quebra é o do auto-fit, perto de 990px, que o
+   globo repete em JS (CORTE em GloboEspera.tsx) — mexer num sem o outro descola
+   os dois. A rota do teaser é a exceção e usa container query, pela razão
+   escrita lá embaixo. */
+
+.le-raiz, .le-raiz *, .le-raiz *::before, .le-raiz *::after { box-sizing: border-box }
+body { margin: 0; padding: 0; background: #0b2d20 }
+
+.le-raiz {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #0b2d20;
+  color: #f7f5f2;
+  font-family: 'Montserrat', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  /* O Playfair vem com algarismos oldstyle (3,4,5,7,9 descem da baseline). Sem
+     isto o "2%" e o "100%" da headline saem desalinhados entre si. Mesmo motivo
+     do app/page.tsx. */
+  font-variant-numeric: lining-nums;
+}
+.le-raiz a { color: #d9be85; text-decoration: none }
+.le-raiz a:hover { color: #f0e9d8 }
+/* :where() zera a especificidade dos tipos, senão este reset (0,1,1) ganha de
+   .le-chip e .le-cta (0,1,0) e leva a cor do texto junto — creme sobre creme,
+   botão sem rótulo visível. Com :where() o seletor vale 0,1,0 e quem vem depois
+   no arquivo manda. */
+.le-raiz :where(input, button, textarea, select) { font: inherit; color: inherit }
+.le-raiz input::placeholder { color: #8f887e }
+.le-raiz :where(input, button, a):focus-visible { outline: 2px solid #a98e4e; outline-offset: 2px }
+
+/* ---- camadas de fundo, na ordem de pintura --------------------------------- */
+
+.le-fundo {
+  position: absolute; inset: 0;
+  background: radial-gradient(115% 95% at 16% 26%, #123b2b 0%, #0b2d20 48%, #0a2b1e 100%);
+}
+.le-trama {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(rgba(247,245,242,.035) 1.3px, transparent 1.3px);
+  background-size: 32px 32px;
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 92%);
+  mask-image: linear-gradient(to bottom, black, transparent 92%);
+}
+/* Véu de leitura. O min() é o que mantém o globo visível no celular: largura
+   fixa no desktop, fração da viewport no mobile.
+
+   O ângulo é 90deg, e o design pedia 96deg. Os 6º de inclinação criavam uma
+   costura vertical visível na metade de cima da tela, e a conta explica: num
+   gradiente inclinado o eixo é mais longo que a largura da caixa (aqui
+   780·sen96 + altura·cos96), então a parada de 100% só é alcançada num canto. Em
+   1920×1080 o canto superior direito fica em 87% do percurso, ou seja o véu
+   ainda tem 38% de opacidade onde a caixa acaba — e corta seco. Embaixo ele
+   chega a zero e não corta, o que deixa o degrau só na metade de cima.
+
+   Adiantar a parada transparente não resolve para toda altura: quanto mais alta
+   e estreita a caixa, mais o eixo cresce e mais cedo o corte pega. No celular, com
+   242px de largura e 1600px de página, o canto de cima fica em 59% do percurso.
+   Em 90deg o eixo é exatamente a largura, o alfa chega a zero na borda em
+   qualquer proporção, e a costura deixa de ser possível.
+
+   O que se perde: a inclinação alargava o véu ~113px da base ao topo. Se ela
+   fizer falta, o caminho é alargar o elemento e recolher as paradas para o fade
+   terminar dentro dele, em vez de na borda. */
+.le-veu {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: min(780px, 62%); pointer-events: none;
+  background: linear-gradient(90deg, #0b2d20 0%, rgba(11,45,32,.92) 40%, rgba(11,45,32,.66) 78%, rgba(11,45,32,0) 100%);
+}
+
+.le-globo { position: absolute; inset: 0; pointer-events: none }
+.le-globo canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none }
+/* O canvas estático entra em fade quando a primeira pintura termina, senão o
+   litoral aparece de um quadro para o outro. */
+.le-globo-base { opacity: 0; transition: opacity .6s ease }
+.le-globo-base.le-pronto { opacity: 1 }
+
+/* ---- grade ----------------------------------------------------------------- */
+
+.le-grade {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr));
+  gap: clamp(36px, 4vw, 64px);
+  padding: clamp(28px, 4.4vw, 44px) clamp(20px, 4.4vw, 60px) clamp(32px, 4vw, 40px);
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+/* ---- coluna esquerda ------------------------------------------------------- */
+
+.le-esq {
+  display: flex; flex-direction: column; justify-content: center;
+  gap: clamp(16px, 1.9vw, 22px); padding: 4px 0;
+}
+/* SVG inline, não <img>: só inline o wordmark usa as fontes self-hosted da
+   página. Como <img> ele cai para Georgia. */
+.le-wordmark {
+  display: block; align-self: flex-start; overflow: visible;
+  margin-bottom: 12px; width: min(268px, 74vw); height: auto;
+}
+/* container-type: a assinatura decide se empilha pela largura DESTE bloco, que
+   é a coluna de texto, e não pela da janela. */
+.le-bloco { display: flex; flex-direction: column; gap: 18px; max-width: 580px; container-type: inline-size }
+
+.le-h1 {
+  margin: 0;
+  font-family: 'Playfair Display', Georgia, serif;
+  /* O teto caiu de 72px (valor do design) para 62px quando a headline mudou: a
+     nova tem 54 caracteres contra 44 da original, e a 72px ganhava uma quarta
+     linha, que é o que empurrava a tela para a rolagem. */
+  font-weight: 600; font-size: clamp(38px, 4.6vw, 62px);
+  line-height: 1; color: #f7f5f2; text-wrap: balance;
+}
+.le-h1 em { font-style: italic; color: #d9be85 }
+
+.le-lide {
+  margin: 0; font-size: clamp(15px, 1.15vw, 16px); line-height: 1.6;
+  color: #a9b8ae; max-width: 505px; text-wrap: pretty;
+}
+
+.le-checks { margin: 2px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px }
+.le-checks li { display: flex; gap: 12px; align-items: baseline; font-size: 15px; line-height: 1.5; color: #f7f5f2 }
+.le-check { color: #d9be85; font-weight: 700 }
+
+/* Rótulo: a caixa alta de 10px com tracking largo é o mesmo padrão em cinco
+   lugares desta tela; o que muda é peso e cor. */
+.le-rotulo { font-size: 10px; letter-spacing: .16em; text-transform: uppercase }
+.le-rotulo-sage { font-weight: 700; color: #8fa398; white-space: nowrap }
+.le-rotulo-gold { font-weight: 900; color: #d9be85 }
+.le-rotulo-campo { font-weight: 900; color: #7e6836 }
+
+.le-assina { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; min-height: 32px; margin-top: 2px }
+.le-filete { display: block; width: 1px; height: 22px; background: rgba(247,245,242,.16) }
+.le-x { font-size: 14px; font-weight: 700; color: #a98e4e }
+/* O × e a marca do BlockTrends quebram juntos ou não quebram. */
+.le-par { display: flex; align-items: center; gap: 14px }
+/* Deitadas, as duas marcas casam por altura. Estas regras vêm ANTES do
+   @container de propósito: têm a mesma especificidade das de lá, e em empate
+   ganha quem vem depois. Invertida, a ordem anula o bloco do celular. */
+.le-logo-veja { height: 30px; width: auto; display: block }
+.le-logo-bt { height: 19px; width: auto; display: block }
+
+/* No celular a assinatura empilha inteira: rótulo, VEJA, ×, BlockTrends.
+   Medido: a linha única pede 522px (110 do rótulo + 122 do VEJA + 229 do par,
+   mais os gaps), e a coluna de texto tem 350px em 390px de janela. Quebrando
+   sozinha ela deixava "× BlockTrends" órfão numa segunda linha.
+
+   O corte é 420px de coluna, e não os 540 da rota: acima disso a quebra em duas
+   linhas ainda lê bem, e empilhar ali custaria ~45px de altura numa faixa
+   (janelas de 1024px a 1200px) onde a tela hoje cabe inteira sem rolagem. */
+@container (max-width: 419px) {
+  /* O ritmo não é uniforme de propósito: o rótulo é cabeçalho e as duas marcas
+     com o × entre elas são uma assinatura só. Espaço maior depois do rótulo,
+     menor dentro da assinatura, e as três linhas passam a se ler como um bloco
+     em vez de quatro itens soltos. */
+  .le-assina { flex-direction: column; align-items: flex-start; gap: 13px }
+  .le-par { flex-direction: column; align-items: flex-start; gap: 7px }
+  /* O filete é separador de linha; empilhado ele não separa nada. */
+  .le-filete { display: none }
+  /* Sem o filete, os dois-pontos fazem o trabalho de anunciar o que vem. */
+  .le-assina .le-rotulo-sage::after { content: ":" }
+  /* Deitado entre duas marcas grandes, o × de 14px lia como sujeira. Em 17px
+     ele vira o operador que é. O recuo alinha o centro dele com a haste do V do
+     VEJA em vez da borda da caixa, que é o que o olho procura numa pilha. */
+  .le-x { font-size: 17px; line-height: 1; margin-left: 3px }
+
+  /* Empilhadas, as marcas casam por LARGURA, não por altura. Deitadas elas
+     casam por altura (os 30px e 19px do design), mas numa pilha o olho compara
+     a extensão de cada linha: com 122px contra 207px a VEJA parecia metade do
+     BlockTrends. Largura fixa nas duas, e a altura cada uma resolve pela sua
+     proporção — assim nenhuma das duas depende do aspect ratio da outra. */
+  .le-logo-veja, .le-logo-bt { width: 200px; height: auto }
+}
+
+/* container-type: a grade abaixo decide o número de colunas pela largura DESTE
+   bloco, não pela da janela. */
+.le-teaser { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; container-type: inline-size }
+/* As quatro paradas desenhadas como uma rota do globo: praça, trilho fraco
+   ligando, e uma corcova de luz percorrendo. Os 01..04 saíram — o <ol> guarda a
+   ordem para o leitor de tela e o trilho a mostra para quem vê.
+
+   Cores e ritmo são os mesmos do canvas, de propósito: trilho
+   rgba(247,245,242,.12), luz rgba(241,230,206,α), praça #F0E3C4 com halo
+   #D9BE85, e 5200ms, que é o período-base das rotas em GloboEspera.tsx.
+
+   Duas formas, nunca uma fileira quebrada: empilhado vira linha do tempo
+   vertical, e a partir de 560px de coluna vira a fileira horizontal de quatro.
+   Quem decide é a largura da PRÓPRIA coluna (container query), não a da janela:
+   a coluna esquerda encolhe sem a janela mudar de faixa, quando a grade de fora
+   colapsa, e era ali que a fileira de quatro quebrava. */
+/* padding zero de propósito: o trilho estático é ::before do item (mede a partir
+   do item) e a luz é ::after da lista (mede a partir da borda dela). Qualquer
+   padding aqui desloca um sem deslocar o outro, e a luz corre numa linha acima
+   da linha. Espaço, se precisar, vem do gap do .le-teaser. */
+.le-rota {
+  /* Quantidade de paradas. Anda junto com o TEASER de Tela.tsx: é o que diz à
+     luz onde a rota termina, na fileira horizontal. */
+  --paradas: 4;
+  position: relative;
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: 1fr; gap: 18px;
+}
+.le-rota-item { position: relative; display: flex; align-items: center; gap: 13px }
+.le-rota-marca {
+  flex: none; width: 7px; height: 7px; border-radius: 50%;
+  background: #f0e3c4; box-shadow: 0 0 0 3px rgba(217,190,133,.16);
+  position: relative; z-index: 1;
+}
+.le-rota-t {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600; font-size: 17px; line-height: 1.2; color: #f7f5f2;
+}
+/* trilho: vertical no empilhado, da praça até a de baixo (o -18px cruza o gap) */
+.le-rota-item::before {
+  content: ""; position: absolute; z-index: 0;
+  left: 3px; top: 50%; bottom: -18px; width: 1px;
+  background: rgba(247,245,242,.12);
+}
+.le-rota-item:last-child::before { display: none }
+
+/* A corcova de luz, uma só para a rota inteira. No empilhado ela desce da
+   primeira praça à última; os 10px de recuo são o meio-item, que é onde o
+   align-items:center põe a praça numa linha de 17px/1.2. Passa POR TRÁS das
+   praças, que têm z-index 1 — igual ao canvas, onde a luz corre na rota e o
+   núcleo da praça fica por cima. */
+.le-rota::after {
+  content: ""; position: absolute; pointer-events: none; z-index: 0;
+  left: 3px; width: 1px; top: 10px; bottom: 10px;
+  background-image: linear-gradient(180deg, rgba(241,230,206,0) 0%, rgba(241,230,206,.85) 50%, rgba(241,230,206,0) 100%);
+  background-size: 100% 34%; background-repeat: no-repeat;
+  animation: leRotaV 5200ms linear infinite;
+}
+
+/* 540px, medido e não chutado: o rótulo mais largo ("Como funciona" e "O que
+   você leva") ocupa 119px em Playfair 17px, mais os 14px de padding do item dá
+   133px por coluna, e 4 × 133 = 532. Os 540 são esses 532 com folga para o
+   fallback Georgia, que é mais largo.
+
+   O valor anterior, 560, era conservador demais: numa janela de 1280px a coluna
+   esquerda dá 558px e caía no empilhado por 2px, o que custa ~100px de altura à
+   toa. */
+@container (min-width: 540px) {
+  .le-rota { grid-template-columns: repeat(4, 1fr); gap: 0 }
+  .le-rota-item { flex-direction: column; align-items: flex-start; gap: 12px; padding-right: 14px }
+  /* trilho horizontal: sai da praça e vai até a próxima */
+  .le-rota-item::before {
+    left: 12px; right: 0; top: 3px; bottom: auto; width: auto; height: 1px;
+  }
+  /* Mesma corcova, deitada: atravessa a fileira em vez de descer. O top:3px
+     casa com o do trilho porque os dois medem da mesma origem agora. */
+  .le-rota::after {
+    /* Encerra no centro da última praça, não na borda da grade. O último item
+       ocupa a quarta coluna inteira, mas a praça dele fica no começo dela: sem
+       este recuo de uma coluna a luz seguia varrendo o vazio à direita do
+       último ponto. O -3px alinha com o centro da praça, igual ao left. */
+    left: 3px; right: calc(100% / var(--paradas) - 3px); width: auto;
+    top: 3px; bottom: auto; height: 1px;
+    background-image: linear-gradient(90deg, rgba(241,230,206,0) 0%, rgba(241,230,206,.85) 50%, rgba(241,230,206,0) 100%);
+    background-size: 34% 100%;
+    animation-name: leRotaH;
+  }
+}
+@keyframes leRotaH {
+  from { background-position: -40% 0 }
+  to { background-position: 140% 0 }
+}
+@keyframes leRotaV {
+  from { background-position: 0 -40% }
+  to { background-position: 0 140% }
+}
+@media (prefers-reduced-motion: reduce) {
+  .le-rota::after { animation: none; opacity: 0 }
+}
+
+/* ---- coluna direita -------------------------------------------------------- */
+
+.le-dir { display: flex; flex-direction: column; justify-content: center; gap: 20px }
+.le-card-wrap { width: 100%; max-width: 452px; margin: 0 auto }
+
+.le-card {
+  display: flex; flex-direction: column; gap: 18px;
+  background: #ffffff; border: 1px solid #d6c3c2; border-radius: 14px;
+  padding: clamp(24px, 3vw, 34px) clamp(20px, 2.6vw, 32px);
+}
+.le-card-glow { animation: leGlow 2.6s ease-in-out infinite; will-change: box-shadow }
+@keyframes leGlow {
+  0%, 100% { box-shadow: 0 12px 30px rgba(11,45,32,.18), 0 0 0 1px rgba(217,190,133,.35) }
+  50%      { box-shadow: 0 22px 66px rgba(217,190,133,.35), 0 0 0 3px rgba(217,190,133,.6) }
+}
+@media (prefers-reduced-motion: reduce) {
+  .le-card-glow { animation: none !important }
+}
+
+.le-card-head { display: flex; flex-direction: column; gap: 7px }
+.le-h2 { margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 600; font-size: 30px; line-height: 1.1; color: #0b2d20 }
+.le-sub { margin: 0; font-size: 13.5px; line-height: 1.6; color: #6d6d6d }
+
+.le-campos { display: flex; flex-direction: column; gap: 14px }
+.le-campo { display: flex; flex-direction: column; gap: 6px }
+.le-input {
+  width: 100%; padding: 13px 14px;
+  background: #f7f5f2; border: 1px solid #d6c3c2; border-radius: 4px;
+  font-size: 15px; color: #333333;
+}
+
+/* Três botões, não um <select>: escolha única e opcional, e o toque num chip é
+   mais barato que abrir um menu nativo no celular. */
+.le-chips-bloco { display: flex; flex-direction: column; gap: 9px }
+.le-chips { display: flex; gap: 8px }
+.le-chip {
+  flex: 1; padding: 11px 6px; font-size: 12px; font-weight: 500;
+  cursor: pointer; border-radius: 4px; transition: all .2s ease;
+  background: #f7f5f2; border: 1px solid #d6c3c2; color: #6d6d6d;
+}
+.le-chip:hover { border-color: #a98e4e }
+.le-chip[aria-pressed="true"] { background: #f0e9d8; border-color: #a98e4e; color: #7e6836; font-weight: 700 }
+
+/* Era um <label> com caixa de aceite; virou aviso em texto, porque o
+   consentimento passou a ser o próprio envio. Mesma tipografia de antes. */
+.le-lgpd { margin: 0; font-size: 11.5px; line-height: 1.55; color: #6d6d6d }
+.le-lgpd a { color: #7e6836; text-decoration: underline }
+.le-lgpd a:hover { color: #a98e4e }
+
+.le-cta {
+  margin-top: 2px; width: 100%; padding: 16px 20px;
+  background: linear-gradient(160deg, #d9be85 0%, #a98e4e 100%);
+  color: #0a2b1e; border: none; border-radius: 10px;
+  font-size: 12.5px; letter-spacing: .02em; font-weight: 700;
+  text-transform: uppercase; cursor: pointer;
+}
+.le-cta:disabled { cursor: progress; opacity: .72 }
+
+.le-micro { margin: 0; text-align: center; font-size: 11px; line-height: 1.55; color: #8f887e }
+
+/* Confirmação: mesmo lugar e mesmas medidas do card, sem o glow. */
+.le-card-ok { gap: 14px; padding: 40px 34px; box-shadow: 0 20px 50px rgba(10,43,30,.32) }
+.le-h2-ok { font-size: 31px; line-height: 1.12 }
+.le-p-ok { margin: 0; font-size: 15px; line-height: 1.6; color: #6d6d6d }
+
+/* Sem o filtro a marca do Grupo Abril não lê sobre o verde. */
+.le-abril { display: flex; align-items: center; justify-content: center; gap: 12px }
+.le-abril img { height: 22px; width: auto; display: block; filter: brightness(0) invert(1); opacity: .78 }
