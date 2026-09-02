@@ -538,6 +538,94 @@ consertado no mesmo dia (TDZ do cronômetro, no `CHANGELOG.md`). O que sobrou é
       estilo do design, minúsculo com "·" ("liberada · 20 questões em 120 minutos", "prova em andamento
       · continue de onde parou", "2ª chamada liberada · comece quando quiser"). Decidir se harmoniza.
 
+## 🆕 Pré-lista `/lista-de-espera` (construída em 02/set/2026, branch `lista-de-espera`)
+
+Tela de captura da lista de espera, do handoff de design "LP de lista de espera — Estratégia
+Internacional". Rota própria, CSS próprio (`app/lista-de-espera/estilo.css`) e componente de
+globo próprio (`GloboEspera.tsx`, parado e em dois canvas). **Não encosta na LP de vendas:**
+do que já existe ela só lê os dados do globo (`app/_lp/globo-dados.ts`) e os `@font-face` de
+`app/_lp/styles.css`, e não passa pelo `port-lp.mjs`. Estática no build, junto com
+`/lista-de-espera/obrigado`.
+
+### Como o lead chega no RD (decidido em 02/set, testado com a conta real)
+
+Pela **captura automática de Leads**, não pela API de conversões e não pelo formulário
+embedado. O código de monitoramento do RD está no `<body>` das duas rotas (`Tela.tsx`), com
+`defer` e não `async`, pelas duas exigências deles: o script vai no corpo e o `<form>` precisa
+existir quando ele roda. A página é estática, então o formulário vem pronto na primeira
+resposta e o aviso do RD sobre SPA não se aplica.
+
+Três coisas que o formulário carrega por causa disso, e que somem se alguém mexer sem saber:
+o `id="form-lista-de-espera"`, que é como o RD batiza o formulário no painel; o
+`<input type="hidden" name="investe_fora">`, porque os chips são `<button>` e a captura só
+enxerga campo de formulário; e o `<input type="hidden" name="lgpd" value="aceito-no-envio">`,
+que registra a base legal depois que a caixa de aceite saiu.
+
+**Não precisa de token, nem de `RD_STATION_API_KEY`.** O `POST /api/lista-de-espera` continua
+existindo como rede de proteção e valida o lead, mas hoje não persiste em lugar nenhum: quem
+grava é o RD. Ver a decisão em aberto abaixo.
+
+### Trava para publicar (uma)
+
+- [ ] 🔒 **URL da política de privacidade** (`NEXT_PUBLIC_POLITICA_PRIVACIDADE_URL`). É o
+      mesmo item 23 do `PLANO-CORRECOES.md`, aqui com consequência maior: a tela coleta dado
+      pessoal, e desde 02/set o consentimento é o próprio envio, não uma caixa marcada. Sem a
+      variável o trecho "Política de Privacidade · LGPD" sai **sem link**, que é melhor que um
+      link morto, mas não é publicável.
+
+### Decisões em aberto, nenhuma bloqueante
+
+- [ ] **O que fazer com o `/api/lista-de-espera`.** Hoje ele valida e registra no log, e o
+      lead só existe de verdade no RD. Ou ele passa a gravar numa tabela do Supabase antes
+      (uma migration, ~30 linhas, e nenhuma inscrição some se o RD falhar), ou sai. O
+      meio-termo atual é o pior dos dois.
+- [ ] **Redirect ou card no lugar** (`NEXT_PUBLIC_LISTA_ESPERA_OBRIGADO_URL`). Vazia, o card
+      de confirmação assume onde estava o formulário, sem redirect, que é o fallback do
+      design. A `/lista-de-espera/obrigado` existe e serve o mesmo card, mas hoje ninguém
+      chega nela.
+- [ ] **SPF, DKIM e DMARC do domínio do BlockTrends**, que é de onde o e-mail do RD vai sair.
+      Com o WhatsApp fora da promessa, o e-mail virou canal único, e o card já orienta a
+      procurar no spam. Configuração de DNS e RD, não código.
+- [ ] **"live de lançamento" aparece quatro vezes** na tela (lide, primeiro bullet, rótulo da
+      rota, microcopy do botão). O corte limpo é encurtar o bullet para "Convite para a live.".
+
+### Decisões de design tomadas aqui, para não se perderem
+
+- **Onde o handoff escrito e o protótipo divergem, vale o protótipo**, que é o artefato que o
+  cliente viu. São quatro valores: chip selecionado (`#F0E9D8` / `#7E6836` / peso 700, contra
+  `rgba(169,142,78,.16)` / `#0B2D20` / 600), placeholder (`#8F887E` contra `#A8A49B`),
+  transição do chip (`.2s` contra `.15s`) e as paradas do `vsGlow`.
+- **A copy da tela não é mais a do handoff.** Headline, lide, bullets, teaser, aceite e card de
+  confirmação foram reescritos com o Pedro em 02/set. O que sobreviveu do handoff é a estrutura
+  e os limites do "o que não prometer": nada de vaga garantida, número de professores ou data
+  de abertura.
+- **Os 01..04 do teaser viraram uma rota**, com praça, trilho e uma corcova de luz percorrendo,
+  nas mesmas cores e no mesmo período (5200ms) das rotas do globo. A ordem virou `<ol>`, para
+  não se perder com os números fora da tela.
+- **Três pontos de quebra, todos por container query e não por media query**, porque o que
+  importa é a largura da coluna, que muda sem a janela mudar de faixa: a rota vira fileira de
+  quatro em 540px de coluna (medido: o rótulo mais largo dá 119px), a assinatura empilha
+  abaixo de 420px, e o globo repete o corte de 990px do `auto-fit` em JS (`CORTE` em
+  `GloboEspera.tsx`) — esse último anda junto com a grade externa, mexer num sem o outro
+  descola os dois.
+- **Empilhadas, VEJA e BlockTrends casam por largura (200px), não por altura.** Deitadas valem
+  os 30px e 19px do design. Numa pilha o olho compara a extensão da linha, e 122px contra
+  207px fazia a VEJA parecer metade.
+- **O globo compacto cruza a headline entre ~600px e o corte de 990px, e fica assim.**
+  Verificado a 960px: o que passa por trás é stipple a 9–16% e linha de rota a 12%, e o texto
+  continua legível. Abaixo de 400px fica limpo.
+
+### Medido, não olhado
+
+Varredura em 390, 768, 1024, 1280, 1440 e 1920px, com a viewport fixada por CDP (a
+`--window-size` do Chrome inclui a moldura e não serve como viewport — dois prints meus
+mentiram por isso): **estouro horizontal zero em todas**, e de 1024px para cima a tela cabe
+inteira sem rolagem. Abaixo disso rola, e é inerente ao empilhamento.
+
+**O que não foi verificado no navegador:** `prefers-reduced-motion`. O código está nos dois
+lados (o globo pinta um quadro só, a luz da rota e o glow do card saem), mas nunca foi
+exercido de fato.
+
 ## 🔒 Bloqueado por insumo
 
 - [x] ~~**Template de e-mail do convite (primeiro acesso)**~~ **DEIXOU DE SER PENDÊNCIA em
