@@ -4,9 +4,9 @@ import { NextResponse, type NextRequest } from "next/server";
  * ATENÇÃO: esta versão do proxy só existe na branch `pre-lista-isolada`.
  *
  * Ela é a vitrine da pré-lista: uma URL própria, para mandar a tela de captura
- * a quem precisa ver **sem** dar acesso ao resto do projeto. Só
- * `/lista-de-espera` responde; qualquer outro caminho devolve 404 vazio, LP de
- * vendas e área do aluno inclusive.
+ * a quem precisa ver **sem** dar acesso ao resto do projeto. A raiz serve a
+ * pré-lista e `/lista-de-espera` também responde; qualquer outro caminho devolve
+ * 404 vazio, LP de vendas e área do aluno inclusive.
  *
  * **Esta branch nunca volta para `homolog` nem para `main`.** Ela sai delas, não
  * entra: para atualizar a vitrine, refaça a branch a partir da `homolog` e
@@ -24,7 +24,17 @@ import { NextResponse, type NextRequest } from "next/server";
 const PERMITIDO = /^\/lista-de-espera\/?$/;
 
 export function proxy(request: NextRequest) {
-  if (PERMITIDO.test(request.nextUrl.pathname)) return NextResponse.next();
+  const { pathname } = request.nextUrl;
+
+  // A raiz serve a pré-lista. É rewrite, não redirect: o link que se manda é a
+  // URL nua do site, e ela precisa continuar nua na barra de endereço em vez de
+  // saltar para /lista-de-espera assim que abre.
+  if (pathname === "/") {
+    return NextResponse.rewrite(new URL("/lista-de-espera", request.url));
+  }
+
+  if (PERMITIDO.test(pathname)) return NextResponse.next();
+
   // 404 vazio, não redirect: redirect anuncia que existe outra coisa em algum
   // lugar, e a graça da vitrine é não anunciar.
   return new NextResponse(null, { status: 404 });
