@@ -1,0 +1,5 @@
+# Vitrine da pré-lista (branch pre-lista-isolada). Nada aqui deve ser indexado:
+# a página de verdade vai para produção por outro caminho, e um link de vitrine
+# ranqueando no lugar dela é o pior resultado possível.
+User-agent: *
+Disallow: /
