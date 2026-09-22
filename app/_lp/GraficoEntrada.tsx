@@ -10,20 +10,24 @@ import { useEffect } from "react";
  * direita: o sentido da animacao repete o sentido do eixo. Um fade perderia
  * isso.
  *
- * TRES GARANTIAS, todas nascidas de um bug real (22/set/2026), em que a
- * secao carregava com dois buracos no lugar dos graficos:
+ * POR QUE ISTO NAO CONFIA NO IntersectionObserver SOZINHO
+ * O observer so entrega callback quando a aba tem ciclo de renderizacao. Em
+ * aba de segundo plano, em janela minimizada, ou sob economia de energia,
+ * ele simplesmente nao dispara, e o grafico ficava fechado para sempre. Foi
+ * bug real, relatado duas vezes ("o grafico do dolar sumiu"). Entao:
  *
- * 1. O estado fechado so existe sob `.tem-js`, marcado por um script inline
- *    antes da primeira pintura. Sem JS o grafico aparece; a animacao e
- *    opt-in, nunca requisito para o conteudo existir.
+ *   1. O estado fechado so existe sob `.tem-js`, marcado por script inline
+ *      antes da primeira pintura. Sem JS, o grafico aparece.
+ *   2. Um listener de `scroll` passivo confere na mao. Rolagem e exatamente
+ *      o momento em que o usuario chega no grafico, e o evento chega mesmo
+ *      quando o observer nao entrega nada.
+ *   3. `visibilitychange`, para quando a aba volta do segundo plano.
+ *   4. Um timeout de 2s, para o caso de a pagina abrir ja com o grafico
+ *      enquadrado e ninguem rolar.
  *
- * 2. Aba em segundo plano nao tem ciclo de renderizacao, entao o
- *    IntersectionObserver nao entrega callback e o grafico ficaria fechado
- *    ate alguem rolar. Por isso tambem ouvimos `visibilitychange` e
- *    conferimos na mao ao voltar.
- *
- * 3. Rede de seguranca de 2s: o que estiver enquadrado e ainda fechado
- *    abre, aconteca o que acontecer com o observer.
+ * Os quatro caminhos chamam a mesma funcao idempotente. O observer virou o
+ * caminho bonito, nao o caminho critico. E ele e criado POR ULTIMO, dentro
+ * de try/catch, para que uma falha dele nao derrube os outros tres.
  */
 export default function GraficoEntrada() {
   useEffect(() => {
@@ -34,42 +38,56 @@ export default function GraficoEntrada() {
     const pendentes = () => alvos.filter((el) => !el.classList.contains("dentro"));
 
     const semMovimento = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    if (semMovimento || typeof IntersectionObserver === "undefined") {
+    if (semMovimento) {
       alvos.forEach(abrir);
       return;
     }
 
-    // Medicao na mao, para os casos em que o observer nao roda.
+    let agendado = false;
     const conferir = () => {
-      pendentes().forEach((el) => {
+      agendado = false;
+      const restantes = pendentes();
+      if (!restantes.length) return desligar();
+      restantes.forEach((el) => {
         const r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight * 0.92 && r.bottom > 0) abrir(el);
+        // 12% da altura ja dentro da tela: comeca a correr um pouco antes de
+        // estar toda enquadrada, senao parece atrasada em relacao a rolagem.
+        if (r.top < window.innerHeight - r.height * 0.12 && r.bottom > 0) abrir(el);
       });
+      if (!pendentes().length) desligar();
+    };
+    const aoRolar = () => {
+      if (agendado) return;
+      agendado = true;
+      setTimeout(conferir, 80); // setTimeout, nao rAF: rAF nao roda em aba oculta
+    };
+    const aoVoltar = () => { if (document.visibilityState === "visible") conferir(); };
+
+    let obs: IntersectionObserver | null = null;
+    const desligar = () => {
+      window.removeEventListener("scroll", aoRolar);
+      window.removeEventListener("resize", aoRolar);
+      document.removeEventListener("visibilitychange", aoVoltar);
+      obs?.disconnect();
     };
 
-    const obs = new IntersectionObserver(
-      (entradas) => {
-        entradas.forEach((e) => {
-          if (!e.isIntersecting) return;
-          abrir(e.target);
-          obs.unobserve(e.target);
-        });
-      },
-      // 12% e 4% de folga: comeca a correr um pouco ANTES de estar toda na
-      // tela, senao a animacao parece atrasada em relacao a rolagem.
-      { threshold: 0.12, rootMargin: "0px 0px 4% 0px" }
-    );
-    alvos.forEach((el) => obs.observe(el));
-
-    const aoVoltar = () => { if (document.visibilityState === "visible") conferir(); };
+    window.addEventListener("scroll", aoRolar, { passive: true });
+    window.addEventListener("resize", aoRolar, { passive: true });
     document.addEventListener("visibilitychange", aoVoltar);
     const rede = window.setTimeout(conferir, 2000);
 
-    return () => {
-      obs.disconnect();
-      document.removeEventListener("visibilitychange", aoVoltar);
-      window.clearTimeout(rede);
-    };
+    try {
+      obs = new IntersectionObserver((entradas) => {
+        entradas.forEach((e) => { if (e.isIntersecting) abrir(e.target); });
+        if (!pendentes().length) desligar();
+      }, { threshold: 0.12 });
+      alvos.forEach((el) => obs!.observe(el));
+    } catch {
+      /* sem observer os outros tres caminhos dao conta */
+    }
+
+    conferir();
+    return () => { window.clearTimeout(rede); desligar(); };
   }, []);
 
   return null;

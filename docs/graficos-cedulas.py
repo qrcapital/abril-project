@@ -25,9 +25,9 @@ serieD = [(x/1000.0, valD(y)) for x, y in pt('linhaD')]
 SANS  = ("-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',"
          "'Inter','Helvetica Neue',system-ui,sans-serif")
 SERIF = "'Playfair Display',Georgia,serif"
-VW, VH = 1000, 522
-NX, NY, NW, NH = 0, 96, 1000, 330
-Y_DATAS, Y_FONTE = NY+NH+30, 500
+VW, VH = 1000, 572
+NX, NY, NW, NH = 0, 96, 1000, 380   # 2,63:1, perto da proporcao de uma cedula real
+Y_DATAS, Y_FONTE = NY+NH+32, 552
 TINTA, VERM = "#1a1815", "#C1121F"
 
 px = lambda t: NX + t*NW
@@ -52,43 +52,81 @@ def guilhoche(op):
     tinha 22 x 48 em decimal e pesava ~25KB por grafico, rerasterizados a
     cada quadro do clip."""
     g = ['<g stroke="%s" fill="none" stroke-width=".75" opacity="%s">' % (VERM, op)]
-    for i in range(14):
-        y = NY + 18 + i*(NH-36)/13
+    for i in range(17):
+        y = NY + 20 + i*(NH-40)/16
         amp = 5 + 3*math.sin(i*0.8)
-        p = f'M {NX+16} {round(y)}'
-        for k in range(1, 25):
-            p += f' L {round(NX+16 + k*(NW-32)/24)} {round(y + amp*math.sin(k*0.95 + i*0.95))}'
+        p = f'M {NX+18} {round(y)}'
+        for k in range(1, 27):
+            p += f' L {round(NX+18 + k*(NW-36)/26)} {round(y + amp*math.sin(k*0.9 + i*0.95))}'
         g.append(f'<path d="{p}"/>')
     return "".join(g) + '</g>'
 
-def roseta(cx, cy, op):
+def medalhao(cx, cy, op):
+    """Medalhao oval de guilhoche, no lugar onde uma cedula poe o retrato.
+
+    Tentei desenhar um perfil gravado ali e ficou desenho animado: rosto a
+    mao em bezier, sem referencia, nao chega a lugar nenhum. Medalhao de
+    guilhoche puro e vocabulario legitimo de cedula, e e geometria, entao
+    sai preciso em vez de amador. (E evita chegar perto de reproduzir o
+    retrato de uma nota que existe.)"""
+    RX, RY = 112, 146
     g = [f'<g stroke="{VERM}" fill="none" opacity="{op}">']
-    for r in (18, 28, 40, 50): g.append(f'<circle cx="{cx}" cy="{cy}" r="{r}" stroke-width=".8"/>')
-    for k in range(32):
-        a = k*math.tau/32
+    for k in (1.0, .93, .74, .68):
+        g.append(f'<ellipse cx="{cx}" cy="{cy}" rx="{round(RX*k)}" ry="{round(RY*k)}" stroke-width="{1.4 if k==1 else .8}"/>')
+    for k in range(44):                      # denteado entre os dois aneis externos
+        a = k*math.tau/44
         g.append('<line x1="%d" y1="%d" x2="%d" y2="%d" stroke-width=".7"/>' % (
-            cx+40*math.cos(a), cy+40*math.sin(a), cx+50*math.cos(a), cy+50*math.sin(a)))
+            cx+RX*.93*math.cos(a), cy+RY*.93*math.sin(a), cx+RX*math.cos(a), cy+RY*math.sin(a)))
+    for j in range(9):                       # trama interna: elipses giradas
+        ang = j*180/9
+        g.append(f'<ellipse cx="{cx}" cy="{cy}" rx="{round(RX*.66)}" ry="{round(RY*.30)}" '
+                 f'transform="rotate({round(ang)} {cx} {cy})" stroke-width=".55" opacity=".8"/>')
     return "".join(g) + '</g>'
 
+def banda(x, op):
+    """Fio de seguranca: faixa vertical de hachura fina, como o das cedulas."""
+    g = [f'<g stroke="{VERM}" fill="none" opacity="{op}">',
+         f'<rect x="{x}" y="{NY+18}" width="26" height="{NH-36}" stroke-width=".9"/>']
+    for k in range(int((NH-36)/9)):
+        y = NY+18 + k*9
+        g.append(f'<line x1="{x+2}" y1="{y}" x2="{x+24}" y2="{y+5}" stroke-width=".6"/>')
+    return "".join(g) + '</g>'
+
+
+def filigrana(op):
+    """Arco duplo nos quatro cantos, a moldura ornamental das cedulas."""
+    g = [f'<g stroke="{VERM}" fill="none" opacity="{op}" stroke-width=".9">']
+    for sx, sy, ox, oy in ((1,1,NX+22,NY+22), (-1,1,NX+NW-22,NY+22),
+                           (1,-1,NX+22,NY+NH-22), (-1,-1,NX+NW-22,NY+NH-22)):
+        for r in (34, 26):
+            g.append(f'<path d="M {ox+sx*r} {oy} A {r} {r} 0 0 {1 if sx*sy>0 else 0} {ox} {oy+sy*r}"/>')
+    return "".join(g) + '</g>'
+
+
 def cedula(rotulo, valor, data, lado, cheia, idp):
-    tx  = NX+58 if lado == "esq" else NX+NW-58
+    tx  = NX+62 if lado == "esq" else NX+NW-62
     anc = "start" if lado == "esq" else "end"
-    rx  = NX+NW-140 if lado == "esq" else NX+140
+    mx  = NX+NW-300 if lado == "esq" else NX+300
+    bx  = NX+330 if lado == "esq" else NX+NW-356
     o_g, o_r, o_t = (".34", ".46", "1") if cheia else (".5", ".6", ".42")
     g = []
     if cheia:
-        g.append(f'<rect x="{NX}" y="{NY}" width="{NW}" height="{NH}" rx="10" fill="url(#{idp})"/>')
+        g.append(f'<rect x="{NX}" y="{NY}" width="{NW}" height="{NH}" rx="12" fill="url(#{idp})"/>')
         g.append(guilhoche(o_g))
-    g.append(f'<rect x="{NX}" y="{NY}" width="{NW}" height="{NH}" rx="10" fill="none" stroke="{VERM}" stroke-width="{2 if cheia else 1.2}" opacity="{1 if cheia else .8}"/>')
-    g.append(f'<rect x="{NX+14}" y="{NY+14}" width="{NW-28}" height="{NH-28}" rx="5" fill="none" stroke="{VERM}" stroke-width="1" opacity="{o_r}"/>')
-    g.append(roseta(rx, NY+NH/2, o_r))
+    g.append(medalhao(mx, NY+NH//2, o_r))
+    g.append(banda(bx, o_r))
+    g.append(f'<rect x="{NX}" y="{NY}" width="{NW}" height="{NH}" rx="12" fill="none" stroke="{VERM}" stroke-width="{2 if cheia else 1.2}" opacity="{1 if cheia else .8}"/>')
+    g.append(f'<rect x="{NX+14}" y="{NY+14}" width="{NW-28}" height="{NH-28}" rx="6" fill="none" stroke="{VERM}" stroke-width="1" opacity="{o_r}"/>')
+    g.append(filigrana(o_r))
     g.append(f'<g opacity="{o_t}">')
-    g.append(f'<text x="{tx}" y="{NY+NH-82}" text-anchor="{anc}" font-family="{SERIF}" font-size="98" font-weight="600" fill="{TINTA}">{valor}</text>')
+    g.append(f'<text x="{tx}" y="{NY+NH-118}" text-anchor="{anc}" font-family="{SERIF}" font-size="104" font-weight="600" fill="{TINTA}">{valor}</text>')
+    g.append(f'<text x="{tx}" y="{NY+NH-82}" text-anchor="{anc}" font-family="{SERIF}" font-size="25" font-weight="600" letter-spacing="7" fill="{VERM}" opacity=".85">{EXTENSO}</text>')
     g.append(f'<text x="{tx}" y="{NY+NH-54}" text-anchor="{anc}" font-family="{SANS}" font-size="12" letter-spacing="3.2" fill="{TINTA}" opacity=".5">{rotulo} · {data}</text>')
     g.append('</g>')
     n = valor.split()[-1]
-    g.append(f'<text x="{NX+30}" y="{NY+40}" font-family="{SERIF}" font-size="26" font-weight="600" fill="{VERM}" opacity="{o_r}">{n}</text>')
-    g.append(f'<text x="{NX+NW-30}" y="{NY+NH-22}" text-anchor="end" font-family="{SERIF}" font-size="26" font-weight="600" fill="{VERM}" opacity="{o_r}">{n}</text>')
+    for ax, ay, a2 in ((NX+34, NY+46, "start"), (NX+NW-34, NY+46, "end"),
+                       (NX+34, NY+NH-26, "start"), (NX+NW-34, NY+NH-26, "end")):
+        g.append(f'<text x="{ax}" y="{ay}" text-anchor="{a2}" font-family="{SERIF}" font-size="27" font-weight="600" fill="{VERM}" opacity="{o_r}">{n}</text>')
     return "".join(g)
 
 def papel(idp):
@@ -146,6 +184,7 @@ def moldura(corpo, alt):
             f'role="img" aria-label="{alt}">{corpo}</svg>')
 
 # ==================================================================== REAL
+EXTENSO = "CEM REAIS"
 ptsP  = reamostra(serieP, 100.0)
 borda = rasgo(ptsP, 7)
 dP = "M %d %d " % (NX, NY+NH) + " ".join("L %d %d" % p for p in borda) + " L %d %d Z" % (NX+NW, NY+NH)
@@ -162,13 +201,13 @@ setaP = seta(origemP, (556, 74), 0.20)
 corpoP = f'''<defs><path id="serieP" d="{dP}"/><clipPath id="clipReal"><use href="#serieP"/></clipPath>{papel("papelP")}</defs>
 {anotacao(["O rasgo segue o IPCA acumulado desde jul/1994.",
            "O papel inteiro é o poder de compra que sobrou."], NX+NW, 34)}
-<g opacity=".14">{cedula("PODER DE COMPRA","R$ 100","JULHO DE 1994","esq",False,"papelP")}</g>
+<g opacity=".2">{cedula("PODER DE COMPRA","R$ 100","JULHO DE 1994","esq",False,"papelP")}</g>
 {"".join(cacos)}
 <g clip-path="url(#clipReal)">{cedula("PODER DE COMPRA","R$ 100","JULHO DE 1994","esq",True,"papelP")}</g>
 <use href="#serieP" fill="none" stroke="{VERM}" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
 <g text-anchor="end">
-<text x="{NX+NW-30}" y="{NY+150}" font-family="{SERIF}" font-size="58" font-weight="600" fill="{VERM}">R$ 11,23</text>
-<text x="{NX+NW-30}" y="{NY+178}" font-family="{SANS}" font-size="13.5" fill="#6b655c">é o que sobrou dos R$ 100</text>
+<text x="{NX+NW-30}" y="{NY+130}" font-family="{SERIF}" font-size="58" font-weight="600" fill="{VERM}">R$ 11,23</text>
+<text x="{NX+NW-30}" y="{NY+158}" font-family="{SANS}" font-size="13.5" fill="#6b655c">é o que sobrou dos R$ 100</text>
 </g>
 <path class="graf-seta" pathLength="1" d="{setaP}" fill="none" stroke="{TINTA}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>
 {rodape("Fonte: Banco Central do Brasil · série 433 (IPCA), jul/1994 a set/2026")}'''
@@ -176,6 +215,7 @@ corpoP = f'''<defs><path id="serieP" d="{dP}"/><clipPath id="clipReal"><use href
 svgP = moldura(corpoP, "Uma nota de cem reais de julho de 1994 desenhada como grafico. A parte inteira e o poder de compra que restou; o rasgo segue a serie do IPCA e chega a onze reais e vinte e tres centavos em setembro de 2026.")
 
 # =================================================================== DOLAR
+EXTENSO = "ONE DOLLAR"
 VMAXD = 6.6
 ptsD = [(round(x), round(y)) for x, y in reamostra(serieD, VMAXD)]
 dD = "M %d %d " % (NX, NY+NH) + " ".join("L %d %d" % p for p in ptsD) + " L %d %d Z" % (NX+NW, NY+NH)
@@ -186,14 +226,14 @@ setaD = seta(origemD, (556, 74), 0.20)
 corpoD = f'''<defs><path id="serieD" d="{dD}"/><clipPath id="clipDolar"><use href="#serieD"/></clipPath>{papel("papelD")}</defs>
 {anotacao(["A borda segue a PTAX de venda, média mensal.",
            "O papel cheio é quanto um dólar custa em reais."], NX+NW, 34)}
-<g opacity=".14">{cedula("CÂMBIO","US$ 1","JULHO DE 1994","dir",False,"papelD")}</g>
+<g opacity=".2">{cedula("CÂMBIO","US$ 1","JULHO DE 1994","dir",False,"papelD")}</g>
 <g clip-path="url(#clipDolar)">{cedula("CÂMBIO","US$ 1","JULHO DE 1994","dir",True,"papelD")}</g>
 <use href="#serieD" fill="none" stroke="{VERM}" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
 <g><circle cx="{pxp}" cy="{pyp}" r="4" fill="{TINTA}"/>
-<text x="{pxp-12}" y="{pyp+26}" font-family="{SANS}" font-size="12.5" fill="{TINTA}" text-anchor="end" font-weight="600">R$ 6,10 <tspan opacity=".55" font-weight="400">dez/2024</tspan></text></g>
+<text x="{pxp-16}" y="{pyp+34}" font-family="{SANS}" font-size="12.5" fill="{TINTA}" text-anchor="end" font-weight="600">R$ 6,10&#160;&#160;<tspan opacity=".55" font-weight="400">dez/2024</tspan></text></g>
 <g>
-<text x="{NX+30}" y="{NY+150}" font-family="{SERIF}" font-size="58" font-weight="600" fill="{VERM}">R$ 5,15</text>
-<text x="{NX+30}" y="{NY+178}" font-family="{SANS}" font-size="13.5" fill="#6b655c">é o que ele custa hoje. Em 1994 custava R$ 0,93</text>
+<text x="{NX+30}" y="{NY+130}" font-family="{SERIF}" font-size="58" font-weight="600" fill="{VERM}">R$ 5,15</text>
+<text x="{NX+30}" y="{NY+158}" font-family="{SANS}" font-size="13.5" fill="#6b655c">é o que ele custa hoje. Em 1994 custava R$ 0,93</text>
 </g>
 <path class="graf-seta" pathLength="1" d="{setaD}" fill="none" stroke="{TINTA}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>
 {rodape("Fonte: Banco Central do Brasil · série 3698 (PTAX venda), jul/1994 a set/2026")}'''
