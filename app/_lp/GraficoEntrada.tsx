@@ -22,7 +22,7 @@ import { useEffect } from "react";
  *    ate alguem rolar. Por isso tambem ouvimos `visibilitychange` e
  *    conferimos na mao ao voltar.
  *
- * 3. Rede de seguranca de 3,5s: o que estiver enquadrado e ainda fechado
+ * 3. Rede de seguranca de 2s: o que estiver enquadrado e ainda fechado
  *    abre, aconteca o que acontecer com o observer.
  */
 export default function GraficoEntrada() {
@@ -55,14 +55,15 @@ export default function GraficoEntrada() {
           obs.unobserve(e.target);
         });
       },
-      // 22% ja garante que a cedula esta enquadrada antes de comecar a correr.
-      { threshold: 0.22, rootMargin: "0px 0px -8% 0px" }
+      // 12% e 4% de folga: comeca a correr um pouco ANTES de estar toda na
+      // tela, senao a animacao parece atrasada em relacao a rolagem.
+      { threshold: 0.12, rootMargin: "0px 0px 4% 0px" }
     );
     alvos.forEach((el) => obs.observe(el));
 
     const aoVoltar = () => { if (document.visibilityState === "visible") conferir(); };
     document.addEventListener("visibilitychange", aoVoltar);
-    const rede = window.setTimeout(conferir, 3500);
+    const rede = window.setTimeout(conferir, 2000);
 
     return () => {
       obs.disconnect();
