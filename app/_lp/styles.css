@@ -697,3 +697,22 @@ html,body{overflow-x:hidden}
   .tb-lock{gap:10px}
   .tb-tr{height:23px}
 }
+
+/* ===========================================================================
+   Entrada dos graficos do diagnostico (22/set/2026)
+   O grafico e uma serie temporal: ele deve nascer em 1994, na esquerda, e
+   correr ate hoje, na direita. Por isso a revelacao e um clip horizontal e
+   nao um fade: o sentido da animacao CARREGA a informacao.
+   A seta e a anotacao entram depois, quando ja existe o que anotar. O
+   pathLength=1 deixa o traco da seta independente do comprimento real.   */
+.graf{clip-path:inset(0 100% 0 0);transition:clip-path 1.5s cubic-bezier(.16,1,.3,1)}
+.graf.dentro{clip-path:inset(0 0 0 0)}
+.graf .graf-seta{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .85s ease-out 1s}
+.graf.dentro .graf-seta{stroke-dashoffset:0}
+.graf .graf-nota{opacity:0;transition:opacity .6s ease 1.42s}
+.graf.dentro .graf-nota{opacity:1}
+@media (prefers-reduced-motion:reduce){
+  .graf,.graf.dentro{clip-path:none;transition:none}
+  .graf .graf-seta,.graf.dentro .graf-seta{stroke-dashoffset:0;transition:none}
+  .graf .graf-nota,.graf.dentro .graf-nota{opacity:1;transition:none}
+}
