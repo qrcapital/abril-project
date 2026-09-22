@@ -27,6 +27,8 @@ const MESES = ["JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO",
 const MES3 = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
 const DOLAR_1994 = 0.93;
 
+type Cotacao = { valor: number; dia: number; mes: number; ano: number };
+
 const real = (v: number) => "R$ " + v.toFixed(2).replace(".", ",");
 const q = (nome: string) => document.querySelector<SVGElement>(`[data-dolar="${nome}"]`);
 
@@ -35,23 +37,30 @@ export default function DolarVivo() {
     let vivo = true;
 
     (async () => {
-      let d: { valor: number; dia: number; mes: number; ano: number };
+      let d: Partial<Cotacao> = {};
       try {
         const r = await fetch("/api/dolar");
         if (!r.ok) return;                     // 502: fica o número assado
-        d = await r.json();
-        if (!vivo || !(d?.valor > 0)) return;
+        d = (await r.json()) as Partial<Cotacao>;
       } catch {
         return;
       }
+      if (!vivo) return;
 
       const { valor, dia, mes, ano } = d;
+      if (typeof valor !== "number" || !(valor > 0)) return;
+      if (!dia || !mes || !ano) return;
 
       const vlr = q("valor");
       if (vlr) vlr.textContent = real(valor);
 
+      // O cartão do multiplicador tem o número como primeiro nó de texto e a
+      // legenda num <span> irmão; trocar só o nó preserva a legenda.
       const mult = document.querySelector<HTMLElement>('[data-dolar="mult"]');
-      if (mult) mult.firstChild!.textContent = (valor / DOLAR_1994).toFixed(1).replace(".", ",") + "×";
+      const noDoNumero = mult?.firstChild;
+      if (noDoNumero && noDoNumero.nodeType === Node.TEXT_NODE) {
+        noDoNumero.textContent = (valor / DOLAR_1994).toFixed(1).replace(".", ",") + "×";
+      }
 
       const fim = q("fim");
       if (fim) fim.textContent = `${dia} DE ${MESES[mes - 1]} DE ${ano}`;

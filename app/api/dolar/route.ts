@@ -29,7 +29,9 @@ const MEIA_HORA = 1800;
 
 type Ponto = { data: string; valor: string };
 
-export const revalidate = MEIA_HORA;
+// Literal, e nao a constante: o Next exige valor estaticamente analisavel
+// aqui, e uma referencia a variavel quebra o build.
+export const revalidate = 1800;
 
 export async function GET() {
   try {
