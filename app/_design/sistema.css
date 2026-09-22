@@ -11,7 +11,7 @@
    lá mora a tinta:
 
      goodhal                          aqui
-     --accent: #1a1815 (a tinta)  ->  --ei-acento: #8e1522 (o vermelho)
+     --accent: #1a1815 (a tinta)  ->  --ei-acento: #C1121F (o vermelho)
      negativo = tinta invertida   ->  primário = vermelho sólido, papel por cima
 
    Tudo o mais atravessa inteiro: papel em vez de tela, neutro saindo de uma
@@ -19,8 +19,11 @@
    a cor é o dado, cor morando no hover, contorno que endurece sem pintar fundo.
 
    CONTRASTE, MEDIDO E NÃO ESTIMADO
-     #8e1522 sobre #f7f4ee ............ 8,45:1   (AAA, serve como texto)
-     #fdfbf6 sobre #8e1522 ............ 9,28:1   (AAA, serve como botão)
+     #C1121F sobre #f7f4ee ............ 5.67:1   (AA, serve como texto)
+     #fdfbf6 sobre #C1121F ............ 6.02:1   (AA, serve como botão)
+     #E4002B sobre #f7f4ee ............ 4.41:1   (REPROVA como texto)
+     #fdfbf6 sobre #E4002B ............ 4.69:1   (AA, serve como preenchimento)
+     #fdfbf6 sobre #8E1522 ............ 8.90:1   (AAA, painel vinho)
      #1a1815 sobre #f7f4ee ............ 15,9:1
      #6b655c sobre #f7f4ee ............ 5,25:1   (AA)
      #6f6860 sobre #f7f4ee ............ 4,73:1   (AA, ver dívida 2 abaixo)
@@ -69,16 +72,22 @@
   --ei-trama-2: rgba(26, 24, 21, .075);
 
   /* ---- acento -----------------------------------------------------------
-     O vermelho da campanha na casa onde o goodhal põe a tinta. O `-cheio` é
-     mais claro e saturado e serve só para preenchimento, ponto e barra, onde
-     ninguém lê nada por cima. O `-tinta` é o papel, para texto sobre o acento. */
-  --ei-acento: #8e1522;
-  --ei-acento-cheio: #a81b2a;
+     O vermelho da campanha na casa onde o goodhal põe a tinta.
+
+     DOIS VERMELHOS, E A DIVISÃO É DE CONTRASTE, NÃO DE GOSTO (22/set/2026).
+     O `--ei-acento` #C1121F é o vermelho de trabalho: texto, link, ênfase,
+     borda, globo. Ele dá 5,67:1 sobre o papel e passa AA como texto.
+     O `--ei-acento-cheio` #E4002B é o vermelho da própria VEJA, e ele NÃO pode
+     ser texto: sobre o papel dá 4,41:1 e reprova AA. Ele existe para
+     preenchimento, ponto, barra e área chapada, onde papel por cima dá 4,69:1.
+     Usar o #E4002B como cor de texto é o erro fácil deste arquivo. */
+  --ei-acento: #C1121F;
+  --ei-acento-cheio: #E4002B;
   --ei-acento-tinta: #fdfbf6;
-  --ei-acento-halo: rgba(142, 21, 34, .14);
-  --ei-acento-toque: rgba(142, 21, 34, .08);
-  --ei-acento-fundo: #6b111c;      /* painel fechado da campanha */
-  --ei-acento-fundo-2: #4a0b13;
+  --ei-acento-halo: rgba(193,18,31, .14);
+  --ei-acento-toque: rgba(193,18,31, .08);
+  --ei-acento-fundo: #8E1522;      /* painel fechado da campanha */
+  --ei-acento-fundo-2: #6B111C;
 
   /* ---- dourado ----------------------------------------------------------
      Secundário de filete e régua, herdado do kit da campanha. Não é cor de

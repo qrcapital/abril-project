@@ -52,8 +52,8 @@
   --le-dourado-regua: var(--ei-ouro-regua);  /* filetes e réguas da marca */
   --le-vermelho: var(--ei-acento);       /* vermelho de trabalho da VEJA Negócios */
   /* O painel é mais fechado que o vermelho de trabalho: os dois valores saem da
-     própria biblioteca da campanha (o leia-me do globo), onde #6B111C é a linha
-     base do conjunto vermelho e #4A0B13 é o fundo da esfera. */
+     própria biblioteca da campanha (o leia-me do globo), onde #8E1522 é a linha
+     base do conjunto vermelho e #6B111C é o fundo da esfera. */
   --le-vermelho-fundo: var(--ei-acento-fundo);
   --le-vermelho-fundo-2: var(--ei-acento-fundo-2);
 
