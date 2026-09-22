@@ -35,7 +35,15 @@
    A interface saiu do Montserrat para a pilha nativa, declarada uma vez em
    `body` e herdada. Os @font-face do Montserrat continuam no arquivo de
    propósito: o Tela.tsx da pré-lista os extrai daqui, e família não usada não
-   baixa arquivo. O Playfair não foi tocado, é onde a identidade VEJA mora. */
+   baixa arquivo.
+
+   A SERIFA RECUOU EM 22/set/2026. Ela ficou restrita a h1 e h2, as oito
+   manchetes da pagina. Trinta e nove outros elementos saíram dela: a faixa de
+   estatisticas, os numerais dos modulos, os numeros das aulas, o preco, os
+   nomes dos professores e os subtitulos h3. Serifa de alto contraste em
+   numero, em rotulo e em caixa alta com tracking largo nao le como editorial,
+   le como brasao. Os @font-face do Playfair continuam porque as manchetes
+   ainda o usam. */
 
 /* cyrillic-ext */
 @font-face {
