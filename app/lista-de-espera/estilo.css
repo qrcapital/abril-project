@@ -592,6 +592,46 @@ body:has(.le-escuro) { background: #0a0a0a }
   left: min(0px, calc(461px - 25vw));
 }
 
+/* ---- tela muito grande: a composição inteira amplia --------------------------
+   Textos, card e globo têm medida máxima, então em monitor grande a tela ficava
+   pequena no meio de muito vazio. A partir de 2040px a composição inteira passa
+   a ser desenhada como numa janela de cerca de 1880px, que é onde ela fecha
+   melhor, e ampliada com zoom até a largura real. Fica igual, só que maior.
+
+   O zoom vem em degraus (zoom = largura do degrau / 1880), porque CSS não divide
+   largura por largura. Entre um degrau e outro a tela desenhada vai de 1880px a
+   pouco mais de 2000px, faixa em que a composição já é a de uma tela comum.
+
+   Dentro do zoom, vw e vh são ampliados junto (conferido no Chromium): 25vw vira
+   25vw vezes o zoom. Por isso aqui nada depende deles:
+   - a altura sai do body, que não tem zoom: ele vira flex em coluna com 100vh e
+     o .le-raiz e a .le-grade esticam para preencher, no lugar dos 100vh deles;
+   - as duas contas de posição (card no centro do painel, texto no centro da área
+     creme) usam cqw, com o .le-raiz como container, e cqw é medido na própria
+     escala do zoom. As fórmulas são as mesmas de cima, só trocando vw por cqw.
+   Os clamp() com vw já estão no teto nessa largura, com ou sem zoom.
+
+   Abaixo de 2040px nada disto vale e a tela fica exatamente como era. */
+@media (min-width: 2040px) {
+  body:has(.le-faixa) { display: flex; flex-direction: column; min-height: 100vh }
+  .le-faixa {
+    flex: 1 0 auto; min-height: 0;
+    display: flex; flex-direction: column;
+    container-type: inline-size;
+  }
+  .le-faixa .le-grade { flex: 1 0 auto; min-height: 0; width: 100% }
+  .le-faixa .le-dir { left: calc(25cqw - (min(750px, 50cqw) - clamp(20px, 4.4cqw, 60px)) / 2) }
+  .le-faixa .le-esq { left: min(0px, calc(461px - 25cqw)) }
+}
+@media (min-width: 2040px) { .le-faixa { zoom: 1.0851 } }
+@media (min-width: 2200px) { .le-faixa { zoom: 1.1702 } }
+@media (min-width: 2360px) { .le-faixa { zoom: 1.2553 } }
+@media (min-width: 2520px) { .le-faixa { zoom: 1.3404 } }
+@media (min-width: 2680px) { .le-faixa { zoom: 1.4255 } }
+@media (min-width: 2880px) { .le-faixa { zoom: 1.5319 } }
+@media (min-width: 3200px) { .le-faixa { zoom: 1.7021 } }
+@media (min-width: 3600px) { .le-faixa { zoom: 1.9149 } }
+
 /* Fora do card, sobre o vermelho, o crédito é sempre claro nas duas versões. A
    marca não precisa de regra aqui: o arquivo branco já é o que Tela.tsx serve
    nesta composição. */
