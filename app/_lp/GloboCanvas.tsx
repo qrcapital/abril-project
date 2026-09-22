@@ -150,7 +150,7 @@ export default function GloboCanvas() {
       // aro da silhueta
       ctx!.beginPath();
       ctx!.arc(0, 0, ARO, 0, Math.PI * 2);
-      ctx!.strokeStyle = "rgba(142,21,34,.26)";
+      ctx!.strokeStyle = "rgba(142,21,34,.36)";
       ctx!.lineWidth = 1;
       ctx!.stroke();
 
@@ -159,7 +159,7 @@ export default function GloboCanvas() {
       // dentro dela sobem um tico da superfície (raio > RG, um relevo sutil) e brilham,
       // com o pico no centro da janela caindo para zero nas bordas. Não é um ponto viajando
       // e sim um trecho da própria linha que se ergue e passa — "rebarba passeando".
-      ctx!.strokeStyle = "rgba(26,24,21,.13)";
+      ctx!.strokeStyle = "rgba(26,24,21,.18)";
       ctx!.lineWidth = 1;
       ctx!.beginPath();
       for (const rota of rotas) {
@@ -190,7 +190,7 @@ export default function GloboCanvas() {
           proj(rota[k][0], rota[k][1], fase, RG * (1 + ELEV * peso));
           if (pz <= LIMBO) { tem = false; continue; }
           if (tem) {
-            ctx!.strokeStyle = `rgba(142,21,34,${(peso * 0.55).toFixed(3)})`;
+            ctx!.strokeStyle = `rgba(142,21,34,${(peso * 0.77).toFixed(3)})`;
             ctx!.lineWidth = 0.8 + peso * 1.1;
             ctx!.beginPath();
             ctx!.moveTo(ppx, ppy);
@@ -217,7 +217,7 @@ export default function GloboCanvas() {
       }
       for (const [arr, a] of [[terraFundo, 0.09], [terraFrente, 0.16]] as const) {
         if (!arr.length) continue;
-        ctx!.fillStyle = `rgba(142,21,34,${a * 1.35})`;
+        ctx!.fillStyle = `rgba(142,21,34,${a * 1.9})`;
         ctx!.beginPath();
         for (let i = 0; i < arr.length; i += 3) {
           const r = 0.9 * arr[i + 2];
@@ -239,7 +239,7 @@ export default function GloboCanvas() {
       for (let f = 0; f < 4; f++) {
         const arr = faixas[f];
         if (!arr.length) continue;
-        ctx!.fillStyle = `rgba(142,21,34,${alfa[f] * 1.3})`;
+        ctx!.fillStyle = `rgba(142,21,34,${alfa[f] * 1.8})`;
         ctx!.beginPath();
         for (let i = 0; i < arr.length; i += 4) {
           // borda do horizonte: os pontos entram com raio crescente (0→cheio) na faixa
