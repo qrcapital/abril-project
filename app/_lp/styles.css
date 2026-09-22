@@ -1,3 +1,42 @@
+/* LP de vendas (rota /). Migrada para a identidade VEJA Negócios em 22/set/2026.
+   ATÉ AQUI ESTE ARQUIVO ERA GERADO pelo scripts/port-lp.mjs. O script foi
+   removido e este arquivo, junto com o body.html, passou a ser a FONTE.
+   Edite direto. Ver AGENTS.md e a entrada "Build" do CHANGELOG.
+
+   O que a migração trocou, e o que deliberadamente não trocou:
+
+   A composição ficou intacta. A página já era creme dominante, com três blocos
+   escuros (hero, docentes, oferta) e cinco claros. O ritmo é o mesmo; o que
+   mudou foi a cor dos três escuros, de verde Meridiano para o vinho da campanha:
+     #0B2D20 -> #6B111C   base
+     #0A2B1E -> #4A0B13   fechado
+     #0A3A28 -> #7C1420   claro
+   Os verde-acinzentados que viviam sobre esse fundo (#8FA398, #A9B8AE, #B9C4BC,
+   #B7C4BB) viraram equivalentes quentes de mesma luminosidade, senão ficariam
+   esverdeados boiando sobre vinho.
+
+   Os neutros saíram do cinza frio para a tinta quente do sistema, pela regra de
+   que nada cinza-azulado contamina o papel: #6D6D6D -> #6B655C, #333333 ->
+   #1A1815, #8F887E -> #6F6860, #F7F5F2 -> #F7F4EE.
+
+   O DOURADO FICOU. Ele é filete, régua e moldura da campanha, não cor de ação.
+   Quem virou cor de ação foi o vermelho.
+
+   Os CTAs perderam o degradê dourado e viraram creme chapado com texto vinho.
+   A razão é aritmética: todos os CTAs desta página estão sobre bloco escuro, e
+   vermelho sobre vinho não se distingue. Creme sobre vinho dá 11,8:1. É a mesma
+   regra do sistema (primário = inversão da própria superfície) aplicada ao
+   contrário do que acontece na pré-lista, onde a superfície é clara e por isso
+   lá o botão é vermelho.
+
+   O raio saiu de 4px fixo para a razão 0,26 da altura: 10, 11 e 13px conforme o
+   botão. 4px numa caixa de 51px dava razão 0,08 e destoava do resto.
+
+   A interface saiu do Montserrat para a pilha nativa, declarada uma vez em
+   `body` e herdada. Os @font-face do Montserrat continuam no arquivo de
+   propósito: o Tela.tsx da pré-lista os extrai daqui, e família não usada não
+   baixa arquivo. O Playfair não foi tocado, é onde a identidade VEJA mora. */
+
 /* cyrillic-ext */
 @font-face {
   font-family: 'Montserrat';
@@ -451,24 +490,24 @@
 
 
 html{scroll-behavior:smooth}
-body{margin:0;padding:0;font-family:'Montserrat',system-ui,sans-serif;color:#333333;background:#F7F5F2;line-height:1.6;-webkit-font-smoothing:antialiased}
+body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;color:#1A1815;background:#F7F4EE;line-height:1.6;-webkit-font-smoothing:antialiased}
 a{color:#7E6836;text-decoration:none}
 a:hover{color:#A98E4E}
 summary::-webkit-details-marker{display:none}
 .ato{transition:background-color .4s ease}
 .ato .eb{color:#7E6836;transition:color .4s ease}
-.ato .tt{color:#0B2D20;transition:color .4s ease}
-.ato .bd{color:#6D6D6D;transition:color .4s ease}
+.ato .tt{color:#6B111C;transition:color .4s ease}
+.ato .bd{color:#6B655C;transition:color .4s ease}
 .ato .ico{color:#7E6836;transition:color .4s ease}
 .ato.on .ico,.ato:hover .ico{color:#D9BE85}
-.ato.on,.ato:hover{background-color:#0B2D20}
+.ato.on,.ato:hover{background-color:#6B111C}
 .ato.on .eb,.ato:hover .eb{color:#D9BE85}
-.ato.on .tt,.ato:hover .tt{color:#F7F5F2}
-.ato.on .bd,.ato:hover .bd{color:#A9B8AE}
+.ato.on .tt,.ato:hover .tt{color:#F7F4EE}
+.ato.on .bd,.ato:hover .bd{color:#D2BCBA}
 .atos:has(.ato:hover) .ato.on:not(:hover){background-color:transparent}
 .atos:has(.ato:hover) .ato.on:not(:hover) .eb{color:#7E6836}
-.atos:has(.ato:hover) .ato.on:not(:hover) .tt{color:#0B2D20}
-.atos:has(.ato:hover) .ato.on:not(:hover) .bd{color:#6D6D6D}
+.atos:has(.ato:hover) .ato.on:not(:hover) .tt{color:#6B111C}
+.atos:has(.ato:hover) .ato.on:not(:hover) .bd{color:#6B655C}
 .atos:has(.ato:hover) .ato.on:not(:hover) .ico{color:#7E6836}
 .prof{transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease}
 .prof:hover{transform:translateY(-6px);border-color:rgba(217,190,133,.7);box-shadow:0 22px 50px rgba(0,0,0,.32)}
@@ -484,14 +523,14 @@ summary::-webkit-details-marker{display:none}
 .mnum{transition:color .3s ease}
 .idxrow:hover .ititle{color:#7E6836}
 .ititle{transition:color .2s ease}
-@keyframes vsGlow{0%,100%{box-shadow:0 12px 30px rgba(11,45,32,.18),0 0 0 1px rgba(217,190,133,.35)}50%{box-shadow:0 22px 66px rgba(217,190,133,.75),0 0 0 4px rgba(217,190,133,.95)}}
+@keyframes vsGlow{0%,100%{box-shadow:0 12px 30px rgba(107,17,28,.18),0 0 0 1px rgba(217,190,133,.35)}50%{box-shadow:0 22px 66px rgba(217,190,133,.75),0 0 0 4px rgba(217,190,133,.95)}}
 .vs-hl{animation:vsGlow 2.6s ease-in-out infinite;will-change:box-shadow}
 .topbar-hamb{display:none}
 html,body{overflow-x:hidden}
 .topbar-nav a{white-space:nowrap}
 @media (max-width:1024px){
   .topbar-inner{gap:14px}
-  .topbar-nav{display:none !important;position:absolute;top:100%;left:0;right:0;background:#0A2B1E;flex-direction:column;align-items:flex-start;gap:16px;padding:20px 28px 24px;border-bottom:1px solid rgba(217,190,133,.18);box-shadow:0 18px 34px rgba(0,0,0,.4)}
+  .topbar-nav{display:none !important;position:absolute;top:100%;left:0;right:0;background:#4A0B13;flex-direction:column;align-items:flex-start;gap:16px;padding:20px 28px 24px;border-bottom:1px solid rgba(217,190,133,.18);box-shadow:0 18px 34px rgba(0,0,0,.4)}
   .nav-cb:checked ~ .topbar-nav{display:flex !important}
   .topbar-nav a{font-size:15px !important}
   .tb-entrar{display:none !important}
@@ -520,8 +559,8 @@ html,body{overflow-x:hidden}
 .prof{overflow:visible!important}
 .prof .ph{border-radius:12px 12px 0 0}
 .dl-tip{position:relative;display:inline-flex;align-items:center;flex:0 0 auto}
-.dl-tip::after{content:attr(data-nome);position:absolute;left:50%;bottom:calc(100% + 9px);transform:translateX(-50%) translateY(4px);background:#F7F5F2;color:#0B2D20;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.03em;white-space:nowrap;padding:4px 9px;border-radius:6px;box-shadow:0 8px 22px rgba(0,0,0,.32);opacity:0;pointer-events:none;transition:opacity .16s ease,transform .16s ease;z-index:6}
-.dl-tip::before{content:"";position:absolute;left:50%;bottom:calc(100% + 4px);transform:translateX(-50%);border:5px solid transparent;border-top-color:#F7F5F2;opacity:0;transition:opacity .16s ease;z-index:6}
+.dl-tip::after{content:attr(data-nome);position:absolute;left:50%;bottom:calc(100% + 9px);transform:translateX(-50%) translateY(4px);background:#F7F4EE;color:#6B111C;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;font-size:10px;font-weight:700;letter-spacing:.03em;white-space:nowrap;padding:4px 9px;border-radius:6px;box-shadow:0 8px 22px rgba(0,0,0,.32);opacity:0;pointer-events:none;transition:opacity .16s ease,transform .16s ease;z-index:6}
+.dl-tip::before{content:"";position:absolute;left:50%;bottom:calc(100% + 4px);transform:translateX(-50%);border:5px solid transparent;border-top-color:#F7F4EE;opacity:0;transition:opacity .16s ease;z-index:6}
 .dl-tip:hover{z-index:7}
 .dl-tip:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
 .dl-tip:hover::before{opacity:1}
@@ -547,7 +586,7 @@ html,body{overflow-x:hidden}
 
 /* Secao Quem Assina (H7) — 2 cards */
 .qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:stretch}
-.qa-card{background:#fff;border:1px solid rgba(169,142,78,.22);border-radius:14px;padding:36px 34px;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(11,45,32,.05)}
+.qa-card{background:#fff;border:1px solid rgba(169,142,78,.22);border-radius:14px;padding:36px 34px;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(107,17,28,.05)}
 /* mobile (25/jul): o selo de 180px nao se aplica bem no viewport estreito — sai; e os
    2 cards viram carrossel com snap a 88%, mesma receita dos docentes. Restaura o
    comportamento que o DESIGN.md §5 ja previa ("chancela 88%") e que se perdeu quando
@@ -609,11 +648,11 @@ html,body{overflow-x:hidden}
    style inline, hover restrito a ponteiro fino. */
 @media (hover:hover){
 [style-hover="color:#D9BE85"]:hover{color:#D9BE85!important}
-[style-hover="color:#F7F5F2"]:hover{color:#F7F5F2!important}
+[style-hover="color:#F7F4EE"]:hover{color:#F7F4EE!important}
 [style-hover="transform:translateY(-1px);box-shadow:0 12px 28px rgba(169,142,78,.45)"]:hover{transform:translateY(-1px)!important;box-shadow:0 12px 28px rgba(169,142,78,.45)!important}
 [style-hover="transform:translateY(-1px);box-shadow:0 16px 38px rgba(169,142,78,.5)"]:hover{transform:translateY(-1px)!important;box-shadow:0 16px 38px rgba(169,142,78,.5)!important}
 [style-hover="transform:scale(1.06)"]:hover{transform:scale(1.06)!important}
-[style-hover="background-color:#0A3A28"]:hover{background-color:#0A3A28!important}
+[style-hover="background-color:#7C1420"]:hover{background-color:#7C1420!important}
 [style-hover="color:#ffffff"]:hover{color:#ffffff!important}
 [style-hover="transform:scale(1.07)"]:hover{transform:scale(1.07)!important}
 }
