@@ -13,8 +13,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     title: "Estratégia Internacional | Lista de espera",
-    description: "O Brasil é 2% do mundo. Não precisa ser 100% do seu risco.",
-    images: [{ url: "/og-lp.png", width: 1200, height: 630, alt: "Estratégia Internacional" }],
+    description: "O caminho para tornar sua carteira global começa aqui.",
+    images: [{ url: "/og-pre-lista.jpg", width: 1200, height: 630, alt: "VEJA Negócios apresenta Estratégia Internacional" }],
   },
 };
 
