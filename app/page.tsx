@@ -21,8 +21,10 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", ...OG },
 };
 
-// Design real da LP (bundle do Claude Design), portado por scripts/port-lp:
-// markup e CSS reais + assets em /public/lp. Renderizado como página estática.
+// Design real da LP: markup e CSS em app/_lp, assets em /public/lp. Renderizado
+// como página estática. Nasceu de um bundle do Claude Design portado por
+// scripts/port-lp.mjs; o script foi aposentado em 22/set/2026 e body.html e
+// styles.css passaram a ser a fonte. Editar os dois direto (ver AGENTS.md).
 // A leitura fica DENTRO do componente (roda no build p/ o SSG; em dev, a cada
 // request) para que edições no body.html/styles.css apareçam sem reiniciar o
 // dev server — o readFileSync em escopo de módulo era cacheado pelo Next.

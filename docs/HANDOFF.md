@@ -175,19 +175,28 @@ divergia do real. Foi ressincronizado junto com este handoff.
 
 Esta é a armadilha número um do projeto.
 
-A LP e a área do aluno **não são escritas à mão**. Elas são portadas de bundles do Claude
-Design que ficam em `referencias/htmls/` por dois scripts:
+**Vale para a área do aluno. Não vale mais para a LP de vendas** (mudou em 22/set/2026,
+ver abaixo).
 
-- `scripts/port-lp.mjs` → gera `app/_lp/body.html`, `app/_lp/styles.css` e `app/_lp/globo-dados.ts`
+A área do aluno **não é escrita à mão**. Ela é portada de um bundle do Claude Design que
+fica em `referencias/htmls/` por um script:
+
 - `scripts/port-area.mjs` → gera as telas em `app/app/_ui/screens/`
 
 Os arquivos gerados **são commitados**, o que dá a falsa impressão de que podem ser
 editados direto. Podem, mas a edição morre na próxima execução do porte.
 
-> **Regra que não se quebra:** toda mudança estável na LP vai no `scripts/port-lp.mjs`,
-> nas etapas numeradas (7d, 7e, ..., 7r). Editar só o `body.html` significa perder a
-> mudança quando alguém rodar o port de novo. Isso já aconteceu com uma correção de
-> contraste AA que voltou sozinha.
+> **Regra que não se quebra, para a área do aluno:** toda mudança estável vai no
+> `scripts/port-area.mjs`. Editar só a tela gerada significa perder a mudança quando
+> alguém rodar o port de novo. Isso já aconteceu com uma correção de contraste AA que
+> voltou sozinha.
+
+> **A LP de vendas saiu deste regime em 22/set/2026.** O `scripts/port-lp.mjs` foi
+> removido e `app/_lp/body.html` e `app/_lp/styles.css` viraram a fonte: edite os dois
+> direto, nada mais os sobrescreve. A troca aconteceu porque a LP migra para a identidade
+> VEJA Negócios, e uma mudança desse tamanho não cabe como remendo de porte sobre um
+> script que já empilhava dezesseis correções manuais. Ver a entrada "Build" do
+> `CHANGELOG.md` e o `AGENTS.md`.
 
 As etapas do port são comentadas em português no próprio script e explicam o porquê de
 cada transformação. Ao adicionar uma etapa nova, siga a numeração e escreva o motivo, não

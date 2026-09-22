@@ -15,9 +15,21 @@ vem no `git clone` (segredos, insumos brutos, e a memória do Claude Code em
 `docs/memoria-claude/`), setup, armadilhas conhecidas e as decisões já fechadas pelo Pedro.
 Leia antes de editar qualquer arquivo.
 
-Duas dele que quebram trabalho quando ignoradas: a LP é **gerada** por
-`scripts/port-lp.mjs`, então editar só o `app/_lp/body.html` perde a mudança no próximo
-porte; e o checklist de `docs/COPY.md` roda no texto **final** de qualquer copy, não no rascunho.
+Uma dele que quebra trabalho quando ignorada: o checklist de `docs/COPY.md` roda no texto
+**final** de qualquer copy, não no rascunho.
+
+**A LP de vendas deixou de ser gerada (22/set/2026).** Até aqui ela nascia de
+`scripts/port-lp.mjs`, que lia o bundle do Claude Design em
+`referencias/htmls/LP-Estrategia-Internacional.html` e reescrevia `app/_lp/` e `public/lp/`.
+O script foi removido: com a migração para a identidade VEJA Negócios, remendar o porte
+custaria mais do que manter o resultado à mão, e ele já carregava dezesseis correções
+manuais empilhadas sobre o bundle.
+
+Consequência prática, e é o oposto do que valia antes: **`app/_lp/body.html` e
+`app/_lp/styles.css` são a fonte, edite os dois direto.** Nada mais os sobrescreve.
+`app/_lp/globo-dados.ts` e os 55 arquivos de `public/lp/` são artefatos versionados e
+igualmente definitivos. O bundle em `referencias/htmls/` fica como referência de design,
+não como fonte de build. Para recuperar o script, `git show` no commit anterior a este.
 
 ## Fundação (leia antes de construir)
 

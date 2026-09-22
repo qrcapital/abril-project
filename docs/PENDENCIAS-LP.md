@@ -42,7 +42,8 @@ plano** feitas e QA'd (1+2 em `c757f12`, 3 em `5c42324`, 4 em `31307ff`; migrati
 alta/média com os fechos de baixa em `e5a35fe` (relatório na entrada "Segurança" do
 CHANGELOG), e a copy **"BlockTrends é masculino"** em `43d5c92`+`ce4d86c` (regra no
 AGENTS.md). Do plano sobrou só o **item 23** (🔒 URLs de Termos/LGPD — insumo do Pedro; a
-correção entra pelo `port-lp.mjs`). Oferecido sem resposta: copy que degrada mal com nome
+correção entra direto em `app/_lp/body.html`, já que o `port-lp.mjs` foi aposentado em
+22/set/2026 e o body passou a ser a fonte). Oferecido sem resposta: copy que degrada mal com nome
 vazio ("Olá," na topbar). O resto desta fila abaixo segue valendo (insumos externos:
 checkout do Guru, vídeos, materiais, domínio de e-mail).
 
@@ -544,7 +545,8 @@ Tela de captura da lista de espera, do handoff de design "LP de lista de espera 
 Internacional". Rota própria, CSS próprio (`app/lista-de-espera/estilo.css`) e componente de
 globo próprio (`GloboEspera.tsx`, parado e em dois canvas). **Não encosta na LP de vendas:**
 do que já existe ela só lê os dados do globo (`app/_lp/globo-dados.ts`) e os `@font-face` de
-`app/_lp/styles.css`, e não passa pelo `port-lp.mjs`. Estática no build, junto com
+`app/_lp/styles.css`. Nunca passou pelo `port-lp.mjs`, que de todo modo foi aposentado em
+22/set/2026. Estática no build, junto com
 `/lista-de-espera/obrigado`.
 
 ### Como o lead chega no RD (decidido em 02/set, testado com a conta real)
@@ -725,6 +727,7 @@ Não entram no homolog; ficam para produção com o conteúdo real:
 
 ---
 
-_Como plugar cada pendência: os pontos da LP vivem em `app/_lp/body.html` (gerado pelo
-porte). Trocas estáveis devem ir também em `scripts/port-lp.mjs` para sobreviver a
-reexecuções — foi assim com WhatsApp, glow e otimização de imagem._
+_Como plugar cada pendência: os pontos da LP vivem em `app/_lp/body.html`, que desde
+22/set/2026 é a **fonte** e não mais um arquivo gerado. Edite direto. O `scripts/port-lp.mjs`
+foi removido, então a antiga exigência de duplicar toda troca estável no script (como foi
+feito com WhatsApp, glow e otimização de imagem) não vale mais._

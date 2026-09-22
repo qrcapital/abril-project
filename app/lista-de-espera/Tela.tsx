@@ -21,17 +21,19 @@ import { join } from "node:path";
  *  "GRUPO" saíam empastadas. Estes são os arquivos na cor final, sem filtro e
  *  sem opacidade, e a diferença aparece já em tela comum.
  *
- *  Ficam em /public/marca, e não em /public/lp, porque aquela pasta é escrita
- *  pelo porte da LP e seria limpa no próximo `port-lp`. A LP de vendas continua
- *  com o arquivo dela, intocado. */
+ *  Ficam em /public/marca, e não em /public/lp, porque aquela pasta era escrita
+ *  pelo porte da LP e seria limpa no próximo `port-lp`. O porte foi aposentado
+ *  em 22/set/2026, então o risco acabou, mas a separação fica: /marca é a
+ *  identidade do projeto, /lp são os assets da LP de vendas. A LP de vendas
+ *  continua com o arquivo dela, intocado. */
 const GRUPO_ABRIL = {
   branco: "/marca/grupo-abril-branco.svg",
   preto: "/marca/grupo-abril-preto.svg",
 } as const;
 
 /** A logo do curso com a assinatura da VEJA Negócios, arquivo fechado pela Abril
- *  (setembro/2026). Fica em /public/marca, e não em /public/lp, porque aquela
- *  pasta é escrita pelo porte da LP e seria limpa no próximo `port-lp`.
+ *  (setembro/2026). Fica em /public/marca por organização: /marca é a identidade
+ *  do projeto, /lp são os assets da LP de vendas.
  *
  *  Duas versões do mesmo desenho: o texto é preto na clara e creme na escura.
  *  Não dá para resolver com filtro CSS, porque o "veja" vermelho tem de ficar
@@ -84,9 +86,8 @@ const MARCA_NO_CREDITO = true;
 
 /** As duas marcas que assinam a mediação da live, em arquivo e não em texto.
  *
- *  A do BlockTrends é a mesma do porte da LP, recolorida nas duas versões e
- *  copiada para /public/marca: em /public/lp ela seria limpa no próximo
- *  `port-lp`, como aconteceria com a do Grupo Abril.
+ *  A do BlockTrends é a mesma da LP de vendas, recolorida nas duas versões e
+ *  copiada para /public/marca, junto com a do Grupo Abril.
  *
  *  A da VEJA Negócios é o próprio lockup oficial da campanha com a palavra
  *  "apresenta" e a linha "Estratégia Internacional" removidas. A geometria do
