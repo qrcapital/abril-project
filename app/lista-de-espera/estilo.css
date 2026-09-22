@@ -572,6 +572,26 @@ body:has(.le-escuro) { background: #0a0a0a }
   left: calc(25vw - (min(750px, 50vw) - clamp(20px, 4.4vw, 60px)) / 2);
 }
 
+/* O mesmo acerto do lado creme, mas só em tela grande. Acima de 1500px a grade
+   para de crescer e fica centralizada, então a coluna de texto começa cada vez
+   mais longe da borda: numa janela de 2500px sobravam 560px à esquerda do texto
+   e menos de 200px entre ele e o vermelho. Aqui o bloco de texto,
+   que tem 490px (a medida do .le-bloco), passa a ficar no centro da área
+   creme, como o card fica no centro do painel.
+
+   A conta: a área creme vai da borda até a régua dourada, em 50vw + gap/2, então
+   o centro dela é 25vw + gap/4 (16px, porque acima de 1600px o gap já é 64px). O
+   começo desejado é 25vw + 16px - 245px, o atual é (100vw - 1500px)/2 + 60px, e a
+   diferença simplifica para 461px - 25vw. Ela só é negativa acima de 1844px;
+   abaixo disso o min() devolve 0 e nada anda, então notebook, 1440px e celular
+   ficam exatamente como estavam. O texto só anda para a esquerda, nunca para a
+   direita. Mexer no max-width do .le-grade, no gap ou na medida do .le-bloco
+   pede refazer a conta. */
+.le-faixa .le-esq {
+  position: relative;
+  left: min(0px, calc(461px - 25vw));
+}
+
 /* Fora do card, sobre o vermelho, o crédito é sempre claro nas duas versões. A
    marca não precisa de regra aqui: o arquivo branco já é o que Tela.tsx serve
    nesta composição. */
