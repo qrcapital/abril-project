@@ -65,10 +65,14 @@ export default function DolarVivo() {
       const fim = q("fim");
       if (fim) fim.textContent = `${dia} DE ${MESES[mes - 1]} DE ${ano}`;
 
+      // A série histórica continua sendo a 3698 (PTAX mensal); só o último
+      // ponto vem da 1 (diária). O rodapé diz as duas, senão passaria a
+      // atribuir 32 anos de dados a uma série que não os gerou.
       const fonte = q("fonte");
       if (fonte) {
         fonte.textContent =
-          `Fonte: Banco Central do Brasil · série 1 (dólar de venda), jul/1994 a ${MES3[mes - 1]}/${ano}`;
+          "Fonte: Banco Central do Brasil · série 3698 (PTAX venda, mensal) até 2026, " +
+          `série 1 (diária) no último ponto, ${dia}/${String(mes).padStart(2, "0")}/${ano}`;
       }
 
       // ---- a ponta da série ------------------------------------------------
