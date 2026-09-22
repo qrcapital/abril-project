@@ -185,7 +185,9 @@ body:has(.le-escuro) { background: #0a0a0a }
    mesmo 990px do auto-fit do .le-grade. */
 @media (max-width: 989px) {
   .le-globo img { left: 84%; top: 12%; width: min(660px, 170vw) }
-  .le-globo { opacity: .55 }
+  /* .25, abaixo dos .34 do desktop: a .55 de antes deixava a linha do mapa
+     passando por cima do "apresenta" da logo e atrapalhava a leitura. */
+  .le-globo { opacity: .25 }
 }
 /* O canvas estático entra em fade quando a primeira pintura termina, senão o
    litoral aparece de um quadro para o outro. */
