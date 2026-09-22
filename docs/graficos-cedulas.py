@@ -173,11 +173,14 @@ def anotacao(linhas, x, y):
                  f'font-style="italic" font-size="19" fill="{TINTA}" opacity=".78">{l}</text>')
     return "".join(t) + '</g>'
 
-def rodape(fonte):
+def rodape(fonte, vivo=False):
+    """`vivo` marca os textos que o DolarVivo substitui com a cotacao do dia."""
+    gf = ' data-dolar="fim"' if vivo else ''
+    gt = ' data-dolar="fonte"' if vivo else ''
     return (f'<g font-family="{SANS}" fill="#6f6860" font-size="11.5">'
             f'<text x="{NX}" y="{Y_DATAS}" letter-spacing="1.6">JULHO DE 1994</text>'
-            f'<text x="{NX+NW}" y="{Y_DATAS}" text-anchor="end" letter-spacing="1.6">SETEMBRO DE 2026</text>'
-            f'<text x="{NX}" y="{Y_FONTE}" font-size="10.5" letter-spacing=".1em" opacity=".85">{fonte}</text></g>')
+            f'<text x="{NX+NW}" y="{Y_DATAS}" text-anchor="end" letter-spacing="1.6"{gf}>SETEMBRO DE 2026</text>'
+            f'<text x="{NX}" y="{Y_FONTE}" font-size="10.5" letter-spacing=".1em" opacity=".85"{gt}>{fonte}</text></g>')
 
 def moldura(corpo, alt):
     return (f'<svg viewBox="0 0 {VW} {VH}" style="width:100%;height:auto;display:block" '
@@ -223,20 +226,20 @@ ipk = min(range(len(ptsD)), key=lambda i: ptsD[i][1]); pxp, pyp = ptsD[ipk]
 iD = int(len(ptsD)*0.45); origemD = ptsD[iD]
 setaD = seta(origemD, (556, 74), 0.20)
 
-corpoD = f'''<defs><path id="serieD" d="{dD}"/><clipPath id="clipDolar"><use href="#serieD"/></clipPath>{papel("papelD")}</defs>
+corpoD = f'''<defs><path id="serieD" data-dolar="serie" data-escala="{NY},{NH},{VMAXD}" d="{dD}"/><clipPath id="clipDolar"><use href="#serieD"/></clipPath>{papel("papelD")}</defs>
 {anotacao(["A borda segue a PTAX de venda, média mensal.",
            "O papel cheio é quanto um dólar custa em reais."], NX+NW, 34)}
 <g opacity=".2">{cedula("CÂMBIO","US$ 1","JULHO DE 1994","dir",False,"papelD")}</g>
 <g clip-path="url(#clipDolar)">{cedula("CÂMBIO","US$ 1","JULHO DE 1994","dir",True,"papelD")}</g>
 <use href="#serieD" fill="none" stroke="{VERM}" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-<g><circle cx="{pxp}" cy="{pyp}" r="4" fill="{TINTA}"/>
+<g data-dolar="pico" data-pico="6.10"><circle cx="{pxp}" cy="{pyp}" r="4" fill="{TINTA}"/>
 <text x="{pxp-16}" y="{pyp+34}" font-family="{SANS}" font-size="12.5" fill="{TINTA}" text-anchor="end" font-weight="600">R$ 6,10&#160;&#160;<tspan opacity=".55" font-weight="400">dez/2024</tspan></text></g>
 <g>
-<text x="{NX+30}" y="{NY+130}" font-family="{SERIF}" font-size="58" font-weight="600" fill="{VERM}">R$ 5,15</text>
+<text x="{NX+30}" y="{NY+130}" font-family="{SERIF}" font-size="58" font-weight="600" fill="{VERM}" data-dolar="valor">R$ 5,15</text>
 <text x="{NX+30}" y="{NY+158}" font-family="{SANS}" font-size="13.5" fill="#6b655c">é o que ele custa hoje. Em 1994 custava R$ 0,93</text>
 </g>
 <path class="graf-seta" pathLength="1" d="{setaD}" fill="none" stroke="{TINTA}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>
-{rodape("Fonte: Banco Central do Brasil · série 3698 (PTAX venda), jul/1994 a set/2026")}'''
+{rodape("Fonte: Banco Central do Brasil · série 3698 (PTAX venda), jul/1994 a set/2026", vivo=True)}'''
 
 svgD = moldura(corpoD, "Um dolar desenhado como grafico. A parte preenchida e quanto ele vale em reais, de noventa e tres centavos em julho de 1994 a cinco reais e quinze centavos em setembro de 2026, com pico de seis reais e dez centavos em dezembro de 2024.")
 

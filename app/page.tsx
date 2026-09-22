@@ -6,6 +6,7 @@ import GloboCanvas from "./_lp/GloboCanvas";
 import CarrosselDots from "./_lp/CarrosselDots";
 import VslMount from "./_lp/VslMount";
 import GraficoEntrada from "./_lp/GraficoEntrada";
+import DolarVivo from "./_lp/DolarVivo";
 
 const SITE_URL = process.env.URL ?? "https://abril-project.netlify.app";
 const OG = {
@@ -58,6 +59,7 @@ export default function Home() {
       <CarrosselDots />
       <VslMount />
       <GraficoEntrada />
+      <DolarVivo />
     </>
   );
 }
