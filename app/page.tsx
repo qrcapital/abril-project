@@ -4,6 +4,7 @@ import { join } from "node:path";
 import HeroPointer from "./_lp/HeroPointer";
 import GloboCanvas from "./_lp/GloboCanvas";
 import CarrosselDots from "./_lp/CarrosselDots";
+import VslMount from "./_lp/VslMount";
 
 const SITE_URL = process.env.URL ?? "https://abril-project.netlify.app";
 const OG = {
@@ -14,9 +15,9 @@ const OG = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Estratégia Internacional | Dolarização de patrimônio com método",
+  title: "Estratégia Internacional | Curso online de dolarização de patrimônio",
   description:
-    "Formação em dolarização de patrimônio e investimento internacional, com quatro especialistas que operaram esse mercado por dentro. Chancela institucional da VEJA Negócios, conteúdo BlockTrends.",
+    "Curso online de 30 horas sobre dolarização de patrimônio e investimento no exterior, com quatro professores que atuaram no Banco Central, na XP, na Caixa e no Bradesco. Chancela institucional da VEJA Negócios, conteúdo BlockTrends.",
   openGraph: { ...OG, type: "website" },
   twitter: { card: "summary_large_image", ...OG },
 };
@@ -46,6 +47,7 @@ export default function Home() {
       <HeroPointer />
       <GloboCanvas />
       <CarrosselDots />
+      <VslMount />
     </>
   );
 }
