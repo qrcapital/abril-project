@@ -152,12 +152,15 @@ export default function Formulario() {
           O hidden existe para o registro não sumir: a captura automática do RD
           só enxerga campo de formulário, e sem ele a base legal da conversão
           chegaria em branco no painel. */}
+      {/* Os dois `le-junto` são nomes próprios que não podem partir no meio de
+          uma linha: a marca e o nome da política. O resto do aviso quebra
+          livre, com as linhas igualadas pelo CSS. */}
       <p className="le-lgpd">
-        Ao enviar, você autoriza o contato da VEJA Negócios e do BlockTrends sobre esta
-        formação e concorda com a{" "}
+        Ao enviar, você autoriza o contato da <span className="le-junto">VEJA Negócios</span> e do
+        BlockTrends sobre esta formação e concorda com a{" "}
         {POLITICA
-          ? <a href={POLITICA} target="_blank" rel="noopener noreferrer">Política de Privacidade · LGPD</a>
-          : "Política de Privacidade · LGPD"}
+          ? <a className="le-junto" href={POLITICA} target="_blank" rel="noopener noreferrer">Política de Privacidade · LGPD</a>
+          : <span className="le-junto">Política de Privacidade · LGPD</span>}
         .
       </p>
       <input type="hidden" name="lgpd" value="aceito-no-envio" />
@@ -166,13 +169,9 @@ export default function Formulario() {
           desabilita e anuncia aria-busy. Sem spinner, e sem travar largura —
           este é width:100%, então a tela não pula na troca de rótulo. */}
       <button className="le-cta" type="submit" disabled={enviando} aria-busy={enviando}>
-        {enviando ? "Enviando..." : "Quero receber o convite →"}
+        {enviando ? "Enviando..." : "Quero receber o convite"}
       </button>
 
-      <p className="le-micro">
-        Leva menos de um minuto. Você recebe o convite da live de lançamento e o aviso da
-        abertura.
-      </p>
     </form>
   );
 }

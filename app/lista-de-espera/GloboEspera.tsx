@@ -28,6 +28,29 @@ import { RG, PERSP, TILT, FASE, ARO, COSTA, TERRA, CIDADES, ROTAS } from "../_lp
 
 const RAD = Math.PI / 180;
 
+/**
+ * Paleta do globo, lida dos tokens do `.le-raiz` (estilo.css). É o que faz o
+ * canvas acompanhar a versão clara ou escura da campanha sem manter uma segunda
+ * cópia da paleta aqui em JS, que era como as duas se descolavam.
+ *
+ * Os tokens vêm em componentes RGB separados por espaço (`169 142 78`), a forma
+ * que serve tanto ao `rgb()` moderno do CSS quanto ao `rgba()` do canvas depois
+ * da troca por vírgulas. `forca` compensa o fundo: sobre o creme, as mesmas
+ * opacidades que funcionam sobre o preto deixam o litoral quase invisível.
+ */
+function paleta(el: Element) {
+  const css = getComputedStyle(el);
+  const cor = (nome: string, padrao: string) =>
+    (css.getPropertyValue(nome).trim() || padrao).replace(/\s+/g, ",");
+  return {
+    linha: cor("--le-globo-linha", "169,142,78"),
+    praca: cor("--le-globo-praca", "240,227,196"),
+    rota: cor("--le-globo-rota", "247,245,242"),
+    luz: cor("--le-luz-rgb", "241,230,206"),
+    forca: Number(css.getPropertyValue("--le-globo-forca")) || 1,
+  };
+}
+
 /** Arco central entre dois pontos geográficos, em graus. */
 function arco(lo1: number, la1: number, lo2: number, la2: number) {
   const p1 = la1 * RAD, p2 = la2 * RAD;
@@ -75,6 +98,10 @@ export default function GloboEspera({ centroX = 0.63, centroY = 0.46, escala = 0
     const ctxB = cvB?.getContext("2d");
     const ctxA = cvA?.getContext("2d");
     if (!cvB || !cvA || !ctxB || !ctxA) return;
+
+    const cor = paleta(cvB.closest(".le-raiz") ?? cvB);
+    /** Opacidade corrigida pelo fundo, nunca acima de 1. */
+    const alfa = (a: number) => Math.min(1, a * cor.forca).toFixed(4);
 
     // ---- dados -------------------------------------------------------------
     // Litoral do Natural Earth já decimado no porte. Vãos acima de 1,2° são
@@ -168,12 +195,12 @@ export default function GloboEspera({ centroX = 0.63, centroY = 0.46, escala = 0
 
       ctxB!.beginPath();
       ctxB!.arc(0, 0, aro, 0, Math.PI * 2);
-      ctxB!.strokeStyle = "rgba(169,142,78,.20)";
+      ctxB!.strokeStyle = `rgba(${cor.linha},${alfa(0.2)})`;
       ctxB!.lineWidth = 1;
       ctxB!.stroke();
 
       // linha-base das rotas
-      ctxB!.strokeStyle = "rgba(247,245,242,.12)";
+      ctxB!.strokeStyle = `rgba(${cor.rota},${alfa(0.12)})`;
       ctxB!.lineWidth = 1;
       ctxB!.beginPath();
       for (const rota of rotas) {
@@ -212,7 +239,7 @@ export default function GloboEspera({ centroX = 0.63, centroY = 0.46, escala = 0
         if (!arr.length) continue;
         // mesmos extremos do original (.09 no fundo, .16 na frente), interpolados
         const a = 0.09 + (0.16 - 0.09) * (f / (FAIXAS_TERRA - 1));
-        ctxB!.fillStyle = `rgba(169,142,78,${a.toFixed(4)})`;
+        ctxB!.fillStyle = `rgba(${cor.linha},${alfa(a)})`;
         ctxB!.beginPath();
         for (let i = 0; i < arr.length; i += 3) {
           const r = 0.9 * arr[i + 2];
@@ -237,7 +264,7 @@ export default function GloboEspera({ centroX = 0.63, centroY = 0.46, escala = 0
         const arr = faixas[f];
         if (!arr.length) continue;
         const a = 0.26 + (0.68 - 0.26) * (f / (FAIXAS_COSTA - 1));
-        ctxB!.fillStyle = `rgba(169,142,78,${a.toFixed(4)})`;
+        ctxB!.fillStyle = `rgba(${cor.linha},${alfa(a)})`;
         ctxB!.beginPath();
         for (let i = 0; i < arr.length; i += 4) {
           // Junto do horizonte o raio cresce de 0 até cheio, para os pontos
@@ -255,7 +282,7 @@ export default function GloboEspera({ centroX = 0.63, centroY = 0.46, escala = 0
       ctxB!.textBaseline = "middle";
       for (const p of pracas) {
         ctxB!.globalAlpha = Math.min(1, 0.5 + 0.5 * p.zn);
-        ctxB!.fillStyle = "#F0E3C4";
+        ctxB!.fillStyle = `rgb(${cor.praca})`;
         ctxB!.beginPath();
         ctxB!.arc(p.x, p.y, 1.7 * p.k, 0, Math.PI * 2);
         ctxB!.fill();
@@ -266,7 +293,7 @@ export default function GloboEspera({ centroX = 0.63, centroY = 0.46, escala = 0
           const dx = p.x + 7 * p.k, dy = p.y - 0.5;
           ctxB!.globalAlpha = fade * 0.3;
           ctxB!.font = `600 ${(9.5 * p.k).toFixed(1)}px Montserrat, system-ui, sans-serif`;
-          ctxB!.fillStyle = "#F1E6CE";
+          ctxB!.fillStyle = `rgb(${cor.linha})`;
           ctxB!.fillText(p.sigla, dx, dy);
           const larg = ctxB!.measureText(p.sigla).width;
           ctxB!.globalAlpha = fade * 0.17;
@@ -305,7 +332,7 @@ export default function GloboEspera({ centroX = 0.63, centroY = 0.46, escala = 0
           proj(rota[k][0], rota[k][1], raio * (1 + ELEV * peso));
           if (pz <= limbo) { tem = false; continue; }
           if (tem) {
-            ctxA!.strokeStyle = `rgba(241,230,206,${(peso * 0.5).toFixed(3)})`;
+            ctxA!.strokeStyle = `rgba(${cor.luz},${(peso * 0.5).toFixed(3)})`;
             ctxA!.lineWidth = 0.8 + peso * 1.1;
             ctxA!.beginPath();
             ctxA!.moveTo(ppx, ppy);
@@ -320,7 +347,7 @@ export default function GloboEspera({ centroX = 0.63, centroY = 0.46, escala = 0
       // Sonar das praças: dois anéis defasados que nascem no ponto e expandem
       // sumindo. Lê como "hub ativo" por movimento pontual, não por brilho
       // difuso — continua sendo fundo quando o olho vai para o formulário.
-      ctxA!.strokeStyle = "#D9BE85";
+      ctxA!.strokeStyle = `rgb(${cor.praca})`;
       ctxA!.lineWidth = 1;
       for (const p of pracas) {
         const vis = 0.4 + 0.6 * p.zn;
