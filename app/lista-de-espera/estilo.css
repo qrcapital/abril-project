@@ -658,3 +658,29 @@ body:has(.le-escuro) { background: #0a0a0a }
     padding: 36px clamp(20px, 4.4vw, 60px) 34px;
   }
 }
+
+/* Empilhado (celular e tablet em pé), a coluna de texto ganha mais respiro. Os
+   espaços vinham do desktop, onde as colunas lado a lado já separam as coisas;
+   uma embaixo da outra, os itens ficavam colados. Só os vãos mudam, nada de
+   tamanho de letra: topo 28 -> 40, logo/texto/live 22 -> 30, manchete/lide/
+   lista 30 -> 34, rótulo até a lista 9 -> 14, entre os itens 8 -> 12, dentro do
+   bloco da live 9 -> 12 e até a mediação 15 -> 20. */
+@media (max-width: 989px) {
+  .le-grade { padding-top: clamp(40px, 4.4vw, 44px) }
+  .le-esq { gap: 30px }
+  .le-bloco { gap: 34px }
+  .le-garante { gap: 14px }
+  .le-checks { gap: 12px }
+  /* Quando um item quebra (só em celular bem estreito), o navegador evita deixar
+     uma palavra sozinha na última linha. Onde não houver suporte, nada muda. */
+  .le-checks li { text-wrap: pretty }
+  .le-teaser { gap: 12px }
+  .le-teaser .le-mediacao { margin-top: 20px }
+}
+
+/* Trecho de texto que sai no celular para a linha não quebrar (ver Tela.tsx).
+   Abaixo de 330px nem a frase curta cabe numa linha e o "mão" ficaria sozinho
+   de novo; ali a frase inteira quebra melhor ("...da turma em / primeira mão"). */
+@media (min-width: 330px) and (max-width: 480px) {
+  .le-fora-celular { display: none }
+}
