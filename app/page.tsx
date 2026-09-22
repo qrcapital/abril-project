@@ -30,11 +30,14 @@ export const metadata: Metadata = {
 // dev server — o readFileSync em escopo de módulo era cacheado pelo Next.
 export default function Home() {
   const dir = join(process.cwd(), "app", "_lp");
+  // Sistema primeiro, estilo da LP depois: ele declara tokens e primitivas, e o
+  // styles.css especializa por cima. Ver app/_design/sistema.css.
+  const sistema = readFileSync(join(process.cwd(), "app", "_design", "sistema.css"), "utf8");
   const lpCss = readFileSync(join(dir, "styles.css"), "utf8");
   const lpBody = readFileSync(join(dir, "body.html"), "utf8");
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: lpCss }} />
+      <style dangerouslySetInnerHTML={{ __html: sistema + "\n" + lpCss }} />
       {/* lining-nums: o Playfair vinha com algarismos oldstyle (3,4,5,7,9 descem
           abaixo da baseline; só 0/1/2 alinham). Força figuras lining para os
           números ficarem todos na mesma linha. Herda p/ toda a LP (não há

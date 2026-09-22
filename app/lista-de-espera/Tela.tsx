@@ -135,8 +135,12 @@ function fontesDoPorte() {
 }
 
 export default function Tela({ children }: { children: React.ReactNode }) {
+  // O sistema entra ANTES do estilo da tela, e a ordem é a regra: ele declara
+  // os tokens e as primitivas, e o estilo.css especializa por cima. Invertido,
+  // o sistema sobrescreveria decisões locais da pré-lista.
   const css = [
     fontesDoPorte(),
+    readFileSync(join(process.cwd(), "app", "_design", "sistema.css"), "utf8"),
     readFileSync(join(process.cwd(), "app", "lista-de-espera", "estilo.css"), "utf8"),
   ].join("\n");
 

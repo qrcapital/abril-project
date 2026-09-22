@@ -29,33 +29,42 @@
    ele acompanha o tema sem ter uma segunda cópia da paleta em JS. Os que ele usa
    vão em componentes RGB separados por espaço, que é o que o canvas monta em
    rgba(). */
+/* Desde 22/set/2026 este bloco não inventa mais valor: ele APELIDA os tokens do
+   app/_design/sistema.css, que é injetado logo antes deste arquivo pelo Tela.tsx.
+   Os nomes --le-* ficam porque o globo lê quatro deles por getComputedStyle
+   (--le-globo-linha, --le-globo-praca, --le-globo-rota, --le-luz-rgb) e renomear
+   descolaria o canvas da paleta. O que mudou de fato foi a tinta dos neutros:
+   saiu o 10,10,10 quase preto e entrou o 26,24,21 quente do sistema, porque
+   neutro frio sobre creme suja o papel. */
 .le-raiz {
-  --le-fundo: #f7f4ee;          /* creme dos banners claros */
-  --le-fundo-alto: #fbf9f5;
-  --le-fundo-baixo: #f1ece2;
+  --le-fundo: var(--ei-papel);       /* creme dos banners claros */
+  --le-fundo-alto: var(--ei-papel-alto);
+  --le-fundo-baixo: var(--ei-papel-baixo);
   --le-veu-rgb: 247 244 238;
 
-  --le-texto: #0a0a0a;
-  --le-texto-2: #57544e;        /* lide e apoios */
-  --le-texto-3: #7c7871;        /* micro, rótulos discretos */
+  --le-texto: var(--ei-tinta);       /* era #0a0a0a; agora a tinta quente */
+  --le-texto-2: var(--ei-tinta-2);   /* lide e apoios */
+  --le-texto-3: var(--ei-tinta-3);   /* micro, rótulos discretos. Era #7c7871,
+                                        que dava 3,9:1 e reprovava em AA nos
+                                        tamanhos de 10 a 12px onde ele é usado */
 
-  --le-dourado: #7e6836;        /* dourado que lê sobre creme */
-  --le-dourado-regua: #a98e4e;  /* filetes e réguas da marca */
-  --le-vermelho: #8e1522;       /* vermelho de trabalho da VEJA Negócios */
+  --le-dourado: var(--ei-ouro);          /* dourado que lê sobre creme */
+  --le-dourado-regua: var(--ei-ouro-regua);  /* filetes e réguas da marca */
+  --le-vermelho: var(--ei-acento);       /* vermelho de trabalho da VEJA Negócios */
   /* O painel é mais fechado que o vermelho de trabalho: os dois valores saem da
      própria biblioteca da campanha (o leia-me do globo), onde #6B111C é a linha
      base do conjunto vermelho e #4A0B13 é o fundo da esfera. */
-  --le-vermelho-fundo: #6b111c;
-  --le-vermelho-fundo-2: #4a0b13;
+  --le-vermelho-fundo: var(--ei-acento-fundo);
+  --le-vermelho-fundo-2: var(--ei-acento-fundo-2);
 
   --le-acento: var(--le-vermelho);          /* checks e praças da rota */
-  --le-acento-halo: rgba(142, 21, 34, .14);
-  --le-linha: rgba(10, 10, 10, .14);        /* filetes */
-  --le-linha-fraca: rgba(10, 10, 10, .12);  /* trilho da rota */
-  --le-trama: rgba(10, 10, 10, .05);        /* pontilhado de fundo */
+  --le-acento-halo: var(--ei-acento-halo);
+  --le-linha: var(--ei-linha-forte);        /* filetes */
+  --le-linha-fraca: var(--ei-linha);        /* trilho da rota */
+  --le-trama: rgba(26, 24, 21, .05);        /* pontilhado de fundo */
   --le-luz-rgb: 169 142 78;                 /* corcova que percorre a rota */
 
-  --le-sombra: rgba(10, 10, 10, .14);
+  --le-sombra: rgba(72, 60, 42, .14);       /* sombra marrom: preta sobre creme suja */
   --le-brilho: rgba(169, 142, 78, .55);
   --le-card-borda: #e2dacd;
 
@@ -103,7 +112,11 @@ body:has(.le-escuro) { background: #0a0a0a }
   overflow: hidden;
   background: var(--le-fundo);
   color: var(--le-texto);
-  font-family: 'Montserrat', system-ui, sans-serif;
+  /* A camada de interface saiu do Montserrat para a pilha nativa em 22/set/2026.
+     No Mac e no iPhone ela resolve para SF Pro, não custa requisição e é mais
+     neutra que o Montserrat, que é geométrico e datado. A serifa da campanha
+     continua onde a identidade mora: manchete, número grande, editorial. */
+  font-family: var(--ei-sans);
   -webkit-font-smoothing: antialiased;
   /* O Playfair vem com algarismos oldstyle (3,4,5,7,9 descem da baseline). Sem
      isto o "2%" e o "100%" da headline saem desalinhados entre si. Mesmo motivo
@@ -384,28 +397,47 @@ body:has(.le-escuro) { background: #0a0a0a }
 }
 
 .le-card-head { display: flex; flex-direction: column; gap: 7px }
-.le-h2 { margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 600; font-size: 30px; line-height: 1.1; color: #0a0a0a }
-.le-sub { margin: 0; font-size: 13.5px; line-height: 1.6; color: #575756 }
+.le-h2 { margin: 0; font-family: var(--ei-serifa); font-weight: 600; font-size: 30px; line-height: 1.1; letter-spacing: -.02em; color: var(--le-texto) }
+.le-sub { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--le-texto-2) }
 
 .le-campos { display: flex; flex-direction: column; gap: 14px }
 .le-campo { display: flex; flex-direction: column; gap: 6px }
+/* Raio por razão, não por número: a caixa fecha em 46px de altura, e 46 x 0,26
+   dá 12px. Os 4px de antes davam razão 0,087 e faziam o campo parecer de outro
+   projeto ao lado do botão. O foco troca a borda pelo acento em vez de matar o
+   outline, e o :focus-visible global do sistema cobre o teclado. */
 .le-input {
   width: 100%; padding: 13px 14px;
-  background: #faf8f4; border: 1px solid #ddd6c9; border-radius: 4px;
-  font-size: 15px; color: #1a1a1a;
+  background: var(--ei-papel-alto); border: 1px solid var(--le-card-borda);
+  border-radius: 12px;
+  font-family: var(--ei-sans); font-size: 15px; color: var(--le-texto);
+  transition: border-color var(--ei-t), background var(--ei-t);
 }
+.le-input::placeholder { color: var(--le-texto-3) }
+.le-input:hover { border-color: var(--ei-linha-forte) }
+.le-input:focus { outline: none; border-color: var(--le-acento); background: var(--ei-solido) }
 
 /* Três botões, não um <select>: escolha única e opcional, e o toque num chip é
    mais barato que abrir um menu nativo no celular. */
 .le-chips-bloco { display: flex; flex-direction: column; gap: 9px }
 .le-chips { display: flex; gap: 8px }
+/* 38px de altura pede 10px de raio pela razão 0,26; eram 4px.
+   O `transition: all` virou lista explícita: `all` anima também o que não devia
+   (largura quando o peso muda no estado ligado) e custa repaint à toa.
+   O ligado saiu do dourado e foi para o acento: o dourado é filete e régua da
+   campanha, não cor de estado, e sobre creme ele lê pior que o vermelho. */
 .le-chip {
-  flex: 1; padding: 11px 6px; font-size: 12px; font-weight: 500;
-  cursor: pointer; border-radius: 4px; transition: all .2s ease;
-  background: #faf8f4; border: 1px solid #ddd6c9; color: #575756;
+  flex: 1; padding: 11px 6px;
+  font-family: var(--ei-sans); font-size: 12px; font-weight: 500;
+  cursor: pointer; border-radius: 10px;
+  transition: color var(--ei-t), background var(--ei-t), border-color var(--ei-t);
+  background: var(--ei-papel-alto); border: 1px solid var(--le-card-borda); color: var(--le-texto-2);
 }
-.le-chip:hover { border-color: #a98e4e }
-.le-chip[aria-pressed="true"] { background: #f5efe3; border-color: #a98e4e; color: #7e6836; font-weight: 700 }
+.le-chip:hover { border-color: var(--ei-linha-forte); color: var(--le-texto) }
+.le-chip[aria-pressed="true"] {
+  background: var(--ei-acento-toque); border-color: var(--le-acento);
+  color: var(--le-acento); font-weight: 600;
+}
 
 /* Era um <label> com caixa de aceite; virou aviso em texto, porque o
    consentimento passou a ser o próprio envio. Mesma tipografia de antes. */
@@ -415,28 +447,48 @@ body:has(.le-escuro) { background: #0a0a0a }
    O .le-junto impede as quebras que não podem acontecer: sem ele "VEJA
    Negócios" partia no meio no celular e "Política de Privacidade · LGPD"
    partia entre 989 e 1280px. */
-.le-lgpd { margin: 0; text-align: center; font-size: 11.5px; line-height: 1.55; color: #575756; text-wrap: balance }
+.le-lgpd { margin: 0; text-align: center; font-size: 11.5px; line-height: 1.55; color: var(--le-texto-2); text-wrap: balance }
 .le-junto { white-space: nowrap }
-.le-lgpd a { color: #7e6836; text-decoration: underline }
-.le-lgpd a:hover { color: #8e1522 }
+/* Link é acento. O dourado ficava em 4,2:1 sobre o creme do card e reprovava
+   AA em 11,5px; o vermelho dá 8,45:1 no mesmo lugar. */
+.le-lgpd a { color: var(--le-acento); text-decoration: underline; text-underline-offset: 2px; transition: color var(--ei-t) }
+.le-lgpd a:hover { color: var(--le-vermelho-fundo) }
 
 /* O botão carrega o vermelho da campanha, no lugar do dourado antigo: nos
    banners é ele que marca o ponto de ação, e aqui o ponto de ação é este. */
+/* Chapado, sem gradiente. Botão do sistema é cor sólida: o degradê dava um
+   brilho de plástico que briga com a ideia de tinta sobre papel, e em tela sem
+   calibração ele bandava para o rosa. O hover escurece para o vermelho fechado
+   da campanha e o botão sobe 1px; no clique ele assenta de volta.
+   48px de altura pedem 13px de raio pela razão; eram 10px.
+   A borda existe e é da cor do fundo, não para aparecer, mas para a caixa ter
+   a mesma altura de um botão de contorno ao lado, sem deslocar um pixel.
+   Caixa-alta pequena precisa de tracking positivo, senão vira mancha: .02em em
+   12,5px é 0,25px e não resolve. */
 .le-cta {
   margin-top: 2px; width: 100%; padding: 16px 20px;
-  background: linear-gradient(160deg, #a21827 0%, #7c121e 100%);
-  color: #fdfaf5; border: none; border-radius: 10px;
-  font-size: 12.5px; letter-spacing: .02em; font-weight: 700;
+  background: var(--le-acento); color: var(--ei-acento-tinta);
+  border: 1px solid var(--le-acento); border-radius: 13px;
+  font-family: var(--ei-sans); font-size: 12.5px; letter-spacing: .09em; font-weight: 600;
   text-transform: uppercase; cursor: pointer;
+  transition: background var(--ei-t-curto), border-color var(--ei-t-curto), transform var(--ei-t-curto);
 }
-.le-cta:hover { background: linear-gradient(160deg, #b01c2d 0%, #8a1523 100%) }
-.le-cta:disabled { cursor: progress; opacity: .72 }
+.le-cta:hover { background: var(--le-vermelho-fundo); border-color: var(--le-vermelho-fundo); transform: translateY(-1px) }
+.le-cta:active { transform: none }
+.le-cta:focus-visible { outline: 2px solid var(--le-texto); outline-offset: 2px }
+.le-cta:disabled { cursor: progress; opacity: .72; transform: none }
+.le-cta:disabled:hover { background: var(--le-acento); border-color: var(--le-acento); transform: none }
+
+@media (prefers-reduced-motion: reduce) {
+  .le-cta, .le-chip, .le-input { transition: none }
+  .le-cta:hover { transform: none }
+}
 
 
 /* Confirmação: mesmo lugar e mesmas medidas do card, sem o glow. */
 .le-card-ok { gap: 14px; padding: 40px 34px; box-shadow: 0 20px 50px var(--le-sombra) }
 .le-h2-ok { font-size: 31px; line-height: 1.12 }
-.le-p-ok { margin: 0; font-size: 15px; line-height: 1.6; color: #575756 }
+.le-p-ok { margin: 0; font-size: 15px; line-height: 1.6; color: var(--le-texto-2) }
 
 /* Alinhamento pela LINHA DE BASE, e não pelo centro das caixas. A marca do Grupo
    Abril tem a árvore em cima e as palavras embaixo, então o centro da caixa dela
