@@ -676,11 +676,16 @@ html,body{overflow-x:hidden}
 
 /* Lockup da barra (22/set/2026). O nome do curso quebra em duas linhas para o
    bloco ficar quase quadrado e casar com a altura do mark da VEJA, em vez de
-   virar uma faixa de 400px. O travessao faz o trabalho que o "apresenta" fazia
-   no lockup original, ocupando um oitavo da largura. */
+   virar uma faixa de 400px.
+
+   O filete e VERTICAL, nao horizontal, e a razao e o que ele separa: de um
+   lado um mark de uma linha, do outro um bloco de duas. Filete deitado corta
+   a leitura na horizontal e some contra a linha de base do texto; em pe ele
+   funciona como divisoria de colunas, que e o que de fato sao. Altura de 28px,
+   entre os 27 do mark e os 30 do bloco de texto. */
 .tb-lock{display:flex;align-items:center;gap:13px}
 .tb-veja{height:27px;width:auto;display:block;flex:0 0 auto}
-.tb-tr{flex:0 0 auto;width:15px;height:1px;background:rgba(247,244,238,.42);display:block}
+.tb-tr{flex:0 0 auto;width:1px;height:28px;background:rgba(247,244,238,.34);display:block}
 .tb-curso{font-family:'Jost',system-ui,sans-serif;font-size:12.5px;font-weight:400;
   letter-spacing:.17em;text-transform:uppercase;color:#F7F4EE;line-height:1.22;
   white-space:nowrap;display:block}
@@ -688,5 +693,5 @@ html,body{overflow-x:hidden}
   .tb-veja{height:23px}
   .tb-curso{font-size:11px;letter-spacing:.13em}
   .tb-lock{gap:10px}
-  .tb-tr{width:11px}
+  .tb-tr{height:23px}
 }
