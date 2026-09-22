@@ -618,7 +618,9 @@ html,body{overflow-x:hidden}
 /* Hero — globo em canvas (desenho em app/_lp/GloboCanvas.tsx). O elemento cobre o hero
    inteiro; o centro do globo fica em 50%/42% da area, como na versao em DOM. */
 .cn-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity .6s ease}
-.cn-canvas.pronto{opacity:1}
+.cn-canvas.pronto{opacity:.4}   /* 22/set: era 1. O globo competia com o titulo do hero.
+                                Ele e textura, nao ilustracao: entra a 40% e o veu de papel
+                                que o body.html poe por cima abre a clareira do miolo. */
 /* Hero — resposta ao mouse: o GLOBO gira e inclina conforme o cursor (feito no canvas,
    ver GloboCanvas.tsx), então o canvas em si NÃO translada — só a trama de fundo desliza
    de leve, para dar a camada distante. O parallax de translação do canvas foi removido
