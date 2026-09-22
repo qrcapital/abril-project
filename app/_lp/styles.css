@@ -491,46 +491,46 @@
 
 html{scroll-behavior:smooth}
 body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;color:#1A1815;background:#F7F4EE;line-height:1.6;-webkit-font-smoothing:antialiased}
-a{color:#7E6836;text-decoration:none}
-a:hover{color:#A98E4E}
+a{color:#8E1522;text-decoration:none}
+a:hover{color:#6B111C}
 summary::-webkit-details-marker{display:none}
 .ato{transition:background-color .4s ease}
-.ato .eb{color:#7E6836;transition:color .4s ease}
+.ato .eb{color:#6B655C;transition:color .4s ease}
 .ato .tt{color:#6B111C;transition:color .4s ease}
 .ato .bd{color:#6B655C;transition:color .4s ease}
-.ato .ico{color:#7E6836;transition:color .4s ease}
-.ato.on .ico,.ato:hover .ico{color:#D9BE85}
+.ato .ico{color:#6B655C;transition:color .4s ease}
+.ato.on .ico,.ato:hover .ico{color:#8E1522}
 .ato.on,.ato:hover{background-color:#6B111C}
-.ato.on .eb,.ato:hover .eb{color:#D9BE85}
+.ato.on .eb,.ato:hover .eb{color:#8E1522}
 .ato.on .tt,.ato:hover .tt{color:#F7F4EE}
 .ato.on .bd,.ato:hover .bd{color:#D2BCBA}
 .atos:has(.ato:hover) .ato.on:not(:hover){background-color:transparent}
-.atos:has(.ato:hover) .ato.on:not(:hover) .eb{color:#7E6836}
+.atos:has(.ato:hover) .ato.on:not(:hover) .eb{color:#6B655C}
 .atos:has(.ato:hover) .ato.on:not(:hover) .tt{color:#6B111C}
 .atos:has(.ato:hover) .ato.on:not(:hover) .bd{color:#6B655C}
-.atos:has(.ato:hover) .ato.on:not(:hover) .ico{color:#7E6836}
+.atos:has(.ato:hover) .ato.on:not(:hover) .ico{color:#6B655C}
 .prof{transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease}
-.prof:hover{transform:translateY(-6px);border-color:rgba(217,190,133,.7);box-shadow:0 22px 50px rgba(0,0,0,.32)}
+.prof:hover{transform:translateY(-6px);border-color:rgba(247,244,238,.5);box-shadow:0 22px 50px rgba(0,0,0,.32)}
 .prof .ph img{transition:transform .6s ease,opacity .5s ease,filter .5s ease}
 .prof:hover .ph .duo{transform:scale(1.05)}
 .prof .ph .col{position:absolute;inset:0;opacity:1;filter:grayscale(1) contrast(1.04)}
 .prof:hover .ph .col{opacity:1;filter:grayscale(0);transform:scale(1.05)}
-.mod summary:hover .mtitle{color:#7E6836}
+.mod summary:hover .mtitle{color:#8E1522}
 .mod .mtitle{transition:color .25s ease}
 .mod .tgl{transition:transform .3s ease,color .3s ease}
-.mod[open] .tgl{transform:rotate(45deg);color:#A98E4E}
-.mod[open] .mnum{color:#A98E4E}
+.mod[open] .tgl{transform:rotate(45deg);color:#8E1522}
+.mod[open] .mnum{color:#8E1522}
 .mnum{transition:color .3s ease}
-.idxrow:hover .ititle{color:#7E6836}
+.idxrow:hover .ititle{color:#8E1522}
 .ititle{transition:color .2s ease}
-@keyframes vsGlow{0%,100%{box-shadow:0 12px 30px rgba(107,17,28,.18),0 0 0 1px rgba(217,190,133,.35)}50%{box-shadow:0 22px 66px rgba(217,190,133,.75),0 0 0 4px rgba(217,190,133,.95)}}
+@keyframes vsGlow{0%,100%{box-shadow:0 12px 30px rgba(107,17,28,.18),0 0 0 1px rgba(247,244,238,.28)}50%{box-shadow:0 22px 66px rgba(247,244,238,.34),0 0 0 4px rgba(247,244,238,.55)}}
 .vs-hl{animation:vsGlow 2.6s ease-in-out infinite;will-change:box-shadow}
 .topbar-hamb{display:none}
 html,body{overflow-x:hidden}
 .topbar-nav a{white-space:nowrap}
 @media (max-width:1024px){
   .topbar-inner{gap:14px}
-  .topbar-nav{display:none !important;position:absolute;top:100%;left:0;right:0;background:#4A0B13;flex-direction:column;align-items:flex-start;gap:16px;padding:20px 28px 24px;border-bottom:1px solid rgba(217,190,133,.18);box-shadow:0 18px 34px rgba(0,0,0,.4)}
+  .topbar-nav{display:none !important;position:absolute;top:100%;left:0;right:0;background:#4A0B13;flex-direction:column;align-items:flex-start;gap:16px;padding:20px 28px 24px;border-bottom:1px solid rgba(247,244,238,.16);box-shadow:0 18px 34px rgba(0,0,0,.4)}
   .nav-cb:checked ~ .topbar-nav{display:flex !important}
   .topbar-nav a{font-size:15px !important}
   .tb-entrar{display:none !important}
@@ -568,7 +568,7 @@ html,body{overflow-x:hidden}
 
 /* Secao Ferramentas (H5b) — mockup pronto (imagem final com as telas ja aplicadas). */
 .entreg-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
-.entreg-list li{border-top:1px solid rgba(169,142,78,.22)}
+.entreg-list li{border-top:1px solid rgba(26,24,21,.12)}
 .entreg-list li:first-child{border-top:none}
 .entreg-stage{position:relative;width:100%;max-width:620px;margin:0 auto}
 .mk-img{width:100%;height:auto;display:block}
@@ -586,7 +586,7 @@ html,body{overflow-x:hidden}
 
 /* Secao Quem Assina (H7) — 2 cards */
 .qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:stretch}
-.qa-card{background:#fff;border:1px solid rgba(169,142,78,.22);border-radius:14px;padding:36px 34px;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(107,17,28,.05)}
+.qa-card{background:#fff;border:1px solid rgba(26,24,21,.12);border-radius:14px;padding:36px 34px;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(107,17,28,.05)}
 /* mobile (25/jul): o selo de 180px nao se aplica bem no viewport estreito — sai; e os
    2 cards viram carrossel com snap a 88%, mesma receita dos docentes. Restaura o
    comportamento que o DESIGN.md §5 ja previa ("chancela 88%") e que se perdeu quando
@@ -614,7 +614,7 @@ html,body{overflow-x:hidden}
    bundle). No desktop este link nao existe visualmente. */
 .nav-entrar{display:none !important}
 @media (max-width:1024px){
-.topbar-nav .nav-entrar{display:block !important;width:100%;margin-top:4px;padding-top:16px;border-top:1px solid rgba(217,190,133,.18)}
+.topbar-nav .nav-entrar{display:block !important;width:100%;margin-top:4px;padding-top:16px;border-top:1px solid rgba(247,244,238,.16)}
 }
 
 .chip-modulo{white-space:nowrap}
@@ -647,10 +647,10 @@ html,body{overflow-x:hidden}
    Ver scripts/comum.mjs: uma regra por valor distinto, !important por causa do
    style inline, hover restrito a ponteiro fino. */
 @media (hover:hover){
-[style-hover="color:#D9BE85"]:hover{color:#D9BE85!important}
+[style-hover="color:#F7F4EE"]:hover{color:#FFFFFF!important}
 [style-hover="color:#F7F4EE"]:hover{color:#F7F4EE!important}
-[style-hover="transform:translateY(-1px);box-shadow:0 12px 28px rgba(169,142,78,.45)"]:hover{transform:translateY(-1px)!important;box-shadow:0 12px 28px rgba(169,142,78,.45)!important}
-[style-hover="transform:translateY(-1px);box-shadow:0 16px 38px rgba(169,142,78,.5)"]:hover{transform:translateY(-1px)!important;box-shadow:0 16px 38px rgba(169,142,78,.5)!important}
+[style-hover="transform:translateY(-1px);box-shadow:0 12px 28px rgba(247,244,238,.45)"]:hover{transform:translateY(-1px)!important;box-shadow:0 12px 28px rgba(247,244,238,.45)!important}
+[style-hover="transform:translateY(-1px);box-shadow:0 16px 38px rgba(247,244,238,.5)"]:hover{transform:translateY(-1px)!important;box-shadow:0 16px 38px rgba(247,244,238,.5)!important}
 [style-hover="transform:scale(1.06)"]:hover{transform:scale(1.06)!important}
 [style-hover="background-color:#7C1420"]:hover{background-color:#7C1420!important}
 [style-hover="color:#ffffff"]:hover{color:#ffffff!important}
