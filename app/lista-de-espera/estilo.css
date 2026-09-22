@@ -1,6 +1,10 @@
 /* Tela de captura da pré-lista (/lista-de-espera).
    Uma tela só, sem scroll e sem navegação: coluna de conteúdo à esquerda sobre o
-   globo, card de formulário à direita. Tokens do Meridiano (docs/DESIGN.md).
+   globo, card de formulário à direita.
+
+   Identidade: a da campanha VEJA Negócios apresenta Estratégia Internacional
+   (creme, preto, vermelho e dourado), a mesma do kit de banners de setembro/2026.
+   Substituiu a paleta verde do Meridiano nesta rota, e só nela.
 
    Escopo: tudo sob .le-raiz. Este CSS é injetado por Tela.tsx só nas rotas da
    pré-lista, no mesmo padrão do app/page.tsx, e não passa pelo Tailwind (que só
@@ -15,15 +19,90 @@
    os dois. A rota do teaser é a exceção e usa container query, pela razão
    escrita lá embaixo. */
 
+/* ---- tokens ----------------------------------------------------------------
+   As duas versões da campanha, clara e escura, são o MESMO layout com outros
+   valores aqui. Quem escolhe é a classe .le-escuro no .le-raiz, emitida por
+   Tela.tsx. Cor literal fora deste bloco só existe dentro do card do formulário,
+   que é claro nas duas versões e por isso não tem par escuro.
+
+   O globo lê estes mesmos tokens por getComputedStyle (GloboEspera.tsx), então
+   ele acompanha o tema sem ter uma segunda cópia da paleta em JS. Os que ele usa
+   vão em componentes RGB separados por espaço, que é o que o canvas monta em
+   rgba(). */
+.le-raiz {
+  --le-fundo: #f7f4ee;          /* creme dos banners claros */
+  --le-fundo-alto: #fbf9f5;
+  --le-fundo-baixo: #f1ece2;
+  --le-veu-rgb: 247 244 238;
+
+  --le-texto: #0a0a0a;
+  --le-texto-2: #57544e;        /* lide e apoios */
+  --le-texto-3: #7c7871;        /* micro, rótulos discretos */
+
+  --le-dourado: #7e6836;        /* dourado que lê sobre creme */
+  --le-dourado-regua: #a98e4e;  /* filetes e réguas da marca */
+  --le-vermelho: #8e1522;       /* vermelho de trabalho da VEJA Negócios */
+  /* O painel é mais fechado que o vermelho de trabalho: os dois valores saem da
+     própria biblioteca da campanha (o leia-me do globo), onde #6B111C é a linha
+     base do conjunto vermelho e #4A0B13 é o fundo da esfera. */
+  --le-vermelho-fundo: #6b111c;
+  --le-vermelho-fundo-2: #4a0b13;
+
+  --le-acento: var(--le-vermelho);          /* checks e praças da rota */
+  --le-acento-halo: rgba(142, 21, 34, .14);
+  --le-linha: rgba(10, 10, 10, .14);        /* filetes */
+  --le-linha-fraca: rgba(10, 10, 10, .12);  /* trilho da rota */
+  --le-trama: rgba(10, 10, 10, .05);        /* pontilhado de fundo */
+  --le-luz-rgb: 169 142 78;                 /* corcova que percorre a rota */
+
+  --le-sombra: rgba(10, 10, 10, .14);
+  --le-brilho: rgba(169, 142, 78, .55);
+  --le-card-borda: #e2dacd;
+
+  --le-globo-opacidade: .34;    /* fundo discreto: a linha marca presença sem disputar */
+}
+
+.le-raiz.le-escuro {
+  --le-fundo: #0a0a0a;
+  --le-fundo-alto: #141414;
+  --le-fundo-baixo: #070707;
+  --le-veu-rgb: 10 10 10;
+
+  --le-texto: #f7f4ee;
+  --le-texto-2: #a6a29a;
+  --le-texto-3: #8a867e;
+
+  --le-dourado: #cdb98e;        /* o dourado claro dos banners escuros */
+  --le-dourado-regua: #a98e4e;
+
+  --le-acento: var(--le-dourado);
+  --le-acento-halo: rgba(205, 185, 142, .16);
+  --le-linha: rgba(247, 244, 238, .16);
+  --le-linha-fraca: rgba(247, 244, 238, .12);
+  --le-trama: rgba(247, 244, 238, .035);
+  --le-luz-rgb: 241 230 206;
+
+  --le-sombra: rgba(0, 0, 0, .45);
+  --le-brilho: rgba(169, 142, 78, .5);
+
+  --le-globo-opacidade: .45;    /* sobre o preto a linha some bem antes */
+}
+
+/* ---- base ------------------------------------------------------------------ */
+
 .le-raiz, .le-raiz *, .le-raiz *::before, .le-raiz *::after { box-sizing: border-box }
-body { margin: 0; padding: 0; background: #0b2d20 }
+/* O fundo do body só aparece no estica da rolagem, no celular. Ele acompanha o
+   tema por :has, porque a classe do tema mora no .le-raiz e não no body; onde
+   :has não existir, fica o claro, que é a versão padrão. */
+body { margin: 0; padding: 0; background: #f7f4ee }
+body:has(.le-escuro) { background: #0a0a0a }
 
 .le-raiz {
   position: relative;
   min-height: 100vh;
   overflow: hidden;
-  background: #0b2d20;
-  color: #f7f5f2;
+  background: var(--le-fundo);
+  color: var(--le-texto);
   font-family: 'Montserrat', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   /* O Playfair vem com algarismos oldstyle (3,4,5,7,9 descem da baseline). Sem
@@ -31,25 +110,25 @@ body { margin: 0; padding: 0; background: #0b2d20 }
      do app/page.tsx. */
   font-variant-numeric: lining-nums;
 }
-.le-raiz a { color: #d9be85; text-decoration: none }
-.le-raiz a:hover { color: #f0e9d8 }
+.le-raiz a { color: var(--le-dourado); text-decoration: none }
+.le-raiz a:hover { color: var(--le-vermelho) }
 /* :where() zera a especificidade dos tipos, senão este reset (0,1,1) ganha de
    .le-chip e .le-cta (0,1,0) e leva a cor do texto junto — creme sobre creme,
    botão sem rótulo visível. Com :where() o seletor vale 0,1,0 e quem vem depois
    no arquivo manda. */
 .le-raiz :where(input, button, textarea, select) { font: inherit; color: inherit }
 .le-raiz input::placeholder { color: #8f887e }
-.le-raiz :where(input, button, a):focus-visible { outline: 2px solid #a98e4e; outline-offset: 2px }
+.le-raiz :where(input, button, a):focus-visible { outline: 2px solid var(--le-vermelho); outline-offset: 2px }
 
 /* ---- camadas de fundo, na ordem de pintura --------------------------------- */
 
 .le-fundo {
   position: absolute; inset: 0;
-  background: radial-gradient(115% 95% at 16% 26%, #123b2b 0%, #0b2d20 48%, #0a2b1e 100%);
+  background: radial-gradient(115% 95% at 16% 26%, var(--le-fundo-alto) 0%, var(--le-fundo) 48%, var(--le-fundo-baixo) 100%);
 }
 .le-trama {
   position: absolute; inset: 0; pointer-events: none;
-  background-image: radial-gradient(rgba(247,245,242,.035) 1.3px, transparent 1.3px);
+  background-image: radial-gradient(var(--le-trama) 1.3px, transparent 1.3px);
   background-size: 32px 32px;
   -webkit-mask-image: linear-gradient(to bottom, black, transparent 92%);
   mask-image: linear-gradient(to bottom, black, transparent 92%);
@@ -77,11 +156,37 @@ body { margin: 0; padding: 0; background: #0b2d20 }
 .le-veu {
   position: absolute; left: 0; top: 0; bottom: 0;
   width: min(780px, 62%); pointer-events: none;
-  background: linear-gradient(90deg, #0b2d20 0%, rgba(11,45,32,.92) 40%, rgba(11,45,32,.66) 78%, rgba(11,45,32,0) 100%);
+  background: linear-gradient(90deg,
+    rgb(var(--le-veu-rgb)) 0%,
+    rgb(var(--le-veu-rgb) / .92) 40%,
+    rgb(var(--le-veu-rgb) / .66) 78%,
+    rgb(var(--le-veu-rgb) / 0) 100%);
 }
 
-.le-globo { position: absolute; inset: 0; pointer-events: none }
-.le-globo canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none }
+/* O globo é a peça da biblioteca visual da campanha (public/marca), na versão em
+   linha (e não a esfera preenchida), e não mais o canvas desenhado ponto a ponto. Medidas
+   herdadas do canvas para a tela não mudar de composição: centro em 63%/46% da
+   janela e esfera de ~956px, que aqui viram 1060px de arquivo (a esfera ocupa
+   1090 dos 1200 do viewBox).
+
+   Fica atrás do véu, que é quem garante a leitura da coluna de texto por cima
+   dele. */
+.le-globo {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  opacity: var(--le-globo-opacidade);
+}
+.le-globo img {
+  position: absolute; left: 78%; top: 44%; transform: translate(-50%, -50%);
+  width: min(1150px, 160vw); height: auto; display: block;
+}
+/* Empilhado, o globo sobe para o alto à direita e encolhe, fora da coluna de
+   texto: as mesmas frações do canvas anterior (84%/12%, fator 0,62). Ele passa
+   POR CIMA do texto onde o véu não alcança, então perde opacidade também. O
+   mesmo 990px do auto-fit do .le-grade. */
+@media (max-width: 989px) {
+  .le-globo img { left: 84%; top: 12%; width: min(660px, 170vw) }
+  .le-globo { opacity: .55 }
+}
 /* O canvas estático entra em fade quando a primeira pintura termina, senão o
    litoral aparece de um quadro para o outro. */
 .le-globo-base { opacity: 0; transition: opacity .6s ease }
@@ -104,217 +209,188 @@ body { margin: 0; padding: 0; background: #0b2d20 }
 
 .le-esq {
   display: flex; flex-direction: column; justify-content: center;
-  gap: clamp(16px, 1.9vw, 22px); padding: 4px 0;
+  gap: clamp(22px, 2.6vw, 34px); padding: 4px 0;
 }
-/* SVG inline, não <img>: só inline o wordmark usa as fontes self-hosted da
-   página. Como <img> ele cai para Georgia. */
-.le-wordmark {
-  display: block; align-self: flex-start; overflow: visible;
-  margin-bottom: 12px; width: min(268px, 74vw); height: auto;
+/* A logo virou arquivo (public/marca), e não mais o wordmark desenhado em SVG
+   inline: ela carrega a assinatura da VEJA Negócios junto do nome do curso, e
+   esse desenho é da Abril. Como <img> ela não depende das fontes da página,
+   porque o arquivo já vem com o texto em curvas. */
+/* As duas margens negativas cancelam a folga transparente do arquivo, medida no
+   navegador: a tinta começa 10px depois da borda esquerda dele e termina 10px
+   antes da borda de baixo, na medida em que ele entra aqui. Sem elas a logo
+   parece recuada em relação à manchete, e o vão até ela vira 62px de branco —
+   o maior da coluna, quase o dobro dos outros. Com elas a tinta da logo nasce
+   na mesma vertical do "O" da manchete e o vão cai para 44px, na mesma família
+   dos outros respiros da coluna.
+
+   Mexer na arte do arquivo pede remedir as duas. */
+.le-logo {
+  display: block; align-self: flex-start;
+  margin-left: -10px; margin-bottom: -8px;
+  width: min(322px, 82vw); height: auto;
 }
 /* container-type: a assinatura decide se empilha pela largura DESTE bloco, que
    é a coluna de texto, e não pela da janela. */
-.le-bloco { display: flex; flex-direction: column; gap: 18px; max-width: 580px; container-type: inline-size }
+/* 490px é a medida da manchete, não um número redondo: o trio mais largo
+   ("global começa aqui.") ocupa 486px em Playfair 55px. Tudo o que vem abaixo
+   fecha na mesma vertical que ela, que é o que dá uma borda direita só para a
+   coluna inteira. Mexer no corpo ou no texto da manchete muda essa medida. */
+.le-bloco { display: flex; flex-direction: column; gap: 30px; max-width: 490px; container-type: inline-size }
 
 .le-h1 {
   margin: 0;
   font-family: 'Playfair Display', Georgia, serif;
-  /* O teto caiu de 72px (valor do design) para 62px quando a headline mudou: a
-     nova tem 54 caracteres contra 44 da original, e a 72px ganhava uma quarta
-     linha, que é o que empurrava a tela para a rolagem. */
-  font-weight: 600; font-size: clamp(38px, 4.6vw, 62px);
-  line-height: 1; color: #f7f5f2; text-wrap: balance;
+  /* O teto caiu de 72px (valor do design) para 62px quando a headline mudou, e
+     de 62 para 55 quando o bloco passou a fechar em três linhas: a 62 a frase
+     quebrava em quatro e deixava "risco." sozinho na última. */
+  font-weight: 600; font-size: clamp(36px, 4.1vw, 55px);
+  line-height: 1.02; color: var(--le-texto);
+  /* Alinhada à esquerda e com as linhas CHEIAS. Não é justificada: a 55px, com
+     três ou quatro palavras por linha, a justificação estica os espaços entre
+     elas e abre buracos no meio da frase. Sem o text-wrap: balance, que encurta
+     as linhas para igualá-las, cada linha vai até onde cabe e a borda direita
+     fecha quase reta sozinha, que é o efeito que a justificação daria sem o
+     preço dela. */
+  text-align: left; text-wrap: initial;
 }
-.le-h1 em { font-style: italic; color: #d9be85 }
+.le-h1 em { font-style: italic; color: var(--le-dourado) }
+/* Cada trio de palavras da manchete anda junto: é o que mantém três por linha
+   sem quebra fixa. */
+.le-trio { white-space: nowrap }
 
 .le-lide {
   margin: 0; font-size: clamp(15px, 1.15vw, 16px); line-height: 1.6;
-  color: #a9b8ae; max-width: 505px; text-wrap: pretty;
+  color: var(--le-texto-2); text-wrap: pretty;
+  /* A hifenização é o que evita os rios de espaço em branco: sem ela, num
+     parágrafo estreito e justificado, uma palavra longa que não coube abre a
+     linha inteira. */
+  text-align: justify; hyphens: auto;
 }
 
-.le-checks { margin: 2px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px }
-.le-checks li { display: flex; gap: 12px; align-items: baseline; font-size: 15px; line-height: 1.5; color: #f7f5f2 }
-.le-check { color: #d9be85; font-weight: 700 }
+/* Mesmo arranjo do teaser: um rótulo em caixa alta abrindo e a lista embaixo. */
+/* Os três itens e o rótulo que os abre andam juntos: o rótulo é o começo da
+   frase que cada item completa, e o vão entre eles tem de ser menor que o vão
+   até o bloco de cima, senão o conjunto se lê como quatro coisas soltas. Medido
+   na tela, dá 16px de branco entre as linhas, contra os 36px que separam o
+   bloco do texto de apoio. */
+.le-garante { display: flex; flex-direction: column; gap: 9px }
+.le-checks { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px }
+.le-checks li { display: flex; gap: 12px; align-items: baseline; font-size: 15px; line-height: 1.5; color: var(--le-texto) }
+.le-check { color: var(--le-acento); font-weight: 700 }
 
 /* Rótulo: a caixa alta de 10px com tracking largo é o mesmo padrão em cinco
    lugares desta tela; o que muda é peso e cor. */
 .le-rotulo { font-size: 10px; letter-spacing: .16em; text-transform: uppercase }
-.le-rotulo-sage { font-weight: 700; color: #8fa398; white-space: nowrap }
-.le-rotulo-gold { font-weight: 900; color: #d9be85 }
+.le-rotulo-gold { font-weight: 900; color: var(--le-dourado) }
 .le-rotulo-campo { font-weight: 900; color: #7e6836 }
 
-.le-assina { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; min-height: 32px; margin-top: 2px }
-.le-filete { display: block; width: 1px; height: 22px; background: rgba(247,245,242,.16) }
-.le-x { font-size: 14px; font-weight: 700; color: #a98e4e }
-/* O × e a marca do BlockTrends quebram juntos ou não quebram. */
-.le-par { display: flex; align-items: center; gap: 14px }
-/* Deitadas, as duas marcas casam por altura. Estas regras vêm ANTES do
-   @container de propósito: têm a mesma especificidade das de lá, e em empate
-   ganha quem vem depois. Invertida, a ordem anula o bloco do celular. */
-.le-logo-veja { height: 30px; width: auto; display: block }
-.le-logo-bt { height: 19px; width: auto; display: block }
 
-/* No celular a assinatura empilha inteira: rótulo, VEJA, ×, BlockTrends.
-   Medido: a linha única pede 522px (110 do rótulo + 122 do VEJA + 229 do par,
-   mais os gaps), e a coluna de texto tem 350px em 390px de janela. Quebrando
-   sozinha ela deixava "× BlockTrends" órfão numa segunda linha.
+/* A mesma medida do .le-bloco, os 490px da manchete: este bloco fecha na
+   vertical em que a coluna inteira fecha. Ele era mais largo que ela enquanto
+   trouxe a fileira de quatro paradas, que não cabia em 490px; sem ela, ficar
+   largo só desalinhava a borda direita da coluna.
 
-   O corte é 420px de coluna, e não os 540 da rota: acima disso a quebra em duas
-   linhas ainda lê bem, e empilhar ali custaria ~45px de altura numa faixa
-   (janelas de 1024px a 1200px) onde a tela hoje cabe inteira sem rolagem. */
-@container (max-width: 419px) {
-  /* O ritmo não é uniforme de propósito: o rótulo é cabeçalho e as duas marcas
-     com o × entre elas são uma assinatura só. Espaço maior depois do rótulo,
-     menor dentro da assinatura, e as três linhas passam a se ler como um bloco
-     em vez de quatro itens soltos. */
-  .le-assina { flex-direction: column; align-items: flex-start; gap: 13px }
-  .le-par { flex-direction: column; align-items: flex-start; gap: 7px }
-  /* O filete é separador de linha; empilhado ele não separa nada. */
-  .le-filete { display: none }
-  /* Sem o filete, os dois-pontos fazem o trabalho de anunciar o que vem. */
-  .le-assina .le-rotulo-sage::after { content: ":" }
-  /* Deitado entre duas marcas grandes, o × de 14px lia como sujeira. Em 17px
-     ele vira o operador que é. O recuo alinha o centro dele com a haste do V do
-     VEJA em vez da borda da caixa, que é o que o olho procura numa pilha. */
-  .le-x { font-size: 17px; line-height: 1; margin-left: 3px }
+   O gap é o vão entre a frase e o parágrafo; a assinatura da mediação pede mais
+   ar que isso e pede o dela por margem. */
+.le-teaser { display: flex; flex-direction: column; gap: 9px; max-width: 490px }
+/* A assinatura fecha o bloco e pede mais ar que o vão interno dele: medido na
+   tela, 14px do rótulo ao parágrafo, 17px do parágrafo à linha da data e 27px
+   dela até as marcas. Cada degrau maior que o anterior é o que faz as três
+   partes se lerem como três, e não como uma pilha de linhas pequenas. */
+.le-teaser .le-mediacao { margin-top: 15px }
+/* O bloco da live: uma linha que diz o assunto, um parágrafo que diz quem
+   conduz e por quê, e a assinatura da mediação com as duas marcas.
 
-  /* Empilhadas, as marcas casam por LARGURA, não por altura. Deitadas elas
-     casam por altura (os 30px e 19px do design), mas numa pilha o olho compara
-     a extensão de cada linha: com 122px contra 207px a VEJA parecia metade do
-     BlockTrends. Largura fixa nas duas, e a altura cada uma resolve pela sua
-     proporção — assim nenhuma das duas depende do aspect ratio da outra. */
-  .le-logo-veja, .le-logo-bt { width: 200px; height: auto }
+   Substituiu a pauta de quatro entradas. O que ela dizia em rótulos soltos
+   ("O tema", "A mesa") cabe numa frase só, e a frase pode argumentar, que é o
+   que faz alguém marcar a hora. */
+/* Justificado, como o texto de apoio lá em cima, e com os hifens postos à mão.
+   A primeira linha abria vãos de 17px entre as palavras (o normal aqui é 4px):
+   "Estratégia Internacional" são duas palavras longas que não podem partir, e
+   "Internacional," nunca cabia na primeira linha. Duas coisas resolvem, medidas
+   de 360px a 1920px de janela: "dois dos professores", que enche a primeira
+   linha no desktop (pior vão: 7px), e os &shy; em palavras comuns do texto, que
+   fazem o mesmo nas colunas estreitas do celular (4 a 7px na maioria das
+   larguras).
+
+   hyphens: manual, e não auto: o automático depende do dicionário do navegador
+   de quem visita e, onde ele existe, poderia partir o nome do curso. Assim só
+   partem as palavras marcadas em Tela.tsx. */
+.le-live-p {
+  margin: 0;
+  font-size: 14px; line-height: 1.55; color: var(--le-texto-2);
+  text-align: justify; hyphens: manual; text-wrap: pretty;
 }
 
-/* container-type: a grade abaixo decide o número de colunas pela largura DESTE
-   bloco, não pela da janela. */
-.le-teaser { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; container-type: inline-size }
-/* As quatro paradas desenhadas como uma rota do globo: praça, trilho fraco
-   ligando, e uma corcova de luz percorrendo. Os 01..04 saíram — o <ol> guarda a
-   ordem para o leitor de tela e o trilho a mostra para quem vê.
+/* Os dois nomes, um degrau acima do cinza do parágrafo. Sem peso extra: o
+   Montserrat em 600 dentro de um texto de 400 já separa, e negrito de verdade
+   num parágrafo justificado abre buracos entre as palavras. */
+.le-nome { font-weight: 600; color: var(--le-texto) }
 
-   Cores e ritmo são os mesmos do canvas, de propósito: trilho
-   rgba(247,245,242,.12), luz rgba(241,230,206,α), praça #F0E3C4 com halo
-   #D9BE85, e 5200ms, que é o período-base das rotas em GloboEspera.tsx.
+/* Data e atalho, na mesma linha, separados pelo mesmo filete do lockup de baixo.
+   A data leva o dourado porque é a informação que marca a hora de alguém. */
+/* Quando, onde e o atalho, numa linha só. O gap de 11px separa a data do "ao
+   vivo" (com o filete no meio, no lugar da barra); os 20px antes do link são o
+   que faz a informação e a ação lerem como dois grupos, e não como quatro
+   pedaços iguais. */
+.le-quando { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 11px; margin: 2px 0 0 }
+.le-data { font-weight: 900; color: var(--le-dourado) }
+.le-filete { width: 1px; background: var(--le-linha); flex: none }
+.le-quando .le-filete { height: 12px }
+.le-quando .le-live-cta { margin-left: 9px }
+/* Dois seletores de classe, e não um: o reset `.le-raiz a` vale 0,1,1 e levaria
+   a cor do link junto se esta regra valesse 0,1,0. Mesma armadilha do reset de
+   input e button lá em cima. */
+.le-teaser .le-live-cta {
+  font-weight: 700; color: var(--le-texto);
+  border-bottom: 1px solid var(--le-linha); padding-bottom: 1px;
+  transition: color .2s ease, border-color .2s ease;
+}
+.le-teaser .le-live-cta:hover { color: var(--le-vermelho); border-bottom-color: currentColor }
 
-   Duas formas, nunca uma fileira quebrada: empilhado vira linha do tempo
-   vertical, e a partir de 560px de coluna vira a fileira horizontal de quatro.
-   Quem decide é a largura da PRÓPRIA coluna (container query), não a da janela:
-   a coluna esquerda encolhe sem a janela mudar de faixa, quando a grade de fora
-   colapsa, e era ali que a fileira de quatro quebrava. */
-/* padding zero de propósito: o trilho estático é ::before do item (mede a partir
-   do item) e a luz é ::after da lista (mede a partir da borda dela). Qualquer
-   padding aqui desloca um sem deslocar o outro, e a luz corre numa linha acima
-   da linha. Espaço, se precisar, vem do gap do .le-teaser. */
-.le-rota {
-  /* Quantidade de paradas. Anda junto com o TEASER de Tela.tsx: é o que diz à
-     luz onde a rota termina, na fileira horizontal. */
-  --paradas: 4;
-  position: relative;
-  list-style: none; margin: 0; padding: 0;
-  display: grid; grid-template-columns: 1fr; gap: 18px;
-}
-.le-rota-item { position: relative; display: flex; align-items: center; gap: 13px }
-.le-rota-marca {
-  flex: none; width: 7px; height: 7px; border-radius: 50%;
-  background: #f0e3c4; box-shadow: 0 0 0 3px rgba(217,190,133,.16);
-  position: relative; z-index: 1;
-}
-.le-rota-t {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-weight: 600; font-size: 17px; line-height: 1.2; color: #f7f5f2;
-}
-/* trilho: vertical no empilhado, da praça até a de baixo (o -18px cruza o gap) */
-.le-rota-item::before {
-  content: ""; position: absolute; z-index: 0;
-  left: 3px; top: 50%; bottom: -18px; width: 1px;
-  background: rgba(247,245,242,.12);
-}
-.le-rota-item:last-child::before { display: none }
-
-/* A corcova de luz, uma só para a rota inteira. No empilhado ela desce da
-   primeira praça à última; os 10px de recuo são o meio-item, que é onde o
-   align-items:center põe a praça numa linha de 17px/1.2. Passa POR TRÁS das
-   praças, que têm z-index 1 — igual ao canvas, onde a luz corre na rota e o
-   núcleo da praça fica por cima. */
-.le-rota::after {
-  content: ""; position: absolute; pointer-events: none; z-index: 0;
-  left: 3px; width: 1px; top: 10px; bottom: 10px;
-  background-image: linear-gradient(180deg, rgba(241,230,206,0) 0%, rgba(241,230,206,.85) 50%, rgba(241,230,206,0) 100%);
-  background-size: 100% 34%; background-repeat: no-repeat;
-  animation: leRotaV 5200ms linear infinite;
-}
-
-/* 540px, medido e não chutado: o rótulo mais largo ("Como funciona" e "O que
-   você leva") ocupa 119px em Playfair 17px, mais os 14px de padding do item dá
-   133px por coluna, e 4 × 133 = 532. Os 540 são esses 532 com folga para o
-   fallback Georgia, que é mais largo.
-
-   O valor anterior, 560, era conservador demais: numa janela de 1280px a coluna
-   esquerda dá 558px e caía no empilhado por 2px, o que custa ~100px de altura à
-   toa. */
-@container (min-width: 540px) {
-  .le-rota { grid-template-columns: repeat(4, 1fr); gap: 0 }
-  .le-rota-item { flex-direction: column; align-items: flex-start; gap: 12px; padding-right: 14px }
-  /* trilho horizontal: sai da praça e vai até a próxima */
-  .le-rota-item::before {
-    left: 12px; right: 0; top: 3px; bottom: auto; width: auto; height: 1px;
-  }
-  /* Mesma corcova, deitada: atravessa a fileira em vez de descer. O top:3px
-     casa com o do trilho porque os dois medem da mesma origem agora. */
-  .le-rota::after {
-    /* Encerra no centro da última praça, não na borda da grade. O último item
-       ocupa a quarta coluna inteira, mas a praça dele fica no começo dela: sem
-       este recuo de uma coluna a luz seguia varrendo o vazio à direita do
-       último ponto. O -3px alinha com o centro da praça, igual ao left. */
-    left: 3px; right: calc(100% / var(--paradas) - 3px); width: auto;
-    top: 3px; bottom: auto; height: 1px;
-    background-image: linear-gradient(90deg, rgba(241,230,206,0) 0%, rgba(241,230,206,.85) 50%, rgba(241,230,206,0) 100%);
-    background-size: 34% 100%;
-    animation-name: leRotaH;
-  }
-}
-@keyframes leRotaH {
-  from { background-position: -40% 0 }
-  to { background-position: 140% 0 }
-}
-@keyframes leRotaV {
-  from { background-position: 0 -40% }
-  to { background-position: 0 140% }
-}
-@media (prefers-reduced-motion: reduce) {
-  .le-rota::after { animation: none; opacity: 0 }
-}
+/* A assinatura da mediação. As alturas das duas marcas não são iguais de
+   propósito: a do BlockTrends é uma palavra comprida e baixa (proporção 10,9:1)
+   e a da VEJA Negócios é curta e alta (4:1). Igualando a caixa, uma das duas
+   sempre parece maior que a outra. Estes valores igualam o que o olho compara,
+   a altura das letras. */
+.le-mediacao { display: flex; align-items: center; gap: 11px; flex-wrap: wrap }
+.le-mediacao-r { font-weight: 700; color: var(--le-texto-3) }
+.le-mediacao img { display: block; width: auto }
+.le-marca-veja { height: 19px }
+.le-marca-bt { height: 9.5px }
+.le-mediacao .le-filete { height: 13px }
 
 /* ---- coluna direita -------------------------------------------------------- */
+/* O card é claro nas duas versões, como o bloco de ação dos banners. Por isso as
+   cores daqui para baixo são literais: não há par escuro para elas. */
 
 .le-dir { display: flex; flex-direction: column; justify-content: center; gap: 20px }
-.le-card-wrap { width: 100%; max-width: 452px; margin: 0 auto }
+.le-card-wrap { width: 100%; max-width: 520px; margin: 0 auto }
 
 .le-card {
   display: flex; flex-direction: column; gap: 18px;
-  background: #ffffff; border: 1px solid #d6c3c2; border-radius: 14px;
-  padding: clamp(24px, 3vw, 34px) clamp(20px, 2.6vw, 32px);
+  background: #ffffff; border: 1px solid var(--le-card-borda); border-radius: 14px;
+  padding: clamp(26px, 3.2vw, 38px) clamp(22px, 2.9vw, 36px);
 }
 .le-card-glow { animation: leGlow 2.6s ease-in-out infinite; will-change: box-shadow }
 @keyframes leGlow {
-  0%, 100% { box-shadow: 0 12px 30px rgba(11,45,32,.18), 0 0 0 1px rgba(217,190,133,.35) }
-  50%      { box-shadow: 0 22px 66px rgba(217,190,133,.35), 0 0 0 3px rgba(217,190,133,.6) }
+  0%, 100% { box-shadow: 0 12px 30px var(--le-sombra), 0 0 0 1px var(--le-brilho) }
+  50%      { box-shadow: 0 22px 66px var(--le-sombra), 0 0 0 3px var(--le-brilho) }
 }
 @media (prefers-reduced-motion: reduce) {
   .le-card-glow { animation: none !important }
 }
 
 .le-card-head { display: flex; flex-direction: column; gap: 7px }
-.le-h2 { margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 600; font-size: 30px; line-height: 1.1; color: #0b2d20 }
-.le-sub { margin: 0; font-size: 13.5px; line-height: 1.6; color: #6d6d6d }
+.le-h2 { margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 600; font-size: 30px; line-height: 1.1; color: #0a0a0a }
+.le-sub { margin: 0; font-size: 13.5px; line-height: 1.6; color: #575756 }
 
 .le-campos { display: flex; flex-direction: column; gap: 14px }
 .le-campo { display: flex; flex-direction: column; gap: 6px }
 .le-input {
   width: 100%; padding: 13px 14px;
-  background: #f7f5f2; border: 1px solid #d6c3c2; border-radius: 4px;
-  font-size: 15px; color: #333333;
+  background: #faf8f4; border: 1px solid #ddd6c9; border-radius: 4px;
+  font-size: 15px; color: #1a1a1a;
 }
 
 /* Três botões, não um <select>: escolha única e opcional, e o toque num chip é
@@ -324,33 +400,201 @@ body { margin: 0; padding: 0; background: #0b2d20 }
 .le-chip {
   flex: 1; padding: 11px 6px; font-size: 12px; font-weight: 500;
   cursor: pointer; border-radius: 4px; transition: all .2s ease;
-  background: #f7f5f2; border: 1px solid #d6c3c2; color: #6d6d6d;
+  background: #faf8f4; border: 1px solid #ddd6c9; color: #575756;
 }
 .le-chip:hover { border-color: #a98e4e }
-.le-chip[aria-pressed="true"] { background: #f0e9d8; border-color: #a98e4e; color: #7e6836; font-weight: 700 }
+.le-chip[aria-pressed="true"] { background: #f5efe3; border-color: #a98e4e; color: #7e6836; font-weight: 700 }
 
 /* Era um <label> com caixa de aceite; virou aviso em texto, porque o
    consentimento passou a ser o próprio envio. Mesma tipografia de antes. */
-.le-lgpd { margin: 0; font-size: 11.5px; line-height: 1.55; color: #6d6d6d }
+/* Duas regras para o aviso não quebrar feio, e as duas fazem falta.
+   O balance iguala as linhas: sem ele o navegador enche cada uma até o fim e
+   sobra uma última curtinha (em 1100px eram 347, 380 e 118px).
+   O .le-junto impede as quebras que não podem acontecer: sem ele "VEJA
+   Negócios" partia no meio no celular e "Política de Privacidade · LGPD"
+   partia entre 989 e 1280px. */
+.le-lgpd { margin: 0; text-align: center; font-size: 11.5px; line-height: 1.55; color: #575756; text-wrap: balance }
+.le-junto { white-space: nowrap }
 .le-lgpd a { color: #7e6836; text-decoration: underline }
-.le-lgpd a:hover { color: #a98e4e }
+.le-lgpd a:hover { color: #8e1522 }
 
+/* O botão carrega o vermelho da campanha, no lugar do dourado antigo: nos
+   banners é ele que marca o ponto de ação, e aqui o ponto de ação é este. */
 .le-cta {
   margin-top: 2px; width: 100%; padding: 16px 20px;
-  background: linear-gradient(160deg, #d9be85 0%, #a98e4e 100%);
-  color: #0a2b1e; border: none; border-radius: 10px;
+  background: linear-gradient(160deg, #a21827 0%, #7c121e 100%);
+  color: #fdfaf5; border: none; border-radius: 10px;
   font-size: 12.5px; letter-spacing: .02em; font-weight: 700;
   text-transform: uppercase; cursor: pointer;
 }
+.le-cta:hover { background: linear-gradient(160deg, #b01c2d 0%, #8a1523 100%) }
 .le-cta:disabled { cursor: progress; opacity: .72 }
 
-.le-micro { margin: 0; text-align: center; font-size: 11px; line-height: 1.55; color: #8f887e }
 
 /* Confirmação: mesmo lugar e mesmas medidas do card, sem o glow. */
-.le-card-ok { gap: 14px; padding: 40px 34px; box-shadow: 0 20px 50px rgba(10,43,30,.32) }
+.le-card-ok { gap: 14px; padding: 40px 34px; box-shadow: 0 20px 50px var(--le-sombra) }
 .le-h2-ok { font-size: 31px; line-height: 1.12 }
-.le-p-ok { margin: 0; font-size: 15px; line-height: 1.6; color: #6d6d6d }
+.le-p-ok { margin: 0; font-size: 15px; line-height: 1.6; color: #575756 }
 
-/* Sem o filtro a marca do Grupo Abril não lê sobre o verde. */
-.le-abril { display: flex; align-items: center; justify-content: center; gap: 12px }
-.le-abril img { height: 22px; width: auto; display: block; filter: brightness(0) invert(1); opacity: .78 }
+/* Alinhamento pela LINHA DE BASE, e não pelo centro das caixas. A marca do Grupo
+   Abril tem a árvore em cima e as palavras embaixo, então o centro da caixa dela
+   fica acima do centro das palavras: centralizadas, as duas tipografias saíam
+   desencontradas em ~7px. Pela base, o pé de "GRUPO Abril" encosta no pé do
+   crédito, que é o que o olho compara. */
+/* O flex-wrap é o que resolve o celular sem media query: onde a linha não cabe
+   ao lado da árvore, ela desce inteira e cada uma se centraliza na sua própria
+   linha. Sem ele o texto quebrava em duas dentro da caixa dele, com a segunda
+   linha ("reservados.") solta embaixo e o conjunto fora do meio. */
+.le-abril { display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 12px }
+
+/* O crédito legal, na forma que a própria Abril usa no rodapé do site dela:
+   caixa alta e baixa, sem o tracking dos rótulos desta tela, que é o que dá a
+   ela cara de assinatura institucional e não de etiqueta de seção. Sem o CNPJ,
+   que é decisão da Lu — ele vive no rodapé da LP de vendas, onde a razão social
+   completa é exigida. */
+.le-credito { font-size: 12px; font-weight: 600; line-height: 1.4; color: var(--le-texto-2); text-align: center }
+/* Sem filtro e sem opacidade: o arquivo já vem na cor certa (Tela.tsx escolhe
+   entre a versão branca e a preta pelo fundo). Era o filtro somado à opacidade
+   que embaçava a marca nos 22px do rodapé — o desenho é vetor, mas o
+   `filter` obriga o navegador a rasterizar a camada, e a 70% de opacidade os
+   traços finos de "GRUPO" perdiam o contraste que os separa do fundo. */
+.le-abril img { height: 22px; width: auto; display: block }
+
+/* ---- composição em faixa ---------------------------------------------------
+   A segunda composição da coluna da direita, tirada do kit de banners: um painel
+   vermelho que sangra até a borda da tela, com o formulário por cima dele.
+
+   Duas coisas vêm dos banners e não do layout antigo: o globo não para na divisa
+   das colunas, ele atravessa e continua dentro do vermelho em linha clara; e o
+   card do formulário é de vidro fosco, não uma superfície branca. A moldura
+   continua existindo, é ela que diz que ali se preenche alguma coisa, mas é de
+   luz e não de tinta.
+
+   Vale nas duas versões, clara e escura: nos banners o painel é o mesmo nas
+   duas. Quem liga é a classe .le-faixa no .le-raiz, emitida por Tela.tsx.
+
+   O painel é um irmão do .le-grade e não um fundo da coluna: assim ele sangra
+   sem depender do padding da grade. O left: 50% acerta a divisa das colunas em
+   qualquer largura porque o .le-grade é centralizado — o meio do container é
+   sempre o meio da janela — e o recuo de meio gap põe a borda exatamente onde a
+   segunda coluna começa. */
+.le-painel { display: none }
+.le-faixa .le-painel {
+  display: block; position: absolute; top: 0; bottom: 0; right: 0;
+  left: calc(50% + clamp(36px, 4vw, 64px) / 2);
+  background: linear-gradient(150deg, var(--le-vermelho-fundo) 0%, var(--le-vermelho-fundo-2) 100%);
+  border-left: 1px solid rgba(169, 142, 78, .5);   /* a régua dourada do banner */
+  pointer-events: none;
+}
+/* O globo fica entre a coluna de texto e o painel: no lugar de antes ele ficaria
+   quase todo escondido atrás do vermelho. */
+.le-faixa .le-globo img { left: 52% }
+
+/* A continuação do globo DENTRO do vermelho. É a mesma camada e as mesmas
+   medidas do globo de baixo, recortada na divisa das colunas e invertida para
+   branco: sobre o vermelho, a linha dourada escurece e some, e o que o banner
+   mostra ali é linha clara. Por ser o mesmo posicionamento, a esfera atravessa a
+   divisa sem emenda: o que entra no vermelho é a continuação exata do arco que
+   sai do creme.
+
+   O recorte repete a conta do painel, e os dois andam juntos. */
+.le-globo-painel { display: none }
+.le-faixa .le-globo-painel {
+  display: block;
+  clip-path: inset(0 0 0 calc(50% + clamp(36px, 4vw, 64px) / 2));
+  opacity: .16;
+}
+.le-faixa .le-globo-painel img { filter: brightness(0) invert(1) }
+
+/* ---- o card de vidro fosco -------------------------------------------------
+   Sobre o vermelho o card deixa de ser uma superfície e vira uma lente: fundo
+   quase transparente, desfoque do que passa atrás e uma moldura de luz. O que
+   está dentro dele inverte junto, porque o fundo agora é escuro. */
+.le-faixa .le-card {
+  background: rgba(253, 250, 245, .1);
+  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  border: 1px solid rgba(253, 250, 245, .3);
+  box-shadow: 0 18px 50px rgba(58, 6, 12, .3), inset 0 1px 0 rgba(253, 250, 245, .18);
+  /* O pulso dourado era para chamar o olho num card branco sobre fundo escuro.
+     No vidro ele vira uma borda que acende e apaga, e o vidro já se destaca. */
+  animation: none;
+}
+
+.le-faixa .le-h2 { color: #fdfaf5 }
+.le-faixa .le-sub { color: rgba(253, 250, 245, .8) }
+.le-faixa .le-rotulo-campo { color: #e8d9b5 }
+/* Os três campos de preencher são opacos e claros, e não vidro como o resto do
+   card: sobre o vermelho, uma caixa translúcida parece decoração da moldura, e
+   estas três são o lugar onde se escreve. O creme é o mesmo do botão, que é a
+   outra peça opaca do card — as duas pontas do ato de preencher.
+   Os chips ficam de vidro de propósito: eles são resposta a uma pergunta
+   opcional, e não campo a preencher. */
+.le-faixa .le-input {
+  background: #fdfaf5;
+  border-color: rgba(253, 250, 245, .55);
+  color: #1a1a1a;
+}
+.le-faixa .le-input::placeholder { color: #8f887e }
+.le-faixa .le-input:focus { background: #ffffff; border-color: #fdfaf5 }
+.le-faixa .le-chip {
+  background: rgba(253, 250, 245, .08);
+  border-color: rgba(253, 250, 245, .3);
+  color: rgba(253, 250, 245, .88);
+}
+.le-faixa .le-chip:hover { border-color: #e8d9b5 }
+.le-faixa .le-chip[aria-pressed="true"] {
+  background: #fdfaf5; border-color: #fdfaf5; color: var(--le-vermelho); font-weight: 700;
+}
+.le-faixa .le-lgpd { color: rgba(253, 250, 245, .78) }
+.le-faixa .le-lgpd a { color: #e8d9b5 }
+.le-faixa .le-lgpd a:hover { color: #fdfaf5 }
+/* O botão do banner, invertido: creme com o texto em vermelho. Ele é a única
+   coisa opaca do card, e é de propósito: é onde o olho tem de parar. */
+.le-faixa .le-cta { background: #fdfaf5; color: var(--le-vermelho) }
+.le-faixa .le-cta:hover { background: #ffffff }
+.le-faixa :where(input, button, a):focus-visible { outline-color: #e8d9b5 }
+.le-faixa .le-card-ok { padding: 40px 34px }
+.le-faixa .le-p-ok { color: rgba(253, 250, 245, .82) }
+
+/* A coluna da direita anda para encostar no centro do PAINEL, e não no centro
+   dela mesma. Os dois não coincidem: o painel começa na divisa das colunas e vai
+   até a borda da tela, enquanto a coluna para antes, no respiro da grade (e, em
+   telas acima de 1500px, também na margem que centraliza a grade). O card ficava
+   deslocado para a esquerda por metade dessa diferença: 30px numa janela de
+   1440px, 135px numa de 1920px.
+
+   A conta: o centro desejado é 75vw + gap/4, o centro atual é
+   50vw + (gap/2 + min(750px, 50vw) - respiro)/2, e o deslocamento é a diferença
+   entre os dois. Vale para o card e para o crédito, que andam juntos. */
+.le-faixa .le-dir {
+  position: relative;
+  left: calc(25vw - (min(750px, 50vw) - clamp(20px, 4.4vw, 60px)) / 2);
+}
+
+/* Fora do card, sobre o vermelho, o crédito é sempre claro nas duas versões. A
+   marca não precisa de regra aqui: o arquivo branco já é o que Tela.tsx serve
+   nesta composição. */
+.le-faixa .le-credito { color: rgba(253, 250, 245, .82) }
+
+/* Empilhado não há divisa de colunas para acertar: o painel vira uma faixa no pé
+   da página, sangrando pelos dois lados com o negativo do padding da grade. O
+   globo não atravessa nada ali, então a camada de cima sai. */
+@media (max-width: 989px) {
+  /* Empilhado, o formulário vem logo abaixo desta coluna, então o atalho para
+     ele deixa de ter o que encurtar. E ele não cabe na linha da data nesta
+     largura: descia sozinho para uma segunda linha, recuado dos 9px que o
+     separam do "ao vivo" no desktop. */
+  .le-teaser .le-live-cta { display: none }
+
+  .le-faixa .le-painel, .le-faixa .le-globo-painel { display: none }
+  .le-faixa .le-dir {
+    /* Empilhado não há divisa para acertar: o deslocamento que centraliza o card
+       no painel some junto com o painel. */
+    left: 0;
+    background: linear-gradient(150deg, var(--le-vermelho-fundo) 0%, var(--le-vermelho-fundo-2) 100%);
+    border-top: 1px solid rgba(169, 142, 78, .5);
+    margin: 8px calc(-1 * clamp(20px, 4.4vw, 60px)) calc(-1 * clamp(32px, 4vw, 40px));
+    padding: 36px clamp(20px, 4.4vw, 60px) 34px;
+  }
+}
