@@ -39,6 +39,14 @@ export default function Home() {
   const lpBody = readFileSync(join(dir, "body.html"), "utf8");
   return (
     <>
+      {/* Marca .tem-js no <html> ANTES da primeira pintura. Todo estado
+          inicial fechado de animacao (ver `.tem-js .graf` no styles.css)
+          pende desta classe, entao sem JS o conteudo aparece inteiro em vez
+          de ficar invisivel esperando um observer que talvez nunca rode.
+          Precisa ser inline e sincrono: um efeito de React roda depois da
+          pintura e causaria flash. E precisa vir de page.tsx, porque script
+          dentro de dangerouslySetInnerHTML nao executa. */}
+      <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('tem-js')" }} />
       <style dangerouslySetInnerHTML={{ __html: sistema + "\n" + lpCss }} />
       {/* lining-nums: o Playfair vinha com algarismos oldstyle (3,4,5,7,9 descem
           abaixo da baseline; só 0/1/2 alinham). Força figuras lining para os
