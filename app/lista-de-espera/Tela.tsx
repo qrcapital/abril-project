@@ -46,7 +46,7 @@ const LOGO = {
  * duas estão implementadas no estilo.css; trocar aqui troca a tela inteira,
  * porque todas as cores saem dos tokens do `.le-raiz`.
  */
-const TEMA: keyof typeof LOGO = "claro";
+const TEMA = "claro" as keyof typeof LOGO;
 
 /** A esfera da biblioteca visual da campanha, a mesma das outras peças. Substituiu
  *  o globo em canvas (GloboEspera) quando a identidade mudou: aquele era desenhado
