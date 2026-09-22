@@ -220,7 +220,11 @@ export default function Tela({ children }: { children: React.ReactNode }) {
                   </li>
                   <li>
                     <span className="le-check" aria-hidden="true">✓</span>
-                    Todos os detalhes da turma em primeira mão
+                    {/* No celular o "da turma" sai: ali a linha não cabia e o "mão"
+                        descia sozinho para a linha de baixo. O span de fora mantém
+                        a frase como um item só do flex do li; sem ele, cada pedaço
+                        viraria um item e ganharia o gap de 12px entre eles. */}
+                    <span>Todos os detalhes<span className="le-fora-celular"> da turma</span> em primeira mão</span>
                   </li>
                 </ul>
               </div>
