@@ -151,7 +151,24 @@ def cedula_brl(NH, cheia, idp):
     g.append('</g>')
     # medalhao da efigie, centro levemente a direita
     mx, my = 556, B+NH/2-6
-    g.append(roseta_oval(mx, my, 96, 132, o_r))
+    # Medalhao: guilhoche por tras e o busto gravado por cima.
+    # O busto e arte original encomendada para este projeto (brief de
+    # 23/set: perfil classico em talho-doce, coroa de louros, reserva de
+    # luz). Entra como MASCARA e nao como imagem colorida: o arquivo e
+    # cinza, onde branco e tinta, e quem pinta e um retangulo no vermelho da
+    # campanha. Assim a mesma arte serve a copia fantasma e a cheia so
+    # trocando a opacidade, e a cor continua vindo do sistema.
+    g.append(roseta_oval(mx, my, 96, 132, o_r, tramas=0))
+    bw, bh = 232, 312
+    bx_, by_ = mx - bw//2, my - 152
+    sfxb = idp + ("c" if cheia else "f")
+    g.append(f'<defs><mask id="{sfxb}bm" maskUnits="userSpaceOnUse" x="{bx_}" y="{by_}" '
+             f'width="{bw}" height="{bh}">'
+             f'<image href="/lp/busto-medalhao.webp" x="{bx_}" y="{by_}" width="{bw}" '
+             f'height="{bh}" preserveAspectRatio="xMidYMid meet"/></mask>'
+             f'<clipPath id="{sfxb}bo"><ellipse cx="{mx}" cy="{my}" rx="94" ry="130"/></clipPath></defs>'
+             f'<g clip-path="url(#{sfxb}bo)"><rect x="{bx_}" y="{by_}" width="{bw}" height="{bh}" '
+             f'fill="{VERM}" opacity="{o_r}" mask="url(#{sfxb}bm)"/></g>')
     g.append(f'<g fill="none" stroke="{VERM}" opacity="{o_r}" stroke-width="1.1">'
              f'<ellipse cx="{mx}" cy="{my}" rx="104" ry="142"/></g>')
     g.append(f'<g fill="{VERM}" opacity="{o_r}">{louro(mx, my, 118, 186, 274, 13, 11)}</g>')
