@@ -19,6 +19,7 @@ louro na base, volutas no topo), que e vocabulario legitimo de cedula e e
 geometria, entao sai preciso. Tudo o mais, layout, tipografia, selos,
 faixa, molduras e ornamentos, segue o catalogo."""
 import re, ast, math, random
+from perfil import busto
 
 import series                      # IPCA 433 e PTAX 3698, congeladas do SGS
 serieP = series.poder_de_compra()  # R$ 100 de jul/1994, deflacionados
@@ -130,7 +131,8 @@ def cedula_brl(NH, cheia, idp):
     g.append('</g>')
     # medalhao da efigie, centro levemente a direita
     mx, my = 556, B+NH/2-6
-    g.append(roseta_oval(mx, my, 96, 132, o_r))
+    g.append(roseta_oval(mx, my, 96, 132, o_r, tramas=0))
+    g.append(busto(mx, my, 232, VERM, o_r, "bsBRL"+("c" if cheia else "f"), 88, 121, coroa=True))
     g.append(f'<g fill="none" stroke="{VERM}" opacity="{o_r}" stroke-width="1.1">'
              f'<ellipse cx="{mx}" cy="{my}" rx="104" ry="142"/></g>')
     g.append(f'<g fill="{VERM}" opacity="{o_r}">{louro(mx, my, 118, 186, 274, 13, 11)}</g>')
@@ -214,11 +216,13 @@ def cedula_usd(NH, cheia, idp):
                  + tx(qx, qy+3, "1", f=SERIF, s=34, w="600", anc="middle", fill=VERM) + '</g>')
 
     # selo do Federal Reserve, a esquerda do retrato
-    g.append(selo_circular(252, cy+4, 58, "arcoFRB", "FEDERAL RESERVE SYSTEM",
+    sfx = "c" if cheia else "f"
+    g.append(selo_circular(252, cy+4, 58, "arcoFRB"+sfx, "FEDERAL RESERVE SYSTEM",
              tx(252, cy+22, "A", f=SERIF, s=54, w="600", anc="middle", fill=VERM, op=o_r), o_r))
     # medalhao do retrato, centro
     mx = 506
-    g.append(roseta_oval(mx, cy, 92, 124, o_r))
+    g.append(roseta_oval(mx, cy, 92, 124, o_r, tramas=0))
+    g.append(busto(mx, cy, 218, VERM, o_r, "bsUSD"+("c" if cheia else "f"), 84, 113))
     g.append(f'<g stroke="{VERM}" fill="none" opacity="{o_r}" stroke-width="1.2">'
              f'<ellipse cx="{mx}" cy="{cy}" rx="103" ry="137"/></g>')
     g.append(f'<g fill="{VERM}" opacity="{o_r}">')          # perolado da moldura
@@ -238,7 +242,7 @@ def cedula_usd(NH, cheia, idp):
               f'</g><g fill="{VERM}" opacity="{o_r}">'
               + "".join(f'<circle cx="{766+k*4.4:.0f}" cy="{cy+6}" r="1.4"/>' for k in range(9))
               + '</g>')
-    g.append(selo_circular(782, cy, 58, "arcoTES", "DEPARTMENT OF THE TREASURY",
+    g.append(selo_circular(782, cy, 58, "arcoTES"+sfx, "DEPARTMENT OF THE TREASURY",
              escudo + tx(782, cy+50, "1789", s=9, w="600", anc="middle", ls=1, fill=VERM, op=o_r), o_r))
 
     # tipografia
@@ -352,12 +356,12 @@ setaP = seta((ptsP[iP][0], ptsP[iP][1]), (560, 124), 0.20)
 VH_BRL = NY+NH_BRL+104
 
 svgP = f'''<svg viewBox="0 0 {VW} {VH_BRL}" style="width:100%;height:auto;display:block" role="img" aria-label="Uma nota de cem reais de julho de 1994 desenhada como grafico. A parte inteira e o poder de compra que restou; o rasgo segue a serie do IPCA e chega a onze reais e vinte e tres centavos em setembro de 2026.">
-<defs><path id="serieP" d="{dP}"/><clipPath id="clipReal"><use href="#serieP"/></clipPath>{papel("papelP")}</defs>
+<defs><path id="serieP" d="{dP}"/><clipPath id="clipReal"><use href="#serieP"/></clipPath><clipPath id="molduraP"><rect x="0" y="{NY}" width="{NW}" height="{NH_BRL}" rx="12"/></clipPath>{papel("papelP")}</defs>
 {cabeca("R$ 11,23", "é o que sobrou dos R$ 100", ["O rasgo segue o IPCA acumulado desde jul/1994.", "O papel inteiro é o poder de compra que sobrou."])}
 <g opacity=".2">{cedula_brl(NH_BRL, False, "papelP")}</g>
 {"".join(cacos)}
-<g clip-path="url(#clipReal)">{cedula_brl(NH_BRL, True, "papelP")}</g>
-<use href="#serieP" fill="none" stroke="{VERM}" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+<g clip-path="url(#molduraP)"><g clip-path="url(#clipReal)">{cedula_brl(NH_BRL, True, "papelP")}</g>
+<use href="#serieP" fill="none" stroke="{VERM}" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></g>
 <path class="graf-seta" pathLength="1" d="{setaP}" fill="none" stroke="{TINTA}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>
 {rodape(NH_BRL, "Fonte: Banco Central do Brasil · série 433 (IPCA), jul/1994 a set/2026")}
 </svg>'''
@@ -373,11 +377,11 @@ setaD = seta((ptsD[iD][0], ptsD[iD][1]), (560, 124), 0.20)
 VH_USD = NY+NH_USD+104
 
 svgD = f'''<svg viewBox="0 0 {VW} {VH_USD}" style="width:100%;height:auto;display:block" role="img" aria-label="Um dolar desenhado como grafico. A parte preenchida e quanto ele vale em reais, de noventa e tres centavos em julho de 1994 a cinco reais e quinze centavos em setembro de 2026, com pico de seis reais e dez centavos em dezembro de 2024.">
-<defs><path id="serieD" data-dolar="serie" data-escala="{NY},{NH_USD},{VMAXD}" d="{dD}"/><clipPath id="clipDolar"><use href="#serieD"/></clipPath>{papel("papelD")}</defs>
+<defs><path id="serieD" data-dolar="serie" data-escala="{NY},{NH_USD},{VMAXD}" d="{dD}"/><clipPath id="clipDolar"><use href="#serieD"/></clipPath><clipPath id="molduraD"><rect x="0" y="{NY}" width="{NW}" height="{NH_USD}" rx="10"/></clipPath>{papel("papelD")}</defs>
 {cabeca("R$ 5,15", "é o que ele custa hoje. Em 1994 custava R$ 0,93", ["A borda segue a PTAX de venda, média mensal.", "O papel cheio é quanto um dólar custa em reais."], gancho_valor=True)}
 <g opacity=".2">{cedula_usd(NH_USD, False, "papelD")}</g>
-<g clip-path="url(#clipDolar)">{cedula_usd(NH_USD, True, "papelD")}</g>
-<use href="#serieD" fill="none" stroke="{VERM}" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+<g clip-path="url(#molduraD)"><g clip-path="url(#clipDolar)">{cedula_usd(NH_USD, True, "papelD")}</g>
+<use href="#serieD" fill="none" stroke="{VERM}" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></g>
 <g data-dolar="pico" data-pico="6.10"><circle cx="{pxp}" cy="{pyp}" r="4" fill="{TINTA}"/>
 {tx(pxp-16, pyp+34, 'R$ 6,10&#160;&#160;<tspan opacity=".55" font-weight="400">dez/2024</tspan>', s=12.5, w="600", anc="end", fill=TINTA)}</g>
 <path class="graf-seta" pathLength="1" d="{setaD}" fill="none" stroke="{TINTA}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>
