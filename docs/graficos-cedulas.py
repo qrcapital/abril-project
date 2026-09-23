@@ -224,116 +224,124 @@ def selo_circular(cx, cy, r, idp, arco_txt, centro, op):
          centro]
     return "".join(g)
 
+def guilhoche_torno(x, y, w, h, n, op, fase=0.0):
+    """Campo de torno (engine turning): duas familias de senoides sobrepostas.
+
+    E o miolo da estetica de cedula do seculo XIX. O padrao nasce da
+    INTERFERENCIA entre as duas familias, nao de cada uma: por isso as
+    frequencias sao primas entre si, senao vira listra."""
+    g = [f'<g stroke="{VERM}" fill="none" stroke-width=".55" opacity="{op}">']
+    for i in range(n):
+        t = i/(n-1)
+        yy = y + t*h
+        p = f'M {x:.0f} {yy:.1f}'
+        for k in range(1, 61):
+            xx = x + k*w/60
+            v = (7*math.sin(k*0.37 + i*0.82 + fase) + 4*math.sin(k*0.61 - i*0.53 + fase))
+            p += f' L {xx:.0f} {yy+v:.1f}'
+        g.append(f'<path d="{p}"/>')
+    return "".join(g) + '</g>'
+
+
+def rosacea(cx, cy, r, op, n=40):
+    """Rosacea de torno: aneis concentricos, denteado e trama radial."""
+    g = [f'<g stroke="{VERM}" fill="none" opacity="{op}">']
+    for k in (1.0, .86, .7, .5, .32):
+        g.append(f'<circle cx="{cx}" cy="{cy}" r="{r*k:.1f}" stroke-width="{1.1 if k==1 else .6}"/>')
+    for k in range(n):
+        a = k*math.tau/n
+        g.append('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke-width=".55"/>' % (
+            cx+r*.7*math.cos(a), cy+r*.7*math.sin(a), cx+r*.86*math.cos(a), cy+r*.86*math.sin(a)))
+    for k in range(18):                      # petalas internas
+        a = k*math.tau/18
+        g.append('<ellipse cx="%.1f" cy="%.1f" rx="%.1f" ry="%.1f" transform="rotate(%.0f %.1f %.1f)" stroke-width=".5"/>' % (
+            cx+r*.24*math.cos(a), cy+r*.24*math.sin(a), r*.26, r*.1,
+            math.degrees(a), cx+r*.24*math.cos(a), cy+r*.24*math.sin(a)))
+    return "".join(g) + '</g>'
+
+
 def cedula_usd(NH, cheia, idp):
-    """Catalogo do anverso da Federal Reserve Note de 1 dolar (desde 1963)."""
+    """Cedula ORNAMENTAL de invencao, na gramatica da gravura de cedula do
+    seculo XIX: moldura de guilhoche, rosaceas de canto, campo de torno,
+    medalhao oval e cartelas.
+
+    As legendas sao NOSSAS, nao as da nota americana. Alem de ser o certo,
+    fica melhor: uma pagina assinada pela VEJA Negocios carregando o texto
+    institucional do Tesouro dos EUA seria estranho de qualquer forma. O que
+    faz o olho ler "cedula" e o ornamento, nao a legenda."""
     B, T = NY, NY+NH
     o_g, o_r, o_t = (".34", ".5", "1") if cheia else (".5", ".62", ".44")
     cy = B+NH/2
     g = []
     if cheia:
         g.append(f'<rect x="0" y="{B}" width="{NW}" height="{NH}" rx="10" fill="url(#{idp})"/>')
-        g.append(f'<g stroke="{VERM}" fill="none" opacity="{o_g}">')
-        for i in range(18):
-            y = B + 26 + i*(NH-52)/17
-            amp = 5 + 3*math.sin(i*0.9)
-            p = f'M 18 {round(y)}'
-            for k in range(1, 25):
-                p += f' L {round(18 + k*(NW-36)/24)} {round(y + amp*math.sin(k*1.05 + i*1.1))}'
-            g.append(f'<path d="{p}"/>')
-        g.append('</g>')
+        g.append(guilhoche_torno(14, B+16, NW-28, NH-32, 26, o_g))
 
-    # moldura ornamental: festao de laco repetido ao longo da borda
-    g.append(f'<g stroke="{VERM}" fill="none" opacity="{o_r}" stroke-width=".8">')
-    for y0 in (B+22, T-22):
+    # moldura: tres faixas concentricas de ornamento
+    g.append(f'<g stroke="{VERM}" fill="none" opacity="{o_r}">')
+    g.append(f'<rect x="0" y="{B}" width="{NW}" height="{NH}" rx="10" stroke-width="{2 if cheia else 1.2}"/>')
+    g.append(f'<rect x="13" y="{B+13}" width="{NW-26}" height="{NH-26}" rx="6" stroke-width="1"/>')
+    g.append(f'<rect x="27" y="{B+27}" width="{NW-54}" height="{NH-54}" rx="4" stroke-width=".7"/>')
+    g.append('</g>')
+    # festao de laco entre a 1a e a 2a moldura
+    g.append(f'<g stroke="{VERM}" fill="none" opacity="{float(o_r)*.85:.2f}" stroke-width=".8">')
+    for y0 in (B+7, T-7):
         p = f'M 60 {y0}'
-        for k in range(1, 33):
-            x = 60 + k*(NW-120)/32
-            p += f' Q {x-10:.0f} {y0 + (13 if k%2 else -13)} {x:.0f} {y0}'
+        for k in range(1, 41):
+            x = 60 + k*(NW-120)/40
+            p += f' Q {x-7:.0f} {y0 + (6 if k%2 else -6)} {x:.0f} {y0}'
         g.append(f'<path d="{p}"/>')
-    for x0 in (26, NW-26):
-        p = f'M {x0} {B+60}'
-        for k in range(1, 13):
-            y = B+60 + k*(NH-120)/12
-            p += f' Q {x0 + (11 if k%2 else -11)} {y-9:.0f} {x0} {y:.0f}'
+    for x0 in (7, NW-7):
+        p = f'M {x0} {B+50}'
+        for k in range(1, 19):
+            y = B+50 + k*(NH-100)/18
+            p += f' Q {x0 + (6 if k%2 else -6)} {y-5:.0f} {x0} {y:.0f}'
         g.append(f'<path d="{p}"/>')
     g.append('</g>')
-    g.append(f'<rect x="0" y="{B}" width="{NW}" height="{NH}" rx="10" fill="none" '
-             f'stroke="{VERM}" stroke-width="{2 if cheia else 1.2}" opacity="{1 if cheia else .82}"/>')
-    g.append(f'<rect x="12" y="{B+12}" width="{NW-24}" height="{NH-24}" rx="5" fill="none" '
-             f'stroke="{VERM}" stroke-width="1" opacity="{o_r}"/>')
-
-    # quatro numerais "1" ornados, com oliveira
-    for qx, qy in ((60, B+62), (NW-60, B+62), (60, T-46), (NW-60, T-46)):
-        g.append(f'<g opacity="{o_r}"><g stroke="{VERM}" fill="none" stroke-width=".7">'
-                 f'<circle cx="{qx}" cy="{qy-9}" r="25"/><circle cx="{qx}" cy="{qy-9}" r="19"/></g>'
-                 f'<g fill="{VERM}" opacity=".75">{louro(qx, qy-9, 30, 120, 240, 9, 7)}</g>'
-                 + tx(qx, qy+3, "1", f=SERIF, s=34, w="600", anc="middle", fill=VERM) + '</g>')
-
-    # numeral pequeno do distrito, repetido junto aos quatro cantos
-    for nx_, ny_ in ((104, B+62), (NW-104, B+62), (104, T-46), (NW-104, T-46)):
-        g.append(tx(nx_, ny_, "1", f=SERIF, s=15, w="600", anc="middle", fill=VERM, op=o_r))
-    # serrilha ornamental na moldura interna
-    g.append(f'<g stroke="{VERM}" fill="none" opacity="{float(o_r)*.8:.2f}" stroke-width=".6">')
-    for k in range(64):
-        xx = 30 + k*(NW-60)/63
-        g.append(f'<line x1="{xx:.0f}" y1="{B+12}" x2="{xx:.0f}" y2="{B+19}"/>')
-        g.append(f'<line x1="{xx:.0f}" y1="{T-12}" x2="{xx:.0f}" y2="{T-19}"/>')
+    # contas na moldura interna
+    g.append(f'<g fill="{VERM}" opacity="{float(o_r)*.7:.2f}">')
+    for k in range(78):
+        xx = 30 + k*(NW-60)/77
+        g.append(f'<circle cx="{xx:.0f}" cy="{B+20}" r="1.5"/><circle cx="{xx:.0f}" cy="{T-20}" r="1.5"/>')
     g.append('</g>')
-    # selo do Federal Reserve, a esquerda do retrato
-    sfx = "c" if cheia else "f"
-    g.append(selo_circular(252, cy+4, 58, "arcoFRB"+sfx, "FEDERAL RESERVE SYSTEM",
-             tx(252, cy+22, "A", f=SERIF, s=54, w="600", anc="middle", fill=VERM, op=o_r), o_r))
-    # medalhao do retrato, centro
-    mx = 506
-    g.append(roseta_oval(mx, cy, 92, 124, o_r))
+
+    # rosaceas de canto com o numeral
+    for qx, qy in ((72, B+74), (NW-72, B+74), (72, T-74), (NW-72, T-74)):
+        g.append(rosacea(qx, qy, 46, o_r))
+        g.append(f'<g fill="{VERM}" opacity="{float(o_r)*.8:.2f}">{louro(qx, qy, 54, 118, 242, 11, 8)}</g>')
+        g.append(tx(qx, qy+17, "1", f=SERIF, s=46, w="600", anc="middle", fill=VERM, op=o_t))
+
+    # selos circulares, so geometria
+    g.append(rosacea(250, cy+6, 62, o_r, n=54))
+    g.append(rosacea(756, cy+6, 62, o_r, n=54))
+
+    # medalhao central
+    mx = 503
+    g.append(roseta_oval(mx, cy, 82, 106, o_r))
     g.append(f'<g stroke="{VERM}" fill="none" opacity="{o_r}" stroke-width="1.2">'
-             f'<ellipse cx="{mx}" cy="{cy}" rx="103" ry="137"/></g>')
-    g.append(f'<g fill="{VERM}" opacity="{o_r}">')          # perolado da moldura
+             f'<ellipse cx="{mx}" cy="{cy}" rx="92" ry="119"/></g>')
+    g.append(f'<g fill="{VERM}" opacity="{o_r}">')
     for k in range(58):
         a = k*math.tau/58
-        g.append(f'<circle cx="{mx+97*math.cos(a):.0f}" cy="{cy+130*math.sin(a):.0f}" r="2"/>')
-    g.append(louro(mx, cy, 114, 58, 122, 9, 9) + louro(mx, cy, 114, 238, 302, 9, 9))
+        g.append(f'<circle cx="{mx+86*math.cos(a):.0f}" cy="{cy+112*math.sin(a):.0f}" r="1.8"/>')
+    g.append(louro(mx, cy, 102, 58, 122, 8, 8) + louro(mx, cy, 102, 238, 302, 8, 8))
     g.append('</g>')
-    # selo do Tesouro, sobre o "ONE" grande
-    g.append(tx(782, cy+34, "ONE", f=SERIF, s=112, w="600", anc="middle", fill=VERM, op=".22"))
-    escudo = (f'<g stroke="{VERM}" fill="none" opacity="{o_r}" stroke-width="1">'
-              f'<path d="M 760 {cy-16} L 804 {cy-16} L 804 {cy+12} Q 782 {cy+30} 760 {cy+12} Z"/>'
-              f'<line x1="765" y1="{cy-4}" x2="799" y2="{cy-4}"/>'
-              f'<line x1="782" y1="{cy-12}" x2="782" y2="{cy-4}"/>'
-              f'<circle cx="769" cy="{cy-2}" r="3"/><circle cx="795" cy="{cy-2}" r="3"/>'
-              f'<circle cx="782" cy="{cy+14}" r="4"/><line x1="782" y1="{cy+18}" x2="782" y2="{cy+26}"/>'
-              f'</g><g fill="{VERM}" opacity="{o_r}">'
-              + "".join(f'<circle cx="{766+k*4.4:.0f}" cy="{cy+6}" r="1.4"/>' for k in range(9))
-              + '</g>')
-    g.append(selo_circular(782, cy, 58, "arcoTES"+sfx, "DEPARTMENT OF THE TREASURY",
-             escudo + tx(782, cy+50, "1789", s=9, w="600", anc="middle", ls=1, fill=VERM, op=o_r), o_r))
 
-    # tipografia
+    # cartelas e tipografia, com as NOSSAS legendas
+    g.append(f'<g stroke="{VERM}" fill="none" opacity="{float(o_r)*.8:.2f}" stroke-width=".8">'
+             f'<rect x="318" y="{B+40}" width="364" height="28" rx="14"/>'
+             f'<rect x="368" y="{T-62}" width="264" height="34" rx="6"/></g>')
     g.append(f'<g opacity="{o_t}">')
-    g.append(f'<g stroke="{VERM}" fill="none" opacity=".5" stroke-width=".8">'
-             f'<rect x="330" y="{B+40}" width="340" height="26" rx="13"/></g>')
-    g.append(tx(500, B+58, "FEDERAL RESERVE NOTE", f=SERIF, s=15, w="600", anc="middle", ls=3.2, fill=VERM))
-    g.append(tx(500, B+100, "THE UNITED STATES OF AMERICA", f=SERIF, s=29, w="600", anc="middle", ls=4.4, fill=TINTA))
-    g.append(tx(104, B+134, "THIS NOTE IS LEGAL TENDER", s=10.5, w="600", ls=1.2, fill=TINTA, op=".6"))
-    g.append(tx(104, B+150, "FOR ALL DEBTS, PUBLIC AND PRIVATE", s=10.5, w="600", ls=1.2, fill=TINTA, op=".6"))
-    g.append(tx(700, B+52, "B4", s=10, w="600", fill=VERM, op=".65"))
-    g.append(tx(900, B+118, "A 30116104 A", anc="end", f=SERIF, s=15, w="600", ls=1.4, fill=VERM, op=".62"))
-    g.append(tx(160, T-118, "A 30116104 A", f=SERIF, s=15, w="600", ls=1.4, fill=VERM, op=".62"))
-    g.append(tx(782, cy-70, "WASHINGTON, D.C.", s=10, w="600", anc="middle", ls=1.6, fill=TINTA, op=".6"))
-    g.append(tx(506, cy+144, "WASHINGTON", s=10.5, w="600", anc="middle", ls=2.6, fill=TINTA, op=".6"))
-    g.append(tx(500, T-34, "ONE DOLLAR", f=SERIF, s=30, w="600", anc="middle", ls=5.2, fill=TINTA))
-    g.append(tx(NW-40, T-62, "FW B 2", s=9.5, w="600", anc="end", ls=1, fill=VERM, op=".6"))
-    g.append(tx(206, T-62, "SERIES", s=9.5, w="600", anc="middle", ls=1.4, fill=TINTA, op=".55"))
-    g.append(tx(206, T-50, "2026", s=9.5, w="600", anc="middle", ls=1.4, fill=TINTA, op=".55"))
+    g.append(tx(500, B+60, "CÂMBIO COMERCIAL", f=SERIF, s=15, w="600", anc="middle", ls=3.4, fill=VERM))
+    g.append(tx(500, B+100, "UM DÓLAR", f=SERIF, s=30, w="600", anc="middle", ls=5.2, fill=TINTA))
+    g.append(tx(104, B+140, "PTAX DE VENDA", s=10.5, w="600", ls=1.4, fill=TINTA, op=".6"))
+    g.append(tx(104, B+156, "MÉDIA MENSAL, BANCO CENTRAL", s=10.5, w="600", ls=1.4, fill=TINTA, op=".6"))
+    g.append(tx(500, T-38, "US$ 1", f=SERIF, s=30, w="600", anc="middle", ls=5.4, fill=TINTA))
+    g.append(tx(250, cy+92, "SÉRIE 3698", s=10, w="600", anc="middle", ls=2, fill=TINTA, op=".55"))
+    g.append(tx(756, cy+92, "1994 · 2026", s=10, w="600", anc="middle", ls=2, fill=TINTA, op=".55"))
     g.append('</g>')
-    # duas assinaturas
-    g.append(f'<g stroke="{TINTA}" fill="none" opacity="{float(o_r)*.85:.2f}" stroke-width="1.3" stroke-linecap="round">'
-             f'<path d="M 254 {T-86} q 14 -16 24 -2 t 22 -6 q 12 12 24 -4 t 26 6"/>'
-             f'<path d="M 700 {T-86} q 16 -14 26 0 t 24 -8 q 10 14 24 -2 t 24 8"/></g>')
-    g.append(f'<g opacity="{o_t}">'
-             + tx(300, T-70, "Treasurer of the United States", s=8.5, anc="middle", fill=TINTA, op=".5")
-             + tx(748, T-70, "Secretary of the Treasury", s=8.5, anc="middle", fill=TINTA, op=".5") + '</g>')
     return "".join(g)
+
 
 # ----------------------------------------------------------------- serie
 def reamostra(serie, vmax, NH, passo=3.0):
