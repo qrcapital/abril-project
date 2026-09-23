@@ -729,3 +729,7 @@ html,body{overflow-x:hidden}
   .tem-js .graf .graf-seta,.tem-js .graf.dentro .graf-seta{stroke-dashoffset:0;transition:none}
   .tem-js .graf .graf-nota,.tem-js .graf.dentro .graf-nota{opacity:1;transition:none}
 }
+
+/* Lockup da marca do curso reutilizado fora da topbar (secao Programa). */
+.lock-secao{display:flex;align-items:center;gap:14px}
+@media (max-width:760px){ .lock-secao{display:none} }
