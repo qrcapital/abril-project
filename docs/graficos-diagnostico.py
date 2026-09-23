@@ -115,7 +115,7 @@ iP = int(len(ptsP)*0.42)
 setaP = seta(ptsP[iP], (566, 116), 0.20)
 
 svgP = f'''<svg viewBox="0 0 {VW} {VH}" style="width:100%;height:auto;display:block" role="img" aria-label="Poder de compra de cem reais de julho de 1994, corrigido pelo IPCA. Em setembro de 2026 equivalem a onze reais e vinte e tres centavos.">
-{cabeca("R$ 11,23", "é o que sobrou dos R$ 100", ["A linha segue o IPCA acumulado desde jul/1994.", "A área é o poder de compra que ainda resta."])}
+{cabeca("R$ 11,23", "é o que sobrou de R$ 100 guardados em 1994", ["Cem reais de 1994 compram onze reais hoje.", "A estabilidade voltou em 94. A imortalidade, não."])}
 {grade(VMAXP, [25, 50, 75, 100], lambda v: f"R$ {v}")}
 {areaP}
 <path d="{linhaP}" fill="none" stroke="{VERM}" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
@@ -134,7 +134,7 @@ iD = int(len(ptsD)*0.42)
 setaD = seta(ptsD[iD], (566, 116), 0.20)
 
 svgD = f'''<svg viewBox="0 0 {VW} {VH}" style="width:100%;height:auto;display:block" role="img" aria-label="Cotacao do dolar em reais, de julho de 1994 a setembro de 2026, com pico de seis reais e dez centavos em dezembro de 2024.">
-{cabeca("R$ 5,15", "é o que ele custa hoje. Em 1994 custava R$ 0,93", ["A linha segue a PTAX de venda, média mensal.", "A área é quanto um dólar custa em reais."], gancho=True)}
+{cabeca("R$ 5,15", "é o que custa hoje o dólar que valia R$ 0,93", ["O dólar sobe, desce e sobe de novo.", "Em trinta e dois anos, nunca voltou ao começo."], gancho=True)}
 {grade(VMAXD, [2, 4, 6], lambda v: f"R$ {v}")}
 {areaD}
 <path data-dolar="serie" data-escala="{GY},{GH},{VMAXD}" d="{linhaD}" fill="none" stroke="{VERM}" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
