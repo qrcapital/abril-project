@@ -222,7 +222,7 @@ def cedula_usd(NH, cheia, idp):
     # medalhao do retrato, centro
     mx = 506
     g.append(roseta_oval(mx, cy, 92, 124, o_r, tramas=0))
-    g.append(busto(mx, cy, 218, VERM, o_r, "bsUSD"+("c" if cheia else "f"), 84, 113))
+    g.append(busto(mx, cy, 218, VERM, o_r, "bsUSD"+("c" if cheia else "f"), 84, 113, rabicho=True))
     g.append(f'<g stroke="{VERM}" fill="none" opacity="{o_r}" stroke-width="1.2">'
              f'<ellipse cx="{mx}" cy="{cy}" rx="103" ry="137"/></g>')
     g.append(f'<g fill="{VERM}" opacity="{o_r}">')          # perolado da moldura
