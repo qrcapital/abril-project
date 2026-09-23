@@ -729,17 +729,3 @@ html,body{overflow-x:hidden}
   .tem-js .graf .graf-seta,.tem-js .graf.dentro .graf-seta{stroke-dashoffset:0;transition:none}
   .tem-js .graf .graf-nota,.tem-js .graf.dentro .graf-nota{opacity:1;transition:none}
 }
-
-/* ===========================================================================
-   Hero em duas colunas (22/set/2026)
-   O argumento fica a esquerda e a chancela a direita, como contrapeso, em
-   vez de a marca ser um chapeu em cima do titulo. Abaixo de 900px a grade
-   colapsa: a chancela sobe para cima do texto (order:-1), que e a ordem que
-   fazia sentido quando tudo era centralizado, e o texto volta ao centro.  */
-@media (max-width:900px){
-  .hero-grade{grid-template-columns:1fr !important;gap:34px !important;text-align:center}
-  .hero-chancela{order:-1}
-  .hero-texto p:first-child{margin-bottom:14px}
-  .hero-texto p{margin-left:auto;margin-right:auto}
-  .hero-ctas{justify-content:center}
-}

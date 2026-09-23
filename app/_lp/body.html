@@ -25,35 +25,25 @@
   <div class="cn-dots" style="position:absolute;inset:0;background-image:radial-gradient(rgba(26,24,21,.05) 1.3px, transparent 1.3px);background-size:32px 32px;-webkit-mask-image:linear-gradient(to bottom,black,transparent 92%);mask-image:linear-gradient(to bottom,black,transparent 92%);pointer-events:none"></div><canvas class="cn-canvas" aria-hidden="true"></canvas><!-- Véu: o globo é textura de fundo, não ilustração. Esta camada abre uma
        clareira de papel no miolo, onde o texto mora, e deixa o globo aparecer
        só nas bordas. Sem ela o desenho disputa leitura com o título. -->
-  <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(1150px 700px at 34% 42%, rgba(253,251,246,.97) 0%, rgba(253,251,246,.88) 32%, rgba(253,251,246,.55) 56%, rgba(253,251,246,.18) 76%, transparent 90%)"></div>
+  <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(1100px 680px at 50% 34%, rgba(253,251,246,.97) 0%, rgba(253,251,246,.88) 34%, rgba(253,251,246,.58) 58%, rgba(253,251,246,.2) 78%, transparent 92%)"></div>
 
-  <!-- Duas colunas: o argumento a esquerda, a chancela a direita. O olho e o
-       par VEJA x BlockTrends deixam de ser um chapeu em cima do titulo e
-       passam a ser o contrapeso dele, na mesma altura. Em telas estreitas a
-       grade colapsa e volta a ordem antiga (ver .hero-grade no styles.css). -->
-  <div class="hero-grade" style="max-width:1180px;margin:0 auto;padding:0 28px;position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:56px;align-items:center">
-
-    <div class="hero-texto">
-      <p style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;font-size:11.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#C1121F;margin:0 0 18px">Curso online · Dolarização de patrimônio</p>
-      <h1 style="font-family:'Playfair Display',serif;margin:0;font-size:clamp(38px,4.6vw,58px);font-weight:600;letter-spacing:-.012em;line-height:1.06">Seu patrimônio não devia depender de um <em style="font-style:italic;color:#C1121F">só país</em>.</h1>
-      <p style="font-size:16.5px;color:#6B655C;max-width:520px;margin:22px 0 32px;line-height:1.55">Uma formação de 30 horas sobre investimento no exterior e exposição cambial, com quatro professores que atuaram no Banco Central, na XP, na Caixa e no Bradesco.</p>
-      <div class="hero-ctas" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-        <a href="#oferta" style="display:inline-block;border-radius:13px;font-weight:700;font-size:13.5px;letter-spacing:.06em;padding:17px 34px;background:#1A1815;color:#FDFBF6;box-shadow:0 12px 30px rgba(72,60,42,.28);text-align:center;transition:transform .12s ease, box-shadow .12s ease" style-hover="transform:translateY(-1px);box-shadow:0 16px 38px rgba(247,244,238,.5)">INSCREVA-SE NO CURSO&nbsp;&nbsp;→</a>
-        <a href="#curriculo" style="display:inline-block;border-radius:13px;font-weight:700;font-size:13.5px;letter-spacing:.06em;padding:16px 30px;background:transparent;color:#1A1815;border:1px solid rgba(26,24,21,.28);text-align:center;transition:border-color .12s ease" style-hover="border-color:rgba(26,24,21,.62)">VER O PROGRAMA</a>
-      </div>
-      <p style="font-size:11.5px;color:#6F6860;margin:16px 0 0;letter-spacing:.04em">Acesso imediato · comece quando quiser · garantia de 7 dias</p>
+  <div style="max-width:880px;margin:0 auto;padding:0 28px;position:relative;z-index:1;text-align:center">
+    <img decoding="async" src="/lp/f2070b29-906c-48d8-92c7-0948fe19573b.webp" alt="" aria-hidden="true" style="width:150px;display:block;margin:0 auto 18px">
+    <div class="hero-lockup" style="display:flex;align-items:center;justify-content:center;gap:26px;margin:0 0 30px;flex-wrap:wrap">
+      <img decoding="async" src="/marca/veja-negocios-claro.svg" alt="VEJA Negócios" style="height:42px;width:auto;display:block">
+      <span style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;font-size:22px;color:#1A1815;font-weight:800;line-height:1">×</span>
+      <img decoding="async" src="/marca/blocktrends-preto.svg" alt="BlockTrends" style="height:19px;width:auto;display:block">
     </div>
-
-    <div class="hero-chancela" style="text-align:center">
-      <img decoding="async" src="/lp/f2070b29-906c-48d8-92c7-0948fe19573b.webp" alt="" aria-hidden="true" style="width:172px;display:block;margin:0 auto 26px">
-      <div class="hero-lockup" style="display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap">
-        <img decoding="async" src="/marca/veja-negocios-claro.svg" alt="VEJA Negócios" style="height:44px;width:auto;display:block">
-        <span style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;font-size:22px;color:#1A1815;font-weight:800;line-height:1">×</span>
-        <img decoding="async" src="/marca/blocktrends-preto.svg" alt="BlockTrends" style="height:20px;width:auto;display:block">
-      </div>
-      <p style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#6F6860;margin:20px 0 0">Chancela institucional · conteúdo BlockTrends</p>
+    <!-- A etiqueta é quem nomeia o objeto. O título é editorial e continua sendo
+         opinião; sem esta linha acima, a página não diz o que está vendendo. -->
+    <p style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;font-size:11.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#C1121F;margin:0 0 18px">Curso online · Dolarização de patrimônio</p>
+    <h1 style="font-family:'Playfair Display',serif;margin:0;font-size:clamp(40px,5.4vw,62px);font-weight:600;letter-spacing:-.01em;line-height:1.05">Seu patrimônio não devia depender de um <em style="font-style:italic;color:#C1121F">só país</em>.</h1>
+    <p style="font-size:16.5px;color:#6B655C;max-width:610px;margin:24px auto 34px;line-height:1.55">Uma formação de 30 horas sobre investimento no exterior e exposição cambial, com quatro professores que atuaram no Banco Central, na XP, na Caixa e no Bradesco.</p>
+    <div class="hero-ctas" style="display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap">
+      <a href="#oferta" style="display:inline-block;border-radius:13px;font-weight:700;font-size:13.5px;letter-spacing:.06em;padding:17px 34px;background:#1A1815;color:#FDFBF6;box-shadow:0 12px 30px rgba(72,60,42,.28);text-align:center;transition:transform .12s ease, box-shadow .12s ease" style-hover="transform:translateY(-1px);box-shadow:0 16px 38px rgba(247,244,238,.5)">INSCREVA-SE NO CURSO&nbsp;&nbsp;→</a>
+      <a href="#curriculo" style="display:inline-block;border-radius:13px;font-weight:700;font-size:13.5px;letter-spacing:.06em;padding:16px 30px;background:transparent;color:#1A1815;border:1px solid rgba(26,24,21,.28);text-align:center;transition:border-color .12s ease" style-hover="border-color:rgba(26,24,21,.62)">VER O PROGRAMA</a>
     </div>
-
+    <p style="font-size:11.5px;color:#6F6860;margin:16px 0 0;letter-spacing:.04em">Acesso imediato · comece quando quiser · garantia de 7 dias</p>
   </div>
 
   
