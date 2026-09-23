@@ -1,4 +1,7 @@
-// GERADO por scripts/port-lp.mjs (etapa 7l). Nao editar a mao.
+// Gerado por scripts/port-lp.mjs (etapa 7l), script aposentado em 22/set/2026.
+// Artefato definitivo e versionado: nada mais reescreve este arquivo. Editar a
+// mao e possivel, mas sao 104KB de coordenadas do globo, entao prefira gerar de
+// novo a partir de scripts/globo-terra.txt se a malha precisar mudar.
 // Geometria e dados do globo do hero; quem desenha e ./GloboCanvas.tsx.
 export const RG = 520;
 export const PERSP = 2301;

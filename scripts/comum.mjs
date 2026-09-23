@@ -1,4 +1,5 @@
-// Peças compartilhadas pelos dois portes (port-lp.mjs e port-area.mjs).
+// Peças do porte. Eram compartilhadas por port-lp.mjs e port-area.mjs; o port-lp
+// foi aposentado em 22/set/2026 e hoje só o port-area.mjs consome este arquivo.
 
 import contato from '../lib/contato.json' with { type: 'json' };
 

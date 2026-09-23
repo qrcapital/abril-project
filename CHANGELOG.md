@@ -7,6 +7,28 @@ e é validado no ambiente de **homolog** (branch `homolog`).
 
 ## Não lançado
 
+### Build
+- **`scripts/port-lp.mjs` aposentado. A LP de vendas passa a ser mantida à mão** — 2026-09-22
+  - O script lia o bundle do Claude Design em `referencias/htmls/LP-Estrategia-Internacional.html`
+    e reescrevia `app/_lp/body.html`, `app/_lp/styles.css`, `app/_lp/globo-dados.ts` e os 55
+    arquivos de `public/lp/`. Foi removido, não desativado: o histórico está no git e o
+    bundle continua em `referencias/` como referência de design.
+  - **Motivo:** a LP de vendas migra para a identidade VEJA Negócios, a mesma já aplicada na
+    pré-lista. Uma troca de identidade inteira não cabe como remendo de porte, e o script já
+    empilhava dezesseis correções manuais sobre o bundle (hover dos docentes, glow do card de
+    preço, rodapé, tipografia da oferta, entre outras). Cada nova execução exigiria reaplicar
+    todas.
+  - **Nada quebra.** O `port-lp` nunca esteve em `package.json`, nenhum `check` depende dele e
+    tudo o que ele gerava está versionado. Build e dev seguem idênticos.
+  - **A inversão que importa:** antes, editar `app/_lp/body.html` era erro, porque o próximo
+    porte apagava. Agora `body.html` e `styles.css` **são a fonte** e se editam direto. O aviso
+    contrário saiu do `AGENTS.md`, do `app/page.tsx`, do cabeçalho do `globo-dados.ts`, dos três
+    comentários do `Tela.tsx` e das duas menções em `docs/PENDENCIAS-LP.md`, incluindo o item 23,
+    cuja correção de URLs de Termos/LGPD agora entra direto no body.
+  - Preço e parcelamento eram preenchidos pelo porte (`{{ preco }}` → `R$ 397`, `{{ parcelas }}`
+    → `10x sem juros de R$ 39,70`) e hoje estão literais no `body.html`. Mudança de preço passou
+    a ser edição de texto, não de script.
+
 ### Segurança
 - **Varredura de segurança completa** (banco + aplicação, duas frentes) — 2026-08-18
   - **Veredito: nenhuma vulnerabilidade alta ou média.** RLS default-deny nas 13 tabelas,

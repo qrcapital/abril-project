@@ -1,3 +1,59 @@
+/* LP de vendas (rota /). Migrada para a identidade VEJA Negócios em 22/set/2026.
+   ATÉ AQUI ESTE ARQUIVO ERA GERADO pelo scripts/port-lp.mjs. O script foi
+   removido e este arquivo, junto com o body.html, passou a ser a FONTE.
+   Edite direto. Ver AGENTS.md e a entrada "Build" do CHANGELOG.
+
+   O que a migração trocou, e o que deliberadamente não trocou:
+
+   A composição ficou intacta. A página já era creme dominante, com três blocos
+   escuros (hero, docentes, oferta) e cinco claros. O ritmo é o mesmo; o que
+   mudou foi a cor dos três escuros, de verde Meridiano para o vinho da campanha:
+     #0B2D20 -> #8E1522   base
+     #0A2B1E -> #6B111C   fechado
+     #0A3A28 -> #A01827   claro
+   Os verde-acinzentados que viviam sobre esse fundo (#8FA398, #A9B8AE, #B9C4BC,
+   #B7C4BB) viraram equivalentes quentes de mesma luminosidade, senão ficariam
+   esverdeados boiando sobre vinho.
+
+   Os neutros saíram do cinza frio para a tinta quente do sistema, pela regra de
+   que nada cinza-azulado contamina o papel: #6D6D6D -> #6B655C, #333333 ->
+   #1A1815, #8F887E -> #6F6860, #F7F5F2 -> #F7F4EE.
+
+   O DOURADO FICOU. Ele é filete, régua e moldura da campanha, não cor de ação.
+   Quem virou cor de ação foi o vermelho.
+
+   Os CTAs perderam o degradê dourado e viraram creme chapado com texto vinho.
+   A razão é aritmética: todos os CTAs desta página estão sobre bloco escuro, e
+   vermelho sobre vinho não se distingue. Creme sobre vinho dá 11,8:1. É a mesma
+   regra do sistema (primário = inversão da própria superfície) aplicada ao
+   contrário do que acontece na pré-lista, onde a superfície é clara e por isso
+   lá o botão é vermelho.
+
+   O raio saiu de 4px fixo para a razão 0,26 da altura: 10, 11 e 13px conforme o
+   botão. 4px numa caixa de 51px dava razão 0,08 e destoava do resto.
+
+   A interface saiu do Montserrat para a pilha nativa, declarada uma vez em
+   `body` e herdada. Os /* Jost, geometrica derivada da Futura, OFL-1.1, auto-hospedada (24KB nos dois
+   pesos). Existe por um motivo so: ser o wordmark do curso. O par classico de
+   uma serifa de alto contraste como a do "Negocios" e uma geometrica, e o que
+   faz o par funcionar e o contraste entre os dois desenhos, nao a semelhanca. */
+@font-face{font-family:'Jost';font-style:normal;font-weight:400;font-display:swap;
+  src:url('/fonts/jost-latin-400-normal.woff2') format('woff2')}
+@font-face{font-family:'Jost';font-style:normal;font-weight:500;font-display:swap;
+  src:url('/fonts/jost-latin-500-normal.woff2') format('woff2')}
+
+@font-face do Montserrat continuam no arquivo de
+   propósito: o Tela.tsx da pré-lista os extrai daqui, e família não usada não
+   baixa arquivo.
+
+   A SERIFA RECUOU EM 22/set/2026. Ela ficou restrita a h1 e h2, as oito
+   manchetes da pagina. Trinta e nove outros elementos saíram dela: a faixa de
+   estatisticas, os numerais dos modulos, os numeros das aulas, o preco, os
+   nomes dos professores e os subtitulos h3. Serifa de alto contraste em
+   numero, em rotulo e em caixa alta com tracking largo nao le como editorial,
+   le como brasao. Os @font-face do Playfair continuam porque as manchetes
+   ainda o usam. */
+
 /* cyrillic-ext */
 @font-face {
   font-family: 'Montserrat';
@@ -451,47 +507,47 @@
 
 
 html{scroll-behavior:smooth}
-body{margin:0;padding:0;font-family:'Montserrat',system-ui,sans-serif;color:#333333;background:#F7F5F2;line-height:1.6;-webkit-font-smoothing:antialiased}
-a{color:#7E6836;text-decoration:none}
-a:hover{color:#A98E4E}
+body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;color:#1A1815;background:#F7F4EE;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:#C1121F;text-decoration:none}
+a:hover{color:#8E1522}
 summary::-webkit-details-marker{display:none}
 .ato{transition:background-color .4s ease}
-.ato .eb{color:#7E6836;transition:color .4s ease}
-.ato .tt{color:#0B2D20;transition:color .4s ease}
-.ato .bd{color:#6D6D6D;transition:color .4s ease}
-.ato .ico{color:#7E6836;transition:color .4s ease}
-.ato.on .ico,.ato:hover .ico{color:#D9BE85}
-.ato.on,.ato:hover{background-color:#0B2D20}
-.ato.on .eb,.ato:hover .eb{color:#D9BE85}
-.ato.on .tt,.ato:hover .tt{color:#F7F5F2}
-.ato.on .bd,.ato:hover .bd{color:#A9B8AE}
+.ato .eb{color:#6B655C;transition:color .4s ease}
+.ato .tt{color:#8E1522;transition:color .4s ease}
+.ato .bd{color:#6B655C;transition:color .4s ease}
+.ato .ico{color:#6B655C;transition:color .4s ease}
+.ato.on .ico,.ato:hover .ico{color:#C1121F}
+.ato.on,.ato:hover{background-color:#8E1522}
+.ato.on .eb,.ato:hover .eb{color:#C1121F}
+.ato.on .tt,.ato:hover .tt{color:#F7F4EE}
+.ato.on .bd,.ato:hover .bd{color:#D2BCBA}
 .atos:has(.ato:hover) .ato.on:not(:hover){background-color:transparent}
-.atos:has(.ato:hover) .ato.on:not(:hover) .eb{color:#7E6836}
-.atos:has(.ato:hover) .ato.on:not(:hover) .tt{color:#0B2D20}
-.atos:has(.ato:hover) .ato.on:not(:hover) .bd{color:#6D6D6D}
-.atos:has(.ato:hover) .ato.on:not(:hover) .ico{color:#7E6836}
+.atos:has(.ato:hover) .ato.on:not(:hover) .eb{color:#6B655C}
+.atos:has(.ato:hover) .ato.on:not(:hover) .tt{color:#8E1522}
+.atos:has(.ato:hover) .ato.on:not(:hover) .bd{color:#6B655C}
+.atos:has(.ato:hover) .ato.on:not(:hover) .ico{color:#6B655C}
 .prof{transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease}
-.prof:hover{transform:translateY(-6px);border-color:rgba(217,190,133,.7);box-shadow:0 22px 50px rgba(0,0,0,.32)}
+.prof:hover{transform:translateY(-6px);border-color:rgba(247,244,238,.5);box-shadow:0 22px 50px rgba(0,0,0,.32)}
 .prof .ph img{transition:transform .6s ease,opacity .5s ease,filter .5s ease}
 .prof:hover .ph .duo{transform:scale(1.05)}
 .prof .ph .col{position:absolute;inset:0;opacity:1;filter:grayscale(1) contrast(1.04)}
 .prof:hover .ph .col{opacity:1;filter:grayscale(0);transform:scale(1.05)}
-.mod summary:hover .mtitle{color:#7E6836}
+.mod summary:hover .mtitle{color:#C1121F}
 .mod .mtitle{transition:color .25s ease}
 .mod .tgl{transition:transform .3s ease,color .3s ease}
-.mod[open] .tgl{transform:rotate(45deg);color:#A98E4E}
-.mod[open] .mnum{color:#A98E4E}
+.mod[open] .tgl{transform:rotate(45deg);color:#C1121F}
+.mod[open] .mnum{color:#C1121F}
 .mnum{transition:color .3s ease}
-.idxrow:hover .ititle{color:#7E6836}
+.idxrow:hover .ititle{color:#C1121F}
 .ititle{transition:color .2s ease}
-@keyframes vsGlow{0%,100%{box-shadow:0 12px 30px rgba(11,45,32,.18),0 0 0 1px rgba(217,190,133,.35)}50%{box-shadow:0 22px 66px rgba(217,190,133,.75),0 0 0 4px rgba(217,190,133,.95)}}
+@keyframes vsGlow{0%,100%{box-shadow:0 12px 30px rgba(142,21,34,.18),0 0 0 1px rgba(247,244,238,.28)}50%{box-shadow:0 22px 66px rgba(247,244,238,.34),0 0 0 4px rgba(247,244,238,.55)}}
 .vs-hl{animation:vsGlow 2.6s ease-in-out infinite;will-change:box-shadow}
 .topbar-hamb{display:none}
 html,body{overflow-x:hidden}
 .topbar-nav a{white-space:nowrap}
 @media (max-width:1024px){
   .topbar-inner{gap:14px}
-  .topbar-nav{display:none !important;position:absolute;top:100%;left:0;right:0;background:#0A2B1E;flex-direction:column;align-items:flex-start;gap:16px;padding:20px 28px 24px;border-bottom:1px solid rgba(217,190,133,.18);box-shadow:0 18px 34px rgba(0,0,0,.4)}
+  .topbar-nav{display:none !important;position:absolute;top:100%;left:0;right:0;background:#6B111C;flex-direction:column;align-items:flex-start;gap:16px;padding:20px 28px 24px;border-bottom:1px solid rgba(247,244,238,.16);box-shadow:0 18px 34px rgba(0,0,0,.4)}
   .nav-cb:checked ~ .topbar-nav{display:flex !important}
   .topbar-nav a{font-size:15px !important}
   .tb-entrar{display:none !important}
@@ -520,8 +576,8 @@ html,body{overflow-x:hidden}
 .prof{overflow:visible!important}
 .prof .ph{border-radius:12px 12px 0 0}
 .dl-tip{position:relative;display:inline-flex;align-items:center;flex:0 0 auto}
-.dl-tip::after{content:attr(data-nome);position:absolute;left:50%;bottom:calc(100% + 9px);transform:translateX(-50%) translateY(4px);background:#F7F5F2;color:#0B2D20;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.03em;white-space:nowrap;padding:4px 9px;border-radius:6px;box-shadow:0 8px 22px rgba(0,0,0,.32);opacity:0;pointer-events:none;transition:opacity .16s ease,transform .16s ease;z-index:6}
-.dl-tip::before{content:"";position:absolute;left:50%;bottom:calc(100% + 4px);transform:translateX(-50%);border:5px solid transparent;border-top-color:#F7F5F2;opacity:0;transition:opacity .16s ease;z-index:6}
+.dl-tip::after{content:attr(data-nome);position:absolute;left:50%;bottom:calc(100% + 9px);transform:translateX(-50%) translateY(4px);background:#F7F4EE;color:#8E1522;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;font-size:10px;font-weight:700;letter-spacing:.03em;white-space:nowrap;padding:4px 9px;border-radius:6px;box-shadow:0 8px 22px rgba(0,0,0,.32);opacity:0;pointer-events:none;transition:opacity .16s ease,transform .16s ease;z-index:6}
+.dl-tip::before{content:"";position:absolute;left:50%;bottom:calc(100% + 4px);transform:translateX(-50%);border:5px solid transparent;border-top-color:#F7F4EE;opacity:0;transition:opacity .16s ease;z-index:6}
 .dl-tip:hover{z-index:7}
 .dl-tip:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
 .dl-tip:hover::before{opacity:1}
@@ -529,7 +585,7 @@ html,body{overflow-x:hidden}
 
 /* Secao Ferramentas (H5b) — mockup pronto (imagem final com as telas ja aplicadas). */
 .entreg-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
-.entreg-list li{border-top:1px solid rgba(169,142,78,.22)}
+.entreg-list li{border-top:1px solid rgba(26,24,21,.12)}
 .entreg-list li:first-child{border-top:none}
 .entreg-stage{position:relative;width:100%;max-width:620px;margin:0 auto}
 .mk-img{width:100%;height:auto;display:block}
@@ -547,7 +603,7 @@ html,body{overflow-x:hidden}
 
 /* Secao Quem Assina (H7) — 2 cards */
 .qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:stretch}
-.qa-card{background:#fff;border:1px solid rgba(169,142,78,.22);border-radius:14px;padding:36px 34px;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(11,45,32,.05)}
+.qa-card{background:#fff;border:1px solid rgba(26,24,21,.12);border-radius:14px;padding:36px 34px;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(142,21,34,.05)}
 /* mobile (25/jul): o selo de 180px nao se aplica bem no viewport estreito — sai; e os
    2 cards viram carrossel com snap a 88%, mesma receita dos docentes. Restaura o
    comportamento que o DESIGN.md §5 ja previa ("chancela 88%") e que se perdeu quando
@@ -562,7 +618,9 @@ html,body{overflow-x:hidden}
 /* Hero — globo em canvas (desenho em app/_lp/GloboCanvas.tsx). O elemento cobre o hero
    inteiro; o centro do globo fica em 50%/42% da area, como na versao em DOM. */
 .cn-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity .6s ease}
-.cn-canvas.pronto{opacity:1}
+.cn-canvas.pronto{opacity:.22}   /* 22/set: era 1. O globo competia com o titulo do hero.
+                                Ele e textura, nao ilustracao: entra a 40% e o veu de papel
+                                que o body.html poe por cima abre a clareira do miolo. */
 /* Hero — resposta ao mouse: o GLOBO gira e inclina conforme o cursor (feito no canvas,
    ver GloboCanvas.tsx), então o canvas em si NÃO translada — só a trama de fundo desliza
    de leve, para dar a camada distante. O parallax de translação do canvas foi removido
@@ -575,7 +633,7 @@ html,body{overflow-x:hidden}
    bundle). No desktop este link nao existe visualmente. */
 .nav-entrar{display:none !important}
 @media (max-width:1024px){
-.topbar-nav .nav-entrar{display:block !important;width:100%;margin-top:4px;padding-top:16px;border-top:1px solid rgba(217,190,133,.18)}
+.topbar-nav .nav-entrar{display:block !important;width:100%;margin-top:4px;padding-top:16px;border-top:1px solid rgba(247,244,238,.16)}
 }
 
 .chip-modulo{white-space:nowrap}
@@ -608,12 +666,70 @@ html,body{overflow-x:hidden}
    Ver scripts/comum.mjs: uma regra por valor distinto, !important por causa do
    style inline, hover restrito a ponteiro fino. */
 @media (hover:hover){
-[style-hover="color:#D9BE85"]:hover{color:#D9BE85!important}
-[style-hover="color:#F7F5F2"]:hover{color:#F7F5F2!important}
-[style-hover="transform:translateY(-1px);box-shadow:0 12px 28px rgba(169,142,78,.45)"]:hover{transform:translateY(-1px)!important;box-shadow:0 12px 28px rgba(169,142,78,.45)!important}
-[style-hover="transform:translateY(-1px);box-shadow:0 16px 38px rgba(169,142,78,.5)"]:hover{transform:translateY(-1px)!important;box-shadow:0 16px 38px rgba(169,142,78,.5)!important}
+[style-hover="color:#F7F4EE"]:hover{color:#FFFFFF!important}
+[style-hover="color:#F7F4EE"]:hover{color:#F7F4EE!important}
+[style-hover="transform:translateY(-1px);box-shadow:0 12px 28px rgba(247,244,238,.45)"]:hover{transform:translateY(-1px)!important;box-shadow:0 12px 28px rgba(247,244,238,.45)!important}
+[style-hover="transform:translateY(-1px);box-shadow:0 16px 38px rgba(247,244,238,.5)"]:hover{transform:translateY(-1px)!important;box-shadow:0 16px 38px rgba(247,244,238,.5)!important}
 [style-hover="transform:scale(1.06)"]:hover{transform:scale(1.06)!important}
-[style-hover="background-color:#0A3A28"]:hover{background-color:#0A3A28!important}
+[style-hover="background-color:#A01827"]:hover{background-color:#A01827!important}
 [style-hover="color:#ffffff"]:hover{color:#ffffff!important}
 [style-hover="transform:scale(1.07)"]:hover{transform:scale(1.07)!important}
 }
+
+/* Lockup da barra (22/set/2026). O nome do curso quebra em duas linhas para o
+   bloco ficar quase quadrado e casar com a altura do mark da VEJA, em vez de
+   virar uma faixa de 400px.
+
+   O filete e VERTICAL, nao horizontal, e a razao e o que ele separa: de um
+   lado um mark de uma linha, do outro um bloco de duas. Filete deitado corta
+   a leitura na horizontal e some contra a linha de base do texto; em pe ele
+   funciona como divisoria de colunas, que e o que de fato sao. Altura de 28px,
+   entre os 27 do mark e os 30 do bloco de texto. */
+.tb-lock{display:flex;align-items:center;gap:13px}
+.tb-veja{height:27px;width:auto;display:block;flex:0 0 auto}
+.tb-tr{flex:0 0 auto;width:1px;height:28px;background:rgba(247,244,238,.34);display:block}
+.tb-curso{font-family:'Jost',system-ui,sans-serif;font-size:12.5px;font-weight:400;
+  letter-spacing:.17em;text-transform:uppercase;color:#F7F4EE;line-height:1.22;
+  white-space:nowrap;display:block}
+@media (max-width:560px){
+  .tb-veja{height:23px}
+  .tb-curso{font-size:11px;letter-spacing:.13em}
+  .tb-lock{gap:10px}
+  .tb-tr{height:23px}
+}
+
+/* ===========================================================================
+   Entrada dos graficos do diagnostico (22/set/2026)
+
+   O grafico e uma serie temporal: ele deve nascer em 1994, na esquerda, e
+   correr ate hoje, na direita. Por isso a revelacao e um clip horizontal e
+   nao um fade: o sentido da animacao CARREGA a informacao. A seta e a
+   anotacao entram depois, quando ja existe o que anotar.
+
+   POR QUE TUDO PENDE DE `.tem-js` (corrigido em 22/set, depois de bug real)
+   A primeira versao escondia o grafico no CSS e so o revelava quando o
+   IntersectionObserver disparasse. Isso faz CONTEUDO depender de JS: se o
+   bundle demora, falha, ou a aba esta em segundo plano (sem ciclo de
+   renderizacao nao ha callback de IO nem requestAnimationFrame), a secao
+   fica com dois buracos no lugar dos graficos. Foi exatamente o que
+   apareceu ao abrir a pagina direto no #tese.
+
+   Agora o padrao e VISIVEL. Um script inline no topo do body marca
+   `.tem-js` no <html> antes da primeira pintura, e so entao o estado
+   inicial fechado entra. Sem JS, ou com JS quebrado, o grafico simplesmente
+   aparece, sem piscar.                                                    */
+.tem-js .graf{clip-path:inset(0 100% 0 0);transition:clip-path .85s cubic-bezier(.22,1,.36,1);will-change:clip-path}
+.tem-js .graf.dentro{clip-path:inset(0 0 0 0)}
+.tem-js .graf .graf-seta{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .5s ease-out .5s}
+.tem-js .graf.dentro .graf-seta{stroke-dashoffset:0}
+.tem-js .graf .graf-nota{opacity:0;transition:opacity .45s ease .78s}
+.tem-js .graf.dentro .graf-nota{opacity:1}
+@media (prefers-reduced-motion:reduce){
+  .tem-js .graf,.tem-js .graf.dentro{clip-path:none;transition:none}
+  .tem-js .graf .graf-seta,.tem-js .graf.dentro .graf-seta{stroke-dashoffset:0;transition:none}
+  .tem-js .graf .graf-nota,.tem-js .graf.dentro .graf-nota{opacity:1;transition:none}
+}
+
+/* Lockup da marca do curso reutilizado fora da topbar (secao Programa). */
+.lock-secao{display:flex;align-items:center;gap:14px}
+@media (max-width:760px){ .lock-secao{display:none} }

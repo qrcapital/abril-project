@@ -1,0 +1,464 @@
+/* Sistema visual — Estratégia Internacional
+   =========================================================================
+   Adaptado do goodhal_2000 (briefing de 22/set/2026) para a identidade
+   VEJA Negócios apresenta Estratégia Internacional.
+
+   A ADAPTAÇÃO, E POR QUE ELA NÃO É UMA CÓPIA
+   O princípio 2 do goodhal é que ele não tem cor de marca: lá o `--accent` é
+   idêntico ao `--txt`, e a ação primária é a própria tinta do texto invertida.
+   Aqui isso não vale, porque a campanha TEM cor e ela é o vermelho da VEJA.
+   Então o que veio do goodhal foi o SISTEMA, e o vermelho ocupa a casa onde
+   lá mora a tinta:
+
+     goodhal                          aqui
+     --accent: #1a1815 (a tinta)  ->  --ei-acento: #C1121F (o vermelho)
+     negativo = tinta invertida   ->  primário = vermelho sólido, papel por cima
+
+   Tudo o mais atravessa inteiro: papel em vez de tela, neutro saindo de uma
+   tinta só, raio como razão da altura, peso inverso ao tamanho, cor só quando
+   a cor é o dado, cor morando no hover, contorno que endurece sem pintar fundo.
+
+   CONTRASTE, MEDIDO E NÃO ESTIMADO
+     #C1121F sobre #f7f4ee ............ 5.67:1   (AA, serve como texto)
+     #fdfbf6 sobre #C1121F ............ 6.02:1   (AA, serve como botão)
+     #E4002B sobre #f7f4ee ............ 4.41:1   (REPROVA como texto)
+     #fdfbf6 sobre #E4002B ............ 4.69:1   (AA, serve como preenchimento)
+     #fdfbf6 sobre #8E1522 ............ 8.90:1   (AAA, painel vinho)
+     #1a1815 sobre #f7f4ee ............ 15,9:1
+     #6b655c sobre #f7f4ee ............ 5,25:1   (AA)
+     #6f6860 sobre #f7f4ee ............ 4,73:1   (AA, ver dívida 2 abaixo)
+
+   AS DÍVIDAS DO GOODHAL QUE NÃO FORAM HERDADAS
+   O briefing lista doze dívidas conhecidas. Quatro delas custam nada para
+   evitar na origem, e seria tolice importar o sistema junto com os defeitos:
+
+     1. Foco de teclado. Lá não existe um `:focus-visible` no projeto inteiro,
+        e é a dívida mais grave. Aqui ele está implementado no fim deste arquivo.
+     2. `--faint` a 4,26:1. O próprio briefing sugere ~#6f6860. Adotado.
+     3. Etiqueta colorida a 4,07:1 por tingimento de 12 a 13%. Aqui o tingimento
+        é 8%, como o briefing recomenda.
+     4. Alvo de toque cobrindo só três classes legadas. Aqui a regra de 44px
+        vale para todo controle em `@media (hover:none)`.
+
+   Também não herdamos os dois idiomas de inversão (dívida 4 do briefing):
+   existe um só, `--ei-acento` / `--ei-acento-tinta`.
+
+   ESCOPO
+   Este arquivo é injetado pelas duas landing pages antes do CSS específico de
+   cada uma, no mesmo padrão de readFileSync que elas já usavam. Não passa pelo
+   Tailwind, que só roda no admin. */
+
+:root {
+  /* ---- papel ------------------------------------------------------------
+     O fundo não é branco e nada é preto puro. Tinta sobre papel quente. */
+  --ei-papel: #f7f4ee;
+  --ei-papel-alto: #fbf9f5;        /* campo de formulário, um passo mais claro */
+  --ei-papel-baixo: #f1ece2;
+  --ei-solido: #fdfbf6;            /* superfície opaca: o objeto em si */
+  --ei-vidro: rgba(255, 255, 255, .66);   /* flutua sobre conteúdo */
+  --ei-vidro-fino: rgba(255, 255, 255, .46);
+  --ei-desfoque: saturate(1.35) blur(20px);
+
+  /* ---- tinta ------------------------------------------------------------
+     Uma tinta só, quente (26,24,21). Nenhum neutro cinza-azulado, porque
+     cinza frio sobre creme suja o papel. */
+  --ei-tinta: #1a1815;
+  --ei-tinta-2: #6b655c;           /* apoio, rótulo, descrição */
+  --ei-tinta-3: #6f6860;           /* metadado, contador */
+  --ei-linha: rgba(26, 24, 21, .11);
+  --ei-linha-forte: rgba(26, 24, 21, .19);
+  --ei-hover: rgba(26, 24, 21, .05);
+  --ei-trama: rgba(26, 24, 21, .028);
+  --ei-trama-2: rgba(26, 24, 21, .075);
+
+  /* ---- acento -----------------------------------------------------------
+     O vermelho da campanha na casa onde o goodhal põe a tinta.
+
+     DOIS VERMELHOS, E A DIVISÃO É DE CONTRASTE, NÃO DE GOSTO (22/set/2026).
+     O `--ei-acento` #C1121F é o vermelho de trabalho: texto, link, ênfase,
+     borda, globo. Ele dá 5,67:1 sobre o papel e passa AA como texto.
+     O `--ei-acento-cheio` #E4002B é o vermelho da própria VEJA, e ele NÃO pode
+     ser texto: sobre o papel dá 4,41:1 e reprova AA. Ele existe para
+     preenchimento, ponto, barra e área chapada, onde papel por cima dá 4,69:1.
+     Usar o #E4002B como cor de texto é o erro fácil deste arquivo. */
+  --ei-acento: #C1121F;
+  --ei-acento-cheio: #E4002B;
+  --ei-acento-tinta: #fdfbf6;
+  --ei-acento-halo: rgba(193,18,31, .14);
+  --ei-acento-toque: rgba(193,18,31, .08);
+  --ei-acento-fundo: #8E1522;      /* painel fechado da campanha */
+  --ei-acento-fundo-2: #6B111C;
+
+  /* ---- dourado ----------------------------------------------------------
+     Secundário de filete e régua, herdado do kit da campanha. Não é cor de
+     ação: ação é o vermelho. */
+  --ei-ouro: #7e6836;
+  --ei-ouro-regua: #a98e4e;
+
+  /* ---- semânticas -------------------------------------------------------
+     Calibradas pelo goodhal para o mínimo AA sobre este creme. O par de cada
+     uma é funcional: a primeira lê, a `-cheio` preenche.
+     ATENÇÃO: as quatro ficam entre 4,52 e 4,57:1. Se o papel mudar de valor,
+     as quatro quebram juntas e precisam ser recalibradas em bloco. */
+  --ei-verde: #297f49;   --ei-verde-cheio: #36a05d;
+  --ei-ambar: #956719;   --ei-ambar-cheio: #b98123;
+  --ei-azul: #2774ad;    --ei-azul-cheio: #3692d6;
+  --ei-vermelho-erro: #cc3a2e;
+
+  /* ---- sombra -----------------------------------------------------------
+     Marrom, não preta. Sombra preta sobre creme fica suja. */
+  --ei-sombra: 0 10px 30px rgba(72, 60, 42, .10);
+  --ei-sombra-pop: 0 18px 44px rgba(72, 60, 42, .16);
+  --ei-veu: rgba(38, 32, 24, .34);
+
+  /* ---- raio -------------------------------------------------------------
+     Raio é RAZÃO, não número: altura x 0,26. A âncora é o botão de 34px com
+     9px. Copiar 9px para qualquer altura quebra a família.
+     Encaixe: raio externo = raio interno + padding. */
+  --ei-r-chip: 5px;      /* 18px de altura */
+  --ei-r-etiq: 6px;      /* 22px */
+  --ei-r-peq: 8px;       /* 30px */
+  --ei-r-btn: 9px;       /* 34px, canônico */
+  --ei-r-gde: 11px;      /* 40px */
+  --ei-r-card: 14px;     /* item de lista, dropdown */
+  --ei-r-painel: 18px;   /* card de conteúdo isolado */
+  --ei-pilula: 999px;    /* filtro e estado, nunca ação */
+
+  /* ---- tipografia -------------------------------------------------------
+     Sans para operar, serifa para ler, e não se misturam no mesmo bloco.
+
+     A sans é a pilha nativa: no Mac e no iPhone resolve para SF Pro. Não é
+     webfont, não custa requisição e é o que o briefing chama de "parecer parte
+     do sistema operacional". Foi ela que substituiu o Montserrat na camada de
+     interface, e é o que o pedido de "fonte mais limpa" quis dizer.
+
+     A serifa continua Playfair Display, auto-hospedada em /public/lp. Ela é
+     onde a identidade VEJA mora: manchete, número grande, editorial. Tirar o
+     Playfair tiraria a cara da campanha junto. */
+  --ei-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+             "Inter", "Helvetica Neue", system-ui, sans-serif;
+  --ei-serifa: "Playfair Display", Georgia, "Times New Roman", serif;
+  --ei-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ---- movimento --------------------------------------------------------
+     Padrão 150ms. Acima de 200ms só para transição de página. */
+  --ei-t: .15s;
+  --ei-t-curto: .13s;
+  --ei-t-longo: .18s;
+  --ei-curva: cubic-bezier(.2, .8, .2, 1);
+}
+
+/* ============================================================================
+   BOTÕES
+   Altura canônica 34px. O primário é um por contexto visível e só a ação que
+   conclui. Tudo o mais é contorno ou ícone.
+   ========================================================================= */
+
+.ei-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: var(--ei-r-btn);
+  border: 1px solid var(--ei-linha);
+  background: var(--ei-solido);
+  color: var(--ei-tinta-2);
+  font-family: var(--ei-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color var(--ei-t-curto), background var(--ei-t-curto),
+              border-color var(--ei-t-curto), transform var(--ei-t-curto);
+}
+
+/* Contorno: o botão mais comum. O hover NÃO pinta o fundo, endurece a borda e
+   escurece o texto. Uma barra de botões que muda de fundo a cada hover faz a
+   tela piscar. */
+.ei-btn:hover {
+  border-color: var(--ei-linha-forte);
+  color: var(--ei-tinta);
+}
+
+/* Primário: vermelho sólido, papel por cima. A borda acompanha o fundo em vez
+   de contrastar, para a caixa ter exatamente a mesma altura de um contorno ao
+   lado, sem deslocar um pixel. */
+.ei-btn--primario {
+  background: var(--ei-acento);
+  border-color: var(--ei-acento);
+  color: var(--ei-acento-tinta);
+  font-weight: 560;
+}
+.ei-btn--primario:hover {
+  background: var(--ei-acento-fundo);
+  border-color: var(--ei-acento-fundo);
+  color: var(--ei-acento-tinta);
+  transform: translateY(-1px);
+}
+
+/* Ghost puro, sem caixa: ação terciária. */
+.ei-btn--ghost {
+  background: none;
+  border-color: transparent;
+}
+.ei-btn--ghost:hover {
+  background: var(--ei-hover);
+  border-color: transparent;
+}
+
+/* Alturas. O raio acompanha a razão, não fica em 9px. */
+.ei-btn--gde { height: 40px; padding: 0 20px; border-radius: var(--ei-r-gde); font-size: 13px; }
+.ei-btn--peq { height: 30px; padding: 0 11px; border-radius: var(--ei-r-peq); font-size: 12px; }
+
+/* O botão sobe ao ser mirado e assenta ao ser clicado. */
+.ei-btn:active { transform: none; }
+
+.ei-btn:disabled,
+.ei-btn[aria-disabled="true"] {
+  opacity: .45;
+  cursor: default;
+  transform: none;
+}
+.ei-btn:disabled:hover { border-color: var(--ei-linha); color: var(--ei-tinta-2); }
+
+/* Ícone: quadrado, sem rótulo. Em repouso é cinza; a cor aparece no hover e é
+   a consequência da ação, não um aviso permanente. */
+.ei-ic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--ei-r-btn);
+  border: 1px solid var(--ei-linha);
+  background: var(--ei-solido);
+  color: var(--ei-tinta-3);
+  cursor: pointer;
+  transition: color var(--ei-t), background var(--ei-t),
+              border-color var(--ei-t), transform var(--ei-t);
+}
+.ei-ic:hover {
+  color: var(--ei-tinta);
+  border-color: var(--ei-linha-forte);
+  background: var(--ei-hover);
+  transform: translateY(-1px);
+}
+.ei-ic:active { transform: none; }
+.ei-ic--peq { width: 30px; height: 30px; border-radius: var(--ei-r-peq); }
+.ei-ic--ok:hover { color: var(--ei-verde); border-color: rgba(41,127,73,.45); background: rgba(41,127,73,.09); }
+.ei-ic--nao:hover { color: var(--ei-vermelho-erro); border-color: rgba(204,58,46,.42); background: rgba(204,58,46,.07); }
+
+/* Link textual. */
+.ei-link {
+  color: var(--ei-acento);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  transition: color var(--ei-t);
+}
+.ei-link:hover { color: var(--ei-acento-fundo); }
+
+/* ============================================================================
+   ETIQUETAS E CHIPS
+   Quatro níveis de ênfase. Colorida só para a informação que decide.
+   ========================================================================= */
+
+.ei-etiq {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border: 1px solid var(--ei-linha);
+  border-radius: var(--ei-r-etiq);
+  background: var(--ei-vidro-fino);
+  font-family: var(--ei-sans);
+  font-size: 11.5px;
+  line-height: 1;
+  color: var(--ei-tinta-2);
+  white-space: nowrap;
+  max-width: 26ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Sólida neutra: identidade. */
+.ei-etiq--forte { background: var(--ei-trama-2); color: var(--ei-tinta); border-color: transparent; font-weight: 600; }
+/* Colorida: só a informação que decide. Tingimento a 8%, não 12%, senão o
+   fundo come o contraste da própria letra (dívida 3 do briefing). */
+.ei-etiq--acento { background: var(--ei-acento-toque); color: var(--ei-acento); border-color: transparent; font-weight: 560; }
+.ei-etiq--verde { background: rgba(41,127,73,.08); color: var(--ei-verde); border-color: transparent; }
+.ei-etiq--ambar { background: rgba(149,103,25,.08); color: var(--ei-ambar); border-color: transparent; }
+/* Muda: metadado. */
+.ei-etiq--muda { border: 0; background: none; color: var(--ei-tinta-3); padding: 0 4px; }
+/* Tracejado quer dizer "não confirmado". Nunca decoração. */
+.ei-etiq--incerto { border-style: dashed; }
+
+/* Pílula é filtro ou estado. Retângulo boleado é ação. Ligada não ganha
+   preenchimento, só endurece borda e peso, para a barra ficar silenciosa
+   mesmo com vários filtros ativos. */
+.ei-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 11px;
+  border: 1px solid var(--ei-linha);
+  border-radius: var(--ei-pilula);
+  background: var(--ei-solido);
+  color: var(--ei-tinta-2);
+  font-family: var(--ei-sans);
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: color var(--ei-t), border-color var(--ei-t);
+}
+.ei-chip[aria-pressed="true"],
+.ei-chip.ei-on { border-color: var(--ei-linha-forte); color: var(--ei-tinta); font-weight: 600; }
+
+/* ============================================================================
+   SUPERFÍCIES
+   Vidro quando flutua sobre conteúdo, sólido quando é o conteúdo.
+   ========================================================================= */
+
+.ei-card {
+  background: var(--ei-solido);
+  border: 1px solid var(--ei-linha);
+  border-radius: var(--ei-r-card);
+  box-shadow: var(--ei-sombra);
+}
+.ei-card--painel { border-radius: var(--ei-r-painel); padding: 20px; }
+/* Card clicável: endurece borda e sobe. Nunca muda o fundo. */
+.ei-card--clic { transition: border-color var(--ei-t-longo), transform var(--ei-t-longo); cursor: pointer; }
+.ei-card--clic:hover { border-color: var(--ei-linha-forte); transform: translateY(-2px); }
+
+.ei-flutua {
+  background: var(--ei-vidro);
+  backdrop-filter: var(--ei-desfoque);
+  -webkit-backdrop-filter: var(--ei-desfoque);
+  border: 1px solid var(--ei-linha);
+  border-radius: var(--ei-r-card);
+  box-shadow: var(--ei-sombra-pop);
+}
+
+/* ============================================================================
+   CAMPO DE FORMULÁRIO
+   ========================================================================= */
+
+.ei-campo {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--ei-linha);
+  border-radius: var(--ei-r-gde);
+  background: var(--ei-papel-alto);
+  color: var(--ei-tinta);
+  font-family: var(--ei-sans);
+  font-size: 13.5px;
+  transition: border-color var(--ei-t), background var(--ei-t);
+}
+.ei-campo::placeholder { color: var(--ei-tinta-3); }
+.ei-campo:hover { border-color: var(--ei-linha-forte); }
+.ei-campo:focus { outline: none; border-color: var(--ei-acento); background: var(--ei-solido); }
+.ei-campo[aria-invalid="true"] { border-color: var(--ei-vermelho-erro); }
+
+/* Rótulo caixa-alta: peso alto e tracking positivo, senão vira mancha. */
+.ei-rotulo {
+  display: block;
+  font-family: var(--ei-sans);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--ei-tinta-3);
+}
+
+/* ============================================================================
+   TIPOGRAFIA
+   Peso inversamente proporcional ao tamanho: grande é fino, pequeno é pesado.
+   Peso alto em tamanho grande vira grito; peso baixo vira presença.
+   Texto grande fecha o tracking, caixa-alta pequena abre.
+   ========================================================================= */
+
+.ei-display {
+  font-family: var(--ei-serifa);
+  font-size: clamp(38px, 5.2vw, 68px);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -.028em;
+  color: var(--ei-tinta);
+}
+.ei-titulo {
+  font-family: var(--ei-serifa);
+  font-size: clamp(24px, 2.6vw, 34px);
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: -.02em;
+  color: var(--ei-tinta);
+}
+.ei-lide {
+  font-family: var(--ei-sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--ei-tinta-2);
+  max-width: 62ch;
+}
+.ei-apoio {
+  font-family: var(--ei-sans);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ei-tinta-2);
+  max-width: 62ch;
+}
+.ei-micro {
+  font-family: var(--ei-sans);
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ei-tinta-3);
+}
+.ei-num { font-variant-numeric: tabular-nums; }
+
+/* ============================================================================
+   FOCO DE TECLADO
+   Dívida número um do goodhal, e a mais barata de não herdar. Lá não existe
+   uma única regra de :focus-visible no projeto, e `outline:none` aparece em
+   quase todo campo: quem navega por Tab fica cego nos botões.
+   Aqui o anel é global e usa o acento, com offset para não encostar na borda.
+   ========================================================================= */
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--ei-acento);
+  outline-offset: 2px;
+  border-radius: inherit;
+}
+/* Sobre fundo vermelho o anel vermelho some: ali o anel é papel. */
+.ei-btn--primario:focus-visible,
+[data-ei-escuro] :where(a, button, input, select, textarea):focus-visible {
+  outline-color: var(--ei-acento-tinta);
+}
+
+/* ============================================================================
+   ALVO DE TOQUE
+   No goodhal a regra de 44px cobre três classes legadas e deixa de fora os
+   botões que ele de fato usa. Aqui vale para todo controle.
+   ========================================================================= */
+
+@media (hover: none) {
+  .ei-btn, .ei-ic, .ei-chip { min-height: 44px; }
+  .ei-ic { min-width: 44px; }
+  .ei-btn--peq, .ei-ic--peq { min-height: 44px; }
+}
+
+/* ============================================================================
+   MOVIMENTO REDUZIDO
+   Toda animação precisa de saída.
+   ========================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .ei-btn, .ei-ic, .ei-card--clic, .ei-chip, .ei-campo, .ei-link {
+    transition: none;
+  }
+  .ei-btn:hover, .ei-ic:hover, .ei-card--clic:hover, .ei-btn--primario:hover {
+    transform: none;
+  }
+}
