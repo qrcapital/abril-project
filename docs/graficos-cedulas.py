@@ -89,6 +89,7 @@ def louro(cx, cy, r, de, ate, n=11, tam=9, esp=1):
 
 # ================================================================= R$ 100
 def cedula_brl(NH, cheia, idp):
+    dy_ma = 0  # deslocamento do rotulo da marca d'agua
     """Catalogo do anverso da R$ 100 da segunda familia (BCB)."""
     B, T = NY, NY+NH                      # topo e base
     o_g, o_r, o_t = (".34", ".5", "1") if cheia else (".5", ".62", ".44")
@@ -111,6 +112,14 @@ def cedula_brl(NH, cheia, idp):
     g.append(f'<rect x="18" y="{B+16}" width="78" height="{NH-32}" stroke-width="1"/>')
     for k in range(int((NH-32)/11)):
         g.append(f'<line x1="21" y1="{B+16+k*11}" x2="93" y2="{B+22+k*11}" stroke-width=".55"/>')
+    # linhas de alto-relevo que ATRAVESSAM a faixa, como na nota
+    for k in range(7):
+        yy = B+40+k*(NH-80)/6
+        g.append(f'<line x1="6" y1="{yy:.0f}" x2="128" y2="{yy:.0f}" stroke-width=".8"/>')
+    # janela da marca d agua, area clara a esquerda da efigie
+    g.append(f'<ellipse cx="392" cy="{B+NH/2}" rx="62" ry="{NH*0.30:.0f}" stroke-width=".7" opacity=".5"/>')
+    for k in range(9):                    # trama fina dentro da janela da marca d agua
+        g.append(f'<ellipse cx="392" cy="{B+NH/2}" rx="{62-k*6}" ry="{NH*0.30-k*NH*0.029:.0f}" stroke-width=".45" opacity=".45"/>')
     # quebra-cabeca: blocos geometricos no quadrante superior esquerdo
     rnd = random.Random(4)
     g.append(f'<rect x="124" y="{B+86}" width="128" height="74" rx="6" stroke-width=".9"/>')
@@ -149,8 +158,22 @@ def cedula_brl(NH, cheia, idp):
     g.append(tx(124, T-74, "100", f=SANS, s=88, w="700", fill=TINTA))
     g.append(tx(128, T-34, "REAIS", f=SANS, s=31, w="600", ls=9, fill=VERM))
     g.append(tx(mx, my+176, "REPÚBLICA", s=12, w="600", anc="middle", ls=3, fill=TINTA, op=".6"))
+    # "REAIS" na vertical e microtexto "100" dentro da faixa holografica
+    g.append(tx(0, 0, "REAIS", s=20, w="700", anc="middle", ls=7, fill=VERM, op=".75",
+               extra=f'transform="translate(57 {B+NH/2}) rotate(-90)"'))
+    g.append(tx(0, 0, "100 100 100 100", s=7.5, w="600", anc="middle", ls=1.6, fill=VERM, op=".6",
+               extra=f'transform="translate(57 {B+64}) rotate(-90)"'))
+
     g.append(tx(0, 0, "DEUS SEJA LOUVADO", s=12.5, w="600", ls=3.4, fill=TINTA, op=".62",
                extra=f'transform="translate(706 {B+NH/2+86}) rotate(-90)"'))
+    g.append('</g>')
+    # coral: e o desenho que fica sob a marca tatil na nota
+    g.append(f'<g stroke="{VERM}" fill="none" opacity="{float(o_r)*.7:.2f}" stroke-width=".9" stroke-linecap="round">')
+    rc = random.Random(9)
+    for i in range(7):
+        bx, by = 872+i*15, T-34
+        g.append(f'<path d="M {bx} {by} C {bx-6} {by-22} {bx+8} {by-34} {bx+2} {by-58}"/>')
+        g.append(f'<path d="M {bx+1} {by-30} C {bx+12} {by-38} {bx+14} {by-46} {bx+11} {by-54}"/>')
     g.append('</g>')
     # marca tatil: tres barras no canto inferior direito
     g.append(f'<g fill="{VERM}" opacity="{o_r}">')
@@ -215,6 +238,16 @@ def cedula_usd(NH, cheia, idp):
                  f'<g fill="{VERM}" opacity=".75">{louro(qx, qy-9, 30, 120, 240, 9, 7)}</g>'
                  + tx(qx, qy+3, "1", f=SERIF, s=34, w="600", anc="middle", fill=VERM) + '</g>')
 
+    # numeral pequeno do distrito, repetido junto aos quatro cantos
+    for nx_, ny_ in ((104, B+62), (NW-104, B+62), (104, T-46), (NW-104, T-46)):
+        g.append(tx(nx_, ny_, "1", f=SERIF, s=15, w="600", anc="middle", fill=VERM, op=o_r))
+    # serrilha ornamental na moldura interna
+    g.append(f'<g stroke="{VERM}" fill="none" opacity="{float(o_r)*.8:.2f}" stroke-width=".6">')
+    for k in range(64):
+        xx = 30 + k*(NW-60)/63
+        g.append(f'<line x1="{xx:.0f}" y1="{B+12}" x2="{xx:.0f}" y2="{B+19}"/>')
+        g.append(f'<line x1="{xx:.0f}" y1="{T-12}" x2="{xx:.0f}" y2="{T-19}"/>')
+    g.append('</g>')
     # selo do Federal Reserve, a esquerda do retrato
     sfx = "c" if cheia else "f"
     g.append(selo_circular(252, cy+4, 58, "arcoFRB"+sfx, "FEDERAL RESERVE SYSTEM",
@@ -259,6 +292,7 @@ def cedula_usd(NH, cheia, idp):
     g.append(tx(782, cy-70, "WASHINGTON, D.C.", s=10, w="600", anc="middle", ls=1.6, fill=TINTA, op=".6"))
     g.append(tx(506, cy+144, "WASHINGTON", s=10.5, w="600", anc="middle", ls=2.6, fill=TINTA, op=".6"))
     g.append(tx(500, T-34, "ONE DOLLAR", f=SERIF, s=30, w="600", anc="middle", ls=5.2, fill=TINTA))
+    g.append(tx(NW-40, T-62, "FW B 2", s=9.5, w="600", anc="end", ls=1, fill=VERM, op=".6"))
     g.append(tx(206, T-62, "SERIES", s=9.5, w="600", anc="middle", ls=1.4, fill=TINTA, op=".55"))
     g.append(tx(206, T-50, "2026", s=9.5, w="600", anc="middle", ls=1.4, fill=TINTA, op=".55"))
     g.append('</g>')

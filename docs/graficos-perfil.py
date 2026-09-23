@@ -42,6 +42,11 @@ SOMBRA = (
  "C 66 124 50 130 38 128 C 44 116 46 104 42 96 "
  "C 52 96 62 88 64 72 C 66 56 58 40 44 30 Z")
 PESCOCO = "M 38 112 C 52 120 66 118 76 108 C 78 120 80 130 86 138 L 34 138 Z"
+# Faixa iluminada, colada no contorno da face: testa, dorso do nariz, maca do
+# rosto e queixo. A hachura e ABATIDA aqui por uma mascara. Sombrear tudo por
+# igual achata; o volume nasce de onde a luz NAO e riscada.
+LUZ = ("M 24 30 C 34 26 44 32 46 44 C 48 56 40 64 36 74 "
+       "C 32 84 34 92 30 98 C 24 94 20 86 20 76 C 20 62 26 50 24 42 Z")
 
 TRACOS = [
  ("M 17 47 C 22 43 29 43 33 46", 1.5),   ("M 20 50 C 24 47 30 47 33 50", 1.2),
@@ -51,6 +56,16 @@ TRACOS = [
  ("M 54 52 C 62 51 66 58 64 66 C 63 72 58 74 54 72", 1.3),
  ("M 57 57 C 61 57 62 62 60 67", 1.0),   ("M 40 100 C 48 104 58 103 64 97", 1.1),
  ("M 46 116 C 54 120 62 119 68 114", 0.9),
+ ("M 22 46 C 27 42 33 42 36 45", 0.9),   # sulco da palpebra
+ ("M 21 51 C 22 50 23 50 24 51", 0.8),   # canto interno do olho
+ ("M 33 50 C 35 49 36 50 36 51", 0.8),   # canto externo
+ ("M 22 54 C 26 56 31 55 34 53", 0.8),   # sombra da palpebra inferior
+ ("M 26 62 C 34 64 42 62 48 57", 0.9),   # maca do rosto
+ ("M 22 72 C 26 78 28 84 27 88", 0.9),   # sulco nasolabial
+ ("M 16 74 C 17 76 18 76 19 75", 0.7),   # filtro
+ ("M 29 79 C 31 79 32 80 32 81", 0.8),   # canto da boca
+ ("M 20 34 C 26 33 32 35 35 39", 0.8),   # tempora
+ ("M 44 126 C 56 132 70 132 80 126", 0.9),  # claviculas
  ("M 30 132 C 40 136 52 136 60 132", 1.0), ("M 62 130 C 70 134 78 136 86 134", 1.0),
 ]
 
@@ -81,9 +96,14 @@ def busto(cx, cy, altura, cor, op, idp, rx, ry,
     x0, y0 = cx - 52*k, cy - 66*k
     T  = lambda d: _tp(d, x0, y0, k)
     lw = lambda w: max(0.55, w*k)
-    S, H, Sh, P = T(SILHUETA), T(CABELO), T(SOMBRA), T(PESCOCO)
+    S, H, Sh, P, L = T(SILHUETA), T(CABELO), T(SOMBRA), T(PESCOCO), T(LUZ)
 
     g = ['<defs>', f'<clipPath id="{idp}s"><path d="{S}"/></clipPath>']
+    if detalhe:
+        g.append(f'<mask id="{idp}m" maskUnits="userSpaceOnUse" x="{cx-rx}" y="{cy-ry}" '
+                 f'width="{rx*2}" height="{ry*2}">'
+                 f'<rect x="{cx-rx}" y="{cy-ry}" width="{rx*2}" height="{ry*2}" fill="#fff"/>'
+                 f'<path d="{L}" fill="#000" opacity=".82"/></mask>')
     if detalhe:
         g += [f'<clipPath id="{idp}h"><path d="{H}"/></clipPath>',
               f'<clipPath id="{idp}d"><path d="{Sh}"/></clipPath>',
@@ -94,8 +114,8 @@ def busto(cx, cy, altura, cor, op, idp, rx, ry,
           f'<path d="{S}" fill="{cor}" opacity=".1"/>']
 
     if detalhe:
-        g.append(f'<g clip-path="url(#{idp}s)" stroke="{cor}" fill="none" '
-                 f'stroke-width="{lw(1.15):.2f}" opacity=".3">')
+        g.append(f'<g clip-path="url(#{idp}s)" mask="url(#{idp}m)" stroke="{cor}" fill="none" '
+                 f'stroke-width="{lw(1.15):.2f}" opacity=".34">')
         g += [f'<path d="{T(d)}"/>' for d in _arcos(24)]
         g.append('</g>')
         g.append(f'<g clip-path="url(#{idp}d)" stroke="{cor}" fill="none" '
