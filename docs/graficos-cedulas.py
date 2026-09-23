@@ -19,7 +19,6 @@ louro na base, volutas no topo), que e vocabulario legitimo de cedula e e
 geometria, entao sai preciso. Tudo o mais, layout, tipografia, selos,
 faixa, molduras e ornamentos, segue o catalogo."""
 import re, ast, math, random
-from perfil import busto
 
 import series                      # IPCA 433 e PTAX 3698, congeladas do SGS
 serieP = series.poder_de_compra()  # R$ 100 de jul/1994, deflacionados
@@ -120,6 +119,13 @@ def cedula_brl(NH, cheia, idp):
     g.append(f'<ellipse cx="392" cy="{B+NH/2}" rx="62" ry="{NH*0.30:.0f}" stroke-width=".7" opacity=".5"/>')
     for k in range(9):                    # trama fina dentro da janela da marca d agua
         g.append(f'<ellipse cx="392" cy="{B+NH/2}" rx="{62-k*6}" ry="{NH*0.30-k*NH*0.029:.0f}" stroke-width=".45" opacity=".45"/>')
+    # fita ondulada larga, o elemento de fundo mais visivel do anverso
+    for off, opf in ((0, .55), (26, .4), (52, .28)):
+        p = f'M 108 {B+NH*0.46+off:.0f}'
+        for kk in range(1, 15):
+            xx = 108 + kk*(560)/14
+            p += f' Q {xx-20:.0f} {B+NH*0.46+off+(22 if kk%2 else -22):.0f} {xx:.0f} {B+NH*0.46+off:.0f}'
+        g.append(f'<path d="{p}" stroke-width="{7-off/26*2:.1f}" opacity="{opf}"/>')
     # quebra-cabeca: blocos geometricos no quadrante superior esquerdo
     rnd = random.Random(4)
     g.append(f'<rect x="124" y="{B+86}" width="128" height="74" rx="6" stroke-width=".9"/>')
@@ -129,19 +135,23 @@ def cedula_brl(NH, cheia, idp):
         bx, by = 124+rnd.randint(6,96), B+86+rnd.randint(6,50)
         g.append(f'<rect x="{bx}" y="{by}" width="{rnd.randint(8,24)}" height="{rnd.randint(7,16)}" rx="2"/>')
     g.append('</g>')
+    # painel de fundo do numeral grande, canto superior direito
+    g.append(f'<rect x="742" y="{B+18}" width="{NW-760}" height="118" rx="4" '
+             f'stroke-width=".9" opacity="{float(o_r)*.9:.2f}"/>')
+    for k in range(11):
+        g.append(f'<line x1="748" y1="{B+24+k*10.4:.0f}" x2="{NW-24}" y2="{B+24+k*10.4:.0f}" stroke-width=".55" opacity=".4"/>')
     # painel do numero escondido, lateral direita
     g.append(f'<g stroke="{VERM}" fill="none" opacity="{o_r}">')
-    g.append(f'<rect x="742" y="{B+112}" width="164" height="{NH-232}" rx="5" stroke-width=".9"/>')
+    g.append(f'<rect x="742" y="{B+152}" width="164" height="{NH-272}" rx="5" stroke-width=".9"/>')
     for k in range(34):
         a = math.radians(k*360/34)
-        cx, cy = 824, B+NH/2-8
+        cx, cy = 824, B+NH/2+14
         g.append('<line x1="%.0f" y1="%.0f" x2="%.0f" y2="%.0f" stroke-width=".5"/>' % (
             cx+18*math.cos(a), cy+12*math.sin(a), cx+78*math.cos(a), cy+96*math.sin(a)))
     g.append('</g>')
     # medalhao da efigie, centro levemente a direita
     mx, my = 556, B+NH/2-6
-    g.append(roseta_oval(mx, my, 96, 132, o_r, tramas=0))
-    g.append(busto(mx, my, 232, VERM, o_r, "bsBRL"+("c" if cheia else "f"), 88, 121, coroa=True))
+    g.append(roseta_oval(mx, my, 96, 132, o_r))
     g.append(f'<g fill="none" stroke="{VERM}" opacity="{o_r}" stroke-width="1.1">'
              f'<ellipse cx="{mx}" cy="{my}" rx="104" ry="142"/></g>')
     g.append(f'<g fill="{VERM}" opacity="{o_r}">{louro(mx, my, 118, 186, 274, 13, 11)}</g>')
@@ -157,12 +167,16 @@ def cedula_brl(NH, cheia, idp):
     g.append(tx(970, B+108, "100", f=SANS, s=104, w="700", anc="end", fill=TINTA))
     g.append(tx(124, T-74, "100", f=SANS, s=88, w="700", fill=TINTA))
     g.append(tx(128, T-34, "REAIS", f=SANS, s=31, w="600", ls=9, fill=VERM))
-    g.append(tx(mx, my+176, "REPÚBLICA", s=12, w="600", anc="middle", ls=3, fill=TINTA, op=".6"))
+    g.append(tx(mx, my+152, "REPÚBLICA", s=12, w="600", anc="middle", ls=3, fill=TINTA, op=".6"))
     # "REAIS" na vertical e microtexto "100" dentro da faixa holografica
     g.append(tx(0, 0, "REAIS", s=20, w="700", anc="middle", ls=7, fill=VERM, op=".75",
                extra=f'transform="translate(57 {B+NH/2}) rotate(-90)"'))
     g.append(tx(0, 0, "100 100 100 100", s=7.5, w="600", anc="middle", ls=1.6, fill=VERM, op=".6",
                extra=f'transform="translate(57 {B+64}) rotate(-90)"'))
+    # colunas de microtexto "100", como as que correm rente a faixa na nota
+    for cx_ in (104,):
+        for r_ in range(int((NH-40)/13)):
+            g.append(tx(cx_, B+30+r_*13, "100 100", s=6.5, w="600", ls=.8, fill=VERM, op=".38"))
 
     g.append(tx(0, 0, "DEUS SEJA LOUVADO", s=12.5, w="600", ls=3.4, fill=TINTA, op=".62",
                extra=f'transform="translate(706 {B+NH/2+86}) rotate(-90)"'))
@@ -254,8 +268,7 @@ def cedula_usd(NH, cheia, idp):
              tx(252, cy+22, "A", f=SERIF, s=54, w="600", anc="middle", fill=VERM, op=o_r), o_r))
     # medalhao do retrato, centro
     mx = 506
-    g.append(roseta_oval(mx, cy, 92, 124, o_r, tramas=0))
-    g.append(busto(mx, cy, 218, VERM, o_r, "bsUSD"+("c" if cheia else "f"), 84, 113, rabicho=True))
+    g.append(roseta_oval(mx, cy, 92, 124, o_r))
     g.append(f'<g stroke="{VERM}" fill="none" opacity="{o_r}" stroke-width="1.2">'
              f'<ellipse cx="{mx}" cy="{cy}" rx="103" ry="137"/></g>')
     g.append(f'<g fill="{VERM}" opacity="{o_r}">')          # perolado da moldura
