@@ -944,37 +944,11 @@ body:has(.le-escuro) { background: #0a0a0a }
   gap: 24px; flex-wrap: wrap;
 }
 
-/* ---- faixa 1: lockup e redes, sobre o vinho ---- */
-.le-rod-marca {
-  background: #8E1522; padding: 24px 0;
-  border-bottom: 1px solid rgba(247, 244, 238, .18);
-}
-.le-rod-lock { display: inline-block; color: #F7F4EE; text-decoration: none }
-/* `margin-right` negativo anula o rastro que o letter-spacing deixa depois da
-   última letra. Sem ele o bloco "termina" 0.26em depois do A e as réguas de
-   baixo fecham fora do alinhamento dele. Mesma dívida registrada no DESIGN.md e
-   resolvida do mesmo jeito na sidebar do admin. */
-.le-rod-lock-n {
-  display: block; font-variant-numeric: tabular-nums;
-  font-size: 20px; letter-spacing: .26em; font-weight: 500;
-  color: #F7F4EE; line-height: 1; white-space: nowrap; margin-right: -.26em;
-}
-.le-rod-lock-i {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 8px; letter-spacing: .44em; color: #EDE6DD; font-weight: 600;
-  margin-top: 5px; white-space: nowrap;
-}
-.le-rod-lock-i i { flex: 1; height: 1px; background: rgba(247, 244, 238, .22); min-width: 16px }
-.le-rod-lock-i span { margin-right: -.44em }
-.le-rod-redes { display: flex; align-items: center; gap: 16px }
-.le-rod-siga {
-  font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
-  font-weight: 700; color: #F7F4EE;
-}
-.le-rod-redes a { color: #C9AFAE; display: inline-flex; transition: color .2s ease }
-.le-rod-redes a:hover { color: #F7F4EE }
+/* A faixa vinho do topo do rodapé saiu em 13/out/2026, e com ela o `.le-rod-lock`
+   e o `.le-rod-redes`. Ver o comentário no Rodape.tsx sobre por que ela não faz
+   falta nesta página e continua fazendo na LP de vendas. */
 
-/* ---- faixa 2: marca, descrição e colunas, sobre o preto ---- */
+/* ---- marca, descrição e colunas, sobre o preto ---- */
 .le-rod-corpo { background: #000; padding: 48px 0 40px }
 /* `align-items: flex-start` e gap maior: aqui as duas partes têm alturas bem
    diferentes e centralizar deixaria a marca boiando ao lado das três colunas. */
@@ -1000,7 +974,7 @@ body:has(.le-escuro) { background: #0a0a0a }
 }
 .le-rod-lista a:hover { color: #ffffff }
 
-/* ---- faixa 3: crédito ---- */
+/* ---- crédito ---- */
 .le-rod-credito { background: #000; padding: 0 0 26px }
 .le-rod-credito .le-rod-dentro {
   justify-content: center; padding-top: 22px;

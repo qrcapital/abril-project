@@ -54,35 +54,19 @@ const INSTITUCIONAL = [
 export default function Rodape() {
   return (
     <footer className="le-rodape">
-      {/* ---- faixa vinho: lockup e redes ---- */}
-      <div className="le-rod-marca">
-        <div className="le-rod-dentro">
-          {/* O lockup do rodapé é o vertical, com as réguas, e não o horizontal do
-              topo: é o mesmo par que a LP de vendas usa, assinatura horizontal na
-              topbar e empilhada no rodapé. As compensações de tracking são as que
-              o admin documentou, e sem elas o "ESTRATÉGIA" termina 0,26em depois
-              do A e as réguas fecham fora do alinhamento dele. */}
-          <a className="le-rod-lock" href="#form-lista-de-espera">
-            <b className="le-rod-lock-n">ESTRATÉGIA</b>
-            <span className="le-rod-lock-i">
-              <i aria-hidden="true" />
-              <span>INTERNACIONAL</span>
-              <i aria-hidden="true" />
-            </span>
-          </a>
+      {/* A FAIXA VINHO SAIU em 13/out/2026, por ordem do Marcelo. Ela trazia o
+          lockup empilhado e o bloco "Siga" das redes, e era o que o `<footer>` da
+          LP de vendas tem no topo. Duas razões para ela não fazer falta aqui: o
+          lockup já abre a página, a um rolar de distância, e as redes nunca
+          chegaram a existir porque os três `href` são `#` até hoje. O que sobrava
+          era uma tarja de cor cortando a página entre o painel do formulário e o
+          rodapé preto, sem nada dentro.
 
-          {REDES.length > 0 && (
-            <div className="le-rod-redes">
-              <span className="le-rod-siga">Siga</span>
-              {REDES.map((r) => (
-                <a key={r.nome} href={r.href} aria-label={r.nome} target="_blank" rel="noopener noreferrer">
-                  {r.svg}
-                </a>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+          Na LP de vendas ela continua, e lá faz sentido: o rodapé está a uma
+          página inteira do topo, e a tarja é o que devolve a marca antes do fim.
+
+          A constante `REDES` acima segue servindo para quando os perfis
+          existirem; o bloco delas volta junto com esta faixa. */}
 
       {/* ---- faixa preta: marca, descrição e colunas ---- */}
       <div className="le-rod-corpo">
