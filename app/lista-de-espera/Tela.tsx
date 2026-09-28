@@ -332,12 +332,18 @@ export default function Tela({ children }: { children: React.ReactNode }) {
                 no alto da página.
 
                 Fica discreta de propósito. A chancela de cima é da Abril; esta
-                diz de quem é o conteúdo, no tom de crédito e não de marca. */}
+                diz de quem é o conteúdo, no tom de crédito e não de marca.
+
+                A MARCA É A VERSÃO ESCURA, e não `MEDIACAO.bt[TEMA]`. Aquele par
+                é escolhido pelo tema da PÁGINA, que é o creme, e foi assim que
+                ela nasceu invisível aqui: debaixo do card ela está sobre o painel
+                vermelho, não sobre o papel. Quem decide é o fundo imediato, e
+                aqui ele não muda com o tema. */}
             <div className="le-powered">
               <span className="le-powered-r">Powered by</span>
               {/* eslint-disable-next-line @next/next/no-img-element -- SVG de marca
                   com altura fixa: o next/image rasterizaria o vetor. */}
-              <img className="le-powered-bt" src={MEDIACAO.bt[TEMA]} alt="BlockTrends" />
+              <img className="le-powered-bt" src={MEDIACAO.bt.escuro} alt="BlockTrends" />
             </div>
             {/* O crédito da Abril saiu daqui em 28/set/2026: a mesma razão
                 social e o mesmo CNPJ aparecem duas vezes no rodapé novo, na

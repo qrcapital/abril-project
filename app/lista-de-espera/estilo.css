@@ -250,7 +250,7 @@ body:has(.le-escuro) { background: #0a0a0a }
 
 .le-esq {
   display: flex; flex-direction: column; justify-content: center;
-  gap: clamp(18px, 2.6vw, 22px); padding: 4px 0;
+  gap: clamp(18px, 2.6vw, 24px); padding: 4px 0;
 }
 /* ── O LOCKUP ────────────────────────────────────────────────────────────────
    O MESMO desenho da topbar da LP de vendas (`.tb-lock` em app/_lp/styles.css),
@@ -354,7 +354,7 @@ body:has(.le-escuro) { background: #0a0a0a }
    está explicado no `.le-prof-foto`. */
 .le-profs {
   margin: 0; padding: 0; list-style: none;
-  display: flex; flex-wrap: nowrap; gap: 22px;
+  display: flex; flex-wrap: nowrap; gap: 20px;
 }
 /* `min-width: 0` é o que permite o filho de flex encolher abaixo do conteúdo
    dele; sem isso o `flex: 1 1 0` não tem efeito e os itens estouram a coluna. */
@@ -365,12 +365,12 @@ body:has(.le-escuro) { background: #0a0a0a }
    `object-position: top` porque o enquadramento original é de meio corpo e o
    corte centrado cortaria a testa. */
 /* ┌─ 96px NÃO É UM NÚMERO SOLTO ────────────────────────────────────────────────┐
-   │ É o tamanho em que a BASE DO RETRATO fecha na mesma vertical que a base do   │
-   │ card do formulário, na coluna da direita. As duas colunas são centradas na    │
-   │ mesma grade, então a base da esquerda só encontra a da direita quando as duas │
-   │ têm a mesma altura: crescer o retrato em 2px desce a base em 1.               │
+   │ É o tamanho em que a BASE DO RETRATO fecha na vertical da base do card, e o  │
+   │ maior que cabe sem o nome "Rodolfo Bastos" quebrar em duas linhas. As duas   │
+   │ colunas são centradas na mesma grade, então as bases só se encontram quando   │
+   │ as alturas batem: crescer o retrato em 2px desce a base em 1.                 │
    │                                                                               │
-   │ O ajuste fino é o gap de `.le-bloco` (24) e o de `.le-esq` (22), medidos em    │
+   │ O ajuste fino é o gap de `.le-bloco` (26) e o de `.le-esq` (24), medidos em    │
    │ 1440x778 contra a altura real do card. Mexer em qualquer um dos três pede     │
    │ remedir os outros dois, e o alvo é a base do retrato encostar na base do card.│
    │                                                                               │
@@ -379,7 +379,7 @@ body:has(.le-escuro) { background: #0a0a0a }
    │ pessoa vê ao chegar.                                                          │
    └───────────────────────────────────────────────────────────────────────────────┘ */
 .le-prof-foto {
-  flex: none; width: 96px; height: 96px; border-radius: 50%;
+  flex: none; width: 88px; height: 88px; border-radius: 50%;
   object-fit: cover; object-position: top; display: block;
   filter: grayscale(1) contrast(1.05);
   border: 1px solid var(--le-linha);
@@ -389,8 +389,8 @@ body:has(.le-escuro) { background: #0a0a0a }
    para 13,5. O bloco inteiro cresceu junto com o retrato: quem está na live é
    argumento de conversão nesta página, e a 52px com nome no corpo do texto ele
    lia como legenda de foto. */
-.le-prof .le-nome { font-size: 19px; line-height: 1.25; text-wrap: balance }
-.le-prof-cred { font-size: 14px; line-height: 1.35; color: var(--le-texto-2) }
+.le-prof .le-nome { font-size: 17px; line-height: 1.25 }
+.le-prof-cred { font-size: 13.5px; line-height: 1.35; color: var(--le-texto-2) }
 
 /* ── A PROMESSA DA PRÉ-LISTA, EM UMA FRASE ───────────────────────────────────
    Eram três itens com rótulo dourado por cima, quatro linhas ao todo. Com a
@@ -430,7 +430,7 @@ body:has(.le-escuro) { background: #0a0a0a }
    ("global começa aqui.") ocupa 486px em Playfair 55px. Tudo o que vem abaixo
    fecha na mesma vertical que ela, que é o que dá uma borda direita só para a
    coluna inteira. Mexer no corpo ou no texto da manchete muda essa medida. */
-.le-bloco { display: flex; flex-direction: column; gap: 24px; max-width: 490px; container-type: inline-size }
+.le-bloco { display: flex; flex-direction: column; gap: 26px; max-width: 490px; container-type: inline-size }
 
 .le-h1 {
   margin: 0;
