@@ -34,22 +34,10 @@ import contato from "@/lib/contato.json";
  */
 const REDES: { nome: string; href: string; svg: React.ReactNode }[] = [];
 
-/**
- * Os links institucionais apontam para a LP DE VENDAS, que é onde essas âncoras existem.
- *
- * DECISÃO QUE VALE CONFERIR: a pré-lista existe porque as inscrições ainda não abriram, e estes
- * links levam quem está aqui para a página que tem preço e botão de compra. Fazia sentido no
- * rodapé de lá, onde a pessoa já está na oferta. Aqui é uma escolha, não uma consequência.
- *
- * `false` desliga a coluna inteira sem mexer em mais nada.
- */
-const MOSTRAR_INSTITUCIONAL = true;
-
-const INSTITUCIONAL = [
-  { rotulo: "Professores", href: "/#docentes" },
-  { rotulo: "Formação", href: "/#curriculo" },
-  { rotulo: "Dúvidas", href: "/#faq" },
-];
+/* A COLUNA "INSTITUCIONAL" SAIU em 13/out/2026, por ordem do Marcelo, e com ela a constante de
+   links e o flag que a ligava. Ela apontava para as âncoras da LP de vendas, que é a página com
+   preço e botão de compra: mandar para lá quem está na pré-lista justamente porque as inscrições
+   ainda não abriram era o contrário do que esta tela existe para fazer. */
 
 export default function Rodape() {
   return (
@@ -75,23 +63,20 @@ export default function Rodape() {
             {/* eslint-disable-next-line @next/next/no-img-element -- SVG de marca com
                 largura fixa: o next/image rasterizaria o vetor. */}
             <img src="/lp/grupo_abril.svg" alt="Grupo Abril" width={150} />
-            <p>
-              Formação em dolarização de patrimônio e investimento internacional. BlockTrends, com
-              chancela institucional da VEJA Negócios.
+            {/* A MESMA LINHA QUE FICA EMBAIXO DA LOGO NO RODAPÉ DA VEJA, com a
+                pontuação deles: vírgula depois do S.A. e hífen antes de "Todos os
+                direitos". Substituiu uma descrição do curso que era nossa e que,
+                debaixo da marca da Abril, parecia dita por eles.
+
+                Ela é também o motivo de a terceira faixa do rodapé ter sumido: era
+                onde esta linha morava, e mantê-la nos dois lugares repetia a razão
+                social duas vezes na mesma tela. */}
+            <p className="le-rod-razao">
+              Abril Comunicações S.A., CNPJ 44.597.052/0001-62 - Todos os direitos reservados.
             </p>
           </div>
 
           <div className="le-rod-listas">
-            {MOSTRAR_INSTITUCIONAL && (
-              <div className="le-rod-lista">
-                <div className="le-rod-lista-t">Institucional</div>
-                {INSTITUCIONAL.map((l) => (
-                  <a key={l.href} href={l.href}>
-                    {l.rotulo}
-                  </a>
-                ))}
-              </div>
-            )}
 
             {/* As duas páginas existem no próprio site desde 12/out/2026, então os
                 links são sempre válidos e a condicional que existia aqui saiu com
@@ -120,12 +105,6 @@ export default function Rodape() {
         </div>
       </div>
 
-      {/* ---- faixa preta: crédito ---- */}
-      <div className="le-rod-credito">
-        <div className="le-rod-dentro">
-          <span>Abril Comunicações S.A. · CNPJ 44.597.052/0001-62 · Todos os direitos reservados.</span>
-        </div>
-      </div>
     </footer>
   );
 }
