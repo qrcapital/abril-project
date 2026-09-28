@@ -14,8 +14,18 @@ import { emTrabalho, ligarExigencias, pintarCaixa } from "@/app/app/_ui/feedback
  *
  * Deu certo, vai direto para `/app`: o aluno acabou de provar posse do e-mail, então exigir
  * login em seguida seria atrito sem ganho.
+ *
+ * `exigeAceite` diz se a tela veio com a caixa dos documentos (migration `0023`). A conferência
+ * aqui é só para a mensagem aparecer sem ida ao servidor; quem de fato recusa é a action, que
+ * pergunta ao banco. Ver o comentário em `actions.ts`.
  */
-export default function RedefinirClient({ html }: { html: string }) {
+export default function RedefinirClient({
+  html,
+  exigeAceite = false,
+}: {
+  html: string;
+  exigeAceite?: boolean;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const [erro, setErro] = useState<string | null>(null);
@@ -45,6 +55,7 @@ export default function RedefinirClient({ html }: { html: string }) {
 
     const senha = root?.querySelector<HTMLInputElement>("#senha")?.value ?? "";
     const repetir = root?.querySelector<HTMLInputElement>("#repetir")?.value ?? "";
+    const aceite = root?.querySelector<HTMLInputElement>("[data-aceite]")?.checked ?? false;
 
     const problema = validarSenha(senha);
     if (problema) {
@@ -55,10 +66,17 @@ export default function RedefinirClient({ html }: { html: string }) {
       setErro("As duas senhas não são iguais.");
       return;
     }
+    // A senha vem antes do aceite na ordem das conferências porque vem antes na ordem da tela:
+    // apontar a caixa lá embaixo enquanto o campo de cima está errado manda a pessoa consertar a
+    // coisa errada primeiro.
+    if (exigeAceite && !aceite) {
+      setErro("Para continuar, confirme que leu e aceita os Termos de Uso e a Política de Privacidade.");
+      return;
+    }
 
     setErro(null);
     const restaurar = emTrabalho(btn, "Salvando...");
-    const r = await definirSenha(senha);
+    const r = await definirSenha(senha, aceite);
     if (r.ok) {
       // Sem restaurar: a navegação já vai acontecer, e devolver o botão ao normal antes
       // dela pisca "clique de novo" numa tela que está saindo.

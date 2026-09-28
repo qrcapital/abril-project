@@ -29,6 +29,9 @@ const ITENS = [
   // Auditoria fica do lado de Equipe, abaixo da mesma régua, porque é a outra metade do assunto
   // "quem opera": uma diz quem tem a chave, a outra diz o que fizeram com ela.
   { href: "/admin/auditoria", rotulo: "Auditoria", pronto: true },
+  // Consentimentos fecha o bloco de rastros: Auditoria responde pelo que a equipe fez, esta
+  // responde pelo que os titulares autorizaram. Pedido do jurídico da Abril em set/2026.
+  { href: "/admin/consentimentos", rotulo: "Consentimentos", pronto: true },
 ];
 
 export default function Nav({ email, temAcesso }: { email?: string; temAcesso?: boolean }) {

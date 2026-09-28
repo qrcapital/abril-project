@@ -25,7 +25,15 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * disso, os relatórios precisam de paginação nas RPCs, não aqui.
  */
 
-const TETO: Record<string, number> = { alunos: 500, emails: 1000, auditoria: 1000 };
+// Consentimentos tem o teto mais alto dos quatro porque é o único que alguém pede INTEIRO: os
+// outros três se consultam por recorte, e este é entregue ao time de privacidade da Abril como
+// base completa. Duas linhas por aluno (Política e Termos) também dobram a contagem natural.
+const TETO: Record<string, number> = {
+  alunos: 500,
+  emails: 1000,
+  auditoria: 1000,
+  consentimentos: 5000,
+};
 
 const escapar = (v: unknown): string => {
   let s = String(v ?? "");
@@ -121,6 +129,50 @@ export async function GET(req: NextRequest) {
         rotularAcao(String(a.acao)),
         a.alvo_nome ?? a.alvo_email ?? "",
         descrever(String(a.acao), (a.detalhe as Record<string, unknown>) ?? null).join(" · "),
+      ]),
+    );
+  }
+
+  if (tipo === "consentimentos") {
+    const { data, error } = await db.rpc("listar_consentimentos", {
+      termo: "",
+      limite: TETO.consentimentos,
+    });
+    if (error) return new NextResponse("O relatório falhou. Tente de novo.", { status: 500 });
+    const rows = data ?? [];
+    linhas = rows.length;
+    // AS COLUNAS SÃO A PROVA, então nenhuma delas é decoração. O `texto` é a mais importante e a
+    // que mais parece dispensável numa planilha: é a frase que a pessoa tinha na frente, e sem ela
+    // a linha vira "fulano aceitou alguma coisa em tal data". Sai por último porque é longa e
+    // empurraria as outras para fora da tela no Excel.
+    conteudo = csv(
+      [
+        "quando",
+        "email no aceite",
+        "email atual",
+        "nome",
+        "origem",
+        "documento",
+        "versao",
+        "pedido no guru",
+        "ip",
+        "navegador",
+        "texto aceito",
+      ],
+      rows.map((c: Record<string, unknown>) => [
+        dataBR(c.created_at),
+        c.email,
+        // Só repete o e-mail atual quando ele mudou. Coluna inteira duplicada some do olho de quem
+        // lê, e a diferença é justamente o que se quer enxergar.
+        c.email_atual && c.email_atual !== c.email ? c.email_atual : "",
+        c.nome,
+        c.origem,
+        c.documento_tipo === "politica" ? "Política de Privacidade" : "Termos de Uso",
+        c.documento_versao,
+        c.guru_order_id,
+        c.ip,
+        c.user_agent,
+        c.texto,
       ]),
     );
   }

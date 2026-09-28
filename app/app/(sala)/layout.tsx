@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 
 import { getMatricula } from "@/lib/matricula";
+import { aceitouVigente } from "@/lib/consentimento";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import Chrome from "@/app/app/_ui/Chrome";
 
 // Telas autenticadas do curso. O login (/app/login) e a tela de acesso (/app/acesso) ficam
@@ -25,6 +28,20 @@ export default async function SalaLayout({
   // escolhido por quem digita o endereço e faria a tela contar a história que o visitante quiser.
   const { estado } = await getMatricula();
   if (estado !== "ativa") redirect("/app/acesso");
+
+  // Segunda guarda, do log de consentimento (migration 0023). A ordem é esta de propósito: quem
+  // não tem matrícula ativa não deve nem ser perguntado sobre os documentos, porque não vai entrar
+  // de qualquer jeito, e pedir aceite a quem está barrado seria colher consentimento sem uso.
+  //
+  // `/app/termos` mora fora deste grupo pelo mesmo motivo da `/app/acesso`: dentro, o redirect
+  // cairia sobre si mesmo em laço.
+  //
+  // Custa uma consulta por navegação na sala. Se isso pesar, o caminho é um campo em `profiles`
+  // com a última versão aceita, escrito junto do insert, não tirar a guarda daqui.
+  const {
+    data: { user },
+  } = await (await createClient()).auth.getUser();
+  if (user && !(await aceitouVigente(createAdminClient(), user.id))) redirect("/app/termos");
 
   return <Chrome>{children}</Chrome>;
 }

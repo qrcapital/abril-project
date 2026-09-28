@@ -414,6 +414,9 @@ export default async function AdminPainel() {
           ["alunos", "Alunos e progresso"],
           ["emails", "Log de e-mails"],
           ["auditoria", "Auditoria"],
+          // O CSV que a Abril pediu junto da revisão dos documentos: é por aqui que o time de
+          // privacidade deles recebe o log sem precisar de conta no painel.
+          ["consentimentos", "Consentimentos"],
         ].map(([tipo, rotulo]) => (
           <a
             key={tipo}
