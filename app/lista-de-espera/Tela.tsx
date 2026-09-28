@@ -243,7 +243,9 @@ export default function Tela({ children }: { children: React.ReactNode }) {
 
                   Agora o ineditismo é a ABERTURA e não o apêndice: ele diz o que
                   a coisa é, e a oração seguinte diz o que ela faz por quem entra.
-                  Uma informação puxa a outra, e o período fecha em três linhas.
+                  Uma informação puxa a outra, e o período fecha em três linhas,
+                  que é o teto: a quarta empurrava os retratos para baixo da base
+                  do card e desmanchava o alinhamento das duas colunas.
 
                   O recorte do fato continua o mesmo, e é estreito de propósito:
                   "primeiro curso da Abril SOBRE INVESTIMENTO NO EXTERIOR". O
@@ -254,8 +256,8 @@ export default function Tela({ children }: { children: React.ReactNode }) {
                 <strong className="le-inedito">
                   O primeiro curso da Abril sobre investimento no exterior
                 </strong>{" "}
-                reúne quem tem décadas de mercado para ensinar, na prática, a investir fora
-                do Brasil e proteger seu patrimônio da moeda em que você vive.
+                reúne quem tem décadas de mercado para ensinar, na prática, a tirar parte
+                do seu patrimônio do risco de um país só.
               </p>
 
               {/* TRIO DE CARTÕES, no lugar da linha corrida de data que ficava lá

@@ -250,7 +250,7 @@ body:has(.le-escuro) { background: #0a0a0a }
 
 .le-esq {
   display: flex; flex-direction: column; justify-content: center;
-  gap: clamp(18px, 2.6vw, 28px); padding: 4px 0;
+  gap: clamp(18px, 2.6vw, 26px); padding: 4px 0;
 }
 /* ── O LOCKUP ────────────────────────────────────────────────────────────────
    O MESMO desenho da topbar da LP de vendas (`.tb-lock` em app/_lp/styles.css),
@@ -378,7 +378,7 @@ body:has(.le-escuro) { background: #0a0a0a }
    │ A BASE DO RETRATO fecha na vertical da base do card: as duas colunas são     │
    │ centradas na mesma grade, então crescer o retrato em 2px desce a base em 1.   │
    │                                                                               │
-   │ O ajuste fino é o gap de `.le-bloco` (30) e o de `.le-esq` (28), medidos em    │
+   │ O ajuste fino é o gap de `.le-bloco` (24) e o de `.le-esq` (26), medidos em    │
    │ 1440x778 contra a altura real do card. Mexer em qualquer um dos três pede     │
    │ remedir os outros dois, e o alvo é a base do retrato encostar na base do card.│
    │                                                                               │
@@ -430,9 +430,11 @@ body:has(.le-escuro) { background: #0a0a0a }
 }
 .le-powered-r {
   font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase;
-  font-weight: 600; color: rgba(253, 250, 245, .55);
+  font-weight: 600; color: rgba(253, 250, 245, .7);
 }
-.le-powered-bt { display: block; height: 11px; width: auto; opacity: .7 }
+/* Sobre o painel vermelho a marca branca a .7 sumia; .88 mantém o tom de crédito
+   sem virar assinatura de marca. */
+.le-powered-bt { display: block; height: 11px; width: auto; opacity: .88 }
 
 /* container-type: a assinatura decide se empilha pela largura DESTE bloco, que
    é a coluna de texto, e não pela da janela. */
@@ -440,7 +442,7 @@ body:has(.le-escuro) { background: #0a0a0a }
    ("global começa aqui.") ocupa 486px em Playfair 55px. Tudo o que vem abaixo
    fecha na mesma vertical que ela, que é o que dá uma borda direita só para a
    coluna inteira. Mexer no corpo ou no texto da manchete muda essa medida. */
-.le-bloco { display: flex; flex-direction: column; gap: 30px; max-width: 490px; container-type: inline-size }
+.le-bloco { display: flex; flex-direction: column; gap: 24px; max-width: 490px; container-type: inline-size }
 
 .le-h1 {
   margin: 0;
