@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
+import Rodape from "./Rodape";
 import { LIVE_DIA, LIVE_EM, LIVE_HORA, copyDaLive } from "./live";
 
 /**
@@ -368,6 +369,15 @@ export default function Tela({ children }: { children: React.ReactNode }) {
             </div>
           </div>
         </div>
+
+        {/* O rodapé do site, o mesmo das três faixas da LP de vendas. Fica DENTRO
+            do `.le-raiz`, e não fora, porque é lá que moram os tokens da campanha
+            que ele consome.
+
+            Com ele a rota deixa de ser uma dobra só: a `.le-grade` continua com
+            `min-height: 100vh` e o rodapé vem depois, então a página passa a ter
+            rolagem. É o comportamento do site, que é o que foi pedido. */}
+        <Rodape />
       </div>
 
       {/* Fica aqui embaixo, dentro do corpo, e com `defer` em vez de `async`,

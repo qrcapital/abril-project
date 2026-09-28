@@ -811,3 +811,101 @@ body:has(.le-escuro) { background: #0a0a0a }
   .le-recebe { text-wrap: pretty }
 }
 
+
+/* ---- rodapé do site -------------------------------------------------------
+   As mesmas três faixas do `<footer>` da LP de vendas (app/_lp/body.html), na
+   mesma ordem e com as mesmas cores. Ver o comentário do topo de Rodape.tsx
+   sobre por que isto é uma cópia e o que isso custa.
+
+   Os valores são literais e não tokens, como no resto do rodapé de lá: o vinho
+   e o preto daqui são do desenho do rodapé, não da paleta da campanha, e a
+   página em versão escura não muda nenhum dos dois. */
+.le-rodape {
+  position: relative; z-index: 2;
+  font-family: var(--ei-sans, system-ui, sans-serif);
+}
+/* Os mesmos 1180px de miolo e 28px de padding da LP, para as duas páginas
+   fecharem na mesma vertical quando abertas na mesma janela. */
+.le-rod-dentro {
+  max-width: 1180px; margin: 0 auto; padding: 0 28px;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 24px; flex-wrap: wrap;
+}
+
+/* ---- faixa 1: lockup e redes, sobre o vinho ---- */
+.le-rod-marca {
+  background: #8E1522; padding: 24px 0;
+  border-bottom: 1px solid rgba(247, 244, 238, .18);
+}
+.le-rod-lock { display: inline-block; color: #F7F4EE; text-decoration: none }
+/* `margin-right` negativo anula o rastro que o letter-spacing deixa depois da
+   última letra. Sem ele o bloco "termina" 0.26em depois do A e as réguas de
+   baixo fecham fora do alinhamento dele. Mesma dívida registrada no DESIGN.md e
+   resolvida do mesmo jeito na sidebar do admin. */
+.le-rod-lock-n {
+  display: block; font-variant-numeric: tabular-nums;
+  font-size: 20px; letter-spacing: .26em; font-weight: 500;
+  color: #F7F4EE; line-height: 1; white-space: nowrap; margin-right: -.26em;
+}
+.le-rod-lock-i {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 8px; letter-spacing: .44em; color: #EDE6DD; font-weight: 600;
+  margin-top: 5px; white-space: nowrap;
+}
+.le-rod-lock-i i { flex: 1; height: 1px; background: rgba(247, 244, 238, .22); min-width: 16px }
+.le-rod-lock-i span { margin-right: -.44em }
+.le-rod-redes { display: flex; align-items: center; gap: 16px }
+.le-rod-siga {
+  font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+  font-weight: 700; color: #F7F4EE;
+}
+.le-rod-redes a { color: #C9AFAE; display: inline-flex; transition: color .2s ease }
+.le-rod-redes a:hover { color: #F7F4EE }
+
+/* ---- faixa 2: marca, descrição e colunas, sobre o preto ---- */
+.le-rod-corpo { background: #000; padding: 48px 0 40px }
+/* `align-items: flex-start` e gap maior: aqui as duas partes têm alturas bem
+   diferentes e centralizar deixaria a marca boiando ao lado das três colunas. */
+.le-rod-colunas { align-items: flex-start; gap: 48px }
+.le-rod-sobre { flex: 0 1 300px; min-width: 240px }
+.le-rod-sobre img { display: block; width: 150px; height: auto }
+.le-rod-sobre p {
+  font-size: 12px; line-height: 1.7; margin: 20px 0 0;
+  max-width: 300px; color: #8a8a8a;
+}
+.le-rod-listas { display: flex; gap: 56px; flex-wrap: wrap }
+.le-rod-lista { display: flex; flex-direction: column; gap: 11px; flex: 0 0 auto }
+.le-rod-lista-t {
+  font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+  font-weight: 700; color: #DCCFCC; margin-bottom: 8px;
+}
+/* Dois seletores, e não um: o reset `.le-raiz a` vale 0,1,1 e levaria a cor
+   junto se esta regra valesse 0,1,0. Mesma armadilha do reset de input e button
+   lá em cima. */
+.le-rod-lista a, .le-rod-lista .le-rod-morto {
+  color: #B3A9A6; font-size: 13px; text-decoration: none;
+  transition: color .2s ease;
+}
+.le-rod-lista a:hover { color: #ffffff }
+/* Política sem URL configurada: mesmo texto, sem promessa de destino. O cursor
+   default é o que avisa que não há para onde ir. */
+.le-rod-lista .le-rod-morto { color: #6f6f6f; cursor: default }
+
+/* ---- faixa 3: crédito ---- */
+.le-rod-credito { background: #000; padding: 0 0 26px }
+.le-rod-credito .le-rod-dentro {
+  justify-content: center; padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  gap: 16px;
+}
+.le-rod-credito span { font-size: 11.5px; color: #6f6f6f; text-align: center }
+
+/* Anel de foco sobre o vinho e sobre o preto: o acento vermelho do sistema
+   desapareceria nos dois. Mesma correção aplicada às seções vinho da LP. */
+.le-rodape :where(a, button):focus-visible { outline-color: #F7F4EE }
+
+@media (max-width: 720px) {
+  .le-rod-corpo { padding: 36px 0 32px }
+  .le-rod-colunas { gap: 32px }
+  .le-rod-listas { gap: 32px }
+}
