@@ -26,8 +26,11 @@ export default function CartaoConfirmado() {
       <span className="le-rotulo le-rotulo-campo">Inscrição confirmada</span>
       <h2 className="le-h2 le-h2-ok">Você está na lista.</h2>
       <p className="le-p-ok">
-        {copyDaLive().confirmacao} Só quem está nesta lista recebe. Fique de olho na caixa de
-        entrada e, se não chegar, procure por Estratégia Internacional no spam.
+        {/* `{" "}` depois da expressão: o JSX apara o começo do nó de texto seguinte
+            quando ele continua na linha de baixo, e as duas frases sairiam coladas. */}
+        {copyDaLive().confirmacao}{" "}
+        Só quem está nesta lista recebe. Fique de olho na caixa de entrada e, se não chegar,
+        procure por Estratégia Internacional no spam.
       </p>
     </div>
   );

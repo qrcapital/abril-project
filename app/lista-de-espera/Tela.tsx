@@ -294,8 +294,11 @@ export default function Tela({ children }: { children: React.ReactNode }) {
               <p className="le-live-p">
                 <strong className="le-nome">Tony Volpon</strong> e{" "}
                 <strong className="le-nome">Rodolfo Bastos</strong>, dois dos pro&shy;fes&shy;so&shy;res
-                da for&shy;ma&shy;ção Estratégia Internacional, {copy.verbo} por que
-                con&shy;cen&shy;trar todo o pa&shy;tri&shy;mô&shy;nio em um único país é
+                {/* `{" "}` obrigatório depois da expressão: o JSX apara o começo do nó de
+                    texto seguinte quando ele continua na linha de baixo, e sem isto o
+                    resultado é "mostrampor que", colado. Mesmo motivo do `e{" "}` acima. */}
+                da for&shy;ma&shy;ção Estratégia Internacional, {copy.verbo}{" "}
+                por que con&shy;cen&shy;trar todo o pa&shy;tri&shy;mô&shy;nio em um único país é
                 de&shy;ci&shy;são de risco, não de con&shy;for&shy;to.
               </p>
 
