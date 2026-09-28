@@ -48,16 +48,19 @@ function mascararTelefone(v: string) {
 /**
  * O RD Station está vivo nesta página?
  *
- * Os quatro nomes são os globais que o loader publica: dois da captura de formulário, um do
- * rastreador e a fila que o snippet cria antes de tudo. Basta um para sabermos que o script
- * executou, e portanto que a captura do submit tem quem a escute.
+ * Os quatro nomes foram LIDOS DA PÁGINA, não deduzidos da documentação. A primeira versão desta
+ * função procurava `RDStationForms`, `RdIntegration` e `_rdsQueue`, e nenhum dos três existe: o
+ * loader publica `RdstationFormsIntegration` (a captura de formulário), `LeadTracking` (o envio
+ * da conversão), `RDStation` e `rdtracker`. A checagem passava por acidente, pelo único nome que
+ * eu tinha acertado. Basta um para sabermos que o script executou, e portanto que a captura do
+ * submit tem quem a escute.
  *
  * ARMADILHA: isto é API interna de terceiro e pode mudar de nome sem aviso. Por isso ela nunca é a
  * única condição para confirmar o envio, só a mais generosa das duas. Ver o comentário de `enviar`.
  */
 function rdEstaDePe(): boolean {
   const w = window as unknown as Record<string, unknown>;
-  return ["RDStationForms", "RdIntegration", "rdtracker", "_rdsQueue"].some(
+  return ["RdstationFormsIntegration", "LeadTracking", "RDStation", "rdtracker"].some(
     (nome) => w[nome] != null,
   );
 }
@@ -147,7 +150,12 @@ export default function Formulario() {
           body: JSON.stringify({ email, nome: campo("nome") }),
           signal: corta,
         });
-        return r.ok;
+        // O `ok` do CORPO, e não o `r.ok` do status. A rota responde 200 mesmo quando não
+        // conseguiu gravar, porque 500 não diz nada ao visitante; quem sabe se o consentimento
+        // entrou é o veredito que ela devolve, e é ele que decide se o cadastro pode ser
+        // confirmado sem o RD de pé.
+        if (!r.ok) return false;
+        return ((await r.json()) as { ok?: boolean }).ok === true;
       } catch {
         return false;
       }

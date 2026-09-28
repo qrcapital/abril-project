@@ -80,15 +80,31 @@ export async function POST(req: NextRequest) {
   const email = texto(corpo.email, 254)?.toLowerCase() ?? "";
   if (!EMAIL.test(email)) return NextResponse.json({ ok: false }, { status: 400 });
 
-  const registradas = await registrarConsentimento(createAdminClient(), {
-    email,
-    nome: texto(corpo.nome, 200),
-    origem: "lista-de-espera",
-    texto: TEXTO_AVISO_LISTA,
-    tipos: ["politica"],
-  });
+  /**
+   * O `try` cobre a criação do cliente, e isso NÃO é zelo excessivo: `createAdminClient()` lança
+   * na hora se `NEXT_PUBLIC_SUPABASE_URL` ou a service role não estiverem no ambiente, e foi
+   * exatamente o que aconteceu no deploy preview, onde essas variáveis não estão configuradas.
+   * A rota respondia 500 com corpo vazio, e o formulário lia `r.ok === false` sem nenhuma pista
+   * do motivo. Agora a falha vira uma resposta honesta e o motivo vai para o log do servidor.
+   */
+  let registradas = 0;
+  try {
+    registradas = await registrarConsentimento(createAdminClient(), {
+      email,
+      nome: texto(corpo.nome, 200),
+      origem: "lista-de-espera",
+      texto: TEXTO_AVISO_LISTA,
+      tipos: ["politica"],
+    });
+  } catch (e) {
+    console.error("[consentimento] rota falhou antes de gravar:", (e as Error).message);
+  }
 
-  // 200 mesmo com zero linhas. O visitante não tem o que fazer com "o log falhou", a tela dele já
-  // seguiu para o card de confirmação, e o grito útil já saiu no log do servidor.
+  /**
+   * 200 SEMPRE, e o veredito no corpo. O visitante não tem o que fazer com um 500, e o formulário
+   * precisa distinguir três coisas que um código de status não separa: gravou, não gravou, e a
+   * requisição nem chegou. Quem lê isto é o `Formulario.tsx`, que usa o `ok` para decidir se pode
+   * confirmar o cadastro quando o RD Station não está de pé.
+   */
   return NextResponse.json({ ok: registradas > 0 });
 }
