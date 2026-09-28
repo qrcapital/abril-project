@@ -25,9 +25,10 @@ export default function CartaoConfirmado() {
     <div className="le-card le-card-ok">
       <span className="le-rotulo le-rotulo-campo">Inscrição confirmada</span>
       <h2 className="le-h2 le-h2-ok">Você está na lista.</h2>
+      {/* `{" "}` depois da expressão: o JSX apara o começo do nó de texto seguinte quando
+          ele continua na linha de baixo, e as duas frases sairiam coladas. O comentário
+          fica fora do <p> porque dentro ele parte o nó de texto e come o espaço também. */}
       <p className="le-p-ok">
-        {/* `{" "}` depois da expressão: o JSX apara o começo do nó de texto seguinte
-            quando ele continua na linha de baixo, e as duas frases sairiam coladas. */}
         {copyDaLive().confirmacao}{" "}
         Só quem está nesta lista recebe. Fique de olho na caixa de entrada e, se não chegar,
         procure por Estratégia Internacional no spam.

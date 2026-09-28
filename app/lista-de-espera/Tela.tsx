@@ -291,12 +291,18 @@ export default function Tela({ children }: { children: React.ReactNode }) {
                   Estão só em palavras comuns: o nome do curso e os nomes dos
                   professores nunca partem. Editar a frase sem eles funciona;
                   só volta a abrir vão entre as palavras em algumas larguras. */}
+              {/* DOIS AVISOS SOBRE ESPAÇO NESTE PARÁGRAFO, os dois aprendidos na página e
+                  nenhum deles visível no build:
+
+                  1. depois de uma expressão, `{" "}` é obrigatório quando o texto seguinte
+                     continua na linha de baixo. O JSX apara o começo desse nó e
+                     `{copy.verbo} por que` sai como "mostrampor que";
+                  2. comentário JSX no meio da prosa também parte o nó de texto e come o
+                     espaço em volta. Por isso este está AQUI FORA e não lá dentro, que foi
+                     onde ele colou "professoresda formação". */}
               <p className="le-live-p">
                 <strong className="le-nome">Tony Volpon</strong> e{" "}
                 <strong className="le-nome">Rodolfo Bastos</strong>, dois dos pro&shy;fes&shy;so&shy;res
-                {/* `{" "}` obrigatório depois da expressão: o JSX apara o começo do nó de
-                    texto seguinte quando ele continua na linha de baixo, e sem isto o
-                    resultado é "mostrampor que", colado. Mesmo motivo do `e{" "}` acima. */}
                 da for&shy;ma&shy;ção Estratégia Internacional, {copy.verbo}{" "}
                 por que con&shy;cen&shy;trar todo o pa&shy;tri&shy;mô&shy;nio em um único país é
                 de&shy;ci&shy;são de risco, não de con&shy;for&shy;to.
