@@ -72,7 +72,11 @@ export default function Rodape() {
                 onde esta linha morava, e mantê-la nos dois lugares repetia a razão
                 social duas vezes na mesma tela. */}
             <p className="le-rod-razao">
-              Abril Comunicações S.A., CNPJ 44.597.052/0001-62 - Todos os direitos reservados.
+              {/* Espaço não separável antes do hífen: em duas linhas ele caía sozinho
+                  no começo da segunda, e hífen abrindo linha lê como palavra cortada.
+                  Preso ao "62", ele desce junto com o número ou fica na primeira. */}
+              Abril Comunicações S.A., CNPJ 44.597.052/0001-62{"\u00a0"}- Todos os direitos
+              reservados.
             </p>
           </div>
 
