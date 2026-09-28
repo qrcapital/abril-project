@@ -295,9 +295,21 @@ export default function Tela({ children }: { children: React.ReactNode }) {
                 </div>
               </div>
 
+              {/* A segunda frase é o ineditismo, e o recorte dela foi escolhido com
+                  cuidado: "primeiro curso da Abril SOBRE INVESTIMENTO NO EXTERIOR",
+                  e não "primeiro curso da Abril". O Grupo Abril já teve a Abril
+                  Educação, que virou Somos Educação em 2017, então a afirmação ampla
+                  tem precedente e cairia no colo do jurídico deles numa página que
+                  eles co-assinam. O recorte por tema é estreito e se sustenta.
+
+                  Em <strong> porque é a informação nova do parágrafo: a primeira
+                  frase descreve o curso, esta diz por que ele é um acontecimento. */}
               <p className="le-lide">
                 Aprenda na prática a investir fora do Brasil e proteger seu patrimônio com
-                quem tem décadas de mercado.
+                quem tem décadas de mercado.{" "}
+                <strong className="le-inedito">
+                  É o primeiro curso da Abril sobre investimento no exterior.
+                </strong>
               </p>
 
               {/* QUEM ESTÁ NA LIVE, com rosto. Substituiu o parágrafo de quatro
@@ -327,12 +339,16 @@ export default function Tela({ children }: { children: React.ReactNode }) {
                 </ul>
               </div>
 
-              {/* Os três benefícios viraram uma frase. Eram uma lista com rótulo
-                  dourado por cima, quatro linhas ao todo, e nesta coluna a lista
-                  competia com a dos professores logo abaixo: duas listas
-                  empilhadas leem como formulário, não como convite. */}
+              {/* Os três benefícios viraram uma frase, e a frase virou apoio.
+                  Eram uma lista com rótulo dourado por cima, quatro linhas ao
+                  todo, competindo com a dos professores logo abaixo: duas listas
+                  empilhadas leem como formulário, não como convite.
+
+                  Agora ela desce de degrau também no peso: corpo menor, tinta
+                  discreta e sem o tique vermelho, que era o que a fazia disputar
+                  atenção com o bloco dos professores. O que promete a pré-lista é
+                  o botão ao lado; isto só detalha o que vem depois dele. */}
               <p className="le-recebe">
-                <span className="le-check" aria-hidden="true">✓</span>
                 Na pré-lista você recebe {copy.beneficioFrase}, o aviso assim que as inscrições
                 abrirem e os detalhes da turma em primeira mão.
               </p>

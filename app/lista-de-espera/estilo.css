@@ -356,9 +356,9 @@ body:has(.le-escuro) { background: #0a0a0a }
    lista de professores logo acima, duas listas empilhadas passaram a ler como
    formulário em vez de convite. */
 .le-recebe {
-  display: flex; gap: 10px; align-items: baseline;
   margin: 0; max-width: 490px;
-  font-size: 14px; line-height: 1.5; color: var(--le-texto-2);
+  font-size: 12.5px; line-height: 1.55; color: var(--le-texto-3);
+  text-wrap: pretty;
 }
 
 /* ── POWERED BY ──────────────────────────────────────────────────────────────
@@ -401,6 +401,12 @@ body:has(.le-escuro) { background: #0a0a0a }
    sem quebra fixa. */
 .le-trio { white-space: nowrap }
 
+/* A segunda frase do lide, a do ineditismo. Sobe para a tinta principal em vez
+   de ganhar cor ou corpo: o lide inteiro é justificado, e peso extra ali abriria
+   vãos entre as palavras da linha em que ela começa. O degrau de tinta basta,
+   é o mesmo que separa os nomes dos professores do apoio em volta deles. */
+.le-inedito { font-weight: 600; color: var(--le-texto) }
+
 .le-lide {
   margin: 0; font-size: clamp(15px, 1.15vw, 16px); line-height: 1.6;
   color: var(--le-texto-2); text-wrap: pretty;
@@ -411,10 +417,7 @@ body:has(.le-escuro) { background: #0a0a0a }
 }
 
 /* Mesmo arranjo do teaser: um rótulo em caixa alta abrindo e a lista embaixo. */
-/* O tique da frase da pré-lista. Sobrou da lista de três itens que ele abria:
-   a lista virou uma frase em 28/set/2026 e `.le-garante` e `.le-checks` saíram
-   com ela, mas o sinal continua marcando o começo da promessa. */
-.le-check { color: var(--le-acento); font-weight: 700 }
+
 
 /* Rótulo: a caixa alta de 10px com tracking largo é o mesmo padrão em cinco
    lugares desta tela; o que muda é peso e cor. */
