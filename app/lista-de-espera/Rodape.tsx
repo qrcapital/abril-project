@@ -138,7 +138,12 @@ export default function Rodape() {
               <a href={contato.whatsapp} target="_blank" rel="noopener noreferrer">
                 Suporte no WhatsApp
               </a>
-              <a href={`mailto:${contato.dpoEmail}`}>DPO · {contato.dpoEmail}</a>
+              {/* "Encarregado" e não "DPO", e o endereço é `contato@blocktrends.com.br`
+                  e não o antigo `dpo@qr.capital`: é o canal acordado com a Abril na
+                  revisão da Política, uma caixa compartilhada entre destinatários das
+                  duas casas, com encaminhamento para o `dpo@abril.com.br`. O termo
+                  segue o dos documentos, que é o da LGPD. */}
+              <a href={`mailto:${contato.dpoEmail}`}>Encarregado · {contato.dpoEmail}</a>
             </div>
           </div>
         </div>

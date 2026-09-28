@@ -76,6 +76,10 @@ export const COPY_LIVE = {
     beneficio: "Convite para a live de lançamento",
     /** A mesma promessa em minúscula e no meio de uma frase, para a versão em linha corrida. */
     beneficioFrase: "o convite da live de lançamento",
+    /** O apoio do card, logo abaixo do "Entre na pré-lista". Substituiu "Sem custo e sem
+     *  compromisso", que dizia o preço e não dizia o que se ganha. */
+    apoioCard:
+      "Entrar é de graça. Você recebe o convite da live de lançamento, o aviso quando as inscrições abrirem e os detalhes da turma em primeira mão.",
     rotuloTeaser: "Quem está na live",
     verbo: "mostram",
     chamada: "Garanta seu lugar →",
@@ -88,6 +92,8 @@ export const COPY_LIVE = {
     passou: true,
     beneficio: "Gravação da live de lançamento",
     beneficioFrase: "a gravação da live de lançamento",
+    apoioCard:
+      "Entrar é de graça. Você recebe a gravação da live de lançamento, o aviso quando as inscrições abrirem e os detalhes da turma em primeira mão.",
     rotuloTeaser: "Quem esteve na live",
     verbo: "mostraram",
     chamada: "Receba a gravação →",

@@ -43,23 +43,11 @@ const PROFESSORES = [
  * `@font-face` do CSS portado.
  */
 
-/** A marca do Grupo Abril, nas duas versões fechadas pela Abril (setembro/2026).
- *
- *  Substituiu o `/lp/grupo_abril.svg` do porte da LP, que era um desenho só, em
- *  cinza, levado a preto ou a branco por filtro CSS e servido a 70-82% de
- *  opacidade. Nos 22px do rodapé isso somava contraste de menos e as letras de
- *  "GRUPO" saíam empastadas. Estes são os arquivos na cor final, sem filtro e
- *  sem opacidade, e a diferença aparece já em tela comum.
- *
- *  Ficam em /public/marca, e não em /public/lp, porque aquela pasta era escrita
- *  pelo porte da LP e seria limpa no próximo `port-lp`. O porte foi aposentado
- *  em 22/set/2026, então o risco acabou, mas a separação fica: /marca é a
- *  identidade do projeto, /lp são os assets da LP de vendas. A LP de vendas
- *  continua com o arquivo dela, intocado. */
-const GRUPO_ABRIL = {
-  branco: "/marca/grupo-abril-branco.svg",
-  preto: "/marca/grupo-abril-preto.svg",
-} as const;
+/* A marca do Grupo Abril saiu daqui em 28/set/2026, junto com o crédito ao lado do
+   formulário: a razão social e o CNPJ já aparecem duas vezes no rodapé novo, e uma
+   terceira na mesma página vira rodapé colado em cima de rodapé. O rodapé usa o
+   arquivo da LP (`/lp/grupo_abril.svg`); os dois de `/public/marca` continuam lá
+   para quem reativar o crédito nesta coluna. */
 
 /** A logo do curso com a assinatura da VEJA Negócios, arquivo fechado pela Abril
  *  (setembro/2026). Fica em /public/marca por organização: /marca é a identidade
@@ -73,10 +61,10 @@ const GRUPO_ABRIL = {
  * duas estão implementadas no estilo.css; trocar aqui troca a tela inteira,
  * porque todas as cores saem dos tokens do `.le-raiz`.
  *
- * Quem consome isto são os pares claro/escuro de `MEDIACAO`, `GLOBO` e
- * `GRUPO_ABRIL`. O par `LOGO`, do lockup em arquivo único, saiu em 28/set/2026:
- * o lockup passou a ser montado em tipografia sobre a marca solta da VEJA
- * Negócios, que já vinha de `MEDIACAO.veja`.
+ * Quem consome isto são os pares claro/escuro de `MEDIACAO` e `GLOBO`. Os outros dois
+ * saíram em 28/set/2026: `LOGO`, do lockup em arquivo único, quando o lockup passou a
+ * ser montado em tipografia sobre a marca solta da VEJA Negócios; e `GRUPO_ABRIL`,
+ * quando o crédito duplicado ao lado do formulário deu lugar ao rodapé do site.
  */
 /* `as` e não anotação: com `const TEMA: "claro" | "escuro" = "claro"` o TypeScript estreita o
    tipo pelo valor inicial e passa a acusar `TEMA === "escuro"` como comparação impossível, o que
@@ -105,19 +93,6 @@ const COR_GLOBO: keyof typeof GLOBO = "dourado";
  * independente do TEMA: nos banners o painel é igual no claro e no escuro.
  */
 const COMPOSICAO: "cartao" | "faixa" = "faixa";
-
-/** Qual das duas versões da marca do Grupo Abril o rodapé recebe. Ela é
- *  monocromática, então quem decide é o fundo embaixo dela: em faixa o crédito
- *  fica sobre o painel vermelho nas duas versões da campanha, e em cartão ele
- *  fica sobre o fundo da página, que é creme na clara e preto na escura. */
-const MARCA_ABRIL =
-  COMPOSICAO === "faixa" || TEMA === "escuro" ? GRUPO_ABRIL.branco : GRUPO_ABRIL.preto;
-
-/** Se a árvore acompanha o crédito no rodapé. O texto é o do rodapé do site da
- *  Abril, onde a marca não aparece; aqui ela fica, porque esta é uma página
- *  co-assinada e o selo é o que diz de quem ela é. Desligar aqui deixa só a
- *  linha de texto, como no site deles. */
-const MARCA_NO_CREDITO = true;
 
 /** As duas marcas que assinam a mediação da live, em arquivo e não em texto.
  *
@@ -260,10 +235,28 @@ export default function Tela({ children }: { children: React.ReactNode }) {
                 <span className="le-trio"><em>global</em> começa aqui.</span>
               </h1>
 
+              {/* A segunda frase é o ineditismo, e o recorte dela foi escolhido com
+                  cuidado: "primeiro curso da Abril SOBRE INVESTIMENTO NO EXTERIOR",
+                  e não "primeiro curso da Abril". O Grupo Abril já teve a Abril
+                  Educação, que virou Somos Educação em 2017, então a afirmação ampla
+                  tem precedente e cairia no colo do jurídico deles numa página que
+                  eles co-assinam. O recorte por tema é estreito e se sustenta.
+
+                  Em <strong> porque é a informação nova do parágrafo: a primeira
+                  frase descreve o curso, esta diz por que ele é um acontecimento. */}
+              <p className="le-lide">
+                Aprenda na prática a investir fora do Brasil e proteger seu patrimônio com
+                quem tem décadas de mercado.{" "}
+                <strong className="le-inedito">
+                  É o primeiro curso da Abril sobre investimento no exterior.
+                </strong>
+              </p>
+
               {/* TRIO DE CARTÕES, no lugar da linha corrida de data que ficava lá
-                  embaixo, junto do teaser. Subiu para logo abaixo do título
-                  porque é a informação que decide se a pessoa se cadastra agora:
-                  quando é, que horas e que é ao vivo.
+                  embaixo, junto do teaser. Fica ENTRE o texto de apoio e os
+                  professores, e não colado no título: encostado na manchete ele
+                  entrava antes de a pessoa saber do que se trata, e o dado
+                  chegava sem a pergunta que ele responde.
 
                   Três cartões e não uma frase porque cada um responde a uma
                   pergunta diferente, e em cartão a resposta é escaneável sem ler.
@@ -295,23 +288,6 @@ export default function Tela({ children }: { children: React.ReactNode }) {
                 </div>
               </div>
 
-              {/* A segunda frase é o ineditismo, e o recorte dela foi escolhido com
-                  cuidado: "primeiro curso da Abril SOBRE INVESTIMENTO NO EXTERIOR",
-                  e não "primeiro curso da Abril". O Grupo Abril já teve a Abril
-                  Educação, que virou Somos Educação em 2017, então a afirmação ampla
-                  tem precedente e cairia no colo do jurídico deles numa página que
-                  eles co-assinam. O recorte por tema é estreito e se sustenta.
-
-                  Em <strong> porque é a informação nova do parágrafo: a primeira
-                  frase descreve o curso, esta diz por que ele é um acontecimento. */}
-              <p className="le-lide">
-                Aprenda na prática a investir fora do Brasil e proteger seu patrimônio com
-                quem tem décadas de mercado.{" "}
-                <strong className="le-inedito">
-                  É o primeiro curso da Abril sobre investimento no exterior.
-                </strong>
-              </p>
-
               {/* QUEM ESTÁ NA LIVE, com rosto. Substituiu o parágrafo de quatro
                   linhas que dizia os mesmos dois nomes em prosa: numa página de
                   captura, quem vai falar é uma pergunta que a foto responde mais
@@ -339,19 +315,6 @@ export default function Tela({ children }: { children: React.ReactNode }) {
                 </ul>
               </div>
 
-              {/* Os três benefícios viraram uma frase, e a frase virou apoio.
-                  Eram uma lista com rótulo dourado por cima, quatro linhas ao
-                  todo, competindo com a dos professores logo abaixo: duas listas
-                  empilhadas leem como formulário, não como convite.
-
-                  Agora ela desce de degrau também no peso: corpo menor, tinta
-                  discreta e sem o tique vermelho, que era o que a fazia disputar
-                  atenção com o bloco dos professores. O que promete a pré-lista é
-                  o botão ao lado; isto só detalha o que vem depois dele. */}
-              <p className="le-recebe">
-                Na pré-lista você recebe {copy.beneficioFrase}, o aviso assim que as inscrições
-                abrirem e os detalhes da turma em primeira mão.
-              </p>
             </div>
 
             {/* Assinatura de quem faz o conteúdo, no pé da coluna. A linha de
@@ -371,18 +334,13 @@ export default function Tela({ children }: { children: React.ReactNode }) {
 
           <div className="le-dir">
             <div className="le-card-wrap">{children}</div>
-            <div className="le-abril">
-              {MARCA_NO_CREDITO && (
-                /* eslint-disable-next-line @next/next/no-img-element -- idem */
-                <img src={MARCA_ABRIL} alt="Grupo Abril" />
-              )}
-              {/* Idêntico ao da LP de vendas, inclusive os meios-pontos. O CNPJ
-                  não é formalidade numa tela que coleta dado pessoal: é ele que
-                  identifica o controlador para quem quiser exercer um direito. */}
-              <span className="le-credito">
-                Abril Comunicações S.A. · CNPJ 44.597.052/0001-62 · Todos os direitos reservados.
-              </span>
-            </div>
+            {/* O crédito da Abril saiu daqui em 28/set/2026: a mesma razão
+                social e o mesmo CNPJ aparecem duas vezes no rodapé novo, na
+                faixa da marca e na linha final. Repetir três vezes na mesma
+                página não dá mais peso institucional, dá aspecto de rodapé
+                colado em cima de rodapé. A constante MARCA_ABRIL e o
+                MARCA_NO_CREDITO continuam acima, servindo quem for reativar o
+                crédito ao lado do formulário. */}
           </div>
         </div>
 

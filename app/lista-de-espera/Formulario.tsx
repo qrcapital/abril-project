@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import CartaoConfirmado from "./CartaoConfirmado";
+import { copyDaLive } from "./live";
 
 /**
  * Formulário da pré-lista. Uma conversão só: nome, e-mail, WhatsApp e uma
@@ -176,7 +177,11 @@ export default function Formulario() {
     >
       <div className="le-card-head">
         <h2 className="le-h2">Entre na pré-lista</h2>
-        <p className="le-sub">Sem custo e sem compromisso.</p>
+        {/* Era "Sem custo e sem compromisso", que dizia o preço e não dizia o que
+            se ganha. A promessa dos três itens morava na coluna da esquerda, longe
+            do botão que a cumpre; agora ela é o apoio do próprio card, e abre pelo
+            preço, que é a objeção mais barata de derrubar. */}
+        <p className="le-sub">{copyDaLive().apoioCard}</p>
       </div>
 
       <div id="rd-form-lista-de-espera" className="le-campos">

@@ -302,14 +302,23 @@ body:has(.le-escuro) { background: #0a0a0a }
   display: flex; flex-direction: column; gap: 5px;
   padding: 12px 14px;
   border: 1px solid var(--le-linha);
-  border-radius: 10px;
+  border-radius: 16px;
   background: rgba(var(--le-veu-rgb), .5);
 }
 .le-card-q-r { font-weight: 600; color: var(--le-texto-3) }
+/* SANS, e não a serifa. A Playfair é fonte de manchete: desenhada para corpos
+   grandes, com contraste alto entre traço fino e grosso. Em 17px, e ainda por
+   cima em números ("28", "21h"), o traço fino some e o resultado lê como texto
+   de corpo esticado, não como dado. A sans dá o peso que o cartão precisa e
+   deixa a serifa para a manchete, que é onde ela funciona.
+   `tabular-nums` para os números terem a mesma largura: sem isso o "1" é mais
+   estreito e o valor dança dentro do cartão. */
 .le-card-q-v {
   display: flex; align-items: center; gap: 7px;
-  font-family: var(--ei-serifa, 'Playfair Display', Georgia, serif);
-  font-size: 17px; font-weight: 600; line-height: 1.15; color: var(--le-texto);
+  font-family: var(--ei-sans, system-ui, sans-serif);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-size: 16px; font-weight: 600; letter-spacing: -.005em;
+  line-height: 1.15; color: var(--le-texto);
 }
 /* Ponto que pulsa no cartão do formato, e só enquanto a live não passou. É a
    convenção de "no ar" e dispensa a palavra fazer o trabalho sozinha. */
@@ -331,7 +340,12 @@ body:has(.le-escuro) { background: #0a0a0a }
    Substituiu um parágrafo de quatro linhas que dizia os mesmos dois nomes em
    prosa. Numa página de captura, "quem vai falar" é pergunta que a foto responde
    mais rápido que a frase. */
-.le-live-quem { display: flex; flex-direction: column; gap: 12px; max-width: 490px }
+/* O rótulo deste bloco é o único que anuncia um bloco inteiro, e não um campo:
+   os 10,5px do `.le-rotulo` o deixavam menor que a credencial dos professores
+   que ele apresenta. 12px com o mesmo tracking mantém a família e devolve a
+   hierarquia. */
+.le-live-quem { display: flex; flex-direction: column; gap: 14px; max-width: 490px }
+.le-live-quem .le-rotulo { font-size: 12px }
 .le-profs {
   margin: 0; padding: 0; list-style: none;
   display: flex; flex-wrap: wrap; gap: 14px 30px;
@@ -343,13 +357,18 @@ body:has(.le-escuro) { background: #0a0a0a }
    `object-position: top` porque o enquadramento original é de meio corpo e o
    corte centrado cortaria a testa. */
 .le-prof-foto {
-  flex: none; width: 52px; height: 52px; border-radius: 50%;
+  flex: none; width: 62px; height: 62px; border-radius: 50%;
   object-fit: cover; object-position: top; display: block;
   filter: grayscale(1) contrast(1.05);
   border: 1px solid var(--le-linha);
 }
 .le-prof-txt { display: flex; flex-direction: column; gap: 2px }
-.le-prof-cred { font-size: 12.5px; line-height: 1.35; color: var(--le-texto-2) }
+/* Os nomes sobem de 15px (herdado do corpo) para 16,5 e a credencial de 12,5
+   para 13,5. O bloco inteiro cresceu junto com o retrato: quem está na live é
+   argumento de conversão nesta página, e a 52px com nome no corpo do texto ele
+   lia como legenda de foto. */
+.le-prof .le-nome { font-size: 16.5px; line-height: 1.25 }
+.le-prof-cred { font-size: 13.5px; line-height: 1.35; color: var(--le-texto-2) }
 
 /* ── A PROMESSA DA PRÉ-LISTA, EM UMA FRASE ───────────────────────────────────
    Eram três itens com rótulo dourado por cima, quatro linhas ao todo. Com a
@@ -448,9 +467,24 @@ body:has(.le-escuro) { background: #0a0a0a }
 .le-dir { display: flex; flex-direction: column; justify-content: center; gap: 20px }
 .le-card-wrap { width: 100%; max-width: 520px; margin: 0 auto }
 
+/* ┌─ A ESCALA DE ARREDONDAMENTO ────────────────────────────────────────────────┐
+   │ Os raios desta tela eram 10, 12, 13 e 14px, escolhidos um a um e sem relação  │
+   │ entre si. De perto cada um parecia certo; juntos na mesma tela leem como      │
+   │ peças de projetos diferentes, que é a falta de coesão que o Marcelo apontou.  │
+   │                                                                               │
+   │ Agora o raio acompanha a ALTURA do elemento, na razão ~0,29 que o sistema usa │
+   │ (--ei-r-btn: 9px para 34px de altura). Da menor peça para a maior:            │
+   │                                                                               │
+   │   chip      ~39px  ->  12    campo     ~47px  ->  12                          │
+   │   botão     ~49px  ->  14    cartão de dado  ~66px  ->  16                    │
+   │   card do formulário, que contém todos eles           ->  20                  │
+   │                                                                               │
+   │ O card é sempre o maior: recipiente com canto menor que o do conteúdo aperta  │
+   │ visualmente o que está dentro dele.                                           │
+   └───────────────────────────────────────────────────────────────────────────────┘ */
 .le-card {
   display: flex; flex-direction: column; gap: 18px;
-  background: #ffffff; border: 1px solid var(--le-card-borda); border-radius: 14px;
+  background: #ffffff; border: 1px solid var(--le-card-borda); border-radius: 20px;
   padding: clamp(26px, 3.2vw, 38px) clamp(22px, 2.9vw, 36px);
 }
 .le-card-glow { animation: leGlow 2.6s ease-in-out infinite; will-change: box-shadow }
@@ -494,7 +528,7 @@ body:has(.le-escuro) { background: #0a0a0a }
 .le-chip {
   flex: 1; padding: 11px 6px;
   font-family: var(--ei-sans); font-size: 12px; font-weight: 500;
-  cursor: pointer; border-radius: 10px;
+  cursor: pointer; border-radius: 12px;
   transition: color var(--ei-t), background var(--ei-t), border-color var(--ei-t);
   background: var(--ei-papel-alto); border: 1px solid var(--le-card-borda); color: var(--le-texto-2);
 }
@@ -554,7 +588,7 @@ body:has(.le-escuro) { background: #0a0a0a }
 .le-cta {
   margin-top: 2px; width: 100%; padding: 16px 20px;
   background: var(--le-acento); color: var(--ei-acento-tinta);
-  border: 1px solid var(--le-acento); border-radius: 13px;
+  border: 1px solid var(--le-acento); border-radius: 14px;
   font-family: var(--ei-sans); font-size: 12.5px; letter-spacing: .09em; font-weight: 600;
   text-transform: uppercase; cursor: pointer;
   transition: background var(--ei-t-curto), border-color var(--ei-t-curto), transform var(--ei-t-curto);
