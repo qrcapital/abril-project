@@ -250,7 +250,7 @@ body:has(.le-escuro) { background: #0a0a0a }
 
 .le-esq {
   display: flex; flex-direction: column; justify-content: center;
-  gap: clamp(22px, 2.6vw, 40px); padding: 4px 0;
+  gap: clamp(18px, 2.6vw, 22px); padding: 4px 0;
 }
 /* ── O LOCKUP ────────────────────────────────────────────────────────────────
    O MESMO desenho da topbar da LP de vendas (`.tb-lock` em app/_lp/styles.css),
@@ -344,18 +344,40 @@ body:has(.le-escuro) { background: #0a0a0a }
    os 10,5px do `.le-rotulo` o deixavam menor que a credencial dos professores
    que ele apresenta. 12px com o mesmo tracking mantém a família e devolve a
    hierarquia. */
-.le-live-quem { display: flex; flex-direction: column; gap: 14px; max-width: 490px }
+.le-live-quem { display: flex; flex-direction: column; gap: 12px; max-width: 490px }
 .le-live-quem .le-rotulo { font-size: 12.5px }
+/* `nowrap` e `flex: 1 1 0`, e não `wrap`: com o retrato a 96px os dois itens
+   somavam 548px e não cabiam nos 490 da coluna, então o segundo descia para uma
+   linha própria e o par deixava de ler como par. Sem quebra e com as duas metades
+   iguais, quem cede é o TEXTO, que quebra em duas linhas quando precisa. Trocar
+   o tamanho do retrato aqui pede remedir o alinhamento com a base do card, que
+   está explicado no `.le-prof-foto`. */
 .le-profs {
   margin: 0; padding: 0; list-style: none;
-  display: flex; flex-wrap: wrap; gap: 16px 34px;
+  display: flex; flex-wrap: nowrap; gap: 22px;
 }
-.le-prof { display: flex; align-items: center; gap: 14px }
+/* `min-width: 0` é o que permite o filho de flex encolher abaixo do conteúdo
+   dele; sem isso o `flex: 1 1 0` não tem efeito e os itens estouram a coluna. */
+.le-prof { display: flex; align-items: center; gap: 14px; flex: 1 1 0; min-width: 0 }
 /* Preto e branco com um toque de contraste: é o mesmo tratamento do estado de
    repouso dos retratos na LP de vendas. Sem ele entra o duotone verde da
    identidade anterior, que é de onde estes arquivos vêm.
    `object-position: top` porque o enquadramento original é de meio corpo e o
    corte centrado cortaria a testa. */
+/* ┌─ 96px NÃO É UM NÚMERO SOLTO ────────────────────────────────────────────────┐
+   │ É o tamanho em que a BASE DO RETRATO fecha na mesma vertical que a base do   │
+   │ card do formulário, na coluna da direita. As duas colunas são centradas na    │
+   │ mesma grade, então a base da esquerda só encontra a da direita quando as duas │
+   │ têm a mesma altura: crescer o retrato em 2px desce a base em 1.               │
+   │                                                                               │
+   │ O ajuste fino é o gap de `.le-bloco` (24) e o de `.le-esq` (22), medidos em    │
+   │ 1440x778 contra a altura real do card. Mexer em qualquer um dos três pede     │
+   │ remedir os outros dois, e o alvo é a base do retrato encostar na base do card.│
+   │                                                                               │
+   │ O card muda de altura com o conteúdo (a mensagem de erro, o card de           │
+   │ confirmação), então o alinhamento é do estado em repouso, que é o que a       │
+   │ pessoa vê ao chegar.                                                          │
+   └───────────────────────────────────────────────────────────────────────────────┘ */
 .le-prof-foto {
   flex: none; width: 96px; height: 96px; border-radius: 50%;
   object-fit: cover; object-position: top; display: block;
@@ -367,8 +389,8 @@ body:has(.le-escuro) { background: #0a0a0a }
    para 13,5. O bloco inteiro cresceu junto com o retrato: quem está na live é
    argumento de conversão nesta página, e a 52px com nome no corpo do texto ele
    lia como legenda de foto. */
-.le-prof .le-nome { font-size: 19px; line-height: 1.25 }
-.le-prof-cred { font-size: 14.5px; line-height: 1.35; color: var(--le-texto-2) }
+.le-prof .le-nome { font-size: 19px; line-height: 1.25; text-wrap: balance }
+.le-prof-cred { font-size: 14px; line-height: 1.35; color: var(--le-texto-2) }
 
 /* ── A PROMESSA DA PRÉ-LISTA, EM UMA FRASE ───────────────────────────────────
    Eram três itens com rótulo dourado por cima, quatro linhas ao todo. Com a
@@ -408,7 +430,7 @@ body:has(.le-escuro) { background: #0a0a0a }
    ("global começa aqui.") ocupa 486px em Playfair 55px. Tudo o que vem abaixo
    fecha na mesma vertical que ela, que é o que dá uma borda direita só para a
    coluna inteira. Mexer no corpo ou no texto da manchete muda essa medida. */
-.le-bloco { display: flex; flex-direction: column; gap: 40px; max-width: 490px; container-type: inline-size }
+.le-bloco { display: flex; flex-direction: column; gap: 24px; max-width: 490px; container-type: inline-size }
 
 .le-h1 {
   margin: 0;
@@ -862,9 +884,12 @@ body:has(.le-escuro) { background: #0a0a0a }
   .le-esq { gap: 30px }
   .le-bloco { gap: 34px }
   .le-live-quem { gap: 14px }
-  /* Empilhado, os dois professores cabem lado a lado até uns 560px e depois
-     empilham sozinhos pelo wrap; o gap vertical é que precisava crescer. */
-  .le-profs { gap: 16px 30px }
+  /* Empilhado a coluna fica estreita e `nowrap` esmagaria os dois retratos num
+     texto de uma palavra por linha. Aqui a quebra volta, e com ela o gap
+     vertical. O alinhamento com a base do card não existe nesta largura: as
+     colunas estão uma embaixo da outra. */
+  .le-profs { flex-wrap: wrap; gap: 18px 30px }
+  .le-prof { flex: 0 1 auto }
   .le-recebe { text-wrap: pretty }
 }
 
