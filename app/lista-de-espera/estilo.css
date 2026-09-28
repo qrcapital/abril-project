@@ -248,9 +248,25 @@ body:has(.le-escuro) { background: #0a0a0a }
 
 /* ---- coluna esquerda ------------------------------------------------------- */
 
+/* ┌─ POR QUE ESTA COLUNA TEM 52px DE PADDING EMBAIXO ───────────────────────────┐
+   │ Para o TOPO do lockup fechar na mesma vertical que o topo do card, do outro  │
+   │ lado. As duas colunas se esticam igual na grade e centram o próprio conteúdo │
+   │ dentro de si, mas a da direita não centra só o card: ela centra o card MAIS o │
+   │ powered by embaixo dele, e esse peso extra empurra o card para cima. Sem      │
+   │ compensação, o conteúdo da esquerda ficava 24px mais baixo que o da direita.  │
+   │                                                                               │
+   │ Os 52px são a altura do powered by mais o vão até o card. O padding reserva   │
+   │ esse mesmo espaço aqui, e os dois conteúdos passam a ter o mesmo centro.      │
+   │                                                                               │
+   │ O ALINHAMENTO É DE TOPO E DE BASE AO MESMO TEMPO, e por isso ele é apertado:  │
+   │ com os centros iguais, os dois só se encontram nas duas pontas se tiverem a   │
+   │ mesma altura. Daí os gaps desta coluna (40 aqui, 35 no `.le-bloco`) serem     │
+   │ medidos e não escolhidos: eles são o que estica o conteúdo da esquerda até os │
+   │ 585px do card. Mexer no card, nos retratos ou no texto pede remedir os dois.  │
+   └───────────────────────────────────────────────────────────────────────────────┘ */
 .le-esq {
   display: flex; flex-direction: column; justify-content: center;
-  gap: clamp(18px, 2.6vw, 26px); padding: 4px 0;
+  gap: clamp(18px, 2.6vw, 40px); padding: 4px 0 52px;
 }
 /* ── O LOCKUP ────────────────────────────────────────────────────────────────
    O MESMO desenho da topbar da LP de vendas (`.tb-lock` em app/_lp/styles.css),
@@ -378,7 +394,7 @@ body:has(.le-escuro) { background: #0a0a0a }
    │ A BASE DO RETRATO fecha na vertical da base do card: as duas colunas são     │
    │ centradas na mesma grade, então crescer o retrato em 2px desce a base em 1.   │
    │                                                                               │
-   │ O ajuste fino é o gap de `.le-bloco` (24) e o de `.le-esq` (26), medidos em    │
+   │ O ajuste fino é o gap de `.le-bloco` (35) e o de `.le-esq` (40), medidos em    │
    │ 1440x778 contra a altura real do card. Mexer em qualquer um dos três pede     │
    │ remedir os outros dois, e o alvo é a base do retrato encostar na base do card.│
    │                                                                               │
@@ -442,7 +458,7 @@ body:has(.le-escuro) { background: #0a0a0a }
    ("global começa aqui.") ocupa 486px em Playfair 55px. Tudo o que vem abaixo
    fecha na mesma vertical que ela, que é o que dá uma borda direita só para a
    coluna inteira. Mexer no corpo ou no texto da manchete muda essa medida. */
-.le-bloco { display: flex; flex-direction: column; gap: 24px; max-width: 490px; container-type: inline-size }
+.le-bloco { display: flex; flex-direction: column; gap: 35px; max-width: 490px; container-type: inline-size }
 
 .le-h1 {
   margin: 0;
@@ -893,7 +909,9 @@ body:has(.le-escuro) { background: #0a0a0a }
    lista 30 -> 34 e dentro do bloco de quem está na live 12 -> 14. */
 @media (max-width: 989px) {
   .le-grade { padding-top: clamp(40px, 4.4vw, 44px) }
-  .le-esq { gap: 30px }
+  /* Sem a reserva do powered by: empilhado não há card ao lado para alinhar, e os
+     52px viravam um buraco entre a coluna de texto e o formulário. */
+  .le-esq { gap: 30px; padding-bottom: 0 }
   .le-bloco { gap: 34px }
   .le-live-quem { gap: 14px }
   /* Empilhado a coluna fica estreita e `nowrap` esmagaria os dois retratos num

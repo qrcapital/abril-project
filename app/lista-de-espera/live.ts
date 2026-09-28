@@ -16,7 +16,7 @@
  */
 
 /** Início da transmissão. Fuso explícito: sem ele, o mesmo literal vira 18h no servidor em UTC. */
-export const LIVE_EM = new Date("2026-10-12T21:00:00-03:00");
+export const LIVE_EM = new Date("2026-10-13T19:00:00-03:00");
 
 /** Folga até o texto virar. Cobre a transmissão e o que costuma passar dela. */
 const HORAS_DE_FOLGA = 3;
@@ -52,7 +52,7 @@ export const livePassou = (agora: number = Date.now()): boolean => agora > FIM;
  */
 export const LIVE_ONDE = "YouTube";
 
-/** "12 de outubro". Vai sozinho no cartão de data do trio abaixo do título. */
+/** "13 de outubro". Vai sozinho no cartão de data do trio abaixo do título. */
 export const LIVE_DIA = new Intl.DateTimeFormat("pt-BR", {
   day: "numeric",
   month: "long",
