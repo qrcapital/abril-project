@@ -53,38 +53,53 @@ export const TEXTO_ACEITE =
 export const TEXTO_AVISO_LISTA =
   "Autorizo o contato da VEJA Negócios e do BlockTrends sobre esta formação e concordo com a Política de Privacidade · LGPD.";
 
-/** Pendência da publicação no domínio final. Vazio: o nome sai sem link, que é melhor que link morto. */
-export const URL_POLITICA = process.env.NEXT_PUBLIC_POLITICA_PRIVACIDADE_URL ?? "";
-export const URL_TERMOS = process.env.NEXT_PUBLIC_TERMOS_USO_URL ?? "";
+/**
+ * Onde os dois documentos vivem.
+ *
+ * O PADRÃO É INTERNO, e isso mudou em 12/out/2026: até então as duas constantes nasciam vazias e
+ * o nome do documento aparecia sem link em toda parte, porque link morto numa tela que colhe
+ * consentimento é pior que texto simples. Agora as páginas existem no próprio site
+ * (`app/privacidade` e `app/termos-de-uso`), então o caminho relativo é sempre válido e não
+ * depende de ninguém configurar nada.
+ *
+ * As variáveis de ambiente continuam, e ganham um papel novo: apontar para as páginas da ABRIL
+ * quando o curso estiver publicado no domínio deles e os documentos passarem a morar lá.
+ */
+export const URL_POLITICA = process.env.NEXT_PUBLIC_POLITICA_PRIVACIDADE_URL || "/privacidade";
+export const URL_TERMOS = process.env.NEXT_PUBLIC_TERMOS_USO_URL || "/termos-de-uso";
 
-type Versao = { id: string; tipo: TipoDocumento; versao: string };
+type Versao = { tipo: TipoDocumento; versao: string };
 
 /**
- * As versões vigentes dos dois documentos.
- *
- * A fonte da verdade é a tabela, não uma constante no código: quando a Abril publicar uma revisão,
- * quem muda é uma linha de `consent_documents`, sem deploy. O custo é uma consulta, e ela acontece
- * uma vez por aceite, não por página.
- *
- * Devolve `[]` se a consulta falhar, e quem chama trata isso como "não dá para registrar agora".
+ * ┌─ A VERSÃO VIGENTE DE CADA DOCUMENTO, E POR QUE ELA MORA AQUI ─────────────────────────────────┐
+ * │ A primeira versão disto lia a tabela `consent_documents`, para publicar uma revisão ser uma   │
+ * │ linha de SQL em vez de um deploy. Bonito, e errado: as páginas públicas dos documentos são    │
+ * │ estáticas, e uma leitura no banco dentro delas quebrou o build no primeiro `npm run build`    │
+ * │ sem credencial no ambiente. Página jurídica não pode depender do banco estar de pé.           │
+ * │                                                                                               │
+ * │ Uma constante no código, então, e UMA SÓ para tudo: é ela que a página mostra, é ela que o    │
+ * │ log grava em `consents.documento_versao`, e é ela que o gate da sala compara. Com duas        │
+ * │ fontes, o dia em que uma for atualizada sem a outra é o dia em que o log aponta para um texto │
+ * │ que o site não mostra mais.                                                                   │
+ * │                                                                                               │
+ * │ PUBLICAR UMA REVISÃO são três passos, nesta ordem: trocar o `.html` em `app/_legal`, mudar a  │
+ * │ data aqui, e inserir a linha nova em `consent_documents` (que guarda o histórico e a URL).    │
+ * │ O segundo passo é o que faz as telas voltarem a pedir o aceite sozinhas.                      │
+ * └───────────────────────────────────────────────────────────────────────────────────────────────┘
  */
-export async function versoesVigentes(db: SupabaseClient): Promise<Versao[]> {
-  const { data, error } = await db
-    .from("consent_documents")
-    .select("id, tipo, versao, vigente_desde")
-    .lte("vigente_desde", new Date().toISOString())
-    .order("vigente_desde", { ascending: false });
+export const VERSOES: Record<TipoDocumento, string> = {
+  politica: "2026-09-28",
+  termos: "2026-09-28",
+};
 
-  if (error) {
-    console.error("[consentimento] nao deu para ler as versoes vigentes:", error.message);
-    return [];
-  }
+const VIGENTES: Versao[] = (Object.keys(VERSOES) as TipoDocumento[]).map((tipo) => ({
+  tipo,
+  versao: VERSOES[tipo],
+}));
 
-  // Uma por tipo, a mais recente. A ordenação acima já põe a vigente na frente, então o primeiro
-  // de cada tipo vence e os antigos são descartados.
-  const porTipo = new Map<string, Versao>();
-  for (const d of data ?? []) if (!porTipo.has(d.tipo)) porTipo.set(d.tipo, d as Versao);
-  return [...porTipo.values()];
+/** As versões vigentes dos dois documentos. Sem ida ao banco, e por isso nunca falha. */
+export function versoesVigentes(): Versao[] {
+  return VIGENTES;
 }
 
 /**
@@ -155,21 +170,28 @@ export async function registrarConsentimento(
     tipos?: TipoDocumento[];
   },
 ): Promise<number> {
-  const todas = await versoesVigentes(db);
+  const todas = versoesVigentes();
   const versoes = dados.tipos ? todas.filter((v) => dados.tipos!.includes(v.tipo)) : todas;
-  if (versoes.length === 0) {
-    console.error("[consentimento] sem versao vigente em consent_documents; aceite NAO registrado");
-    return 0;
-  }
+  if (versoes.length === 0) return 0;
 
   const [ip, userAgent] = await Promise.all([ipDaRequisicao(), userAgentDaRequisicao()]);
+
+  // `documento_id` é conveniência para quem consulta o log por SQL, não requisito: a versão já
+  // vai congelada na linha. Se a tabela de documentos não tiver a versão cadastrada, o aceite é
+  // registrado assim mesmo, com o id nulo, porque perder o consentimento seria muito pior.
+  const { data: docs } = await db
+    .from("consent_documents")
+    .select("id, tipo, versao")
+    .in("versao", versoes.map((v) => v.versao));
+  const idDe = (v: Versao) =>
+    (docs ?? []).find((d) => d.tipo === v.tipo && d.versao === v.versao)?.id ?? null;
 
   const linhas = versoes.map((v) => ({
     user_id: dados.userId ?? null,
     email: dados.email,
     nome: dados.nome ?? null,
     origem: dados.origem,
-    documento_id: v.id,
+    documento_id: idDe(v),
     documento_tipo: v.tipo,
     documento_versao: v.versao,
     texto: dados.texto ?? TEXTO_ACEITE,
@@ -203,8 +225,7 @@ export async function registrarConsentimento(
  * quem pagou pelo curso.
  */
 export async function aceitouVigente(db: SupabaseClient, userId: string): Promise<boolean> {
-  const versoes = await versoesVigentes(db);
-  if (versoes.length === 0) return true;
+  const versoes = versoesVigentes();
 
   const { data, error } = await db
     .from("consents")

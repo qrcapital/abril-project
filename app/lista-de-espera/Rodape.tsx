@@ -109,28 +109,15 @@ export default function Rodape() {
               </div>
             )}
 
-            {/* AS POLÍTICAS SÃO CONDICIONAIS, e no `body.html` não são: lá as duas
-                são `href="#"`. Mesma regra do aceite do formulário, e pelo mesmo
-                motivo: numa página que coleta dado pessoal, um link de política que
-                não abre é pior que o nome sem link, porque promete o documento que
-                justifica a coleta. Preencher as duas variáveis de ambiente liga os
-                dois links aqui e a caixa de aceite lá em cima de uma vez. */}
+            {/* As duas páginas existem no próprio site desde 12/out/2026, então os
+                links são sempre válidos e a condicional que existia aqui saiu com
+                eles. As constantes continuam vindo de `lib/consentimento.ts`, que é
+                a mesma fonte da caixa de aceite: se um dia os documentos passarem
+                a morar no domínio da Abril, muda-se num lugar só. */}
             <div className="le-rod-lista">
               <div className="le-rod-lista-t">Políticas</div>
-              {URL_TERMOS ? (
-                <a href={URL_TERMOS} target="_blank" rel="noopener noreferrer">
-                  Termos de uso
-                </a>
-              ) : (
-                <span className="le-rod-morto">Termos de uso</span>
-              )}
-              {URL_POLITICA ? (
-                <a href={URL_POLITICA} target="_blank" rel="noopener noreferrer">
-                  Privacidade · LGPD
-                </a>
-              ) : (
-                <span className="le-rod-morto">Privacidade · LGPD</span>
-              )}
+              <a href={URL_TERMOS}>Termos de uso</a>
+              <a href={URL_POLITICA}>Privacidade · LGPD</a>
             </div>
 
             <div className="le-rod-lista">

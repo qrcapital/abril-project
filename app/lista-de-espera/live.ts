@@ -16,7 +16,7 @@
  */
 
 /** Início da transmissão. Fuso explícito: sem ele, o mesmo literal vira 18h no servidor em UTC. */
-export const LIVE_EM = new Date("2026-09-28T21:00:00-03:00");
+export const LIVE_EM = new Date("2026-10-12T21:00:00-03:00");
 
 /** Folga até o texto virar. Cobre a transmissão e o que costuma passar dela. */
 const HORAS_DE_FOLGA = 3;
@@ -42,7 +42,17 @@ export const livePassou = (agora: number = Date.now()): boolean => agora > FIM;
  * `timeZone` fixo em São Paulo: a formatação roda no servidor, cujo relógio está em UTC, e sem isso
  * as 21h viram 0h do dia 29.
  */
-/** "28 de setembro". Vai sozinho no cartão de data do trio abaixo do título. */
+/**
+ * Onde a transmissão acontece. Constante, e não texto no JSX, porque aparece no cartão do trio e
+ * volta a aparecer no dia em que a página falar da gravação.
+ *
+ * "YouTube" sozinho no cartão: o canal é o da VEJA Negócios, e dizer isso ali dentro estouraria a
+ * largura de um quarto de coluna. Quem assina a transmissão já está dito no lockup, no alto da
+ * mesma página.
+ */
+export const LIVE_ONDE = "YouTube";
+
+/** "12 de outubro". Vai sozinho no cartão de data do trio abaixo do título. */
 export const LIVE_DIA = new Intl.DateTimeFormat("pt-BR", {
   day: "numeric",
   month: "long",

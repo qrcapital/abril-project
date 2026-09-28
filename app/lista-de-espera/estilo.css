@@ -250,7 +250,7 @@ body:has(.le-escuro) { background: #0a0a0a }
 
 .le-esq {
   display: flex; flex-direction: column; justify-content: center;
-  gap: clamp(18px, 2.6vw, 24px); padding: 4px 0;
+  gap: clamp(18px, 2.6vw, 28px); padding: 4px 0;
 }
 /* ── O LOCKUP ────────────────────────────────────────────────────────────────
    O MESMO desenho da topbar da LP de vendas (`.tb-lock` em app/_lp/styles.css),
@@ -297,10 +297,14 @@ body:has(.le-escuro) { background: #0a0a0a }
 
    `1fr` nos três e não `auto`: com largura automática o cartão da data ficaria
    quase o dobro dos outros dois e o trio deixaria de ler como trio. */
-.le-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 490px }
+/* Quatro colunas desde que o "onde" entrou. `1fr` em todas e não `auto`: com
+   largura automática o cartão da data ficaria quase o dobro dos outros e o
+   conjunto deixaria de ler como conjunto. A 490px isso dá ~113px por cartão, que
+   é o que dita o corpo do valor lá embaixo. */
+.le-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 490px }
 .le-card-q {
   display: flex; flex-direction: column; gap: 5px;
-  padding: 12px 14px;
+  padding: 11px 12px;
   border: 1px solid var(--le-linha);
   border-radius: 16px;
   background: rgba(var(--le-veu-rgb), .5);
@@ -314,11 +318,14 @@ body:has(.le-escuro) { background: #0a0a0a }
    `tabular-nums` para os números terem a mesma largura: sem isso o "1" é mais
    estreito e o valor dança dentro do cartão. */
 .le-card-q-v {
-  display: flex; align-items: center; gap: 7px;
+  display: flex; align-items: center; gap: 6px;
   font-family: var(--ei-sans, system-ui, sans-serif);
   font-variant-numeric: tabular-nums lining-nums;
-  font-size: 16px; font-weight: 600; letter-spacing: -.005em;
-  line-height: 1.15; color: var(--le-texto);
+  /* 14,5px e não 16: com quatro cartões a caixa caiu para ~113px, e "12 de
+     outubro" a 16px não cabia numa linha. A quebra ali é pior que meio ponto de
+     corpo, porque desalinha o valor dos quatro. */
+  font-size: 14.5px; font-weight: 600; letter-spacing: -.005em;
+  line-height: 1.15; color: var(--le-texto); white-space: nowrap;
 }
 /* Ponto que pulsa no cartão do formato, e só enquanto a live não passou. É a
    convenção de "no ar" e dispensa a palavra fazer o trabalho sozinha. */
@@ -331,9 +338,10 @@ body:has(.le-escuro) { background: #0a0a0a }
 @media (prefers-reduced-motion: reduce) { .le-ponto { animation: none } }
 /* Abaixo de 420px os três não cabem lado a lado sem quebrar "28 de setembro" no
    meio, então o de data toma a linha inteira e os outros dois dividem a de baixo. */
-@media (max-width: 420px) {
+/* Abaixo de 520px os quatro não cabem lado a lado, e 2x2 é melhor que uma fila
+   que encolhe até o valor quebrar: os pares mantêm a leitura em bloco. */
+@media (max-width: 520px) {
   .le-cards { grid-template-columns: 1fr 1fr }
-  .le-card-q:first-child { grid-column: 1 / -1 }
 }
 
 /* ── QUEM ESTÁ NA LIVE ───────────────────────────────────────────────────────
@@ -365,12 +373,12 @@ body:has(.le-escuro) { background: #0a0a0a }
    `object-position: top` porque o enquadramento original é de meio corpo e o
    corte centrado cortaria a testa. */
 /* ┌─ 96px NÃO É UM NÚMERO SOLTO ────────────────────────────────────────────────┐
-   │ É o tamanho em que a BASE DO RETRATO fecha na vertical da base do card, e o  │
-   │ maior que cabe sem o nome "Rodolfo Bastos" quebrar em duas linhas. As duas   │
-   │ colunas são centradas na mesma grade, então as bases só se encontram quando   │
-   │ as alturas batem: crescer o retrato em 2px desce a base em 1.                 │
+   │ 68px depois de passar por 52, 62, 76, 96 e 88: a 96 os nomes quebravam, e a  │
+   │ 88 o retrato roubava a cena de quem está na live, que é o nome, não a foto.  │
+   │ A BASE DO RETRATO fecha na vertical da base do card: as duas colunas são     │
+   │ centradas na mesma grade, então crescer o retrato em 2px desce a base em 1.   │
    │                                                                               │
-   │ O ajuste fino é o gap de `.le-bloco` (26) e o de `.le-esq` (24), medidos em    │
+   │ O ajuste fino é o gap de `.le-bloco` (30) e o de `.le-esq` (28), medidos em    │
    │ 1440x778 contra a altura real do card. Mexer em qualquer um dos três pede     │
    │ remedir os outros dois, e o alvo é a base do retrato encostar na base do card.│
    │                                                                               │
@@ -379,7 +387,7 @@ body:has(.le-escuro) { background: #0a0a0a }
    │ pessoa vê ao chegar.                                                          │
    └───────────────────────────────────────────────────────────────────────────────┘ */
 .le-prof-foto {
-  flex: none; width: 88px; height: 88px; border-radius: 50%;
+  flex: none; width: 68px; height: 68px; border-radius: 50%;
   object-fit: cover; object-position: top; display: block;
   filter: grayscale(1) contrast(1.05);
   border: 1px solid var(--le-linha);
@@ -389,8 +397,8 @@ body:has(.le-escuro) { background: #0a0a0a }
    para 13,5. O bloco inteiro cresceu junto com o retrato: quem está na live é
    argumento de conversão nesta página, e a 52px com nome no corpo do texto ele
    lia como legenda de foto. */
-.le-prof .le-nome { font-size: 17px; line-height: 1.25 }
-.le-prof-cred { font-size: 13.5px; line-height: 1.35; color: var(--le-texto-2) }
+.le-prof .le-nome { font-size: 16px; line-height: 1.25 }
+.le-prof-cred { font-size: 13px; line-height: 1.35; color: var(--le-texto-2) }
 
 /* ── A PROMESSA DA PRÉ-LISTA, EM UMA FRASE ───────────────────────────────────
    Eram três itens com rótulo dourado por cima, quatro linhas ao todo. Com a
@@ -414,9 +422,11 @@ body:has(.le-escuro) { background: #0a0a0a }
 
    Encolheu junto com a mudança: crédito ao pé de um bloco de ação pede menos
    presença que assinatura de coluna editorial. */
+/* `.le-dir` já separa os filhos com um gap; os 18px extras aqui são o que tira a
+   assinatura de cima do card e a põe embaixo dele, como pé e não como borda. */
 .le-powered {
   display: flex; align-items: center; justify-content: flex-end; gap: 7px;
-  width: 100%; max-width: 520px; margin: 0 auto;
+  width: 100%; max-width: 520px; margin: 18px auto 0;
 }
 .le-powered-r {
   font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase;
@@ -430,7 +440,7 @@ body:has(.le-escuro) { background: #0a0a0a }
    ("global começa aqui.") ocupa 486px em Playfair 55px. Tudo o que vem abaixo
    fecha na mesma vertical que ela, que é o que dá uma borda direita só para a
    coluna inteira. Mexer no corpo ou no texto da manchete muda essa medida. */
-.le-bloco { display: flex; flex-direction: column; gap: 26px; max-width: 490px; container-type: inline-size }
+.le-bloco { display: flex; flex-direction: column; gap: 30px; max-width: 490px; container-type: inline-size }
 
 .le-h1 {
   margin: 0;
@@ -964,14 +974,11 @@ body:has(.le-escuro) { background: #0a0a0a }
 /* Dois seletores, e não um: o reset `.le-raiz a` vale 0,1,1 e levaria a cor
    junto se esta regra valesse 0,1,0. Mesma armadilha do reset de input e button
    lá em cima. */
-.le-rod-lista a, .le-rod-lista .le-rod-morto {
+.le-rod-lista a {
   color: #B3A9A6; font-size: 13px; text-decoration: none;
   transition: color .2s ease;
 }
 .le-rod-lista a:hover { color: #ffffff }
-/* Política sem URL configurada: mesmo texto, sem promessa de destino. O cursor
-   default é o que avisa que não há para onde ir. */
-.le-rod-lista .le-rod-morto { color: #6f6f6f; cursor: default }
 
 /* ---- faixa 3: crédito ---- */
 .le-rod-credito { background: #000; padding: 0 0 26px }

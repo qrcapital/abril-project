@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import Rodape from "./Rodape";
-import { LIVE_DIA, LIVE_EM, LIVE_HORA, copyDaLive } from "./live";
+import { LIVE_DIA, LIVE_EM, LIVE_HORA, LIVE_ONDE, copyDaLive } from "./live";
 
 /**
  * Quem está na live, com rosto.
@@ -235,21 +235,27 @@ export default function Tela({ children }: { children: React.ReactNode }) {
                 <span className="le-trio"><em>global</em> começa aqui.</span>
               </h1>
 
-              {/* A segunda frase é o ineditismo, e o recorte dela foi escolhido com
-                  cuidado: "primeiro curso da Abril SOBRE INVESTIMENTO NO EXTERIOR",
-                  e não "primeiro curso da Abril". O Grupo Abril já teve a Abril
-                  Educação, que virou Somos Educação em 2017, então a afirmação ampla
-                  tem precedente e cairia no colo do jurídico deles numa página que
-                  eles co-assinam. O recorte por tema é estreito e se sustenta.
+              {/* UM PERÍODO SÓ, e isso é o conserto de um defeito de escrita meu.
+                  Eram duas frases lado a lado sem nenhuma conjunção entre elas:
+                  "aprenda na prática..." e "é o primeiro curso da Abril...". As
+                  duas verdadeiras, nenhuma puxando a outra, e a segunda ficava
+                  solta como uma etiqueta colada no fim do parágrafo.
 
-                  Em <strong> porque é a informação nova do parágrafo: a primeira
-                  frase descreve o curso, esta diz por que ele é um acontecimento. */}
+                  Agora o ineditismo é a ABERTURA e não o apêndice: ele diz o que
+                  a coisa é, e a oração seguinte diz o que ela faz por quem entra.
+                  Uma informação puxa a outra, e o período fecha em três linhas.
+
+                  O recorte do fato continua o mesmo, e é estreito de propósito:
+                  "primeiro curso da Abril SOBRE INVESTIMENTO NO EXTERIOR". O
+                  Grupo Abril já teve a Abril Educação, que virou Somos Educação
+                  em 2017, então a afirmação ampla tem precedente e cairia no colo
+                  do jurídico deles numa página que eles co-assinam. */}
               <p className="le-lide">
-                Aprenda na prática a investir fora do Brasil e proteger seu patrimônio com
-                quem tem décadas de mercado.{" "}
                 <strong className="le-inedito">
-                  É o primeiro curso da Abril sobre investimento no exterior.
-                </strong>
+                  O primeiro curso da Abril sobre investimento no exterior
+                </strong>{" "}
+                reúne quem tem décadas de mercado para ensinar, na prática, a investir fora
+                do Brasil e proteger seu patrimônio da moeda em que você vive.
               </p>
 
               {/* TRIO DE CARTÕES, no lugar da linha corrida de data que ficava lá
@@ -279,6 +285,13 @@ export default function Tela({ children }: { children: React.ReactNode }) {
                 {/* O terceiro é o único que muda depois da transmissão: vira
                     "Gravação", e aí o ponto vermelho que pulsa não faz sentido e
                     sai junto. */}
+                {/* O "onde" entrou em 12/out/2026: a transmissão é aberta, no canal da
+                    VEJA Negócios, e quem se cadastra quer saber se vai precisar de
+                    plataforma nova antes de decidir. */}
+                <div className="le-card-q">
+                  <span className="le-rotulo le-card-q-r">Onde</span>
+                  <span className="le-card-q-v">{LIVE_ONDE}</span>
+                </div>
                 <div className="le-card-q le-card-q-vivo">
                   <span className="le-rotulo le-card-q-r">Formato</span>
                   <span className="le-card-q-v">

@@ -1,0 +1,115 @@
+/* ============================================================================
+   Páginas de documento: Política de Privacidade e Termos de Uso.
+
+   O HTML do corpo vem do `pandoc` e não tem classe nenhuma, só `p`, `strong`,
+   `ul/ol/li` e `blockquote`. Por isso tudo aqui desce por tipo, a partir do
+   `.dj-corpo`. Mexer na conversão pode trazer tags novas; o que não estiver
+   coberto aqui herda o corpo e continua legível, que é o piso aceitável.
+
+   A régua é UMA: isto se lê por obrigação, não por prazer. Nada de ornamento,
+   nada de destaque que não seja hierarquia. Coluna estreita, entrelinha larga,
+   e a tinta quente do sistema, que cansa menos que preto puro sobre papel.
+   ========================================================================== */
+
+.dj {
+  background: var(--ei-papel);
+  color: var(--ei-tinta);
+  font-family: var(--ei-sans, system-ui, sans-serif);
+  min-height: 100vh;
+  /* `lining-nums` porque o texto é cheio de número de cláusula, CNPJ e CEP: com
+     os algarismos de caixa baixa (o padrão de várias fontes) eles descem abaixo
+     da linha de base e a numeração das seções perde o alinhamento. */
+  font-variant-numeric: lining-nums;
+}
+
+/* 68ch, e não um valor em pixels: a medida confortável de leitura é contada em
+   caracteres, e assim ela acompanha o corpo da fonte se ele mudar. */
+.dj-dentro {
+  max-width: 68ch;
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 64px) clamp(20px, 5vw, 32px) clamp(48px, 7vw, 96px);
+}
+
+/* ---- topo ---------------------------------------------------------------- */
+
+.dj-topo {
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--ei-linha);
+}
+.dj-volta {
+  display: inline-block;
+  font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+  font-weight: 600; color: var(--ei-tinta-3); text-decoration: none;
+  transition: color var(--ei-t);
+}
+.dj-volta:hover { color: var(--ei-acento) }
+.dj-h1 {
+  margin: 14px 0 0;
+  font-family: var(--ei-serifa, 'Playfair Display', Georgia, serif);
+  font-size: clamp(28px, 4vw, 40px); font-weight: 600;
+  line-height: 1.1; letter-spacing: -.015em;
+}
+.dj-versao { margin: 8px 0 0; font-size: 13px; color: var(--ei-tinta-3) }
+.dj-versao strong { font-weight: 600; color: var(--ei-tinta-2) }
+
+/* ---- corpo --------------------------------------------------------------- */
+
+.dj-corpo { font-size: 15px; line-height: 1.75; color: var(--ei-tinta-2) }
+.dj-corpo p { margin: 0 0 18px }
+
+/* O documento usa parágrafos inteiros em caixa alta e negrito para os avisos
+   ("POR FAVOR, LEIA..."). Em tela isso vira uma mancha preta que se pula. Eles
+   mantêm o peso mas ganham a tinta principal, entrelinha maior e uma régua
+   dourada à esquerda: continuam sendo o destaque que o texto quer, e passam a
+   ser legíveis. O seletor é o parágrafo cujo ÚNICO filho é um <strong>, que é
+   exatamente a forma que o pandoc dá a esses avisos. */
+.dj-corpo p:has(> strong:only-child) {
+  color: var(--ei-tinta);
+  border-left: 2px solid var(--ei-ouro-regua);
+  padding-left: 16px;
+  margin: 24px 0;
+  line-height: 1.65;
+}
+.dj-corpo strong { font-weight: 600; color: var(--ei-tinta) }
+.dj-corpo em { font-style: italic }
+
+.dj-corpo ul, .dj-corpo ol { margin: 0 0 18px; padding-left: 22px }
+.dj-corpo li { margin-bottom: 10px }
+.dj-corpo li > p { margin-bottom: 8px }
+.dj-corpo li::marker { color: var(--ei-tinta-3) }
+
+/* Os `blockquote` do documento são continuações de cláusula recuadas, não
+   citações. Sem aspas nem itálico, então: só o recuo, mais discreto que o do
+   Word, que aqui empurraria o texto para fora da coluna de leitura. */
+.dj-corpo blockquote {
+  margin: 0 0 18px; padding-left: 18px;
+  border-left: 1px solid var(--ei-linha);
+}
+.dj-corpo blockquote p:last-child { margin-bottom: 0 }
+
+.dj-corpo a { color: var(--ei-acento); text-decoration: underline; text-underline-offset: 2px }
+
+/* ---- rodapé -------------------------------------------------------------- */
+
+.dj-rodape {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 12px;
+  margin-top: 48px; padding-top: 24px;
+  border-top: 1px solid var(--ei-linha);
+  font-size: 13px; color: var(--ei-tinta-3);
+}
+.dj-rodape a { color: var(--ei-acento); text-decoration: none }
+.dj-rodape a:hover { text-decoration: underline; text-underline-offset: 2px }
+.dj-sep { width: 1px; height: 12px; background: var(--ei-linha); flex: none }
+
+/* ---- impressão ----------------------------------------------------------- */
+/* Documento jurídico é impresso e anexado a processo. Sem isto o papel sai com
+   o fundo creme chapado e a navegação de volta no topo, que não leva a lugar
+   nenhum numa folha. */
+@media print {
+  .dj { background: #fff }
+  .dj-volta, .dj-rodape { display: none }
+  .dj-dentro { max-width: none; padding: 0 }
+  .dj-corpo { font-size: 11pt; line-height: 1.5; color: #000 }
+  .dj-corpo p:has(> strong:only-child) { border-left-color: #999 }
+}
