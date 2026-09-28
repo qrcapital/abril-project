@@ -536,6 +536,27 @@ body:has(.le-escuro) { background: #0a0a0a }
 .le-lgpd a { color: var(--le-acento); text-decoration: underline; text-underline-offset: 2px; transition: color var(--ei-t) }
 .le-lgpd a:hover { color: var(--le-vermelho-fundo) }
 
+/* ── CAIXA DE ACEITE ─────────────────────────────────────────────────────────
+   Voltou em 28/set/2026 a pedido do jurídico da Abril. O aviso que morava aqui
+   era um <p> centralizado; com a caixa ao lado, `text-align: center` deixaria as
+   linhas desalinhadas em relação ao quadradinho, então o texto vira esquerda. */
+.le-aceite {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin: 2px 0 16px; cursor: pointer;
+}
+/* 16px fixos com `flex: none`: sem isso o flex espreme a caixa quando o texto
+   cresce, e um checkbox de 9px de largura não é alvo de toque em celular. O
+   `margin-top` de 1px assenta a caixa na primeira linha do texto, que tem
+   line-height 1.55 e por isso nasce um pouco abaixo do topo do bloco. */
+.le-aceite-caixa {
+  flex: none; width: 16px; height: 16px; margin: 1px 0 0;
+  accent-color: var(--le-acento); cursor: pointer;
+}
+/* Herda tudo do .le-lgpd e só corrige o alinhamento e o balanceamento: ao lado
+   da caixa, `text-wrap: balance` encurtava a última linha e abria um vão que
+   fazia o bloco parecer torto. */
+.le-aceite-texto { text-align: left; text-wrap: initial }
+
 /* O botão carrega o vermelho da campanha, no lugar do dourado antigo: nos
    banners é ele que marca o ponto de ação, e aqui o ponto de ação é este. */
 /* Chapado, sem gradiente. Botão do sistema é cor sólida: o degradê dava um
@@ -683,6 +704,9 @@ body:has(.le-escuro) { background: #0a0a0a }
 }
 .le-faixa .le-lgpd { color: rgba(253, 250, 245, .78) }
 .le-faixa .le-lgpd a { color: #e8d9b5 }
+/* Sobre o painel o `accent-color` vermelho sumiria dentro do próprio vermelho:
+   a caixa marcada passa a ser dourada com o tique na tinta escura do painel. */
+.le-faixa .le-aceite-caixa { accent-color: #e8d9b5 }
 /* O aviso de falha em vermelho desapareceria sobre o painel vermelho. Aqui ele
    vira creme com a régua dourada, que é o par de ênfase usado no resto do card. */
 .le-faixa .le-erro { color: #fdfaf5; border-left-color: #e8d9b5 }

@@ -36,19 +36,22 @@ export const TEXTO_ACEITE =
   "Li e aceito os Termos de Uso e a Política de Privacidade, e autorizo o tratamento dos meus dados pessoais nas condições descritas nesses documentos.";
 
 /**
- * O aviso da `/lista-de-espera`, onde o consentimento é o próprio envio e não há caixa.
+ * A frase ao lado da caixa da `/lista-de-espera`.
  *
- * ISTO É DELIBERADO E JÁ FOI DECIDIDO UMA VEZ. A tela de pré-lista chegou a ter caixa de aceite e
- * ela saiu; o aviso ficou acima do botão para ser lido antes do ato. Uma caixa obrigatória num
- * formulário de topo de funil cobra atrito de todo mundo para registrar o que o envio já registra.
+ * HISTÓRIA CURTA, PORQUE ELA SE INVERTEU DUAS VEZES: a tela nasceu com caixa, a caixa saiu e o
+ * consentimento virou o próprio envio (aviso acima do botão, sem atrito de topo de funil), e em
+ * 28/set/2026 a caixa voltou, a pedido do jurídico da Abril, que nomeou o checkbox ao perguntar
+ * pelo log de consentimento.
  *
- * O que mudou com a migration `0023` não foi a forma do consentimento, foi quem guarda: antes o
- * registro existia só no RD Station, agora existe aqui também, com a versão do documento junto.
- * Se a decisão de produto mudar e a caixa voltar, o que muda é o texto desta constante e a tela,
- * não o log.
+ * O texto acompanhou a inversão: era "Ao enviar, você autoriza", descrevendo um ato que acontecia
+ * no botão, e virou "Autorizo", na primeira pessoa, porque agora o ato é marcar a caixa. Gravar
+ * "ao enviar, você autoriza" num log colhido por checkbox descreveria errado o que a pessoa fez.
+ *
+ * Tem de ser igual ao JSX do `Formulario.tsx`, palavra por palavra: é isto que vai congelado em
+ * `consents.texto`, e o valor do log é justamente ser o que estava na tela.
  */
 export const TEXTO_AVISO_LISTA =
-  "Ao enviar, você autoriza o contato da VEJA Negócios e do BlockTrends sobre esta formação e concorda com a Política de Privacidade · LGPD.";
+  "Autorizo o contato da VEJA Negócios e do BlockTrends sobre esta formação e concordo com a Política de Privacidade · LGPD.";
 
 /** Pendência da publicação no domínio final. Vazio: o nome sai sem link, que é melhor que link morto. */
 export const URL_POLITICA = process.env.NEXT_PUBLIC_POLITICA_PRIVACIDADE_URL ?? "";

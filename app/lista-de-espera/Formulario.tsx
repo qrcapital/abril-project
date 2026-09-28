@@ -65,7 +65,8 @@ function rdEstaDePe(): boolean {
 export default function Formulario() {
   const [enviado, setEnviado] = useState(false);
   const [enviando, setEnviando] = useState(false);
-  const [erro, setErro] = useState(false);
+  const [erro, setErro] = useState<"envio" | "aceite" | null>(null);
+  const [aceite, setAceite] = useState(false);
   const [investidor, setInvestidor] = useState("");
   const [telefone, setTelefone] = useState("");
 
@@ -116,8 +117,17 @@ export default function Formulario() {
       form.querySelector<HTMLInputElement>(`[name="${n}"]`)?.value.trim() ?? "";
     const email = campo("email");
 
+    // A caixa antes de tudo. O `required` do input já barra pelo navegador, mas server action e
+    // rota são portas próprias e o handler é a única guarda que o React controla: sem aceite não
+    // há consentimento para registrar, e registrar o envio assim mesmo produziria exatamente o
+    // log sem valor que a caixa veio evitar.
+    if (!aceite) {
+      setErro("aceite");
+      return;
+    }
+
     setEnviando(true);
-    setErro(false);
+    setErro(null);
 
     // Registro do consentimento no NOSSO log (migration 0023). Antes disto o único registro de
     // quem concordou com o quê vivia no RD Station, e a pergunta "qual versão da Política esta
@@ -151,7 +161,7 @@ export default function Formulario() {
     if (nossoOk || rdEstaDePe()) setEnviado(true);
     else {
       setEnviando(false);
-      setErro(true);
+      setErro("envio");
     }
   }
 
@@ -243,24 +253,48 @@ export default function Formulario() {
         </div>
       </div>
 
-      {/* Sem caixa de aceite: o consentimento é o próprio envio, e o aviso fica
-          acima do botão para ser lido antes do ato, não depois.
+      {/* CAIXA DE ACEITE, desde 28/set/2026, a pedido do jurídico da Abril.
+          Ela já tinha existido aqui e saíra: o consentimento passou a ser o
+          próprio envio, com o aviso acima do botão. A Abril pediu o log de
+          consentimento nomeando o checkbox, e esta é a metade da resposta que
+          aparece na tela; a outra é a tabela da migration 0023.
 
-          O hidden existe para o registro não sumir: a captura automática do RD
-          só enxerga campo de formulário, e sem ele a base legal da conversão
-          chegaria em branco no painel. */}
-      {/* Os dois `le-junto` são nomes próprios que não podem partir no meio de
-          uma linha: a marca e o nome da política. O resto do aviso quebra
-          livre, com as linhas igualadas pelo CSS. */}
-      <p className="le-lgpd">
-        Ao enviar, você autoriza o contato da <span className="le-junto">VEJA Negócios</span> e do
-        BlockTrends sobre esta formação e concorda com a{" "}
-        {POLITICA
-          ? <a className="le-junto" href={POLITICA} target="_blank" rel="noopener noreferrer">Política de Privacidade · LGPD</a>
-          : <span className="le-junto">Política de Privacidade · LGPD</span>}
-        .
-      </p>
-      <input type="hidden" name="lgpd" value="aceito-no-envio" />
+          É um ato separado do envio de propósito. Consentimento que se dá sem
+          um gesto próprio é o que a caixa existe para evitar, e é a diferença
+          entre um log que prova alguma coisa e um que só registra a hora do
+          clique no botão.
+
+          `align-items:flex-start` e a caixa de 16px com `flex:none` vêm do
+          mesmo desenho do aceite da plataforma (lib/senha-template.ts): o texto
+          tem três linhas nesta largura, e centralizar deixaria a caixa boiando
+          no meio do parágrafo.
+
+          O hidden continua, agora dizendo COMO o aceite foi colhido: a captura
+          automática do RD só enxerga campo de formulário, e sem ele a base legal
+          da conversão chegaria em branco no painel.
+
+          Os dois `le-junto` são nomes próprios que não podem partir no meio de
+          uma linha: a marca e o nome da política. */}
+      <label className="le-aceite" htmlFor="aceite">
+        <input
+          className="le-aceite-caixa"
+          type="checkbox"
+          id="aceite"
+          name="aceite"
+          required
+          checked={aceite}
+          onChange={(ev) => setAceite(ev.target.checked)}
+        />
+        <span className="le-lgpd le-aceite-texto">
+          Autorizo o contato da <span className="le-junto">VEJA Negócios</span> e do BlockTrends
+          sobre esta formação e concordo com a{" "}
+          {POLITICA
+            ? <a className="le-junto" href={POLITICA} target="_blank" rel="noopener noreferrer">Política de Privacidade · LGPD</a>
+            : <span className="le-junto">Política de Privacidade · LGPD</span>}
+          .
+        </span>
+      </label>
+      <input type="hidden" name="lgpd" value="aceito-em-caixa" />
 
       {/* Botão em trabalho (DESIGN.md §3): o rótulo vira gerúndio, o botão
           desabilita e anuncia aria-busy. Sem spinner, e sem travar largura —
@@ -272,7 +306,12 @@ export default function Formulario() {
           O texto cita o bloqueador porque essa é a causa de longe mais comum de
           os dois canais caírem juntos, e porque é a única que a pessoa consegue
           resolver sozinha. Sem acusar: "pode estar barrando". */}
-      {erro && (
+      {erro === "aceite" && (
+        <p className="le-erro" role="alert">
+          Marque a caixa acima para continuar. Sem ela não podemos registrar o seu consentimento.
+        </p>
+      )}
+      {erro === "envio" && (
         <p className="le-erro" role="alert">
           Não deu para concluir o envio agora. Se você usa bloqueador de anúncios, ele pode estar
           barrando o cadastro; desative para este site e tente de novo. Seus dados continuam
