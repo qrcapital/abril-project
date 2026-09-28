@@ -13,16 +13,21 @@
  * **O canal é só o e-mail.** A versão anterior prometia também o WhatsApp, e o
  * disparo por WhatsApp não está montado: o campo é coletado para a operação, não
  * para entrega automática. Se um dia entrar, a frase volta aqui.
+ *
+ * A primeira frase vem de `live.ts` e muda sozinha quando a live passa: prometer
+ * "o convite da live" no dia seguinte à transmissão seria a mentira mais cara da
+ * página, porque é dita a quem acabou de entregar nome, e-mail e telefone.
  */
+import { copyDaLive } from "./live";
+
 export default function CartaoConfirmado() {
   return (
     <div className="le-card le-card-ok">
       <span className="le-rotulo le-rotulo-campo">Inscrição confirmada</span>
       <h2 className="le-h2 le-h2-ok">Você está na lista.</h2>
       <p className="le-p-ok">
-        O convite da live e o aviso da abertura chegam no e-mail que você cadastrou. Só quem
-        está nesta lista recebe. Fique de olho na caixa de entrada e, se não chegar, procure
-        por Estratégia Internacional no spam.
+        {copyDaLive().confirmacao} Só quem está nesta lista recebe. Fique de olho na caixa de
+        entrada e, se não chegar, procure por Estratégia Internacional no spam.
       </p>
     </div>
   );

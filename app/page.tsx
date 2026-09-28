@@ -20,6 +20,10 @@ export const metadata: Metadata = {
   title: "Estratégia Internacional | Curso online de dolarização de patrimônio",
   description:
     "Curso online de 30 horas sobre dolarização de patrimônio e investimento no exterior, com quatro professores que atuaram no Banco Central, na XP, na Caixa e no Bradesco. Chancela institucional da VEJA Negócios, conteúdo BlockTrends.",
+  // A pré-lista já declarava o seu; a LP de vendas tinha ficado sem. Sem canonical, o
+  // buscador escolhe sozinho entre a raiz, o domínio da Netlify e o domínio da Abril, que
+  // vão servir o mesmo conteúdo durante a transição do CNAME.
+  alternates: { canonical: "/" },
   openGraph: { ...OG, type: "website" },
   twitter: { card: "summary_large_image", ...OG },
 };

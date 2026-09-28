@@ -13,11 +13,10 @@
    Os @font-face NÃO vivem aqui: Tela.tsx os extrai de app/_lp/styles.css, que é
    gerado pelo porte e é o único que sabe os nomes dos .woff2 em /public/lp.
 
-   A grade externa não usa media query: clamp(), min() e auto-fit fazem o
-   trabalho, e o único ponto de quebra é o do auto-fit, perto de 990px, que o
-   globo repete em JS (CORTE em GloboEspera.tsx) — mexer num sem o outro descola
-   os dois. A rota do teaser é a exceção e usa container query, pela razão
-   escrita lá embaixo. */
+   O ponto de quebra da grade é 990px e está DECLARADO na regra .le-grade, não
+   mais deduzido de um auto-fit: a dedução errava por ~11px e abria um buraco de
+   layout, contado no comentário de lá. A rota do teaser é a exceção e usa
+   container query, pela razão escrita lá embaixo. */
 
 /* ---- tokens ----------------------------------------------------------------
    As duas versões da campanha, clara e escura, são o MESMO layout com outros
@@ -25,15 +24,12 @@
    Tela.tsx. Cor literal fora deste bloco só existe dentro do card do formulário,
    que é claro nas duas versões e por isso não tem par escuro.
 
-   O globo lê estes mesmos tokens por getComputedStyle (GloboEspera.tsx), então
-   ele acompanha o tema sem ter uma segunda cópia da paleta em JS. Os que ele usa
-   vão em componentes RGB separados por espaço, que é o que o canvas monta em
-   rgba(). */
 /* Desde 22/set/2026 este bloco não inventa mais valor: ele APELIDA os tokens do
    app/_design/sistema.css, que é injetado logo antes deste arquivo pelo Tela.tsx.
-   Os nomes --le-* ficam porque o globo lê quatro deles por getComputedStyle
-   (--le-globo-linha, --le-globo-praca, --le-globo-rota, --le-luz-rgb) e renomear
-   descolaria o canvas da paleta. O que mudou de fato foi a tinta dos neutros:
+   Os nomes --le-* ficam por inércia útil: são muitos e renomear não paga. O
+   globo em canvas que lia quatro deles por getComputedStyle foi substituído pelo
+   SVG oficial da campanha, e o componente dele saiu do repo em 28/set/2026. O
+   que mudou de fato aqui foi a tinta dos neutros:
    saiu o 10,10,10 quase preto e entrou o 26,24,21 quente do sistema, porque
    neutro frio sobre creme suja o papel. */
 .le-raiz {
@@ -130,7 +126,10 @@ body:has(.le-escuro) { background: #0a0a0a }
    botão sem rótulo visível. Com :where() o seletor vale 0,1,0 e quem vem depois
    no arquivo manda. */
 .le-raiz :where(input, button, textarea, select) { font: inherit; color: inherit }
-.le-raiz input::placeholder { color: #8f887e }
+/* UM lugar para a cor do placeholder. Eram tres regras com dois valores: esta,
+   a do .le-input e a do painel, e a de maior especificidade vencia por acidente
+   de ordem. O #8f887e dava 3,36:1 sobre o campo creme e reprovava em AA. */
+.le-raiz input::placeholder { color: var(--le-texto-3) }
 .le-raiz :where(input, button, a):focus-visible { outline: 2px solid var(--le-vermelho); outline-offset: 2px }
 
 /* ---- camadas de fundo, na ordem de pintura --------------------------------- */
@@ -195,7 +194,8 @@ body:has(.le-escuro) { background: #0a0a0a }
 /* Empilhado, o globo sobe para o alto à direita e encolhe, fora da coluna de
    texto: as mesmas frações do canvas anterior (84%/12%, fator 0,62). Ele passa
    POR CIMA do texto onde o véu não alcança, então perde opacidade também. O
-   mesmo 990px do auto-fit do .le-grade. */
+   mesmo 990px em que a `.le-grade` empilha, agora declarado lá em vez de
+   deduzido do auto-fit. */
 @media (max-width: 989px) {
   .le-globo img { left: 84%; top: 12%; width: min(660px, 170vw) }
   /* .25, abaixo dos .34 do desktop: a .55 de antes deixava a linha do mapa
@@ -209,15 +209,41 @@ body:has(.le-escuro) { background: #0a0a0a }
 
 /* ---- grade ----------------------------------------------------------------- */
 
+/* ┌─ COLUNAS EXPLÍCITAS, E NÃO auto-fit ────────────────────────────────────────┐
+   │ Até 28/set/2026 esta regra era                                              │
+   │   grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr));   │
+   │ e o comentário da media query logo acima afirmava "o mesmo 990px do auto-fit │
+   │ do .le-grade". A afirmação era falsa, e o desencontro abria um buraco.       │
+   │                                                                             │
+   │ Duas colunas de 430 só cabiam com 860 + gap(4vw) + padding(2 × 4,4vw) ≤ w,   │
+   │ ou seja a partir de ~986px de CONTEÚDO. Com a barra de rolagem, que nesta    │
+   │ página existe sempre, o colapso real subia para ~1001px de janela. Entre     │
+   │ 990px e 1001px a media query de `max-width: 989px` não disparava mas a grade │
+   │ já tinha empilhado: as regras que escondem o painel e devolvem o fundo       │
+   │ vermelho para a coluna ficavam desligadas, e o painel virava uma tarja       │
+   │ vertical de 468px cortando o meio da tela, com o formulário jogado para      │
+   │ fora dela e sem fundo. Pegava janela restaurada no Windows, split-screen e   │
+   │ tablet em paisagem.                                                         │
+   │                                                                             │
+   │ Com as colunas declaradas, o ponto de quebra do layout e o das media queries │
+   │ são o mesmo número por construção, e não por coincidência aritmética. Mexer  │
+   │ no gap ou no padding deixa de conseguir reabrir o buraco.                    │
+   │                                                                             │
+   │ AO MUDAR OS 990px AQUI, mude junto nas media queries das linhas ~199, ~697   │
+   │ e ~722. São as quatro que descrevem o mesmo limite.                          │
+   └─────────────────────────────────────────────────────────────────────────────┘ */
 .le-grade {
   position: relative;
   min-height: 100vh;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr));
+  grid-template-columns: 1fr;
   gap: clamp(36px, 4vw, 64px);
   padding: clamp(28px, 4.4vw, 44px) clamp(20px, 4.4vw, 60px) clamp(32px, 4vw, 40px);
   max-width: 1500px;
   margin: 0 auto;
+}
+@media (min-width: 990px) {
+  .le-grade { grid-template-columns: 1fr 1fr }
 }
 
 /* ---- coluna esquerda ------------------------------------------------------- */
@@ -226,23 +252,78 @@ body:has(.le-escuro) { background: #0a0a0a }
   display: flex; flex-direction: column; justify-content: center;
   gap: clamp(22px, 2.6vw, 34px); padding: 4px 0;
 }
-/* A logo virou arquivo (public/marca), e não mais o wordmark desenhado em SVG
-   inline: ela carrega a assinatura da VEJA Negócios junto do nome do curso, e
-   esse desenho é da Abril. Como <img> ela não depende das fontes da página,
-   porque o arquivo já vem com o texto em curvas. */
-/* As duas margens negativas cancelam a folga transparente do arquivo, medida no
-   navegador: a tinta começa 10px depois da borda esquerda dele e termina 10px
-   antes da borda de baixo, na medida em que ele entra aqui. Sem elas a logo
-   parece recuada em relação à manchete, e o vão até ela vira 62px de branco —
-   o maior da coluna, quase o dobro dos outros. Com elas a tinta da logo nasce
-   na mesma vertical do "O" da manchete e o vão cai para 44px, na mesma família
-   dos outros respiros da coluna.
+/* ── O LOCKUP ────────────────────────────────────────────────────────────────
+   Duas camadas desde 28/set/2026: a marca da VEJA Negócios continua sendo o
+   arquivo oficial da Abril, e o "apresenta" mais o nome do curso voltaram a ser
+   tipografia viva, como já eram na topbar da LP de vendas e na sidebar do admin.
+   A versão anterior era um SVG único de 49KB com tudo em curvas.
 
-   Mexer na arte do arquivo pede remedir as duas. */
-.le-logo {
-  display: block; align-self: flex-start;
-  margin-left: -10px; margin-bottom: -8px;
-  width: min(322px, 82vw); height: auto;
+   As duas margens negativas que moravam aqui morreram junto com o arquivo:
+   elas cancelavam folga transparente medida no navegador e obrigavam a remedir
+   a cada troca de arte. A tinta da marca agora começa na borda do <img>, então
+   o alinhamento com o "O" da manchete sai de graça. */
+/* Aviso de falha do envio. Mora acima do botão, no mesmo lugar do aviso de LGPD,
+   porque é onde o olho já está quando o clique não deu em nada.
+
+   A cor é a do próprio vermelho da campanha, não um vermelho de erro genérico: a
+   mensagem precisa ler como parte da página, não como alerta de sistema. Sobre o
+   painel, onde o vermelho sumiria, ela vira creme (ver `.le-faixa .le-erro`). */
+.le-erro {
+  margin: 0 0 14px;
+  font-size: 12.5px; line-height: 1.5;
+  color: var(--le-vermelho);
+  border-left: 2px solid var(--le-vermelho);
+  padding-left: 10px;
+}
+
+.le-lock {
+  align-self: flex-start;
+  /* fit-content, para as réguas fecharem na largura do lockup e não na da
+     coluna. Mesmo motivo do `w-fit` documentado no Nav.tsx do admin. */
+  width: fit-content;
+}
+/* baseline, e não center: o "apresenta" precisa assentar na linha de base do
+   "Negócios", que é onde ele estava no arquivo antigo. Centrado, ele subia para
+   o meio da caixa da marca e ficava boiando ao lado do "ó". */
+.le-lock-topo { display: flex; align-items: baseline; gap: 16px }
+/* 58px é a altura que a marca tinha DENTRO do arquivo antigo, não um valor
+   novo: o lockup ia a 322px de largura e a marca ocupava 546,22 das 760
+   unidades do viewBox, ou seja 231px, que na proporção 4,015:1 dela dá 57,6.
+   Arredondado para cima para não pedir meio pixel ao rasterizador. */
+.le-lock-veja { display: block; height: 58px; width: auto; flex: 0 0 auto }
+.le-lock-apresenta {
+  font-family: var(--ei-sans, 'Jost', system-ui, sans-serif);
+  font-size: 11px; font-weight: 500; letter-spacing: .3em;
+  text-transform: uppercase; color: var(--le-dourado);
+  white-space: nowrap;
+  /* O tracking deixa um rastro depois do último A e desalinharia o bloco à
+     direita. O mesmo `-mr` que o admin aplica, pelo mesmo motivo. */
+  margin-right: -.3em;
+}
+/* width:0 + min-width:100% é o truque do admin: a linha do nome NÃO participa
+   do cálculo de largura do lockup. Sem isso ela, mais larga que a marca, é quem
+   ditaria a medida, e a marca é que fecharia curta. */
+.le-lock-nome {
+  display: flex; align-items: center; gap: 10px;
+  width: 0; min-width: 100%;
+  margin-top: 10px;
+}
+.le-lock-regua { flex: 1; height: 1px; background: var(--le-dourado-regua); min-width: 14px }
+.le-lock-curso {
+  font-family: var(--ei-serifa, 'Playfair Display', Georgia, serif);
+  font-size: 17px; font-weight: 500; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--le-texto);
+  white-space: nowrap; margin-right: -.22em;
+}
+/* No celular o lockup acompanha a manchete, que cai de 55px para 36px. A marca
+   desce proporcionalmente; o nome do curso desce menos, porque abaixo de 13px o
+   tracking de .22em começa a soltar as letras umas das outras. */
+@media (max-width: 560px) {
+  .le-lock-topo { gap: 12px }
+  .le-lock-veja { height: 44px }
+  .le-lock-apresenta { font-size: 9.5px; letter-spacing: .26em; margin-right: -.26em }
+  .le-lock-nome { gap: 8px; margin-top: 8px }
+  .le-lock-curso { font-size: 13px; letter-spacing: .18em; margin-right: -.18em }
 }
 /* container-type: a assinatura decide se empilha pela largura DESTE bloco, que
    é a coluna de texto, e não pela da janela. */
@@ -254,7 +335,7 @@ body:has(.le-escuro) { background: #0a0a0a }
 
 .le-h1 {
   margin: 0;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--ei-serifa, 'Playfair Display', Georgia, serif);
   /* O teto caiu de 72px (valor do design) para 62px quando a headline mudou, e
      de 62 para 55 quando o bloco passou a fechar em três linhas: a 62 a frase
      quebrava em quatro e deixava "risco." sozinho na última. */
@@ -297,7 +378,9 @@ body:has(.le-escuro) { background: #0a0a0a }
    lugares desta tela; o que muda é peso e cor. */
 .le-rotulo { font-size: 10px; letter-spacing: .16em; text-transform: uppercase }
 .le-rotulo-gold { font-weight: 900; color: var(--le-dourado) }
-.le-rotulo-campo { font-weight: 900; color: #7e6836 }
+/* 600, nao 900: a --ei-sans resolve para a pilha nativa, que nao tem 900, e o
+   navegador engrossava o traco sinteticamente. O resto do sistema usa 500/560/600. */
+.le-rotulo-campo { font-weight: 600; color: #7e6836 }
 
 
 /* A mesma medida do .le-bloco, os 490px da manchete: este bloco fecha na
@@ -413,7 +496,6 @@ body:has(.le-escuro) { background: #0a0a0a }
   font-family: var(--ei-sans); font-size: 15px; color: var(--le-texto);
   transition: border-color var(--ei-t), background var(--ei-t);
 }
-.le-input::placeholder { color: var(--le-texto-3) }
 .le-input:hover { border-color: var(--ei-linha-forte) }
 .le-input:focus { outline: none; border-color: var(--le-acento); background: var(--ei-solido) }
 
@@ -589,8 +671,7 @@ body:has(.le-escuro) { background: #0a0a0a }
   border-color: rgba(253, 250, 245, .55);
   color: #1a1a1a;
 }
-.le-faixa .le-input::placeholder { color: #8f887e }
-.le-faixa .le-input:focus { background: #ffffff; border-color: #fdfaf5 }
+.le-faixa .le-faixa .le-input:focus { background: #ffffff; border-color: #fdfaf5 }
 .le-faixa .le-chip {
   background: rgba(253, 250, 245, .08);
   border-color: rgba(253, 250, 245, .3);
@@ -602,6 +683,9 @@ body:has(.le-escuro) { background: #0a0a0a }
 }
 .le-faixa .le-lgpd { color: rgba(253, 250, 245, .78) }
 .le-faixa .le-lgpd a { color: #e8d9b5 }
+/* O aviso de falha em vermelho desapareceria sobre o painel vermelho. Aqui ele
+   vira creme com a régua dourada, que é o par de ênfase usado no resto do card. */
+.le-faixa .le-erro { color: #fdfaf5; border-left-color: #e8d9b5 }
 .le-faixa .le-lgpd a:hover { color: #fdfaf5 }
 /* O botão do banner, invertido: creme com o texto em vermelho. Ele é a única
    coisa opaca do card, e é de propósito: é onde o olho tem de parar. */

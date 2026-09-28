@@ -553,10 +553,6 @@ html,body{overflow-x:hidden}
   .tb-entrar{display:none !important}
   .topbar-hamb{display:inline-flex !important;align-items:center;justify-content:center;cursor:pointer;width:40px;height:40px;margin-left:4px}
 }
-@media (max-width:430px){
-  .tb-logo b{font-size:16px !important;letter-spacing:.16em !important}
-  .tb-logo span{font-size:7px !important;letter-spacing:.34em !important}
-}
 @media (max-width:600px){
   .hero-lockup{flex-direction:column !important;gap:16px !important}
 }
@@ -648,19 +644,22 @@ html,body{overflow-x:hidden}
 .carr-dots button[aria-current="true"]::after{background:var(--dot-on,currentColor);opacity:1;transform:scale(1.25)}
 @media(max-width:760px){.carr-dots{display:flex}}
 
-/* Wordmark da topbar: compensacao do letter-spacing final (o espaco depois da ultima
-   letra entortava o lockup) e, no mobile, a aplicacao padrao em escala menor. */
-.tb-logo b{margin-right:-.26em}
-.tb-logo .wm-int{margin-right:-.44em}
-@media (max-width:430px){
-.tb-logo b{font-size:16px !important;letter-spacing:.26em !important}
-.tb-logo span{font-size:6.5px !important;letter-spacing:.44em !important;gap:8px !important}
-.tb-logo span i{min-width:12px}
-}
-@media (max-width:380px){
-.tb-logo b{font-size:14.5px !important}
-.tb-logo span{font-size:6px !important}
-}
+/* As nove declaracoes de `.tb-logo b`, `.tb-logo span` e `.tb-logo .wm-int` sairam em
+   28/set/2026. Elas compensavam o letter-spacing e reescalavam no mobile um lockup
+   TIPOGRAFICO que a topbar deixou de ter: desde a reescrita, o `.tb-logo` e um <img> da
+   marca, um filete e o `.tb-curso`, e nao ha <b> nem `.wm-int` no DOM para casar. Eram
+   seletores mortos com `!important`, o pior tipo, porque parecem governar alguma coisa e
+   o proximo a mexer no lockup perde tempo com eles. O responsivo real do lockup vive em
+   `.tb-veja` / `.tb-curso`, na media query de 560px. */
+
+/* ANEL DE FOCO SOBRE O VINHO. O sistema ja tem a regra certa, mas ela pende de
+   `[data-ei-escuro]`, e esse atributo nunca foi posto no `body.html`. Resultado: nas duas
+   secoes de fundo vinho (#docentes e #oferta) quem navega por Tab recebia um anel #C1121F
+   sobre #8E1522, quase invisivel. Aqui o gancho e a propria secao, que e o que existe. */
+section[style*="#8E1522"] :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible,
+section[style*="#6B111C"] :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible,
+.topbar :where(a, button, label):focus-visible,
+footer :where(a, button, input, select, textarea):focus-visible{outline-color:#F7F4EE}
 
 /* Hover e foco do bundle (atributos style-hover/style-focus) como CSS nativo.
    Ver scripts/comum.mjs: uma regra por valor distinto, !important por causa do
