@@ -253,78 +253,125 @@ body:has(.le-escuro) { background: #0a0a0a }
   gap: clamp(22px, 2.6vw, 34px); padding: 4px 0;
 }
 /* ── O LOCKUP ────────────────────────────────────────────────────────────────
-   Duas camadas desde 28/set/2026: a marca da VEJA Negócios continua sendo o
-   arquivo oficial da Abril, e o "apresenta" mais o nome do curso voltaram a ser
-   tipografia viva, como já eram na topbar da LP de vendas e na sidebar do admin.
-   A versão anterior era um SVG único de 49KB com tudo em curvas.
+   O MESMO desenho da topbar da LP de vendas (`.tb-lock` em app/_lp/styles.css),
+   com as medidas escaladas para o tamanho que esta tela pede e as cores que o
+   fundo de papel exige. Lá o mark tem 27px, aqui 46: na topbar o lockup é um
+   item de barra, aqui ele é a chancela que abre a página.
 
-   As duas margens negativas que moravam aqui morreram junto com o arquivo:
-   elas cancelavam folga transparente medida no navegador e obrigavam a remedir
-   a cada troca de arte. A tinta da marca agora começa na borda do <img>, então
-   o alinhamento com o "O" da manchete sai de graça. */
-/* Aviso de falha do envio. Mora acima do botão, no mesmo lugar do aviso de LGPD,
-   porque é onde o olho já está quando o clique não deu em nada.
+   Terceira forma desta assinatura na mesma tela em uma semana, e a última. Antes
+   era um SVG único de 49KB com tudo em curvas; depois virou marca + "apresenta"
+   + nome entre réguas douradas; agora é o lockup da LP, porque quem chega aqui
+   por anúncio e depois abre a página de vendas precisa ver a mesma assinatura
+   nos dois lugares.
 
-   A cor é a do próprio vermelho da campanha, não um vermelho de erro genérico: a
-   mensagem precisa ler como parte da página, não como alerta de sistema. Sobre o
-   painel, onde o vermelho sumiria, ela vira creme (ver `.le-faixa .le-erro`). */
-.le-erro {
-  margin: 0 0 14px;
-  font-size: 12.5px; line-height: 1.5;
-  color: var(--le-vermelho);
-  border-left: 2px solid var(--le-vermelho);
-  padding-left: 10px;
+   As duas margens negativas que moravam aqui morreram com o arquivo antigo: elas
+   cancelavam folga transparente medida no navegador e obrigavam a remedir a cada
+   troca de arte. A tinta da marca agora começa na borda do <img>. */
+.le-lock { display: flex; align-items: center; gap: 15px; align-self: flex-start }
+.le-lock-veja { display: block; height: 46px; width: auto; flex: 0 0 auto }
+/* Filete de 1px, altura entre a do mark e a do bloco de duas linhas, como na LP.
+   Não é `border-left` do texto: como irmão ele fica livre para ter altura própria
+   e não herda o line-height do bloco ao lado. */
+.le-lock-tr {
+  flex: 0 0 auto; display: block;
+  width: 1px; height: 47px; background: var(--le-linha);
 }
-
-.le-lock {
-  align-self: flex-start;
-  /* fit-content, para as réguas fecharem na largura do lockup e não na da
-     coluna. Mesmo motivo do `w-fit` documentado no Nav.tsx do admin. */
-  width: fit-content;
-}
-/* baseline, e não center: o "apresenta" precisa assentar na linha de base do
-   "Negócios", que é onde ele estava no arquivo antigo. Centrado, ele subia para
-   o meio da caixa da marca e ficava boiando ao lado do "ó". */
-.le-lock-topo { display: flex; align-items: baseline; gap: 16px }
-/* 58px é a altura que a marca tinha DENTRO do arquivo antigo, não um valor
-   novo: o lockup ia a 322px de largura e a marca ocupava 546,22 das 760
-   unidades do viewBox, ou seja 231px, que na proporção 4,015:1 dela dá 57,6.
-   Arredondado para cima para não pedir meio pixel ao rasterizador. */
-.le-lock-veja { display: block; height: 58px; width: auto; flex: 0 0 auto }
-.le-lock-apresenta {
-  font-family: var(--ei-sans, 'Jost', system-ui, sans-serif);
-  font-size: 11px; font-weight: 500; letter-spacing: .3em;
-  text-transform: uppercase; color: var(--le-dourado);
-  white-space: nowrap;
-  /* O tracking deixa um rastro depois do último A e desalinharia o bloco à
-     direita. O mesmo `-mr` que o admin aplica, pelo mesmo motivo. */
-  margin-right: -.3em;
-}
-/* width:0 + min-width:100% é o truque do admin: a linha do nome NÃO participa
-   do cálculo de largura do lockup. Sem isso ela, mais larga que a marca, é quem
-   ditaria a medida, e a marca é que fecharia curta. */
-.le-lock-nome {
-  display: flex; align-items: center; gap: 10px;
-  width: 0; min-width: 100%;
-  margin-top: 10px;
-}
-.le-lock-regua { flex: 1; height: 1px; background: var(--le-dourado-regua); min-width: 14px }
 .le-lock-curso {
-  font-family: var(--ei-serifa, 'Playfair Display', Georgia, serif);
-  font-size: 17px; font-weight: 500; letter-spacing: .22em;
-  text-transform: uppercase; color: var(--le-texto);
-  white-space: nowrap; margin-right: -.22em;
+  display: block;
+  font-family: var(--ei-sans, 'Jost', system-ui, sans-serif);
+  font-size: 14px; font-weight: 400; letter-spacing: .17em;
+  line-height: 1.22; text-transform: uppercase; white-space: nowrap;
+  color: var(--le-texto);
 }
-/* No celular o lockup acompanha a manchete, que cai de 55px para 36px. A marca
-   desce proporcionalmente; o nome do curso desce menos, porque abaixo de 13px o
-   tracking de .22em começa a soltar as letras umas das outras. */
 @media (max-width: 560px) {
-  .le-lock-topo { gap: 12px }
-  .le-lock-veja { height: 44px }
-  .le-lock-apresenta { font-size: 9.5px; letter-spacing: .26em; margin-right: -.26em }
-  .le-lock-nome { gap: 8px; margin-top: 8px }
-  .le-lock-curso { font-size: 13px; letter-spacing: .18em; margin-right: -.18em }
+  .le-lock { gap: 11px }
+  .le-lock-veja { height: 34px }
+  .le-lock-tr { height: 35px }
+  .le-lock-curso { font-size: 11px; letter-spacing: .13em }
 }
+
+/* ── TRIO DE CARTÕES: data, horário, formato ─────────────────────────────────
+   Subiu do fim da coluna, onde era uma linha corrida com filetes no lugar das
+   barras, para logo abaixo do título. É a informação que decide se a pessoa se
+   cadastra agora, e em cartão ela é escaneável sem ser lida.
+
+   `1fr` nos três e não `auto`: com largura automática o cartão da data ficaria
+   quase o dobro dos outros dois e o trio deixaria de ler como trio. */
+.le-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 490px }
+.le-card-q {
+  display: flex; flex-direction: column; gap: 5px;
+  padding: 12px 14px;
+  border: 1px solid var(--le-linha);
+  border-radius: 10px;
+  background: rgba(var(--le-veu-rgb), .5);
+}
+.le-card-q-r { font-weight: 600; color: var(--le-texto-3) }
+.le-card-q-v {
+  display: flex; align-items: center; gap: 7px;
+  font-family: var(--ei-serifa, 'Playfair Display', Georgia, serif);
+  font-size: 17px; font-weight: 600; line-height: 1.15; color: var(--le-texto);
+}
+/* Ponto que pulsa no cartão do formato, e só enquanto a live não passou. É a
+   convenção de "no ar" e dispensa a palavra fazer o trabalho sozinha. */
+.le-ponto {
+  flex: none; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--le-acento);
+  animation: lePulso 1.8s ease-in-out infinite;
+}
+@keyframes lePulso { 0%, 100% { opacity: 1 } 50% { opacity: .3 } }
+@media (prefers-reduced-motion: reduce) { .le-ponto { animation: none } }
+/* Abaixo de 420px os três não cabem lado a lado sem quebrar "28 de setembro" no
+   meio, então o de data toma a linha inteira e os outros dois dividem a de baixo. */
+@media (max-width: 420px) {
+  .le-cards { grid-template-columns: 1fr 1fr }
+  .le-card-q:first-child { grid-column: 1 / -1 }
+}
+
+/* ── QUEM ESTÁ NA LIVE ───────────────────────────────────────────────────────
+   Substituiu um parágrafo de quatro linhas que dizia os mesmos dois nomes em
+   prosa. Numa página de captura, "quem vai falar" é pergunta que a foto responde
+   mais rápido que a frase. */
+.le-live-quem { display: flex; flex-direction: column; gap: 12px; max-width: 490px }
+.le-profs {
+  margin: 0; padding: 0; list-style: none;
+  display: flex; flex-wrap: wrap; gap: 14px 30px;
+}
+.le-prof { display: flex; align-items: center; gap: 12px }
+/* Preto e branco com um toque de contraste: é o mesmo tratamento do estado de
+   repouso dos retratos na LP de vendas. Sem ele entra o duotone verde da
+   identidade anterior, que é de onde estes arquivos vêm.
+   `object-position: top` porque o enquadramento original é de meio corpo e o
+   corte centrado cortaria a testa. */
+.le-prof-foto {
+  flex: none; width: 52px; height: 52px; border-radius: 50%;
+  object-fit: cover; object-position: top; display: block;
+  filter: grayscale(1) contrast(1.05);
+  border: 1px solid var(--le-linha);
+}
+.le-prof-txt { display: flex; flex-direction: column; gap: 2px }
+.le-prof-cred { font-size: 12.5px; line-height: 1.35; color: var(--le-texto-2) }
+
+/* ── A PROMESSA DA PRÉ-LISTA, EM UMA FRASE ───────────────────────────────────
+   Eram três itens com rótulo dourado por cima, quatro linhas ao todo. Com a
+   lista de professores logo acima, duas listas empilhadas passaram a ler como
+   formulário em vez de convite. */
+.le-recebe {
+  display: flex; gap: 10px; align-items: baseline;
+  margin: 0; max-width: 490px;
+  font-size: 14px; line-height: 1.5; color: var(--le-texto-2);
+}
+
+/* ── POWERED BY ──────────────────────────────────────────────────────────────
+   No pé da coluna, no tom de crédito e não de marca: a chancela do alto é da
+   Abril, e esta diz de quem é o conteúdo. Substituiu a linha de "Mediação", que
+   repetia a marca da VEJA Negócios já presente no lockup. */
+.le-powered { display: flex; align-items: center; gap: 9px; margin-top: 4px }
+.le-powered-r {
+  font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+  font-weight: 600; color: var(--le-texto-3);
+}
+.le-powered-bt { display: block; height: 15px; width: auto; opacity: .8 }
+
 /* container-type: a assinatura decide se empilha pela largura DESTE bloco, que
    é a coluna de texto, e não pela da janela. */
 /* 490px é a medida da manchete, não um número redondo: o trio mais largo
@@ -364,99 +411,32 @@ body:has(.le-escuro) { background: #0a0a0a }
 }
 
 /* Mesmo arranjo do teaser: um rótulo em caixa alta abrindo e a lista embaixo. */
-/* Os três itens e o rótulo que os abre andam juntos: o rótulo é o começo da
-   frase que cada item completa, e o vão entre eles tem de ser menor que o vão
-   até o bloco de cima, senão o conjunto se lê como quatro coisas soltas. Medido
-   na tela, dá 16px de branco entre as linhas, contra os 36px que separam o
-   bloco do texto de apoio. */
-.le-garante { display: flex; flex-direction: column; gap: 9px }
-.le-checks { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px }
-.le-checks li { display: flex; gap: 12px; align-items: baseline; font-size: 15px; line-height: 1.5; color: var(--le-texto) }
+/* O tique da frase da pré-lista. Sobrou da lista de três itens que ele abria:
+   a lista virou uma frase em 28/set/2026 e `.le-garante` e `.le-checks` saíram
+   com ela, mas o sinal continua marcando o começo da promessa. */
 .le-check { color: var(--le-acento); font-weight: 700 }
 
 /* Rótulo: a caixa alta de 10px com tracking largo é o mesmo padrão em cinco
    lugares desta tela; o que muda é peso e cor. */
-.le-rotulo { font-size: 10px; letter-spacing: .16em; text-transform: uppercase }
-.le-rotulo-gold { font-weight: 900; color: var(--le-dourado) }
+/* O tracking caiu de .16em para .08em em 28/set/2026. A .16 os rótulos dos
+   campos (NOME COMPLETO, E-MAIL, WHATSAPP) e a pergunta da qualificação ficavam
+   com as letras soltas umas das outras, lendo como letreiro e não como rótulo, e
+   a pergunta inteira ocupava mais largura do que o campo que ela nomeia. O corpo
+   sobe meio ponto junto: a 10px com pouco tracking a caixa alta fecha demais. */
+.le-rotulo { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase }
+.le-rotulo-gold { font-weight: 600; color: var(--le-dourado) }
 /* 600, nao 900: a --ei-sans resolve para a pilha nativa, que nao tem 900, e o
    navegador engrossava o traco sinteticamente. O resto do sistema usa 500/560/600. */
 .le-rotulo-campo { font-weight: 600; color: #7e6836 }
 
-
-/* A mesma medida do .le-bloco, os 490px da manchete: este bloco fecha na
-   vertical em que a coluna inteira fecha. Ele era mais largo que ela enquanto
-   trouxe a fileira de quatro paradas, que não cabia em 490px; sem ela, ficar
-   largo só desalinhava a borda direita da coluna.
-
-   O gap é o vão entre a frase e o parágrafo; a assinatura da mediação pede mais
-   ar que isso e pede o dela por margem. */
-.le-teaser { display: flex; flex-direction: column; gap: 9px; max-width: 490px }
-/* A assinatura fecha o bloco e pede mais ar que o vão interno dele: medido na
-   tela, 14px do rótulo ao parágrafo, 17px do parágrafo à linha da data e 27px
-   dela até as marcas. Cada degrau maior que o anterior é o que faz as três
-   partes se lerem como três, e não como uma pilha de linhas pequenas. */
-.le-teaser .le-mediacao { margin-top: 15px }
-/* O bloco da live: uma linha que diz o assunto, um parágrafo que diz quem
-   conduz e por quê, e a assinatura da mediação com as duas marcas.
-
-   Substituiu a pauta de quatro entradas. O que ela dizia em rótulos soltos
-   ("O tema", "A mesa") cabe numa frase só, e a frase pode argumentar, que é o
-   que faz alguém marcar a hora. */
-/* Justificado, como o texto de apoio lá em cima, e com os hifens postos à mão.
-   A primeira linha abria vãos de 17px entre as palavras (o normal aqui é 4px):
-   "Estratégia Internacional" são duas palavras longas que não podem partir, e
-   "Internacional," nunca cabia na primeira linha. Duas coisas resolvem, medidas
-   de 360px a 1920px de janela: "dois dos professores", que enche a primeira
-   linha no desktop (pior vão: 7px), e os &shy; em palavras comuns do texto, que
-   fazem o mesmo nas colunas estreitas do celular (4 a 7px na maioria das
-   larguras).
-
-   hyphens: manual, e não auto: o automático depende do dicionário do navegador
-   de quem visita e, onde ele existe, poderia partir o nome do curso. Assim só
-   partem as palavras marcadas em Tela.tsx. */
-.le-live-p {
-  margin: 0;
-  font-size: 14px; line-height: 1.55; color: var(--le-texto-2);
-  text-align: justify; hyphens: manual; text-wrap: pretty;
-}
-
-/* Os dois nomes, um degrau acima do cinza do parágrafo. Sem peso extra: o
-   Montserrat em 600 dentro de um texto de 400 já separa, e negrito de verdade
-   num parágrafo justificado abre buracos entre as palavras. */
+/* O `.le-nome` sobreviveu à reforma de 28/set/2026 e agora nomeia os professores
+   ao lado do retrato. Um degrau acima do cinza do apoio, sem peso extra: o
+   Montserrat em 600 dentro de um texto de 400 já separa. */
 .le-nome { font-weight: 600; color: var(--le-texto) }
 
-/* Data e atalho, na mesma linha, separados pelo mesmo filete do lockup de baixo.
-   A data leva o dourado porque é a informação que marca a hora de alguém. */
-/* Quando, onde e o atalho, numa linha só. O gap de 11px separa a data do "ao
-   vivo" (com o filete no meio, no lugar da barra); os 20px antes do link são o
-   que faz a informação e a ação lerem como dois grupos, e não como quatro
-   pedaços iguais. */
-.le-quando { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 11px; margin: 2px 0 0 }
-.le-data { font-weight: 900; color: var(--le-dourado) }
+/* O filete continua servindo o lockup do topo. As regras que o dimensionavam
+   dentro de `.le-quando` e `.le-mediacao` saíram com os dois blocos. */
 .le-filete { width: 1px; background: var(--le-linha); flex: none }
-.le-quando .le-filete { height: 12px }
-.le-quando .le-live-cta { margin-left: 9px }
-/* Dois seletores de classe, e não um: o reset `.le-raiz a` vale 0,1,1 e levaria
-   a cor do link junto se esta regra valesse 0,1,0. Mesma armadilha do reset de
-   input e button lá em cima. */
-.le-teaser .le-live-cta {
-  font-weight: 700; color: var(--le-texto);
-  border-bottom: 1px solid var(--le-linha); padding-bottom: 1px;
-  transition: color .2s ease, border-color .2s ease;
-}
-.le-teaser .le-live-cta:hover { color: var(--le-vermelho); border-bottom-color: currentColor }
-
-/* A assinatura da mediação. As alturas das duas marcas não são iguais de
-   propósito: a do BlockTrends é uma palavra comprida e baixa (proporção 10,9:1)
-   e a da VEJA Negócios é curta e alta (4:1). Igualando a caixa, uma das duas
-   sempre parece maior que a outra. Estes valores igualam o que o olho compara,
-   a altura das letras. */
-.le-mediacao { display: flex; align-items: center; gap: 11px; flex-wrap: wrap }
-.le-mediacao-r { font-weight: 700; color: var(--le-texto-3) }
-.le-mediacao img { display: block; width: auto }
-.le-marca-veja { height: 19px }
-.le-marca-bt { height: 9.5px }
-.le-mediacao .le-filete { height: 13px }
 
 /* ---- coluna direita -------------------------------------------------------- */
 /* O card é claro nas duas versões, como o bloco de ação dos banners. Por isso as
@@ -803,12 +783,6 @@ body:has(.le-escuro) { background: #0a0a0a }
    da página, sangrando pelos dois lados com o negativo do padding da grade. O
    globo não atravessa nada ali, então a camada de cima sai. */
 @media (max-width: 989px) {
-  /* Empilhado, o formulário vem logo abaixo desta coluna, então o atalho para
-     ele deixa de ter o que encurtar. E ele não cabe na linha da data nesta
-     largura: descia sozinho para uma segunda linha, recuado dos 9px que o
-     separam do "ao vivo" no desktop. */
-  .le-teaser .le-live-cta { display: none }
-
   .le-faixa .le-painel, .le-faixa .le-globo-painel { display: none }
   .le-faixa .le-dir {
     /* Empilhado não há divisa para acertar: o deslocamento que centraliza o card
@@ -825,24 +799,15 @@ body:has(.le-escuro) { background: #0a0a0a }
    espaços vinham do desktop, onde as colunas lado a lado já separam as coisas;
    uma embaixo da outra, os itens ficavam colados. Só os vãos mudam, nada de
    tamanho de letra: topo 28 -> 40, logo/texto/live 22 -> 30, manchete/lide/
-   lista 30 -> 34, rótulo até a lista 9 -> 14, entre os itens 8 -> 12, dentro do
-   bloco da live 9 -> 12 e até a mediação 15 -> 20. */
+   lista 30 -> 34 e dentro do bloco de quem está na live 12 -> 14. */
 @media (max-width: 989px) {
   .le-grade { padding-top: clamp(40px, 4.4vw, 44px) }
   .le-esq { gap: 30px }
   .le-bloco { gap: 34px }
-  .le-garante { gap: 14px }
-  .le-checks { gap: 12px }
-  /* Quando um item quebra (só em celular bem estreito), o navegador evita deixar
-     uma palavra sozinha na última linha. Onde não houver suporte, nada muda. */
-  .le-checks li { text-wrap: pretty }
-  .le-teaser { gap: 12px }
-  .le-teaser .le-mediacao { margin-top: 20px }
+  .le-live-quem { gap: 14px }
+  /* Empilhado, os dois professores cabem lado a lado até uns 560px e depois
+     empilham sozinhos pelo wrap; o gap vertical é que precisava crescer. */
+  .le-profs { gap: 16px 30px }
+  .le-recebe { text-wrap: pretty }
 }
 
-/* Trecho de texto que sai no celular para a linha não quebrar (ver Tela.tsx).
-   Abaixo de 330px nem a frase curta cabe numa linha e o "mão" ficaria sozinho
-   de novo; ali a frase inteira quebra melhor ("...da turma em / primeira mão"). */
-@media (min-width: 330px) and (max-width: 480px) {
-  .le-fora-celular { display: none }
-}

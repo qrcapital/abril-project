@@ -42,18 +42,21 @@ export const livePassou = (agora: number = Date.now()): boolean => agora > FIM;
  * `timeZone` fixo em São Paulo: a formatação roda no servidor, cujo relógio está em UTC, e sem isso
  * as 21h viram 0h do dia 29.
  */
-const dia = new Intl.DateTimeFormat("pt-BR", {
+/** "28 de setembro". Vai sozinho no cartão de data do trio abaixo do título. */
+export const LIVE_DIA = new Intl.DateTimeFormat("pt-BR", {
   day: "numeric",
   month: "long",
   timeZone: "America/Sao_Paulo",
 }).format(LIVE_EM);
 
-const hora = new Intl.DateTimeFormat("pt-BR", {
-  hour: "numeric",
-  timeZone: "America/Sao_Paulo",
-}).format(LIVE_EM);
+/** "21h". Vai sozinho no cartão de horário. */
+export const LIVE_HORA =
+  new Intl.DateTimeFormat("pt-BR", { hour: "numeric", timeZone: "America/Sao_Paulo" }).format(
+    LIVE_EM,
+  ) + "h";
 
-export const LIVE_QUANDO = `${dia}, ${hora}h`;
+/** "28 de setembro, 21h", para quando os dois couberem na mesma linha. */
+export const LIVE_QUANDO = `${LIVE_DIA}, ${LIVE_HORA}`;
 
 /**
  * Os textos que mudam com a virada.
@@ -67,8 +70,13 @@ export const LIVE_QUANDO = `${dia}, ${hora}h`;
  */
 export const COPY_LIVE = {
   antes: {
+    /** `passou` viaja junto para a tela não precisar chamar `livePassou()` de novo e correr o
+     *  risco de pegar um instante diferente do que gerou o resto do conjunto. */
+    passou: false,
     beneficio: "Convite para a live de lançamento",
-    rotuloTeaser: "Confira na live de lançamento:",
+    /** A mesma promessa em minúscula e no meio de uma frase, para a versão em linha corrida. */
+    beneficioFrase: "o convite da live de lançamento",
+    rotuloTeaser: "Quem está na live",
     verbo: "mostram",
     chamada: "Garanta seu lugar →",
     selo: "Ao vivo",
@@ -77,8 +85,10 @@ export const COPY_LIVE = {
       "Entre na pré-lista da formação Estratégia Internacional e receba o convite da live de lançamento e o aviso da abertura das inscrições.",
   },
   depois: {
+    passou: true,
     beneficio: "Gravação da live de lançamento",
-    rotuloTeaser: "O que a live de lançamento mostrou:",
+    beneficioFrase: "a gravação da live de lançamento",
+    rotuloTeaser: "Quem esteve na live",
     verbo: "mostraram",
     chamada: "Receba a gravação →",
     selo: "Gravação",
