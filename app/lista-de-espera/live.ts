@@ -76,10 +76,17 @@ export const COPY_LIVE = {
     beneficio: "Convite para a live de lançamento",
     /** A mesma promessa em minúscula e no meio de uma frase, para a versão em linha corrida. */
     beneficioFrase: "o convite da live de lançamento",
-    /** O apoio do card, logo abaixo do "Entre na pré-lista". Substituiu "Sem custo e sem
-     *  compromisso", que dizia o preço e não dizia o que se ganha. */
-    apoioCard:
-      "Entrar é de graça. Você recebe o convite da live de lançamento, o aviso quando as inscrições abrirem e os detalhes da turma em primeira mão.",
+    /**
+     * O apoio do card, logo abaixo do "Entre na pré-lista". Substituiu "Sem custo e sem
+     * compromisso", que dizia o preço e não dizia o que se ganha.
+     *
+     * CABE EM UMA LINHA, e isso é requisito, não acaso. A versão longa listava os três
+     * benefícios e ocupava duas linhas cheias entre o título e o primeiro campo, empurrando o
+     * formulário para baixo justamente no card cuja única função é ser preenchido. Os dois
+     * pontos fazem o trabalho que a enumeração fazia: preço primeiro, promessa depois.
+     * Ao encurtar, o detalhe da turma saiu; ele não era o que trazia alguém para a lista.
+     */
+    apoioCard: "Entrar é de graça: convite da live e aviso da abertura.",
     rotuloTeaser: "Quem está na live",
     verbo: "mostram",
     chamada: "Garanta seu lugar →",
@@ -92,8 +99,7 @@ export const COPY_LIVE = {
     passou: true,
     beneficio: "Gravação da live de lançamento",
     beneficioFrase: "a gravação da live de lançamento",
-    apoioCard:
-      "Entrar é de graça. Você recebe a gravação da live de lançamento, o aviso quando as inscrições abrirem e os detalhes da turma em primeira mão.",
+    apoioCard: "Entrar é de graça: gravação da live e aviso da abertura.",
     rotuloTeaser: "Quem esteve na live",
     verbo: "mostraram",
     chamada: "Receba a gravação →",

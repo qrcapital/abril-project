@@ -317,23 +317,28 @@ export default function Tela({ children }: { children: React.ReactNode }) {
 
             </div>
 
-            {/* Assinatura de quem faz o conteúdo, no pé da coluna. A linha de
-                "Mediação" que morava aqui saiu: ela repetia a marca da VEJA
-                Negócios, que já assina o lockup no alto da mesma coluna, e
-                nomear a mediação de uma live é detalhe de quem já se inscreveu.
-
-                Fica discreta de propósito. A página é co-assinada e a chancela
-                de cima é da Abril; esta diz de quem é o conteúdo, no tom de
-                crédito e não de marca. */}
-            <div className="le-powered">
-              <span className="le-powered-r">Powered by</span>
-              {/* eslint-disable-next-line @next/next/no-img-element -- idem */}
-              <img className="le-powered-bt" src={MEDIACAO.bt[TEMA]} alt="BlockTrends" />
-            </div>
           </div>
 
           <div className="le-dir">
             <div className="le-card-wrap">{children}</div>
+
+            {/* Assinatura de quem faz o conteúdo. Morava no pé da coluna da
+                esquerda e veio para debaixo do card, alinhada à borda direita
+                dele: ali ela fecha o bloco de ação em vez de competir com o
+                bloco editorial, e o card ganha um pé.
+
+                A linha de "Mediação" que existia antes dela saiu por ordem do
+                Marcelo: repetia a marca da VEJA Negócios, que já assina o lockup
+                no alto da página.
+
+                Fica discreta de propósito. A chancela de cima é da Abril; esta
+                diz de quem é o conteúdo, no tom de crédito e não de marca. */}
+            <div className="le-powered">
+              <span className="le-powered-r">Powered by</span>
+              {/* eslint-disable-next-line @next/next/no-img-element -- SVG de marca
+                  com altura fixa: o next/image rasterizaria o vetor. */}
+              <img className="le-powered-bt" src={MEDIACAO.bt[TEMA]} alt="BlockTrends" />
+            </div>
             {/* O crédito da Abril saiu daqui em 28/set/2026: a mesma razão
                 social e o mesmo CNPJ aparecem duas vezes no rodapé novo, na
                 faixa da marca e na linha final. Repetir três vezes na mesma

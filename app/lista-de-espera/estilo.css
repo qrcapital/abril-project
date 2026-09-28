@@ -345,19 +345,19 @@ body:has(.le-escuro) { background: #0a0a0a }
    que ele apresenta. 12px com o mesmo tracking mantém a família e devolve a
    hierarquia. */
 .le-live-quem { display: flex; flex-direction: column; gap: 14px; max-width: 490px }
-.le-live-quem .le-rotulo { font-size: 12px }
+.le-live-quem .le-rotulo { font-size: 12.5px }
 .le-profs {
   margin: 0; padding: 0; list-style: none;
-  display: flex; flex-wrap: wrap; gap: 14px 30px;
+  display: flex; flex-wrap: wrap; gap: 16px 34px;
 }
-.le-prof { display: flex; align-items: center; gap: 12px }
+.le-prof { display: flex; align-items: center; gap: 14px }
 /* Preto e branco com um toque de contraste: é o mesmo tratamento do estado de
    repouso dos retratos na LP de vendas. Sem ele entra o duotone verde da
    identidade anterior, que é de onde estes arquivos vêm.
    `object-position: top` porque o enquadramento original é de meio corpo e o
    corte centrado cortaria a testa. */
 .le-prof-foto {
-  flex: none; width: 62px; height: 62px; border-radius: 50%;
+  flex: none; width: 76px; height: 76px; border-radius: 50%;
   object-fit: cover; object-position: top; display: block;
   filter: grayscale(1) contrast(1.05);
   border: 1px solid var(--le-linha);
@@ -367,8 +367,8 @@ body:has(.le-escuro) { background: #0a0a0a }
    para 13,5. O bloco inteiro cresceu junto com o retrato: quem está na live é
    argumento de conversão nesta página, e a 52px com nome no corpo do texto ele
    lia como legenda de foto. */
-.le-prof .le-nome { font-size: 16.5px; line-height: 1.25 }
-.le-prof-cred { font-size: 13.5px; line-height: 1.35; color: var(--le-texto-2) }
+.le-prof .le-nome { font-size: 18px; line-height: 1.25 }
+.le-prof-cred { font-size: 14px; line-height: 1.35; color: var(--le-texto-2) }
 
 /* ── A PROMESSA DA PRÉ-LISTA, EM UMA FRASE ───────────────────────────────────
    Eram três itens com rótulo dourado por cima, quatro linhas ao todo. Com a
@@ -384,12 +384,23 @@ body:has(.le-escuro) { background: #0a0a0a }
    No pé da coluna, no tom de crédito e não de marca: a chancela do alto é da
    Abril, e esta diz de quem é o conteúdo. Substituiu a linha de "Mediação", que
    repetia a marca da VEJA Negócios já presente no lockup. */
-.le-powered { display: flex; align-items: center; gap: 9px; margin-top: 4px }
-.le-powered-r {
-  font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
-  font-weight: 600; color: var(--le-texto-3);
+/* Mudou de coluna em 28/set/2026: estava no pé da esquerda e veio para debaixo
+   do card. `max-width` e `margin: 0 auto` são os mesmos do `.le-card-wrap`, e é
+   o que faz a assinatura fechar na MESMA vertical da borda direita do card em
+   qualquer largura. Sem eles ela se alinharia à coluna, que é mais larga que o
+   card, e sobraria para fora dele.
+
+   Encolheu junto com a mudança: crédito ao pé de um bloco de ação pede menos
+   presença que assinatura de coluna editorial. */
+.le-powered {
+  display: flex; align-items: center; justify-content: flex-end; gap: 7px;
+  width: 100%; max-width: 520px; margin: 0 auto;
 }
-.le-powered-bt { display: block; height: 15px; width: auto; opacity: .8 }
+.le-powered-r {
+  font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase;
+  font-weight: 600; color: rgba(253, 250, 245, .55);
+}
+.le-powered-bt { display: block; height: 11px; width: auto; opacity: .7 }
 
 /* container-type: a assinatura decide se empilha pela largura DESTE bloco, que
    é a coluna de texto, e não pela da janela. */
@@ -498,7 +509,11 @@ body:has(.le-escuro) { background: #0a0a0a }
 
 .le-card-head { display: flex; flex-direction: column; gap: 7px }
 .le-h2 { margin: 0; font-family: var(--ei-serifa); font-weight: 600; font-size: 30px; line-height: 1.1; letter-spacing: -.02em; color: var(--le-texto) }
-.le-sub { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--le-texto-2) }
+/* 12px e `text-wrap: nowrap` NÃO: o texto foi encurtado para caber numa linha
+   nas larguras de desktop, mas travar a quebra estouraria o card no celular, que
+   é onde a maior parte do tráfego de anúncio chega. Ele cabe em uma linha porque
+   é curto, não porque foi proibido de quebrar. */
+.le-sub { margin: 0; font-size: 12px; line-height: 1.5; color: var(--le-texto-2) }
 
 .le-campos { display: flex; flex-direction: column; gap: 14px }
 .le-campo { display: flex; flex-direction: column; gap: 6px }
@@ -697,7 +712,12 @@ body:has(.le-escuro) { background: #0a0a0a }
 
 .le-faixa .le-h2 { color: #fdfaf5 }
 .le-faixa .le-sub { color: rgba(253, 250, 245, .8) }
-.le-faixa .le-rotulo-campo { color: #e8d9b5 }
+/* Creme e não o dourado `#e8d9b5`. Sobre o painel vermelho o dourado dava 6,6:1
+   e passava em AA, mas passar não é o ponto: ao lado dos campos brancos ele lia
+   como enfeite da campanha, e rótulo de formulário é instrução, não ornamento.
+   O creme sobe para 10,9:1 e devolve a hierarquia com o texto dentro do campo.
+   O dourado continua sendo régua e filete da campanha, que é o papel dele. */
+.le-faixa .le-rotulo-campo { color: rgba(253, 250, 245, .92) }
 /* Os três campos de preencher são opacos e claros, e não vidro como o resto do
    card: sobre o vermelho, uma caixa translúcida parece decoração da moldura, e
    estas três são o lugar onde se escreve. O creme é o mesmo do botão, que é a
