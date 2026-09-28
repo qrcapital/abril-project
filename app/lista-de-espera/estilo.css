@@ -260,13 +260,13 @@ body:has(.le-escuro) { background: #0a0a0a }
    │                                                                               │
    │ O ALINHAMENTO É DE TOPO E DE BASE AO MESMO TEMPO, e por isso ele é apertado:  │
    │ com os centros iguais, os dois só se encontram nas duas pontas se tiverem a   │
-   │ mesma altura. Daí os gaps desta coluna (40 aqui, 35 no `.le-bloco`) serem     │
-   │ medidos e não escolhidos: eles são o que estica o conteúdo da esquerda até os │
-   │ 585px do card. Mexer no card, nos retratos ou no texto pede remedir os dois.  │
+   │ mesma altura. Daí os gaps desta coluna (28 aqui, 27 no `.le-bloco`) serem     │
+   │ medidos e não escolhidos: eles são o que ajusta o conteúdo da esquerda à     │
+   │ altura do card. Mexer no card, nos retratos ou no texto pede remedir os dois. │
    └───────────────────────────────────────────────────────────────────────────────┘ */
 .le-esq {
   display: flex; flex-direction: column; justify-content: center;
-  gap: clamp(18px, 2.6vw, 40px); padding: 4px 0 52px;
+  gap: clamp(18px, 2.6vw, 28px); padding: 4px 0 52px;
 }
 /* ── O LOCKUP ────────────────────────────────────────────────────────────────
    O MESMO desenho da topbar da LP de vendas (`.tb-lock` em app/_lp/styles.css),
@@ -394,7 +394,7 @@ body:has(.le-escuro) { background: #0a0a0a }
    │ A BASE DO RETRATO fecha na vertical da base do card: as duas colunas são     │
    │ centradas na mesma grade, então crescer o retrato em 2px desce a base em 1.   │
    │                                                                               │
-   │ O ajuste fino é o gap de `.le-bloco` (35) e o de `.le-esq` (40), medidos em    │
+   │ O ajuste fino é o gap de `.le-bloco` (27) e o de `.le-esq` (28), medidos em    │
    │ 1440x778 contra a altura real do card. Mexer em qualquer um dos três pede     │
    │ remedir os outros dois, e o alvo é a base do retrato encostar na base do card.│
    │                                                                               │
@@ -458,7 +458,7 @@ body:has(.le-escuro) { background: #0a0a0a }
    ("global começa aqui.") ocupa 486px em Playfair 55px. Tudo o que vem abaixo
    fecha na mesma vertical que ela, que é o que dá uma borda direita só para a
    coluna inteira. Mexer no corpo ou no texto da manchete muda essa medida. */
-.le-bloco { display: flex; flex-direction: column; gap: 35px; max-width: 490px; container-type: inline-size }
+.le-bloco { display: flex; flex-direction: column; gap: 27px; max-width: 490px; container-type: inline-size }
 
 .le-h1 {
   margin: 0;

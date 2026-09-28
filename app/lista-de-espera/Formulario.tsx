@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import CartaoConfirmado from "./CartaoConfirmado";
-import { copyDaLive } from "./live";
 
 /**
  * Formulário da pré-lista. Uma conversão só: nome, e-mail, WhatsApp e uma
@@ -176,12 +175,13 @@ export default function Formulario() {
       noValidate={false}
     >
       <div className="le-card-head">
+        {/* SEM LINHA DE APOIO. Passou por três versões e saiu: "Sem custo e sem
+            compromisso", depois a promessa dos três itens, depois "Entrar é de
+            graça: convite da live e aviso da abertura". Todas verdadeiras e
+            nenhuma necessária, porque o que elas diziam o resto da tela já diz,
+            e cada uma empurrava o primeiro campo para baixo no card cuja única
+            função é ser preenchido. Título e formulário, sem intermediário. */}
         <h2 className="le-h2">Entre na pré-lista</h2>
-        {/* Era "Sem custo e sem compromisso", que dizia o preço e não dizia o que
-            se ganha. A promessa dos três itens morava na coluna da esquerda, longe
-            do botão que a cumpre; agora ela é o apoio do próprio card, e abre pelo
-            preço, que é a objeção mais barata de derrubar. */}
-        <p className="le-sub">{copyDaLive().apoioCard}</p>
       </div>
 
       <div id="rd-form-lista-de-espera" className="le-campos">
