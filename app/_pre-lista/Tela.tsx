@@ -155,7 +155,7 @@ export default function Tela({ children }: { children: React.ReactNode }) {
   const css = [
     fontesDoPorte(),
     readFileSync(join(process.cwd(), "app", "_design", "sistema.css"), "utf8"),
-    readFileSync(join(process.cwd(), "app", "lista-de-espera", "estilo.css"), "utf8"),
+    readFileSync(join(process.cwd(), "app", "_pre-lista", "estilo.css"), "utf8"),
   ].join("\n");
 
   return (
