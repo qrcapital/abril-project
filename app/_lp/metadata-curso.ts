@@ -17,7 +17,14 @@ const OG = {
 
 export const metadataCurso: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Estratégia Internacional | Curso online de dolarização de patrimônio",
+  /**
+   * `absolute` para o template do layout raiz não entrar. O título já nomeia a marca, e na rota
+   * `/curso` o template acrescentava um segundo "| Estratégia Internacional" no fim. Na raiz o
+   * problema não aparecia, porque o template do layout não se aplica ao próprio segmento dele:
+   * foi assim que o defeito atravessou meses invisível, e só apareceu quando a página ganhou uma
+   * segunda rota.
+   */
+  title: { absolute: "Estratégia Internacional | Curso online de dolarização de patrimônio" },
   description:
     "Curso online de 30 horas sobre dolarização de patrimônio e investimento no exterior, com quatro professores que atuaram no Banco Central, na XP, na Caixa e no Bradesco. Chancela institucional da VEJA Negócios, conteúdo BlockTrends.",
   // A pré-lista já declarava o seu; a LP de vendas tinha ficado sem. Sem canonical, o

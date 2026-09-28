@@ -14,7 +14,12 @@ const SITE_URL = process.env.URL ?? "https://abril-project.netlify.app";
 
 export const metadataPreLista: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Lista de espera",
+  /**
+   * `absolute` pelo mesmo motivo da página do curso, e com o efeito inverso: aqui o template do
+   * layout NÃO era aplicado na raiz, então a aba dizia só "Lista de espera", sem a marca, enquanto
+   * em `/lista-de-espera` dizia o nome completo. Com o absoluto as duas rotas dizem a mesma coisa.
+   */
+  title: { absolute: "Lista de espera | Estratégia Internacional" },
   // A descrição promete o convite antes da live e a gravação depois, pelo mesmo motivo do resto
   // da página: ela é o que aparece no preview do WhatsApp e no card do LinkedIn, onde uma
   // promessa vencida sobrevive por semanas sem ninguém ver.
