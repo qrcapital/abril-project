@@ -53,7 +53,7 @@ const TONS = {
   atencao: "bg-[#F7E3BE] text-[#7A4E06]",
   ruim: "bg-falha/10 text-falha",
   destaque: "bg-gold-soft text-gold-dark",
-  forte: "bg-verde text-gold-lit",
+  forte: "bg-acento text-gold-lit",
 } as const;
 
 export function Selo({

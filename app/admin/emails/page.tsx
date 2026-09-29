@@ -48,7 +48,7 @@ const MENSAGENS: Record<string, string> = {
 };
 
 const CAMPO =
-  "w-full rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-gold focus:outline-none";
+  "w-full rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-acento focus:outline-none";
 const ROTULO = "mb-1 block text-[11px] font-semibold tracking-[0.08em] text-pedra uppercase";
 
 /**
@@ -99,7 +99,7 @@ export default async function Emails({
   return (
     <>
       <header className="mb-6">
-        <h1 className="text-[26px] text-verde">E-mails</h1>
+        <h1 className="text-[26px] text-tinta">E-mails</h1>
         <p className="mt-1 max-w-2xl text-[13px] text-medio">
           O texto dos e-mails do produto e o registro do que o sistema enviou. Os de pagamento
           (PIX, boleto, cartão recusado, carrinho) saem pelo Guru e não aparecem aqui.
@@ -120,7 +120,7 @@ export default async function Emails({
       )}
 
       <section className="mb-10">
-        <h2 className="mb-1 text-[15px] text-verde">Templates</h2>
+        <h2 className="mb-1 text-[15px] text-tinta">Templates</h2>
         <p className="mb-4 max-w-2xl text-[12px] text-medio">
           Cada linha do corpo vira um parágrafo. A moldura, a marca e o endereço do botão ficam no
           código, então aqui você mexe no texto e no banner. Salve antes de abrir a prévia.
@@ -138,7 +138,7 @@ export default async function Emails({
                 open={abrir === t.chave}
                 className="rounded-lg border border-areia bg-white"
               >
-                <summary className="cursor-pointer px-5 py-4 text-[14px] text-verde">
+                <summary className="cursor-pointer px-5 py-4 text-[14px] text-tinta">
                   <span className="font-semibold">{ROTULOS[t.chave]}</span>
                   {t.ativo === false && (
                     <span className="ml-2">
@@ -246,7 +246,7 @@ export default async function Emails({
                           href={t.banner}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-[12px] text-gold-dark underline decoration-areia underline-offset-2 hover:decoration-gold"
+                          className="text-[12px] text-gold-dark underline decoration-areia underline-offset-2 hover:decoration-acento"
                         >
                           abrir em tamanho real
                         </a>
@@ -266,7 +266,7 @@ export default async function Emails({
                           type="file"
                           name="banner_arquivo"
                           accept="image/png,image/jpeg"
-                          className="w-full rounded-md border border-areia bg-white px-3 py-2 text-[12px] text-grafite file:mr-3 file:rounded file:border-0 file:bg-verde file:px-3 file:py-1.5 file:text-[12px] file:font-semibold file:text-offwhite"
+                          className="w-full rounded-md border border-areia bg-white px-3 py-2 text-[12px] text-grafite file:mr-3 file:rounded file:border-0 file:bg-acento file:px-3 file:py-1.5 file:text-[12px] file:font-semibold file:text-offwhite"
                         />
                       </div>
                       <div className="min-w-[200px] flex-1">
@@ -317,7 +317,7 @@ export default async function Emails({
                         type="checkbox"
                         name="ativo"
                         defaultChecked={t.ativo !== false}
-                        className="accent-verde"
+                        className="accent-acento"
                       />
                       Ativo (desligado registra no log e não envia)
                     </label>
@@ -343,7 +343,7 @@ export default async function Emails({
                         type="submit"
                         name="acao"
                         value="salvar"
-                        className="rounded-md bg-verde px-4 py-2 text-[12px] font-semibold text-offwhite hover:bg-verde-2"
+                        className="rounded-md bg-acento px-4 py-2 text-[12px] font-semibold text-offwhite hover:bg-acento-fundo"
                       >
                         Salvar
                       </button>
@@ -357,7 +357,7 @@ export default async function Emails({
       </section>
 
       <section>
-        <h2 className="mb-1 text-[15px] text-verde">Log de envios</h2>
+        <h2 className="mb-1 text-[15px] text-tinta">Log de envios</h2>
         <p className="mb-4 max-w-2xl text-[12px] text-medio">
           Toda tentativa entra aqui, inclusive as que falharam e os testes. Somente leitura.
         </p>
@@ -369,11 +369,11 @@ export default async function Emails({
             defaultValue={q}
             placeholder="e-mail do aluno ou nome do template"
             aria-label="Buscar por e-mail ou template"
-            className="min-w-0 flex-1 rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-gold focus:outline-none"
+            className="min-w-0 flex-1 rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-acento focus:outline-none"
           />
           <button
             type="submit"
-            className="rounded-md bg-verde px-4 py-2 text-[13px] font-semibold text-offwhite hover:bg-verde-2"
+            className="rounded-md bg-acento px-4 py-2 text-[13px] font-semibold text-offwhite hover:bg-acento-fundo"
           >
             Buscar
           </button>

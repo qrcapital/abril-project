@@ -57,29 +57,26 @@ export default function Nav({ email, temAcesso }: { email?: string; temAcesso?: 
   };
 
   return (
-    <nav className="flex h-full flex-col bg-verde-3 px-4 py-6 text-offwhite">
-      {/* Wordmark igual ao do topbar da LP (app/_lp/body.html, .tb-logo): Playfair espaçado em
-          cima, "INTERNACIONAL" miúdo entre duas linhas douradas embaixo. 18px em vez dos 20px da
-          LP porque a sidebar tem 232px e o ESTRATÉGIA com .26em de tracking não cabe a 20. */}
+    <nav className="flex h-full flex-col bg-painel px-4 py-6 text-offwhite">
+      {/* O lockup do site, na versão para fundo escuro: marca da VEJA Negócios, filete em pé e o
+          nome do curso em duas linhas, como na topbar da LP e da área do aluno. Substituiu em
+          29/set/2026 o wordmark empilhado (ESTRATÉGIA em Playfair entre réguas douradas), que era
+          da identidade verde e que o site não usa mais em lugar nenhum.
+
+          Um degrau menor que a topbar (marca de 22px): a sidebar tem 232px, e a 26px o nome em
+          duas linhas encostava na borda direita. */}
       <div className="px-2 pb-7">
-        {/* w-fit: o lockup abraça a largura do ESTRATÉGIA, como na LP, em vez de esticar as
-            linhas douradas até a borda da sidebar. */}
-        {/* Os -mr anulam o rastro do letter-spacing depois da última letra; sem eles o bloco
-            "termina" 0.26em depois do A e as linhas douradas não fecham alinhadas com ele. */}
-        <div className="mx-auto w-fit">
-          <span className="-mr-[0.26em] block font-serif text-[18px] leading-none font-medium tracking-[0.26em] whitespace-nowrap text-offwhite">
-            ESTRATÉGIA
-          </span>
-          {/* w-0 + min-w-full: a linha não participa do cálculo de largura do lockup (senão ela,
-              mais larga que a palavra a 18px, esticava o bloco e o A fechava curto); ela só
-              preenche a largura que o ESTRATÉGIA ditou. */}
-          <span className="mt-[5px] flex w-0 min-w-full items-center gap-2.5 text-[8px] font-semibold tracking-[0.44em] whitespace-nowrap text-bege">
-            <i className="h-px flex-1 bg-gold" aria-hidden />
-            <span className="-mr-[0.44em]">INTERNACIONAL</span>
-            <i className="h-px flex-1 bg-gold" aria-hidden />
+        <div className="flex items-center gap-2.5">
+          {/* eslint-disable-next-line @next/next/no-img-element -- SVG de marca com altura fixa */}
+          <img src="/marca/veja-negocios-escuro.svg" alt="VEJA Negócios" className="block h-[22px] w-auto" />
+          <i className="block h-[23px] w-px bg-offwhite/30" aria-hidden />
+          <span className="block text-[9.5px] leading-[1.22] tracking-[0.15em] whitespace-nowrap text-offwhite uppercase">
+            Estratégia
+            <br />
+            Internacional
           </span>
         </div>
-        <span className="mt-3 block text-center text-[11px] tracking-[0.14em] text-gold-lit uppercase">
+        <span className="mt-4 block text-[10.5px] font-semibold tracking-[0.1em] text-muted uppercase">
           Administração
         </span>
       </div>
@@ -93,8 +90,8 @@ export default function Nav({ email, temAcesso }: { email?: string; temAcesso?: 
                 aria-current={ativo(item.href) ? "page" : undefined}
                 className={`block rounded-md px-3 py-2 text-[13px] transition-colors ${
                   ativo(item.href)
-                    ? "bg-verde-card font-semibold text-gold-lit"
-                    : "text-muted2 hover:bg-verde-card/60 hover:text-offwhite"
+                    ? "bg-acento font-semibold text-offwhite"
+                    : "text-muted2 hover:bg-painel-card/60 hover:text-offwhite"
                 }`}
               >
                 {item.rotulo}

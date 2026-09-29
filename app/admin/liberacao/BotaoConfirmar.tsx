@@ -52,7 +52,7 @@ export default function BotaoConfirmar({
         className={
           perigo
             ? "rounded-md border border-areia px-3 py-1.5 text-[12px] text-falha hover:border-falha"
-            : "rounded-md bg-verde px-4 py-2 text-[12px] font-semibold text-offwhite hover:bg-verde-2"
+            : "rounded-md bg-acento px-4 py-2 text-[12px] font-semibold text-offwhite hover:bg-acento-fundo"
         }
       >
         {rotulo}

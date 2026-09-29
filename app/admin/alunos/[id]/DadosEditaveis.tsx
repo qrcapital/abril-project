@@ -130,7 +130,7 @@ export default function DadosEditaveis({
     "data-1p-ignore": true,
     "data-lpignore": "true",
     className:
-      "w-full rounded-md border border-gold-soft bg-white px-2 py-1 outline-none focus:border-gold",
+      "w-full rounded-md border border-gold-soft bg-white px-2 py-1 outline-none focus:border-acento",
   });
 
   return (
@@ -144,10 +144,10 @@ export default function DadosEditaveis({
                 aria-label="Nome do aluno"
                 maxLength={120}
                 autoFocus
-                className={`${props("nome").className} font-serif text-[26px] text-verde`}
+                className={`${props("nome").className} font-serif text-[26px] text-tinta`}
               />
             ) : (
-              <h1 className="text-[26px] text-verde">
+              <h1 className="text-[26px] text-tinta">
                 {valores.nome || <span className="text-pedra">Conta sem nome</span>}
               </h1>
             )}
@@ -179,7 +179,7 @@ export default function DadosEditaveis({
               setErro("");
               setEstado("parado");
             }}
-            className="rounded-md border border-areia px-3 py-1.5 text-[12px] text-gold-dark hover:border-gold"
+            className="rounded-md border border-areia px-3 py-1.5 text-[12px] text-gold-dark hover:border-acento"
           >
             {editando ? "Pronto" : "Editar"}
           </button>
@@ -203,7 +203,7 @@ export default function DadosEditaveis({
       </header>
 
       <section className="mb-8">
-        <h2 className="mb-3 text-[15px] text-verde">Cadastro e acesso</h2>
+        <h2 className="mb-3 text-[15px] text-tinta">Cadastro e acesso</h2>
         <div className="overflow-x-auto rounded-lg border border-areia bg-white">
           <dl className="grid gap-x-8 gap-y-3 px-5 py-4 text-[13px] sm:grid-cols-2">
             <div>

@@ -56,7 +56,7 @@ export default async function Auditoria({
   return (
     <>
       <header className="mb-6">
-        <h1 className="text-[26px] text-verde">Auditoria</h1>
+        <h1 className="text-[26px] text-tinta">Auditoria</h1>
         <p className="mt-1 max-w-2xl text-[13px] text-medio">
           Quem fez o quê no painel, sobre quem e quando. Somente leitura: nem esta tela nem nenhuma
           outra apaga linha daqui. O e-mail de quem agiu fica congelado no registro, então o rastro
@@ -71,11 +71,11 @@ export default async function Auditoria({
           defaultValue={q}
           placeholder="e-mail de quem agiu, do aluno, ou o nome da ação"
           aria-label="Buscar no rastro"
-          className="min-w-0 flex-1 rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-gold focus:outline-none"
+          className="min-w-0 flex-1 rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-acento focus:outline-none"
         />
         <button
           type="submit"
-          className="rounded-md bg-verde px-4 py-2 text-[13px] font-semibold text-offwhite hover:bg-verde-2"
+          className="rounded-md bg-acento px-4 py-2 text-[13px] font-semibold text-offwhite hover:bg-acento-fundo"
         >
           Buscar
         </button>
@@ -129,7 +129,7 @@ export default async function Auditoria({
                         // sempre "como essa conta está agora?".
                         <Link
                           href={`/admin/alunos/${l.alvo_id}`}
-                          className="text-gold-dark underline decoration-areia underline-offset-2 hover:decoration-gold"
+                          className="text-gold-dark underline decoration-areia underline-offset-2 hover:decoration-acento"
                         >
                           {l.alvo_nome || l.alvo_email || "conta sem nome"}
                         </Link>

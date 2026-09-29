@@ -39,10 +39,10 @@ const MENSAGENS: Record<string, string> = {
 };
 
 const CAMPO =
-  "w-full rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-gold focus:outline-none";
+  "w-full rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-acento focus:outline-none";
 const ROTULO = "mb-1 block text-[11px] font-semibold tracking-[0.08em] text-pedra uppercase";
 const BOTAO_PRIMARIO =
-  "rounded-md bg-verde px-4 py-2 text-[12px] font-semibold text-offwhite hover:bg-verde-2";
+  "rounded-md bg-acento px-4 py-2 text-[12px] font-semibold text-offwhite hover:bg-acento-fundo";
 
 const TIPOS = [
   { valor: "livre", rotulo: "Acesso livre" },
@@ -175,7 +175,7 @@ export default async function Liberacao({
   return (
     <>
       <header className="mb-6">
-        <h1 className="text-[26px] text-verde">Liberação</h1>
+        <h1 className="text-[26px] text-tinta">Liberação</h1>
         <p className="mt-1 max-w-2xl text-[13px] text-medio">
           Como o conteúdo abre para o aluno. Uma política fica ativa por vez e é o padrão de
           todos; as outras servem de rascunho ou de exceção. No detalhe do aluno dá para
@@ -202,7 +202,7 @@ export default async function Liberacao({
           const avisos = avisosDaPolitica(regrasDela, modulos.map((m) => m.ord));
           return (
             <details key={p.id} open={p.ativa} className="rounded-lg border border-areia bg-white">
-              <summary className="cursor-pointer px-5 py-4 text-[14px] text-verde">
+              <summary className="cursor-pointer px-5 py-4 text-[14px] text-tinta">
                 <span className="font-semibold">{p.nome}</span>
                 <span className="ml-2">
                   {p.ativa ? <Selo tom="ok">ativa</Selo> : <Selo tom="neutro">rascunho</Selo>}
@@ -257,13 +257,13 @@ export default async function Liberacao({
         })}
 
         <details open={comEsteira} className="rounded-lg border border-dashed border-areia bg-white">
-          <summary className="cursor-pointer px-5 py-4 text-[14px] font-semibold text-verde">
+          <summary className="cursor-pointer px-5 py-4 text-[14px] font-semibold text-tinta">
             Nova política
           </summary>
           {!comEsteira && (
             <p className="mx-5 mb-3 text-[12px] text-pedra">
               Ela nasce com tudo em breve, o padrão fechado.{" "}
-              <a href="?preset=esteira" className="font-semibold text-gold-dark hover:text-verde">
+              <a href="?preset=esteira" className="font-semibold text-gold-dark hover:text-acento">
                 Preencher com a esteira clássica
               </a>{" "}
               (Módulo I no ato, um por semana dali em diante).

@@ -51,10 +51,10 @@ const MENSAGENS: Record<string, string> = {
 };
 
 const CAMPO =
-  "w-full rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-gold focus:outline-none";
+  "w-full rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-acento focus:outline-none";
 const ROTULO = "mb-1 block text-[11px] font-semibold tracking-[0.08em] text-pedra uppercase";
 const BOTAO_PRIMARIO =
-  "rounded-md bg-verde px-4 py-2 text-[12px] font-semibold text-offwhite hover:bg-verde-2";
+  "rounded-md bg-acento px-4 py-2 text-[12px] font-semibold text-offwhite hover:bg-acento-fundo";
 const BOTAO_SECUNDARIO =
   "rounded-md border border-areia px-3 py-1.5 text-[12px] text-grafite hover:border-pedra";
 
@@ -89,7 +89,7 @@ function Alternativas({
                 value={i}
                 defaultChecked={correta === i}
                 required
-                className="accent-verde"
+                className="accent-acento"
               />
               {letra}
               <span className="text-[10px] text-pedra">certa</span>
@@ -138,7 +138,7 @@ export default async function Questoes({
   return (
     <>
       <header className="mb-6">
-        <h1 className="text-[26px] text-verde">Questões</h1>
+        <h1 className="text-[26px] text-tinta">Questões</h1>
         <p className="mt-1 max-w-2xl text-[13px] text-medio">
           O banco de onde a prova sorteia {TOTAL_QUESTOES} questões, {POR_MODULO} de cada módulo. O
           gabarito só existe aqui: o aluno nunca lê esta tabela, e a prova dele guarda uma cópia das
@@ -180,7 +180,7 @@ export default async function Questoes({
                 open={abrir === String(mod.ord)}
                 className="rounded-lg border border-areia bg-white"
               >
-                <summary className="cursor-pointer px-5 py-4 text-[14px] text-verde">
+                <summary className="cursor-pointer px-5 py-4 text-[14px] text-tinta">
                   <span className="font-semibold">{rotuloModulo(mod.ord)}</span>{" "}
                   <span className="text-grafite">{mod.titulo}</span>
                   <span className="ml-2">
@@ -254,7 +254,7 @@ export default async function Questoes({
                                   type="checkbox"
                                   name="ativo"
                                   defaultChecked={q.ativo}
-                                  className="accent-verde"
+                                  className="accent-acento"
                                 />
                                 Ativa (entra no sorteio)
                               </label>

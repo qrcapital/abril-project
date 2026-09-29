@@ -135,7 +135,7 @@ export default async function Aluno({
     <>
       <Link
         href="/admin/alunos"
-        className="mb-4 inline-block text-[12px] text-gold-dark underline decoration-areia underline-offset-2 hover:decoration-gold"
+        className="mb-4 inline-block text-[12px] text-gold-dark underline decoration-areia underline-offset-2 hover:decoration-acento"
       >
         Voltar para Alunos
       </Link>
@@ -188,7 +188,7 @@ export default async function Aluno({
           é um aluno, e desfazer é escolher de novo. */}
       {atual && (
         <section className="mb-8">
-          <h2 className="mb-3 text-[15px] text-verde">Liberação de conteúdo</h2>
+          <h2 className="mb-3 text-[15px] text-tinta">Liberação de conteúdo</h2>
           <form
             method="post"
             action="/admin/api/aluno"
@@ -200,7 +200,7 @@ export default async function Aluno({
               name="politica"
               defaultValue={atual.release_policy_id ?? ""}
               aria-label="Política de liberação deste aluno"
-              className="rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite focus:border-gold focus:outline-none"
+              className="rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite focus:border-acento focus:outline-none"
             >
               <option value="">Padrão de todos (a política ativa)</option>
               {(politicas.data ?? []).map((p) => (
@@ -212,7 +212,7 @@ export default async function Aluno({
             </select>
             <button
               type="submit"
-              className="rounded-md bg-verde px-4 py-2 text-[12px] font-semibold text-offwhite hover:bg-verde-2"
+              className="rounded-md bg-acento px-4 py-2 text-[12px] font-semibold text-offwhite hover:bg-acento-fundo"
             >
               Trocar liberação
             </button>
@@ -226,7 +226,7 @@ export default async function Aluno({
       )}
 
       <section className="mb-8">
-        <h2 className="mb-3 text-[15px] text-verde">
+        <h2 className="mb-3 text-[15px] text-tinta">
           Progresso{" "}
           <span className="font-sans text-[12px] font-normal text-pedra">
             ({feitasGate}/{totalGate} no gate da prova)
@@ -265,7 +265,7 @@ export default async function Aluno({
                           <input type="hidden" name="modo" value="marcar" />
                           <button
                             type="submit"
-                            className="mr-2 rounded-md border border-areia px-3 py-1.5 text-[12px] text-gold-dark hover:border-gold"
+                            className="mr-2 rounded-md border border-areia px-3 py-1.5 text-[12px] text-gold-dark hover:border-acento"
                           >
                             Concluir
                           </button>
@@ -290,7 +290,7 @@ export default async function Aluno({
       </section>
 
       <section>
-        <h2 className="mb-3 text-[15px] text-verde">Prova</h2>
+        <h2 className="mb-3 text-[15px] text-tinta">Prova</h2>
         {exames.length === 0 ? (
           <Vazio>Nunca abriu a prova.</Vazio>
         ) : (

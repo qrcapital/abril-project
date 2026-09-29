@@ -63,10 +63,10 @@ const MENSAGENS: Record<string, string> = {
 
 /* Uma classe só para os campos, porque são dezenas na tela e a diferença entre eles é o rótulo. */
 const CAMPO =
-  "w-full rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-gold focus:outline-none";
+  "w-full rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-acento focus:outline-none";
 const ROTULO = "mb-1 block text-[11px] font-semibold tracking-[0.08em] text-pedra uppercase";
 const BOTAO_PRIMARIO =
-  "rounded-md bg-verde px-4 py-2 text-[12px] font-semibold text-offwhite hover:bg-verde-2";
+  "rounded-md bg-acento px-4 py-2 text-[12px] font-semibold text-offwhite hover:bg-acento-fundo";
 const BOTAO_SECUNDARIO =
   "rounded-md border border-areia px-3 py-1.5 text-[12px] text-grafite hover:border-pedra disabled:opacity-40";
 
@@ -109,7 +109,7 @@ export default async function Conteudo({
   return (
     <>
       <header className="mb-6">
-        <h1 className="text-[26px] text-verde">Conteúdo</h1>
+        <h1 className="text-[26px] text-tinta">Conteúdo</h1>
         <p className="mt-1 max-w-2xl text-[13px] text-medio">
           Módulos, aulas e materiais do curso. O que é salvo aqui aparece na área do aluno na
           próxima visita, sem deploy.
@@ -149,7 +149,7 @@ export default async function Conteudo({
               open={abrir === String(mod.ord)}
               className="rounded-lg border border-areia bg-white"
             >
-              <summary className="cursor-pointer px-5 py-4 text-[14px] text-verde">
+              <summary className="cursor-pointer px-5 py-4 text-[14px] text-tinta">
                 <span className="font-semibold">{rotuloModulo(mod.ord)}</span>{" "}
                 <span className="text-grafite">{mod.titulo}</span>
                 <span className="ml-2 text-[12px] text-pedra">
@@ -256,7 +256,7 @@ export default async function Conteudo({
                               type="checkbox"
                               name="gate"
                               defaultChecked={a.conta_no_gate}
-                              className="accent-verde"
+                              className="accent-acento"
                             />
                             Conta para o gate de conclusão
                           </label>

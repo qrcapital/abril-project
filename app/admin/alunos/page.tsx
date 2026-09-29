@@ -77,7 +77,7 @@ export default async function Alunos({
   return (
     <>
       <header className="mb-6">
-        <h1 className="text-[26px] text-verde">Alunos</h1>
+        <h1 className="text-[26px] text-tinta">Alunos</h1>
         <p className="mt-1 max-w-2xl text-[13px] text-medio">
           Todas as contas do ambiente, com acesso, progresso e situação da prova. O progresso conta
           só as {total_gate} aulas que liberam a prova.
@@ -91,13 +91,13 @@ export default async function Alunos({
           defaultValue={q}
           placeholder="nome ou e-mail"
           aria-label="Buscar por nome ou e-mail"
-          className="min-w-0 flex-1 basis-64 rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-gold focus:outline-none"
+          className="min-w-0 flex-1 basis-64 rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-acento focus:outline-none"
         />
         <select
           name="st"
           defaultValue={st}
           aria-label="Filtrar por status de acesso"
-          className="rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite focus:border-gold focus:outline-none"
+          className="rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite focus:border-acento focus:outline-none"
         >
           {FILTROS.map((f) => (
             <option key={f.valor} value={f.valor}>
@@ -107,7 +107,7 @@ export default async function Alunos({
         </select>
         <button
           type="submit"
-          className="rounded-md bg-verde px-4 py-2 text-[13px] font-semibold text-offwhite hover:bg-verde-2"
+          className="rounded-md bg-acento px-4 py-2 text-[13px] font-semibold text-offwhite hover:bg-acento-fundo"
         >
           Filtrar
         </button>
@@ -163,7 +163,7 @@ export default async function Alunos({
                     <td className="px-4 py-3 text-right">
                       <Link
                         href={`/admin/alunos/${a.id}`}
-                        className="text-[12px] text-gold-dark underline decoration-areia underline-offset-2 hover:decoration-gold"
+                        className="text-[12px] text-gold-dark underline decoration-areia underline-offset-2 hover:decoration-acento"
                       >
                         Ver
                       </Link>

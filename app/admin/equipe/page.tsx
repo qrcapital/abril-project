@@ -71,7 +71,7 @@ export default async function Equipe({
   return (
     <>
       <header className="mb-6">
-        <h1 className="text-[26px] text-verde">Equipe</h1>
+        <h1 className="text-[26px] text-tinta">Equipe</h1>
         <p className="mt-1 max-w-2xl text-[13px] text-medio">
           Quem tem acesso a este painel. Admin vê e edita tudo, incluindo o banco de questões com
           o gabarito da prova.
@@ -92,7 +92,7 @@ export default async function Equipe({
       )}
 
       <section className="mb-9">
-        <h2 className="mb-3 text-[15px] text-verde">Buscar conta por e-mail</h2>
+        <h2 className="mb-3 text-[15px] text-tinta">Buscar conta por e-mail</h2>
         <form method="get" className="flex max-w-xl gap-2">
           <input
             type="search"
@@ -101,11 +101,11 @@ export default async function Equipe({
             placeholder="e-mail, inteiro ou em parte"
             aria-label="E-mail da conta"
             autoFocus
-            className="min-w-0 flex-1 rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-gold focus:outline-none"
+            className="min-w-0 flex-1 rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-acento focus:outline-none"
           />
           <button
             type="submit"
-            className="rounded-md bg-verde px-4 py-2 text-[13px] font-semibold text-offwhite hover:bg-verde-2"
+            className="rounded-md bg-acento px-4 py-2 text-[13px] font-semibold text-offwhite hover:bg-acento-fundo"
           >
             Buscar
           </button>
@@ -133,7 +133,7 @@ export default async function Equipe({
       </section>
 
       <section>
-        <h2 className="mb-3 text-[15px] text-verde">
+        <h2 className="mb-3 text-[15px] text-tinta">
           Com acesso hoje{" "}
           <span className="font-sans text-[12px] font-normal text-pedra">
             ({admins.length})
@@ -204,7 +204,7 @@ function Tabela({
                 <td className="px-4 py-3 text-[13px] text-medio">{l.nome || "sem nome"}</td>
                 <td className="px-4 py-3">
                   {l.is_master ? (
-                    <span className="rounded-full bg-verde px-2.5 py-1 text-[11px] font-semibold text-gold-lit">
+                    <span className="rounded-full bg-acento px-2.5 py-1 text-[11px] font-semibold text-gold-lit">
                       admin mestre
                     </span>
                   ) : l.is_admin ? (

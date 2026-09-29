@@ -270,7 +270,7 @@ export default async function AdminPainel() {
   return (
     <>
       <header className="mb-7">
-        <h1 className="text-[26px] text-verde">Painel</h1>
+        <h1 className="text-[26px] text-tinta">Painel</h1>
         <p className="mt-1 text-[13px] text-medio">
           Números do ambiente atual, lidos do banco a cada carregamento.
         </p>
@@ -280,13 +280,13 @@ export default async function AdminPainel() {
         {cards.map((c) => (
           <article key={c.rotulo} className="rounded-lg border border-areia bg-white px-5 py-4">
             <p className="text-[11px] tracking-[0.12em] text-pedra uppercase">{c.rotulo}</p>
-            <p className="mt-2 font-serif text-[32px] leading-none text-verde">{c.valor}</p>
+            <p className="mt-2 font-serif text-[32px] leading-none text-tinta">{c.valor}</p>
             <p className="mt-2 text-[12px] text-medio">{c.nota}</p>
           </article>
         ))}
       </div>
 
-      <h2 className="mt-8 mb-3 text-[15px] text-verde">Precisa de você</h2>
+      <h2 className="mt-8 mb-3 text-[15px] text-tinta">Precisa de você</h2>
       {fila.length === 0 ? (
         <p className="rounded-lg border border-areia bg-white px-4 py-3 text-[13px] text-medio">
           Nada pendente. E-mails saindo, banco de questões no piso, nenhuma matrícula vencendo.
@@ -303,7 +303,7 @@ export default async function AdminPainel() {
               <span>{item.texto}</span>
               <Link
                 href={item.href}
-                className="ml-auto text-[12px] font-semibold whitespace-nowrap text-gold-dark hover:text-verde"
+                className="ml-auto text-[12px] font-semibold whitespace-nowrap text-gold-dark hover:text-acento"
               >
                 {item.chamada} →
               </Link>
@@ -312,7 +312,7 @@ export default async function AdminPainel() {
         </div>
       )}
 
-      <h2 className="mt-8 mb-3 text-[15px] text-verde">Formação, do acesso ao certificado</h2>
+      <h2 className="mt-8 mb-3 text-[15px] text-tinta">Formação, do acesso ao certificado</h2>
       <div className="grid items-start gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <div className="rounded-lg border border-areia bg-white px-5 py-4">
           {funil.map((f) => (
@@ -320,7 +320,7 @@ export default async function AdminPainel() {
               <span className="text-[12.5px] text-grafite">{f.rotulo}</span>
               <div className="h-4 overflow-hidden rounded-[3px] bg-bege">
                 <i
-                  className="block h-full bg-verde"
+                  className="block h-full bg-acento"
                   style={{ width: `${Math.round((f.valor / topoFunil) * 100)}%` }}
                 />
               </div>
@@ -350,14 +350,14 @@ export default async function AdminPainel() {
             ))
           )}
           <div className="border-t border-bege py-2.5 text-right">
-            <Link href="/admin/auditoria" className="text-[12px] font-semibold text-gold-dark hover:text-verde">
+            <Link href="/admin/auditoria" className="text-[12px] font-semibold text-gold-dark hover:text-acento">
               Ver auditoria →
             </Link>
           </div>
         </div>
       </div>
 
-      <h2 className="mt-8 mb-3 text-[15px] text-verde">Saúde do sistema</h2>
+      <h2 className="mt-8 mb-3 text-[15px] text-tinta">Saúde do sistema</h2>
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-lg border border-areia bg-white px-5 py-4 text-[12.5px]">
           <p className="mb-2 text-[11px] tracking-[0.12em] text-pedra uppercase">Política de liberação</p>
@@ -377,7 +377,7 @@ export default async function AdminPainel() {
           <p className="mb-2 text-[11px] tracking-[0.12em] text-pedra uppercase">Banco de questões</p>
           <div className="my-2 h-1.5 overflow-hidden rounded-[3px] bg-bege">
             <i
-              className="block h-full bg-gold"
+              className="block h-full bg-acento"
               style={{ width: `${Math.min(100, Math.round((totalAtivas / metaTotal) * 100))}%` }}
             />
           </div>
@@ -404,7 +404,7 @@ export default async function AdminPainel() {
         </div>
       </div>
 
-      <h2 className="mt-8 mb-3 text-[15px] text-verde">Relatórios</h2>
+      <h2 className="mt-8 mb-3 text-[15px] text-tinta">Relatórios</h2>
       <p className="mb-3 max-w-2xl text-[12px] text-medio">
         CSV com ponto e vírgula, abre direto no Excel. Cada exportação fica na auditoria, porque
         é dado de aluno saindo do sistema.

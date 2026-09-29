@@ -64,7 +64,7 @@ export default function BotaoPapel({
         type="submit"
         className={
           promover
-            ? "rounded-md bg-verde px-3 py-1.5 text-[12px] font-semibold text-offwhite hover:bg-verde-2"
+            ? "rounded-md bg-acento px-3 py-1.5 text-[12px] font-semibold text-offwhite hover:bg-acento-fundo"
             : "rounded-md border border-areia px-3 py-1.5 text-[12px] text-grafite hover:border-pedra"
         }
       >

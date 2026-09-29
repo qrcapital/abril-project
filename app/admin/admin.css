@@ -16,16 +16,9 @@
 @import "tailwindcss" source(none);
 @source ".";
 
-/* As duas famílias do Meridiano, apontando para os woff2 que JÁ estão em `public/app/`.
- * São os arquivos do subset latino, e cada um cobre a faixa inteira de pesos (são fontes
- * variáveis, 37K e 38K), por isso duas regras resolvem o que lá são 54.
- *
- * ACOPLAMENTO CONHECIDO: estes nomes de arquivo vêm do bundle de design e estão repetidos
- * aqui à mão. As regras originais moram em `app/app/_ui/styles.css`, que é GERADO pelo
- * `scripts/port-area.mjs`: importar o arquivo gerado traria o design inteiro da área junto,
- * e copiar as 54 regras seria pior que copiar duas. Se um porte futuro trocar os hashes, o
- * admin cai para a fonte de sistema — degradação visual, não quebra.
- */
+/* Só a Playfair Display, apontando para o woff2 que JÁ está em `public/app/` (fonte variável,
+ * 500 a 700). A Montserrat saiu em 29/set/2026 junto com a identidade verde: a sans do admin
+ * passou a ser a do sistema, como no site e na área do aluno. */
 @font-face {
   font-family: "Playfair Display";
   font-style: normal;
@@ -33,48 +26,54 @@
   font-display: swap;
   src: url("/app/26d35370-0f3d-487c-8499-29b54c8cc945.woff2") format("woff2");
 }
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 300 800;
-  font-display: swap;
-  src: url("/app/65b747ad-93b8-49da-be1a-ac50e93086ac.woff2") format("woff2");
-}
 
-/* Tokens do Meridiano (DESIGN.md §2), na fatia que o admin usa. Nomes com o namespace do
- * Tailwind 4: `--color-x` gera `bg-x`, `text-x` e `border-x` sozinho. */
+/* Tokens da identidade VEJA Negócios (app/_design/sistema.css), na fatia que o admin usa.
+ * Namespace do Tailwind 4: `--color-x` gera `bg-x`, `text-x` e `border-x` sozinho.
+ *
+ * ┌─ POR QUE OS NOMES MUDARAM, E NÃO SÓ OS VALORES ───────────────────────────────────────────┐
+ * │ O `verde` antigo fazia dois papéis: `text-verde` nos 29 títulos e `bg-verde` nos 15       │
+ * │ botões primários. Na identidade nova esses dois papéis têm cores diferentes (tinta e      │
+ * │ vermelho), então trocar o valor do token pintaria os títulos de vermelho ou os botões de  │
+ * │ preto. O verde virou `tinta` onde era texto e `acento` onde era ação, classe por classe.  │
+ * └───────────────────────────────────────────────────────────────────────────────────────────┘
+ *
+ * `gold`, `gold-dark` e `gold-soft` continuam: são a régua e o ouro que lê sobre creme, papéis
+ * que a identidade nova manteve. `offwhite`, `areia`, `pedra`, `grafite` e `medio` mantêm o
+ * nome e ganham os valores quentes do sistema. */
 @theme {
-  --color-verde: #0b2d20;
-  --color-verde-2: #123b2b;
-  --color-verde-3: #0a2b1e;
-  --color-verde-card: #0f3526;
-  --color-offwhite: #f7f5f2;
+  --color-tinta: #1a1815;
+  --color-acento: #c1121f;
+  --color-acento-fundo: #8e1522;
+  /* Sidebar: o mesmo escuro da topbar do site e da área do aluno. */
+  --color-painel: #1a1815;
+  --color-painel-card: #2b2723;
+  --color-offwhite: #f7f4ee;
   --color-bege: #ede6dd;
-  --color-areia: #d6c3c2;
-  --color-pedra: #8f887e;
-  --color-grafite: #333333;
-  --color-medio: #6d6d6d;
+  --color-areia: #e2dacd;
+  --color-pedra: #6f6860;
+  --color-grafite: #1a1815;
+  --color-medio: #6b655c;
   --color-gold: #a98e4e;
   --color-gold-dark: #7e6836;
-  --color-gold-lit: #d9be85;
+  --color-gold-lit: #e8d9b5;
   --color-gold-soft: #f0e9d8;
-  --color-muted: #8fa398;
-  --color-muted2: #a9b8ae;
+  /* Os cinzas da sidebar eram esverdeados, feitos para o fundo verde. Agora são quentes. */
+  --color-muted: #9a938a;
+  --color-muted2: #cbc4ba;
 
-  /* Semânticas. O verde tem um valor por fundo (DESIGN.md §2, regra do Pedro de 29/jul):
-   * `#1B7A50` dá 4,89:1 sobre claro e só 2,80:1 sobre o verde escuro; `#3FB07A` é o
-   * inverso. O admin é claro no miolo, então usa o primeiro, e o segundo fica nomeado para
-   * quando algo semântico precisar aparecer sobre a sidebar. */
+  /* Semânticas. Continuam as mesmas: verde e vermelho aqui são dado (deu certo, falhou), e é
+   * o único lugar em que cor é informação e não marca. */
   --color-sucesso: #1b7a50;
   --color-sucesso-escuro: #3fb07a;
   --color-falha: #b0413e;
 
   --font-serif: "Playfair Display", Georgia, serif;
-  --font-sans: "Montserrat", system-ui, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue",
+    system-ui, sans-serif;
 
-  /* Teto de radius do Meridiano é 14px, então `rounded-lg` não passa disso. */
-  --radius-md: 10px;
-  --radius-lg: 14px;
+  /* A escala de raio da campanha, na densidade do admin: campo e botão 12, cartão 16. */
+  --radius-md: 12px;
+  --radius-lg: 16px;
 }
 
 /* O `app/layout.tsx` é compartilhado com a LP e não define fonte nem cor de fundo (a LP faz
@@ -118,14 +117,14 @@
     transition-duration: 0.06s;
   }
   /* Inputs de texto ficam de fora: eles já têm foco próprio (focus:border-gold + outline-none,
-   * utility ganha da base). Rádio e checkbox entram, porque não tinham nada. O anel é
-   * gold-dark no miolo claro e gold-lit no chrome escuro, um valor por fundo (DESIGN.md §2). */
+   * utility ganha da base). Rádio e checkbox entram, porque não tinham nada. O anel é o acento
+   * no miolo claro e o creme na sidebar escura, onde o vermelho sumiria. */
   .admin-root :is(button, [role="button"], a, summary, input, select):focus-visible {
-    outline: 2px solid var(--color-gold-dark);
+    outline: 2px solid var(--color-acento);
     outline-offset: 2px;
   }
   .admin-root nav :is(button, [role="button"], a):focus-visible {
-    outline-color: var(--color-gold-lit);
+    outline-color: var(--color-offwhite);
   }
   .admin-root :is(button:disabled, [aria-busy="true"]) {
     cursor: not-allowed;
