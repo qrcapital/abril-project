@@ -224,7 +224,9 @@
 .au-olho {
   position: absolute; left: 50%; top: 38%;
   transform: translate(-50%, -50%);
-  width: clamp(280px, 28vw, 440px); height: auto;
+  /* Teto de 520px medido num monitor ultrawide, onde o globo chega aos 1150px dele: a 440 o olho
+     ficava pequeno demais no meio da esfera e voltava a parecer distante. */
+  width: clamp(300px, 30vw, 520px); height: auto;
   mix-blend-mode: multiply;
   z-index: 1;
   pointer-events: none;
@@ -248,7 +250,7 @@
 .au-powered {
   position: relative; z-index: 2;
   display: flex; align-items: center; gap: 8px;
-  margin-top: 36px;
+  margin-top: 32px;
   font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
   font-weight: 600; color: rgba(253, 250, 245, .7);
 }
