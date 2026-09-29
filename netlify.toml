@@ -22,8 +22,13 @@
 [context.production.environment]
   NEXT_PUBLIC_APP_ENV = "production"
 
+# A branch homolog é a que publica em blocktrends.abril.com.br (domínio público da Abril, desde
+# 28/set/2026). Branch com contexto próprio ganha do contexto production, então com "homolog"
+# aqui o site público rodava como teste: cadastro livre com matrícula de um ano e webhook do
+# Guru aceitando entrega sem token. Enquanto for ela a publicar o domínio, ela é produção.
+# Para abrir o cadastro de teste temporariamente, use CADASTRO_ABERTO=sim no painel.
 [context.homolog.environment]
-  NEXT_PUBLIC_APP_ENV = "homolog"
+  NEXT_PUBLIC_APP_ENV = "production"
 
 # Deploy previews de Pull Request herdam as variáveis de homolog por padrão.
 [context.deploy-preview.environment]
