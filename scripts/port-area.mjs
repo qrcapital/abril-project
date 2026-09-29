@@ -264,13 +264,14 @@ const flip = (s, key, from, to) =>
   s.split(`value="{{ ${key} }}" hint-placeholder-val="{{ ${from} }}"`)
    .join(`value="{{ ${key} }}" hint-placeholder-val="{{ ${to} }}"`);
 
+// AS QUATRO TELAS DE LOGIN SAÍRAM DO PORTE em 29/set/2026. Elas eram da identidade verde do
+// bundle e foram refeitas na da campanha (creme, vermelho, globo), em código nosso:
+// `lib/auth-casca.ts` e `app/app/_ui/auth.css`. Se voltassem para cá, a próxima execução deste
+// script devolveria o verde por cima do trabalho novo sem avisar. `loginRaw` e `flip` ficam
+// acima só porque outras telas podem reaproveitar o padrão; nenhuma rota lê mais os arquivos
+// `screens/login*.html`.
+void loginRaw; void flip;
 const screens = {
-  login:            prep(loginRaw, V),                                              // "Bem-vindo de volta"
-  'login-error':    prep(flip(loginRaw, 'loginError', 'false', 'true'), V),         // senha errada
-  'login-pending':  prep(flip(loginRaw, 'loginPending', 'false', 'true'), V),       // pagamento em processamento
-  'login-first':    prep(                                                            // 1º acesso: defina sua senha
-                      flip(flip(loginRaw, 'loginFirst', 'false', 'true'), 'loginRegular', 'true', 'false'),
-                      { ...V, loginBtn: 'DEFINIR SENHA' }),
   // home: troca a estrela do card "Prova Final" pelo selo do curso (anel + olho)
   home:       prep(extractScreen(body, 'isHome'), V)
                 // botão "Ver a formação" do hero removido (redundante com os cards da prateleira)

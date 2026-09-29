@@ -33,7 +33,7 @@ export default function RedefinirClient({
   // A caixa vive DENTRO da coluna do formulário (o slot que o senha-template emite), e não
   // como irmã do HTML injetado, senão cai no fim da página.
   useEffect(() => {
-    pintarCaixa(ref.current?.querySelector<HTMLElement>("[data-feedback]"), "erro", erro);
+    pintarCaixa(ref.current?.querySelector<HTMLElement>("[data-feedback]"), "erro", erro, "claro");
   }, [erro]);
 
   // Indicador de exigências (DESIGN.md §3, padrão 4) logo abaixo do campo da senha nova. Esta
@@ -41,7 +41,7 @@ export default function RedefinirClient({
   useEffect(() => {
     const senha = ref.current?.querySelector<HTMLInputElement>("#senha");
     if (!senha) return;
-    const lista = ligarExigencias(senha);
+    const lista = ligarExigencias(senha, "claro");
     senha.after(lista);
     return () => lista.remove();
   }, []);

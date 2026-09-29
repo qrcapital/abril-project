@@ -29,8 +29,8 @@ export default function RecuperarClient({
   // como irmã do HTML injetado, senão cai no fim da página.
   useEffect(() => {
     const slot = ref.current?.querySelector<HTMLElement>("[data-feedback]");
-    if (enviado) pintarCaixa(slot, "sucesso", SUCESSO);
-    else pintarCaixa(slot, "aviso", aviso ?? null);
+    if (enviado) pintarCaixa(slot, "sucesso", SUCESSO, "claro");
+    else pintarCaixa(slot, "aviso", aviso ?? null, "claro");
   }, [aviso, enviado]);
 
   async function onSubmit(e: React.FormEvent) {

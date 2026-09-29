@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { tela } from "@/lib/telas";
 import { caixaAceite, telaSenha } from "@/lib/senha-template";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -16,7 +15,7 @@ const CAMPOS = [
 ];
 
 /** Redefinição comum: a conta já aceitou os documentos, então não há o que colher aqui. */
-const htmlSemAceite = telaSenha(tela("login"), {
+const htmlSemAceite = telaSenha({
   titulo: "Criar uma senha nova",
   lead: `Escolha uma senha de ${REGRA_SENHA}. Ela passa a valer assim que você confirmar.`,
   campos: CAMPOS,
@@ -29,7 +28,7 @@ const htmlSemAceite = telaSenha(tela("login"), {
  * O título muda junto com a caixa de propósito: "criar uma senha nova" numa tela que também está
  * pedindo o aceite dos Termos descreveria metade do que está acontecendo.
  */
-const htmlComAceite = telaSenha(tela("login"), {
+const htmlComAceite = telaSenha({
   titulo: "Crie sua senha de acesso",
   lead: `Escolha uma senha de ${REGRA_SENHA} e confirme os documentos do curso para entrar.`,
   campos: CAMPOS,

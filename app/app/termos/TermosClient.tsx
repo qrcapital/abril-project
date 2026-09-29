@@ -21,7 +21,7 @@ export default function TermosClient({ html }: { html: string }) {
   const [erro, setErro] = useState<string | null>(null);
 
   useEffect(() => {
-    pintarCaixa(ref.current?.querySelector<HTMLElement>("[data-feedback]"), "erro", erro);
+    pintarCaixa(ref.current?.querySelector<HTMLElement>("[data-feedback]"), "erro", erro, "claro");
   }, [erro]);
 
   async function onSubmit(e: React.FormEvent) {

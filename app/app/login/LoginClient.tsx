@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { criarConta } from "./actions";
 import { validarSenha } from "@/lib/senha";
+import { cadastroAberto } from "@/lib/seguranca";
 import { emTrabalho, ligarExigencias, pintarCaixa } from "@/app/app/_ui/feedback";
 
 import contato from "@/lib/contato.json";
@@ -62,7 +63,7 @@ export default function LoginClient({
     // pessoa digita, o padrão 4 do DESIGN.md §3. Vai depois do PRIMEIRO campo, que é onde a
     // senha é escolhida, e não depois do "repita".
     if (mode === "primeiro" && camposSenha.length > 0) {
-      camposSenha[0].after(ligarExigencias(camposSenha[0]));
+      camposSenha[0].after(ligarExigencias(camposSenha[0], "claro"));
     }
 
     // Campo "Nome completo" no 1º acesso (só homolog): clona o par label+input do
@@ -77,6 +78,12 @@ export default function LoginClient({
         nomeInput.type = "text";
         nomeInput.value = "";
         nomeInput.setAttribute("autocomplete", "name");
+        // A casca nova dá `id` e `name` aos campos. Sem trocar os dois, o clone nascia com
+        // `id="email"` repetido, e o `for` do rótulo apontava para o e-mail em vez do nome.
+        nomeInput.id = "nome";
+        nomeInput.name = "nome";
+        nomeInput.placeholder = "Como no certificado";
+        nomeLabel.setAttribute("for", "nome");
         emailLabel.before(nomeLabel, nomeInput);
       }
     }
@@ -91,7 +98,8 @@ export default function LoginClient({
         caixa = document.createElement("div");
         btn?.parentElement?.insertBefore(caixa, btn);
       }
-      pintarCaixa(caixa, tipo, msg);
+      // "claro" desde 29/set/2026: a coluna do formulário passou do verde escuro para o creme.
+      pintarCaixa(caixa, tipo, msg, "claro");
     };
     const showError = (msg: string) => mostrar("erro", msg);
     const clearError = () => caixa && (caixa.hidden = true);
@@ -183,7 +191,11 @@ export default function LoginClient({
   return (
     <>
       <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />
-      <TestBar router={router} />
+      {/* A barra de teste só existe onde o cadastro livre existe. Ela anunciava, na tela de
+          login pública, um botão "1º acesso" que cria conta com matrícula ativa sem compra:
+          com o domínio da Abril servindo esta branch, isso era a porta aberta com placa na
+          frente. Os dois agora pendem da mesma variável. */}
+      {cadastroAberto(process.env.NEXT_PUBLIC_APP_ENV) && <TestBar router={router} />}
     </>
   );
 }
@@ -202,14 +214,14 @@ function TestBar({ router }: { router: ReturnType<typeof useRouter> }) {
         alignItems: "center",
         flexWrap: "wrap",
         justifyContent: "center",
-        background: "rgba(8,31,22,.92)",
-        border: "1px solid rgba(217,190,133,.3)",
+        background: "rgba(26,24,21,.9)",
+        border: "1px solid rgba(253,250,245,.18)",
         borderRadius: 10,
         padding: "8px 12px",
         backdropFilter: "blur(6px)",
       }}
     >
-      <span style={{ fontSize: 9, letterSpacing: ".12em", textTransform: "uppercase", color: "#8FA398", fontWeight: 700 }}>
+      <span style={{ fontSize: 9, letterSpacing: ".1em", textTransform: "uppercase", color: "rgba(253,250,245,.6)", fontWeight: 600 }}>
         Teste (homolog)
       </span>
       {TEST_STATES.map((t) => (
@@ -217,8 +229,8 @@ function TestBar({ router }: { router: ReturnType<typeof useRouter> }) {
           key={t.label}
           onClick={() => router.push(t.s ? `/app/login?s=${t.s}` : "/app/login")}
           style={{
-            border: "1px solid rgba(217,190,133,.4)",
-            color: "#EDE6DD",
+            border: "1px solid rgba(253,250,245,.28)",
+            color: "#fdfaf5",
             background: "transparent",
             borderRadius: 6,
             padding: "6px 10px",

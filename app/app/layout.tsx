@@ -23,6 +23,15 @@ const areaCss = readFileSync(
   "utf8"
 );
 
+// As telas de acesso (login, senha, termos, acesso bloqueado) saíram da identidade verde em
+// 29/set/2026 e têm folha própria, escopada em `.au`. Vem DEPOIS do CSS portado para ganhar dele
+// nos poucos pontos em que os dois se tocam (a cor de fundo do body, por exemplo), e não é escrita
+// pelo `port-area.mjs`, então sobrevive a uma nova execução dele.
+const authCss = readFileSync(
+  join(process.cwd(), "app", "app", "_ui", "auth.css"),
+  "utf8"
+);
+
 export default function AreaLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -42,6 +51,8 @@ export default function AreaLayout({
         dangerouslySetInnerHTML={{
           __html:
             areaCss +
+            "\n" +
+            authCss +
             "\nhtml{font-variant-numeric:lining-nums}" +
             '\n[style*="tabular-nums"]{font-variant-numeric:lining-nums tabular-nums !important}',
         }}

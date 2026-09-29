@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { tela } from "@/lib/telas";
 import { linkSenha, telaSenha } from "@/lib/senha-template";
 import RecuperarClient from "./RecuperarClient";
 
 export const metadata: Metadata = { title: "Redefinir senha" };
 
-const html = telaSenha(tela("login"), {
+const html = telaSenha({
   titulo: "Redefinir sua senha",
   lead: "Informe o e-mail que você usou na compra e a gente envia um link para você criar uma senha nova.",
   campos: [

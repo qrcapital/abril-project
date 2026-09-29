@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { tela } from "@/lib/telas";
 import { caixaAceite, telaSenha } from "@/lib/senha-template";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -28,7 +27,7 @@ export const metadata: Metadata = { title: "Termos e privacidade" };
  * um título, um parágrafo, a caixa e o botão. Escrever JSX novo aqui daria uma tela que diverge do
  * resto do produto na primeira vez que alguém mexer no design.
  */
-const html = telaSenha(tela("login"), {
+const html = telaSenha({
   titulo: "Antes de continuar",
   lead: "Atualizamos os documentos do curso. Para seguir usando a plataforma, confirme a leitura abaixo. Leva um instante e só é pedido uma vez por versão.",
   campos: [],

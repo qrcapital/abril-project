@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { tela } from "@/lib/telas";
 import { linkSenha, telaSenha } from "@/lib/senha-template";
 import { getMatricula, type EstadoAcesso } from "@/lib/matricula";
 import AcessoClient from "./AcessoClient";
@@ -49,7 +48,7 @@ export default async function AcessoPage() {
   if (estado === "ativa") redirect("/app");
 
   const t = TEXTOS[estado];
-  const html = telaSenha(tela("login"), {
+  const html = telaSenha({
     titulo: t.titulo,
     lead: t.lead,
     campos: [],

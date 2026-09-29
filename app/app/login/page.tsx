@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { LOGIN } from "@/lib/auth-casca";
 import LoginClient from "./LoginClient";
 
 export const metadata: Metadata = { title: "Entrar" };
 
-const dir = join(process.cwd(), "app", "app", "_ui", "screens");
-const variants: Record<string, string> = {
-  regular: readFileSync(join(dir, "login.html"), "utf8"),
-  erro: readFileSync(join(dir, "login-error.html"), "utf8"),
-  pendente: readFileSync(join(dir, "login-pending.html"), "utf8"),
-  primeiro: readFileSync(join(dir, "login-first.html"), "utf8"),
-};
+// As quatro variantes saem da casca nova (`lib/auth-casca.ts`), e não mais dos
+// `screens/login*.html` do porte, que eram a identidade verde e saíram do repo em 29/set/2026.
+const variants: Record<string, string> = LOGIN;
 
 // Motivos de o aluno ter caído aqui sem pedir. O proxy manda o `estado`; sem ele, a tela é a
 // de sempre. Mesmo padrão da recuperação de senha.
