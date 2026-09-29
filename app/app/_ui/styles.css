@@ -258,8 +258,6 @@ summary::-webkit-details-marker{display:none}
    Ver scripts/comum.mjs: uma regra por valor distinto, !important por causa do
    style inline, hover restrito a ponteiro fino. */
 @media (hover:hover){
-[style-hover="color:#D9BE85"]:hover{color:#D9BE85!important}
-[style-hover="background:rgba(217,190,133,.12)"]:hover{background:rgba(217,190,133,.12)!important}
 [style-hover="color:#f7f4ee"]:hover{color:#f7f4ee!important}
 [style-hover="color:#fdfaf5"]:hover{color:#fdfaf5!important}
 [style-hover="background:#f1ece2"]:hover{background:#f1ece2!important}
@@ -271,3 +269,5 @@ summary::-webkit-details-marker{display:none}
 [style-hover="background:#C1121F;color:#fff;border-color:#C1121F"]:hover{background:#C1121F!important;color:#fff!important;border-color:#C1121F!important}
 }
 [style-focus="border-color:#C1121F"]:focus{border-color:#C1121F!important}
+/* O olho do banner da home some no celular: a 250px ele passaria por cima do título. */
+@media (max-width:720px){.hero-olho{display:none}}

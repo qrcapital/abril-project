@@ -45,7 +45,7 @@ export default function Erro({
             ...BOTAO,
             background: "transparent",
             color: "#1a1815",
-            border: "1.5px solid #0B2D20",
+            border: "1.5px solid #1a1815",
             textDecoration: "none",
             display: "inline-block",
           }}

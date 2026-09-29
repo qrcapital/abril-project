@@ -2,15 +2,18 @@
 <div style="max-width:1180px;margin:0 auto;padding:30px 28px 64px">
 
   <!-- banner hero -->
-  <div style="position:relative;border-radius:16px;overflow:hidden;min-height:262px;display:flex;align-items:flex-end;background:radial-gradient(620px 320px at 82% 8%, rgba(169,142,78,.34), transparent 62%),linear-gradient(150deg,#8E1522,#6B111C 78%);border:1px solid rgba(11,45,32,.12);box-shadow:0 18px 44px rgba(11,45,32,.14)">
-    <div class="dotstex"></div>
-    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-end;padding-right:52px;opacity:.5"><img src="/app/24396be6-85a2-478c-8a47-900e3f3962b7.webp" alt="" style="width:230px;filter:brightness(1.15)"></div>
+  <div style="position:relative;border-radius:16px;overflow:hidden;min-height:262px;display:flex;align-items:flex-end;background:linear-gradient(150deg,#8E1522,#6B111C 78%);border:1px solid rgba(169,142,78,.5);isolation:isolate;box-shadow:0 18px 44px rgba(72,60,42,.14)">
+    <!-- Globo e olho no lugar da textura de pontos e do olho verde a meia opacidade: a mesma composição
+         do painel das telas de acesso. O olho é o do hero do site, com multiply para o halo branco
+         virar o vermelho do painel e sobrar só a gravura. O isolation do banner prende a mistura aqui. -->
+    <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"><img src="/marca/globo-dourado.svg" alt="" style="position:absolute;right:-120px;top:50%;transform:translateY(-50%);width:640px;height:auto;opacity:.16;filter:brightness(0) invert(1)"></div>
+    <img src="/lp/f2070b29-906c-48d8-92c7-0948fe19573b.webp" alt="" aria-hidden="true" class="hero-olho" style="position:absolute;right:88px;top:50%;transform:translateY(-50%);width:250px;height:auto;mix-blend-mode:multiply;pointer-events:none">
     <div style="position:relative;z-index:1;padding:34px 38px 36px;max-width:640px">
-      <span style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#D9BE85;font-weight:700">Bem-vindo de volta, <span data-u="first">Pedro</span></span>
+      <span style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#e8d9b5;font-weight:600">Bem-vindo de volta, <span data-u="first">Pedro</span></span>
       <h1 style="font-family:'Playfair Display',serif;font-weight:600;font-size:30px;margin:8px 0 6px;color:#f7f4ee;line-height:1.1">Continue de onde parou</h1>
-      <p style="font-size:13.5px;color:#A9B8AE;margin:0 0 22px">Módulo II · Aula 7 · Comprando ações nos EUA</p>
+      <p style="font-size:14px;color:rgba(253,250,245,.78);margin:0 0 22px">Módulo II · Aula 7 · Comprando ações nos EUA</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <button style="display:inline-flex;align-items:center;gap:9px;border:none;border-radius:5px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.05em;padding:13px 24px;cursor:pointer;background:#C1121F;color:#fdfbf6;box-shadow:0 8px 22px rgba(169,142,78,.3);transition:transform .12s ease" style-hover="transform:translateY(-1px)"><span style="font-size:14px">▶</span> Continuar Aula 7</button>
+        <button style="display:inline-flex;align-items:center;gap:9px;border:none;border-radius:12px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.05em;padding:13px 24px;cursor:pointer;background:#fdfbf6;color:#C1121F;box-shadow:0 8px 22px rgba(26,24,21,.28);transition:transform .12s ease" style-hover="transform:translateY(-1px)"><span style="font-size:14px">▶</span> Continuar Aula 7</button>
       </div>
     </div>
   </div>
@@ -24,7 +27,7 @@
     
     <div class="rail" style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px">
 
-      <div class="mcard" style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(11,45,32,.05)">
+      <div class="mcard" style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(72,60,42,.05)">
         <span style="position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:800;letter-spacing:.14em;background:#EDE6DD;border:1px solid #E0D3BE;color:#7E6836;border-radius:4px;padding:3px 7px">BOAS-VINDAS</span>
         <div style="position:relative;aspect-ratio:3/3.5;flex:0 0 auto;background:linear-gradient(160deg,#F0EADF,#E7DECF)"><div class="art-slot">Arte do módulo</div></div>
         <div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1">
@@ -35,7 +38,7 @@
         </div>
       </div>
 
-      <div class="mcard" style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(11,45,32,.05)">
+      <div class="mcard" style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(72,60,42,.05)">
         <span style="position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:800;letter-spacing:.14em;background:#EDE6DD;border:1px solid #E0D3BE;color:#7E6836;border-radius:4px;padding:3px 7px">AULAS</span>
         <div style="position:relative;aspect-ratio:3/3.5;flex:0 0 auto;background:linear-gradient(160deg,#F0EADF,#E7DECF)"><div class="art-slot">Arte do módulo</div></div>
         <div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1">
@@ -47,7 +50,7 @@
         </div>
       </div>
 
-      <div class="mcard" style="background:#fff;border:1px solid #D9BE85;border-radius:13px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;box-shadow:0 8px 22px rgba(169,142,78,.12)">
+      <div class="mcard" style="background:#fff;border:1px solid #C1121F;border-radius:13px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;box-shadow:0 8px 22px rgba(169,142,78,.12)">
         <span style="position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:800;letter-spacing:.14em;background:#C1121F;color:#fdfbf6;border-radius:4px;padding:3px 7px">EM ANDAMENTO</span>
         <div style="position:relative;aspect-ratio:3/3.5;flex:0 0 auto;background:linear-gradient(160deg,#F0EADF,#E7DECF)"><div class="art-slot">Arte do módulo</div></div>
         <div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1">
@@ -59,7 +62,7 @@
         </div>
       </div>
 
-      <div class="mcard" style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(11,45,32,.05)">
+      <div class="mcard" style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(72,60,42,.05)">
         <span style="position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:800;letter-spacing:.14em;background:#EDE6DD;border:1px solid #E0D3BE;color:#7E6836;border-radius:4px;padding:3px 7px">AULAS</span>
         <div style="position:relative;aspect-ratio:3/3.5;flex:0 0 auto;background:linear-gradient(160deg,#F0EADF,#E7DECF)"><div class="art-slot">Arte do módulo</div></div>
         <div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1">
@@ -71,7 +74,7 @@
         </div>
       </div>
 
-      <div class="mcard" style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(11,45,32,.05)">
+      <div class="mcard" style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(72,60,42,.05)">
         <span style="position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:800;letter-spacing:.14em;background:#EDE6DD;border:1px solid #E0D3BE;color:#7E6836;border-radius:4px;padding:3px 7px">AULAS</span>
         <div style="position:relative;aspect-ratio:3/3.5;flex:0 0 auto;background:linear-gradient(160deg,#F0EADF,#E7DECF)"><div class="art-slot">Arte do módulo</div></div>
         <div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1">
@@ -86,7 +89,7 @@
     </div>
 
     <div class="milestones" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px;margin-top:16px">
-      <div class="mcard" style="background:#fff;border:1px solid #E4DACC;border-radius:14px;padding:22px 24px;cursor:pointer;display:flex;align-items:center;gap:18px;box-shadow:0 6px 18px rgba(11,45,32,.05)">
+      <div class="mcard" style="background:#fff;border:1px solid #E4DACC;border-radius:14px;padding:22px 24px;cursor:pointer;display:flex;align-items:center;gap:18px;box-shadow:0 6px 18px rgba(72,60,42,.05)">
         <div style="width:52px;height:52px;border-radius:13px;background:#EDE6DD;display:flex;align-items:center;justify-content:center;flex:0 0 auto"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7E6836" stroke-width="1.6"><path d="M4 5a2 2 0 0 1 2-2h10l4 4v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"></path><path d="M9 10h6M9 14h6"></path></svg></div>
         <div style="flex:1">
           <span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">BÔNUS</span>
@@ -96,8 +99,8 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7E6836" stroke-width="1.8" style="flex:0 0 auto"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"></path></svg>
       </div>
 
-      <div class="mcard" style="background:linear-gradient(150deg,#FFFDF7,#F6EFE0);border:1.5px solid #D9BE85;border-radius:14px;padding:22px 24px;cursor:pointer;display:flex;align-items:center;gap:18px;box-shadow:0 8px 22px rgba(169,142,78,.14)">
-        <div style="position:relative;width:52px;height:52px;flex:0 0 auto"><img src="/app/dec6993b-f88c-4b38-a7bb-33d730441044.svg" alt="Selo do curso" style="width:52px;height:52px;display:block;transform:rotate(-38deg)"><img src="/app/280505b4-fa9f-4519-b1d2-064fbb4ecad1.webp" alt="" style="position:absolute;top:49%;left:50%;transform:translate(-50%,-50%);width:26px;height:auto;display:block"></div>
+      <div class="mcard" style="background:linear-gradient(150deg,#FFFDF7,#F6EFE0);border:1.5px solid #a98e4e;border-radius:14px;padding:22px 24px;cursor:pointer;display:flex;align-items:center;gap:18px;box-shadow:0 8px 22px rgba(169,142,78,.14)">
+        <div style="position:relative;width:52px;height:52px;flex:0 0 auto"><img src="/app/dec6993b-f88c-4b38-a7bb-33d730441044.svg" alt="Selo do curso" style="width:52px;height:52px;display:block;transform:rotate(-38deg)"><img src="/lp/f2070b29-906c-48d8-92c7-0948fe19573b.webp" alt="" style="position:absolute;top:49%;left:50%;transform:translate(-50%,-50%);width:26px;height:auto;display:block"></div>
         <div style="flex:1">
           <span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">PROVA FINAL</span>
           <h3 style="font-family:'Playfair Display',serif;font-size:17px;font-weight:600;margin:3px 0 5px;color:#1a1815">Certificado de 30 horas</h3>

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 import { CURSO, HORAS, normalizarCodigo } from "@/lib/certificado";
 import { createClient } from "@/lib/supabase/server";
@@ -15,6 +17,18 @@ const meses = [
 ];
 
 type Cert = { nome: string; codigo: string; emissao: Date };
+
+/**
+ * As @font-face da Playfair Display, lidas do CSS da área do aluno. Esta rota fica fora de
+ * `/app`, então o layout de lá não a alcança, e sem isto o nome e o código cairiam no Georgia.
+ * `throw` se nada casar: certificado verificado na serifa errada é defeito que ninguém reporta.
+ */
+function fontesPlayfair(): string {
+  const css = readFileSync(join(process.cwd(), "app", "app", "_ui", "styles.css"), "utf8");
+  const faces = (css.match(/@font-face\s*\{[^}]*\}/g) ?? []).filter((f) => f.includes("Playfair"));
+  if (!faces.length) throw new Error("[verificar] nenhuma @font-face da Playfair em app/app/_ui/styles.css");
+  return faces.join("\n");
+}
 
 /**
  * A verificação pública, agora contra o BANCO.
@@ -72,16 +86,18 @@ export default async function VerificarPage({
     <main
       style={{
         minHeight: "100vh",
-        background:
-          "radial-gradient(680px 360px at 82% 6%, rgba(169,142,78,.28), transparent 60%), linear-gradient(150deg,#123B2B,#0A2B1E 78%)",
-        color: "#F7F5F2",
+        // Creme, e não o painel escuro de antes: quem abre esta página é quase sempre um terceiro
+        // (um recrutador, um cliente) conferindo um documento, e a leitura tem de ser a de papel.
+        background: "#f7f4ee",
+        color: "#1a1815",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: 24,
-        fontFamily: "system-ui, -apple-system, sans-serif",
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Helvetica Neue', system-ui, sans-serif",
       }}
     >
+      <style dangerouslySetInnerHTML={{ __html: fontesPlayfair() }} />
       <div style={{ textAlign: "center", maxWidth: 560, width: "100%" }}>
         {/* selo do curso */}
         <div style={{ position: "relative", width: 96, height: 96, margin: "0 auto 22px" }}>
@@ -91,7 +107,7 @@ export default async function VerificarPage({
             style={{ width: 96, height: 96, display: "block", transform: "rotate(-38deg)" }}
           />
           <img
-            src="/app/280505b4-fa9f-4519-b1d2-064fbb4ecad1.webp"
+            src="/lp/f2070b29-906c-48d8-92c7-0948fe19573b.webp"
             alt=""
             style={{
               position: "absolute",
@@ -104,19 +120,24 @@ export default async function VerificarPage({
           />
         </div>
 
-        <div style={{ fontFamily: "Georgia, 'Times New Roman', serif", letterSpacing: ".26em", fontSize: 20, color: "#F7F5F2" }}>
-          ESTRATÉGIA
-        </div>
-        <div style={{ fontSize: 8.5, letterSpacing: ".42em", color: "#D9BE85", marginTop: 4, marginBottom: 34 }}>
-          INTERNACIONAL
+        {/* O lockup do site: marca da VEJA Negócios, filete em pé, nome do curso em duas linhas. */}
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 13, marginBottom: 34 }}>
+          <img src="/marca/veja-negocios-claro.svg" alt="VEJA Negócios" style={{ height: 30, width: "auto", display: "block" }} />
+          <i aria-hidden="true" style={{ display: "block", width: 1, height: 31, background: "rgba(26,24,21,.19)" }} />
+          <span style={{ display: "block", fontSize: 11.5, letterSpacing: ".17em", textTransform: "uppercase", lineHeight: 1.22, textAlign: "left", whiteSpace: "nowrap" }}>
+            Estratégia
+            <br />
+            Internacional
+          </span>
         </div>
 
         {cert ? (
           <div
             style={{
-              background: "rgba(255,255,255,.04)",
-              border: "1px solid rgba(217,190,133,.28)",
-              borderRadius: 16,
+              background: "#fff",
+              border: "1px solid #e2dacd",
+              borderRadius: 20,
+              boxShadow: "0 12px 30px rgba(72,60,42,.1)",
               padding: "34px 34px 30px",
             }}
           >
@@ -126,45 +147,46 @@ export default async function VerificarPage({
                 height: 46,
                 margin: "0 auto 16px",
                 borderRadius: "50%",
-                background: "rgba(31,138,91,.18)",
-                border: "1px solid rgba(31,138,91,.5)",
+                background: "rgba(27,122,80,.08)",
+                border: "1px solid rgba(27,122,80,.35)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4ED18C" strokeWidth="2">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1B7A50" strokeWidth="2">
                 <circle cx="12" cy="12" r="9" />
                 <path d="M8.3 12.3l2.4 2.4 5-5.4" />
               </svg>
             </div>
-            <p style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: "#4ED18C", fontWeight: 700, margin: "0 0 12px" }}>
+            <p style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: "#1B7A50", fontWeight: 600, margin: "0 0 12px" }}>
               Certificado válido
             </p>
-            <h1 style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 600, margin: "0 0 14px", color: "#F7F5F2" }}>
+            <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, fontWeight: 600, margin: "0 0 14px", color: "#1a1815" }}>
               {/* Conta sem nome cadastrado existe (o backfill de 28/jul achou 3 de 8), e aqui o nome
                   é o ponto da consulta: dizer que falta o cadastro é mais honesto que uma linha em
                   branco no lugar de quem se formou. */}
               {cert.nome || "Aluno sem nome no cadastro"}
             </h1>
-            <p style={{ fontSize: 14.5, lineHeight: 1.6, color: "#C9D3CC", margin: "0 0 24px" }}>
-              concluiu a formação <b style={{ color: "#F7F5F2" }}>{CURSO}</b>, com carga horária de{" "}
-              <b style={{ color: "#F7F5F2" }}>{HORAS} horas</b>, emitido em{" "}
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#6b655c", margin: "0 0 24px" }}>
+              concluiu a formação <b style={{ color: "#1a1815" }}>{CURSO}</b>, com carga horária de{" "}
+              <b style={{ color: "#1a1815" }}>{HORAS} horas</b>, emitido em{" "}
               {meses[cert.emissao.getMonth()]} de {cert.emissao.getFullYear()}.
             </p>
-            <div style={{ borderTop: "1px solid rgba(217,190,133,.18)", paddingTop: 18 }}>
-              <span style={{ fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", color: "#8FA398" }}>
+            <div style={{ borderTop: "1px solid #e2dacd", paddingTop: 18 }}>
+              <span style={{ fontSize: 10.5, letterSpacing: ".1em", textTransform: "uppercase", color: "#6f6860", fontWeight: 600 }}>
                 Código de verificação
               </span>
-              <div style={{ fontFamily: "Georgia, serif", fontSize: 20, color: "#D9BE85", marginTop: 4 }}>{cert.codigo}</div>
+              <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, color: "#C1121F", marginTop: 4, letterSpacing: ".04em" }}>{cert.codigo}</div>
             </div>
           </div>
         ) : (
           <div
             style={{
-              background: "rgba(255,255,255,.04)",
-              border: "1px solid rgba(176,65,62,.4)",
-              borderRadius: 16,
+              background: "#fff",
+              border: "1px solid rgba(176,65,62,.32)",
+              borderRadius: 20,
+              boxShadow: "0 12px 30px rgba(72,60,42,.1)",
               padding: "34px 34px 30px",
             }}
           >
@@ -174,28 +196,28 @@ export default async function VerificarPage({
                 height: 46,
                 margin: "0 auto 16px",
                 borderRadius: "50%",
-                background: "rgba(176,65,62,.14)",
-                border: "1px solid rgba(176,65,62,.45)",
+                background: "rgba(176,65,62,.08)",
+                border: "1px solid rgba(176,65,62,.35)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E0736F" strokeWidth="2">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8E3330" strokeWidth="2">
                 <path d="M18 6 6 18M6 6l12 12" />
               </svg>
             </div>
-            <h1 style={{ fontFamily: "Georgia, serif", fontSize: 24, fontWeight: 600, margin: "0 0 12px", color: "#F7F5F2" }}>
+            <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 26, fontWeight: 600, margin: "0 0 12px", color: "#1a1815" }}>
               Certificado não encontrado
             </h1>
-            <p style={{ fontSize: 14, lineHeight: 1.6, color: "#C9D3CC", margin: 0 }}>
+            <p style={{ fontSize: 14.5, lineHeight: 1.6, color: "#6b655c", margin: 0 }}>
               Não localizamos um certificado com o código{" "}
-              <b style={{ color: "#F7F5F2" }}>{codigo}</b>. Confira o código informado no certificado e tente novamente.
+              <b style={{ color: "#1a1815" }}>{codigo}</b>. Confira o código informado no certificado e tente novamente.
             </p>
           </div>
         )}
 
-        <p style={{ fontSize: 11.5, color: "#8FA398", marginTop: 24 }}>
+        <p style={{ fontSize: 12, color: "#6f6860", marginTop: 24 }}>
           Verificação oficial · Estratégia Internacional
         </p>
       </div>

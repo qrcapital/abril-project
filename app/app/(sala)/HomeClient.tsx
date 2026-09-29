@@ -186,7 +186,7 @@ function Modal({ aviso, fechar }: { aviso: Aviso; fechar: () => void }) {
         position: "fixed",
         inset: 0,
         zIndex: 1000,
-        background: "rgba(8,31,22,.72)",
+        background: "rgba(26,24,21,.6)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
