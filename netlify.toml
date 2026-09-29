@@ -28,3 +28,26 @@
 # Deploy previews de Pull Request herdam as variáveis de homolog por padrão.
 [context.deploy-preview.environment]
   NEXT_PUBLIC_APP_ENV = "homolog"
+
+# ------------------------------------------------------------
+# Cabeçalhos de segurança, em todas as rotas
+# ------------------------------------------------------------
+# Nenhuma página nossa é exibida dentro de iframe (o player da Panda é iframe DENTRO das
+# nossas páginas, e isso não é afetado), então o site inteiro recusa ser emoldurado: é o
+# que fecha clickjacking na tela de senha e no admin.
+#
+# A CSP É DELIBERADAMENTE SÓ `frame-ancestors`. Uma política completa, com `script-src`,
+# quebraria o RD Station (código de monitoramento da pré-lista), a Panda, o pixel e os
+# scripts inline que a LP e a área do aluno usam por construção (HTML portado injetado).
+# Fazer isso direito pede nonce por requisição e um inventário dos terceiros; até lá, a
+# política cobre o que dá para cobrir sem quebrar nada. `X-Frame-Options` repete a regra
+# para navegador antigo que não lê CSP.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    Content-Security-Policy = "frame-ancestors 'none'"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"

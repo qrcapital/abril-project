@@ -33,6 +33,7 @@ const TETO: Record<string, number> = {
   emails: 1000,
   auditoria: 1000,
   consentimentos: 5000,
+  guru: 1000,
 };
 
 const escapar = (v: unknown): string => {
@@ -173,6 +174,36 @@ export async function GET(req: NextRequest) {
         c.ip,
         c.user_agent,
         c.texto,
+      ]),
+    );
+  }
+
+  if (tipo === "guru") {
+    // Leitura direta da tabela, sem RPC: `guru_events` (0025) não precisa de `auth.users` nem de
+    // junção, e a service role já a lê. É o CSV de suporte para "paguei e não recebi": cada
+    // entrega do Guru, com o desfecho. O payload cru fica de fora, porque carrega CPF e telefone
+    // e a pergunta de suporte se responde sem ele.
+    const { data, error } = await db
+      .from("guru_events")
+      .select("received_at,request_id,transaction_id,webhook_type,status,email,processed_at,resultado,erro")
+      .order("received_at", { ascending: false })
+      .limit(TETO.guru);
+    if (error) return new NextResponse("O relatório falhou. Tente de novo.", { status: 500 });
+    const rows = data ?? [];
+    linhas = rows.length;
+    conteudo = csv(
+      ["recebido", "request id", "transacao", "tipo", "status", "email", "processado", "resultado", "erro"],
+      rows.map((g: Record<string, unknown>) => [
+        dataBR(g.received_at),
+        g.request_id,
+        g.transaction_id,
+        g.webhook_type,
+        g.status,
+        g.email,
+        // Vazio aqui é o sinal que importa: a entrega chegou e o processamento não terminou.
+        g.processed_at ? dataBR(g.processed_at) : "não terminou",
+        g.resultado,
+        g.erro,
       ]),
     );
   }

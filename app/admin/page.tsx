@@ -6,6 +6,7 @@ import { avisosDaPolitica } from "@/lib/politica-avisos";
 import { getRegras } from "@/lib/politicas";
 import { NOTA_MINIMA } from "@/lib/prova-correcao";
 import { META_POR_MODULO, ORDS_AVALIADOS, POR_MODULO } from "@/lib/questoes";
+import { exigirAdmin } from "@/lib/admin-guarda";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -49,6 +50,9 @@ async function todas<T>(
 }
 
 export default async function AdminPainel() {
+  // Antes de qualquer leitura com a service role: layout e página rodam em paralelo, e a guarda
+  // do layout não segura a consulta daqui (ver `lib/admin-guarda.ts`).
+  await exigirAdmin();
   const db = createAdminClient();
   const agora = new Date();
   const iso = agora.toISOString();
@@ -417,6 +421,8 @@ export default async function AdminPainel() {
           // O CSV que a Abril pediu junto da revisão dos documentos: é por aqui que o time de
           // privacidade deles recebe o log sem precisar de conta no painel.
           ["consentimentos", "Consentimentos"],
+          // Cada entrega do webhook do Guru com o desfecho (0025): o CSV do "paguei e não recebi".
+          ["guru", "Eventos do Guru"],
         ].map(([tipo, rotulo]) => (
           <a
             key={tipo}

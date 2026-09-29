@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { Cabecalho, Linha, Quadro, Selo, Vazio, dataHora } from "@/app/admin/_ui/tabela";
 import { descrever, rotularAcao } from "@/lib/auditoria-texto";
+import { exigirAdmin } from "@/lib/admin-guarda";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = { title: "Auditoria" };
@@ -46,6 +47,9 @@ export default async function Auditoria({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
+  // Antes de qualquer leitura com a service role: layout e página rodam em paralelo, e a guarda
+  // do layout não segura a consulta daqui (ver `lib/admin-guarda.ts`).
+  await exigirAdmin();
   const { q = "" } = await searchParams;
   const termo = q.trim();
 

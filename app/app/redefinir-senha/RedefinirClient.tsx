@@ -80,7 +80,10 @@ export default function RedefinirClient({
     if (r.ok) {
       // Sem restaurar: a navegação já vai acontecer, e devolver o botão ao normal antes
       // dela pisca "clique de novo" numa tela que está saindo.
-      router.push("/app");
+      //
+      // Destino "Comece por aqui" desde 29/set/2026, pedido do dono: primeiro acesso e senha
+      // redefinida caem na porta do Módulo 0, que diz onde o aluno está e quando abre o resto.
+      router.push("/app/comece");
     } else {
       restaurar();
       setErro(r.erro);

@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { TEXTO_AVISO_LISTA, registrarConsentimento } from "@/lib/consentimento";
+import { TEXTO_AVISO_LISTA, ipDaRequisicao, registrarConsentimento } from "@/lib/consentimento";
+import { consumirLimite } from "@/lib/limite";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -22,41 +23,32 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * resolvem o caso real, que é robô de formulário, não adversário dedicado:
  *
  * 1. o corpo é validado campo a campo e tudo que passa é aparado no tamanho;
- * 2. um teto por IP em memória, explicado abaixo;
+ * 2. um teto por IP, explicado abaixo;
  * 3. nada do que chega aqui concede acesso a coisa nenhuma. O pior caso é lixo no log de
  *    consentimento, não conta criada nem e-mail disparado.
+ *
+ * ┌─ O QUE UMA LINHA DAQUI PROVA, E O QUE NÃO PROVA ──────────────────────────────────────────────┐
+ * │ O e-mail desta rota NÃO É VERIFICADO: ninguém clicou num link de confirmação, então a linha   │
+ * │ prova que alguém mandou o formulário com aquele endereço, não que o dono do endereço mandou.  │
+ * │ A marca disso já está na própria linha, sem coluna nova: `origem = 'lista-de-espera'` é, por  │
+ * │ construção, e-mail não verificado. Os aceites com e-mail verificado são os de origem          │
+ * │ `primeiro-acesso` (a pessoa abriu o link que chegou na caixa dela) e `checkout-guru` (o       │
+ * │ pagamento amarra o pedido). Quem responder a um titular a partir do CSV precisa saber disso.   │
+ * └───────────────────────────────────────────────────────────────────────────────────────────────┘
  */
 
 const EMAIL = /^[^@\s]+@[^@\s.]+\.[^@\s]{2,}$/;
 
 /**
- * Teto por IP, em memória do processo.
+ * Teto por IP: 5 envios por minuto, contados no Postgres (`consumir_limite`, migration `0025`).
  *
- * SAIBA O QUE ISTO NÃO É: não é rate limit de verdade. A Netlify roda várias instâncias e cada uma
- * tem o próprio mapa, então o teto real é o número de instâncias vezes este valor, e reinício zera
- * tudo. Serve para o caso que acontece, que é o mesmo formulário sendo reenviado em rajada. Teto
- * sério exige estado compartilhado (o próprio Postgres serviria), e a hora de fazer isso é quando
- * aparecer abuso de verdade, não antes.
+ * Era um Map em memória até 29/set/2026, e o comentário dele já avisava o que ele não era: cada
+ * instância da Netlify tinha o próprio mapa, o teto real era o número de instâncias vezes cinco, e
+ * reinício zerava tudo. Com o estado no banco o teto vale para o site inteiro. Se o banco falhar, o
+ * pedido passa (ver `lib/limite.ts`): esta rota não pode segurar lead por causa de um contador.
  */
-const JANELA_MS = 60_000;
+const JANELA_S = 60;
 const TETO_POR_JANELA = 5;
-const visitas = new Map<string, { n: number; ate: number }>();
-
-function excedeu(ip: string): boolean {
-  const agora = Date.now();
-
-  // Faxina oportunista: sem ela o mapa cresce para sempre numa instância de vida longa. Roda junto
-  // com a checagem porque um timer manteria a instância acordada à toa.
-  if (visitas.size > 5_000) for (const [k, v] of visitas) if (v.ate < agora) visitas.delete(k);
-
-  const atual = visitas.get(ip);
-  if (!atual || atual.ate < agora) {
-    visitas.set(ip, { n: 1, ate: agora + JANELA_MS });
-    return false;
-  }
-  atual.n += 1;
-  return atual.n > TETO_POR_JANELA;
-}
 
 const texto = (v: unknown, teto: number): string | null => {
   const s = typeof v === "string" ? v.trim() : "";
@@ -64,12 +56,6 @@ const texto = (v: unknown, teto: number): string | null => {
 };
 
 export async function POST(req: NextRequest) {
-  const ip =
-    req.headers.get("x-nf-client-connection-ip") ??
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    "sem-ip";
-  if (excedeu(ip)) return NextResponse.json({ ok: false }, { status: 429 });
-
   let corpo: Record<string, unknown>;
   try {
     corpo = (await req.json()) as Record<string, unknown>;
@@ -89,7 +75,14 @@ export async function POST(req: NextRequest) {
    */
   let registradas = 0;
   try {
-    registradas = await registrarConsentimento(createAdminClient(), {
+    const db = createAdminClient();
+    // O IP pela mesma função que o log usa, que confia primeiro no cabeçalho que a Netlify põe e
+    // o cliente não forja. O `x-forwarded-for` cru, que a versão anterior lia, o cliente escreve.
+    const ip = (await ipDaRequisicao()) ?? "sem-ip";
+    if (!(await consumirLimite(db, `consentimento:ip:${ip}`, TETO_POR_JANELA, JANELA_S))) {
+      return NextResponse.json({ ok: false }, { status: 429 });
+    }
+    registradas = await registrarConsentimento(db, {
       email,
       nome: texto(corpo.nome, 200),
       origem: "lista-de-espera",

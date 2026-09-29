@@ -23,31 +23,48 @@ import { getCurriculo } from "./curriculo";
 // carregada do banco já traz o próprio `id`, então não há mais duas listas para casar.
 
 /**
- * As aulas concluídas do aluno logado, por número.
+ * Quando o aluno logado concluiu cada aula: `lessons.id` → instante da conclusão.
+ *
+ * Existe desde 29/set/2026 por causa da regra `apos_modulo` (migration 0024): ela abre um módulo
+ * a partir da DATA em que o anterior foi concluído, e o conjunto de números do `getConcluidas`
+ * não carrega data. Uma consulta só alimenta os dois, via `cache()`.
  *
  * A leitura usa o cliente com a sessão: a policy `progress_self_select` restringe à própria
- * linha, então quem garante o isolamento é a RLS, não um `where` que alguém pode esquecer.
+ * linha, então quem garante o isolamento é a RLS. O `.eq("user_id")` é a segunda camada, pela
+ * lição do `getMatricula` (a policy é mais larga do que o `where` que você não escreveu).
+ *
+ * `completed_at` nulo cai no `updated_at`: toda escrita de hoje grava os dois, mas uma linha
+ * antiga sem a data de conclusão não pode sumir do progresso por isso. O `modulo_aberto()` do
+ * banco faz o mesmo `coalesce`.
  */
-export const getConcluidas = cache(async (): Promise<Set<number>> => {
+export const getConclusoesDasAulas = cache(async (): Promise<Map<string, Date>> => {
   const user = await getUsuario();
-  if (!user) return new Set();
+  if (!user) return new Map();
 
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("progress")
-    .select("lesson_id")
+    .select("lesson_id,completed_at,updated_at")
+    .eq("user_id", user.id)
     .eq("status", "completed");
   if (error) {
     console.error("[progresso] falha ao ler:", error.message);
-    return new Set();
+    return new Map();
   }
+  return new Map(
+    (data ?? []).map((l) => [
+      l.lesson_id as string,
+      new Date((l.completed_at as string | null) ?? (l.updated_at as string)),
+    ]),
+  );
+});
 
-  const { aulas } = await getCurriculo();
-  const numeroPorId = new Map(aulas.map((a) => [a.id, a.n]));
+/**
+ * As aulas concluídas do aluno logado, por número. Derivado do `getConclusoesDasAulas`.
+ */
+export const getConcluidas = cache(async (): Promise<Set<number>> => {
+  const [porAula, { aulas }] = await Promise.all([getConclusoesDasAulas(), getCurriculo()]);
   const concluidas = new Set<number>();
-  for (const linha of data ?? []) {
-    const n = numeroPorId.get(linha.lesson_id as string);
-    if (n !== undefined) concluidas.add(n);
-  }
+  for (const a of aulas) if (porAula.has(a.id)) concluidas.add(a.n);
   return concluidas;
 });

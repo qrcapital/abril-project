@@ -42,5 +42,16 @@ export async function trocarSenha(
     console.warn("[conta] updateUser:", error.message);
     return { ok: false, erro: "Não foi possível salvar a senha. Tente de novo." };
   }
+
+  // Senha trocada derruba as OUTRAS sessões, e esta continua. Quem troca a senha porque desconfia
+  // que alguém entrou na conta espera que esse alguém saia; sem isto, a sessão do intruso seguiria
+  // valendo até expirar sozinha. Melhor esforço: a senha nova já está gravada, e uma falha aqui
+  // não pode virar "não foi possível salvar" na tela.
+  try {
+    const { error: saida } = await supabase.auth.signOut({ scope: "others" });
+    if (saida) console.warn("[conta] signOut(others):", saida.message);
+  } catch (e) {
+    console.warn("[conta] signOut(others) falhou:", e instanceof Error ? e.message : e);
+  }
   return { ok: true };
 }

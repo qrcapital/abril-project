@@ -4,9 +4,7 @@ import { tela } from "@/lib/telas";
 import { getUsuario } from "@/lib/usuario";
 import { getConcluidas } from "@/lib/progresso";
 import { getCurriculo } from "@/lib/curriculo";
-import { getMatricula } from "@/lib/matricula";
-import { liberacao } from "@/lib/liberacao";
-import { getRegras } from "@/lib/politicas";
+import { getCalendario } from "@/lib/calendario";
 import { tentativaAtual } from "@/lib/prova";
 import ProvaClient from "./ProvaClient";
 
@@ -41,9 +39,8 @@ export default async function ProvaPage() {
   // Trava de CALENDÁRIO da política de liberação, vinda da matrícula, no servidor. O gate de
   // aulas abaixo também é servidor desde 29/jul (tabela `progress`); os dois são conferidos de
   // novo no `iniciarProva`, porque a action recebe POST direto sem passar por esta página.
-  const { inicioEm, liberacaoTotal, politicaId } = await getMatricula();
-  const regras = await getRegras(politicaId);
-  if (!inicioEm || !liberacao(inicioEm, liberacaoTotal, regras).completo) redirect("/app");
+  const calendario = await getCalendario();
+  if (!calendario?.completo) redirect("/app");
   const curriculo = await getCurriculo();
 
   const concluidas = await getConcluidas();

@@ -3,9 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getConcluidas } from "@/lib/progresso";
 import { getCurriculo } from "@/lib/curriculo";
-import { liberacao } from "@/lib/liberacao";
-import { getMatricula } from "@/lib/matricula";
-import { getRegras } from "@/lib/politicas";
+import { getCalendario } from "@/lib/calendario";
 import { abrirTentativa, enviar, salvarResposta } from "@/lib/prova";
 import { LETRAS, type Letra } from "@/lib/prova-correcao";
 
@@ -37,18 +35,17 @@ export async function iniciarProva(): Promise<RespostaAcao> {
   const userId = await usuarioAtual();
   if (!userId) return { ok: false, erro: "Sessão expirada. Entre de novo." };
 
-  const [curriculo, concluidas, { inicioEm, liberacaoTotal, politicaId }] = await Promise.all([
+  const [curriculo, concluidas, calendario] = await Promise.all([
     getCurriculo(),
     getConcluidas(),
-    getMatricula(),
+    getCalendario(),
   ]);
   if (!curriculo.provaLiberada(concluidas))
     return {
       ok: false,
       erro: `Conclua as ${curriculo.totalAvaliadas} aulas da formação para liberar a prova.`,
     };
-  const regras = await getRegras(politicaId);
-  if (!inicioEm || !liberacao(inicioEm, liberacaoTotal, regras).completo)
+  if (!calendario?.completo)
     return {
       ok: false,
       erro: "A prova abre quando todos os módulos do cronograma estiverem liberados.",

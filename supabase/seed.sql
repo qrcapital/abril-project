@@ -57,8 +57,12 @@ on conflict (module_id, ord) do update set titulo = excluded.titulo, descricao =
 -- política "Esteira semanal" nasce ativa e sem regra nenhuma, e tudo cai no "em breve".
 -- Quem semeia as regras é este arquivo, que é quem cria os módulos. `do nothing` preserva
 -- o que o admin já tiver editado pela tela.
+--
+-- A conta é `ord * 7` desde 29/set (migration 0024): Módulo 0 no ato, I em 7 dias, II em 14, III
+-- em 21, IV em 28. Antes era `greatest(0, ord - 1) * 7`, que abria o 0 e o I juntos. É a mesma
+-- conta do `regraEsteira` de `lib/liberacao.ts`.
 insert into release_rules (policy_id, module_id, tipo, dias)
-select p.id, m.id, 'dias', greatest(0, m.ord - 1) * 7
+select p.id, m.id, 'dias', m.ord * 7
 from release_policies p, modules m
 where p.nome = 'Esteira semanal'
 on conflict (policy_id, module_id) do nothing;

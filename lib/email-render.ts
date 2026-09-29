@@ -54,6 +54,7 @@ export const VARIAVEIS: Record<string, string[]> = {
   "boas-vindas": ["nome"],
   "resultado-aprovado": ["nome", "nota", "codigo"],
   "resultado-reprovado": ["nome", "nota"],
+  "redefinicao-senha": ["nome"],
 };
 
 /**
@@ -82,6 +83,7 @@ export const ROTULOS: Record<string, string> = {
   "boas-vindas": "Boas-vindas e criação de senha",
   "resultado-aprovado": "Prova aprovada e certificado disponível",
   "resultado-reprovado": "Prova reprovada e caminho da segunda chamada",
+  "redefinicao-senha": "Redefinição de senha",
 };
 
 /** Quando cada um dispara, em uma linha, para ninguém editar às cegas. */
@@ -89,6 +91,7 @@ export const GATILHOS: Record<string, string> = {
   "boas-vindas": "Compra aprovada no webhook do Guru, com o link de criação de senha.",
   "resultado-aprovado": "Envio da prova com nota igual ou acima do mínimo.",
   "resultado-reprovado": "Envio da prova com nota abaixo do mínimo.",
+  "redefinicao-senha": "Pedido em \"Esqueci minha senha\", com o link de uso único para criar uma senha nova.",
 };
 
 const MARCADOR = /\{\{\s*([a-z_]+)\s*\}\}/g;
@@ -143,11 +146,26 @@ const paragrafos = (corpo: string) =>
     .map(limpar)
     .filter(Boolean);
 
-const VERDE = "#0B2D20";
-const OURO = "#A98E4E";
-const CLARO = "#F7F5F2";
-const TEXTO = "#333333";
-const BORDA = "#EDE6DD";
+/**
+ * A PALETA DO E-MAIL, a mesma das telas de acesso (`app/app/_ui/auth.css`): creme, tinta e o
+ * vermelho da campanha VEJA Negócios. O verde e o dourado da identidade anterior saíram em
+ * 29/set/2026, junto com o resto do produto.
+ *
+ * Os valores são hex fixos e não variáveis de CSS porque cliente de e-mail não tem cascata
+ * confiável. O botão é `#C1121F` com texto creme, e não o contrário: vermelho sobre creme em
+ * texto pequeno cansa, e o creme sobre o vermelho dá 5,6:1, acima do AA.
+ */
+const PAPEL = "#f7f4ee";
+const CARTAO = "#fdfbf6";
+const BORDA = "#e2dacd";
+const TINTA = "#1a1815";
+const TINTA_2 = "#6b655c";
+const ACENTO = "#C1121F";
+const FAIXA = "#8E1522";
+const CREME = "#f7f4ee";
+
+const SANS = "-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif";
+const SERIFA = "Georgia,'Times New Roman',serif";
 
 /**
  * URL absoluta, ou `null` quando não dá para montar uma.
@@ -190,44 +208,64 @@ function bannerHtml(endereco: string, alt: string): string {
   const src = absoluta(endereco);
   if (!src) return "";
   return `<tr><td style="padding:0">
-<img src="${esc(src)}" alt="${esc(alt)}" width="${BANNER.larguraExibida}" style="display:block;width:100%;max-width:${BANNER.larguraExibida}px;height:auto;border:0;border-radius:12px 12px 0 0">
+<img src="${esc(src)}" alt="${esc(alt)}" width="${BANNER.larguraExibida}" style="display:block;width:100%;max-width:${BANNER.larguraExibida}px;height:auto;border:0">
 </td></tr>`;
 }
 
 /**
  * A moldura. Tabelas e estilo inline porque cliente de e-mail não tem cascata confiável, e o
- * Outlook ignora metade do CSS moderno.
+ * Outlook ignora metade do CSS moderno. 600px de teto, que é a largura que todo cliente respeita.
  *
- * **A MARCA NÃO DEPENDE DE IMAGEM**, e o banner é opcional por cima disso. Cliente de e-mail bloqueia
- * imagem por padrão, então um cabeçalho que só existe como imagem chega em branco para quem não
- * clica em "exibir": o wordmark em serifada continua sendo o cabeçalho de verdade, e o banner é
- * decoração que some sem levar informação embora. Playfair não existe em caixa de entrada, então a
- * pilha cai para Georgia, que é serifada também.
+ * **A MARCA NÃO DEPENDE DE IMAGEM.** O cabeçalho é uma faixa vermelha com o lockup em TEXTO, e não
+ * o SVG da VEJA Negócios: SVG não abre no Gmail nem no Outlook, e imagem é bloqueada por padrão
+ * em boa parte das caixas. Um cabeçalho que só existisse como imagem chegaria em branco. O banner
+ * do editor, quando existe, entra logo abaixo da faixa, como decoração que some sem levar
+ * informação embora.
  *
- * O botão é verde com texto claro, e não dourado com texto branco: `#A98E4E` com branco dá 2,9:1 e
- * não passa AA. O dourado fica onde ele é acento, na régua e no realce.
+ * **MODO ESCURO.** `color-scheme: light only` pede ao cliente que não inverta as cores, e as cores
+ * vão também em `bgcolor`, que é o que o Outlook respeita. O Gmail do celular inverte assim mesmo;
+ * contra isso, a paleta não usa branco puro nem preto puro, e o texto do botão e da faixa tem o
+ * contraste garantido nos dois sentidos.
+ *
+ * O título é o próprio assunto, em serifa: é a frase que a pessoa acabou de ler na caixa de
+ * entrada, e repeti-la no topo confirma que ela abriu o e-mail certo.
  */
-function moldura(corpoHtml: string, preheader: string, banner: string): string {
+function moldura(
+  corpoHtml: string,
+  preheader: string,
+  banner: string,
+  titulo: string,
+): string {
+  const site = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
+  const linkRodape = (caminho: string, rotulo: string) =>
+    site
+      ? `<a href="${esc(site + caminho)}" style="color:${TINTA_2};text-decoration:underline">${rotulo}</a>`
+      : rotulo;
   return `<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width">
-<title>Estratégia Internacional</title></head>
-<body style="margin:0;padding:0;background:${CLARO}">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(preheader)}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${CLARO};padding:32px 12px">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+<title>${esc(titulo || "Estratégia Internacional")}</title></head>
+<body style="margin:0;padding:0;background:${PAPEL};color-scheme:light only">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all">${esc(preheader)}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="${PAPEL}" style="background:${PAPEL};padding:32px 12px">
 <tr><td align="center">
-<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="width:100%;max-width:560px;background:#ffffff;border:1px solid ${BORDA};border-radius:12px">
-${banner}<tr><td style="padding:28px 32px 0">
-<div style="font-family:Georgia,'Times New Roman',serif;font-size:19px;color:${VERDE}">Estratégia Internacional</div>
-<div style="height:2px;width:38px;background:${OURO};margin:12px 0 0"></div>
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" bgcolor="${CARTAO}" style="width:100%;max-width:600px;background:${CARTAO};border:1px solid ${BORDA};border-radius:16px;border-collapse:separate;overflow:hidden">
+<tr><td bgcolor="${FAIXA}" style="background:${FAIXA};padding:18px 32px;border-radius:16px 16px 0 0;font-family:${SANS};font-size:11px;font-weight:700;letter-spacing:.16em;color:${CREME}">
+VEJA NEGÓCIOS&nbsp;&nbsp;|&nbsp;&nbsp;ESTRATÉGIA INTERNACIONAL
 </td></tr>
-<tr><td style="padding:22px 32px 4px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.65;color:${TEXTO}">
+${banner}<tr><td style="padding:30px 32px 0">
+<h1 style="margin:0;font-family:${SERIFA};font-size:24px;line-height:1.3;font-weight:400;color:${TINTA}">${esc(titulo)}</h1>
+</td></tr>
+<tr><td style="padding:18px 32px 8px;font-family:${SANS};font-size:15px;line-height:1.65;color:${TINTA}">
 ${corpoHtml}
 </td></tr>
-<tr><td style="padding:18px 32px 28px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;line-height:1.6;color:#8F887E;border-top:1px solid ${BORDA}">
-Formação do BlockTrends, com chancela institucional de VEJA Negócios.<br>
+<tr><td style="padding:18px 32px 28px;font-family:${SANS};font-size:12px;line-height:1.7;color:${TINTA_2};border-top:1px solid ${BORDA}">
+Powered by BlockTrends · <a href="mailto:contato@blocktrends.com.br" style="color:${TINTA_2};text-decoration:underline">contato@blocktrends.com.br</a><br>
+${linkRodape("/privacidade", "Política de Privacidade")} · ${linkRodape("/termos-de-uso", "Termos de Uso")}<br>
 Abril Comunicações S.A. · CNPJ 44.597.052/0001-62<br>
-Esta mensagem é sobre a sua matrícula, então ela não tem descadastro.
+Esta mensagem é sobre a sua conta no curso, então ela não tem descadastro.
 </td></tr>
 </table>
 </td></tr></table>
@@ -237,10 +275,10 @@ Esta mensagem é sobre a sua matrícula, então ela não tem descadastro.
 /** O botão, em tabela: `<a>` com padding some no Outlook. */
 function botao(rotulo: string, url: string): string {
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:22px 0 6px">
-<tr><td align="center" bgcolor="${VERDE}" style="border-radius:8px">
-<a href="${esc(url)}" style="display:inline-block;padding:13px 26px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:14px;font-weight:600;color:${CLARO};text-decoration:none">${esc(rotulo)}</a>
+<tr><td align="center" bgcolor="${ACENTO}" style="background:${ACENTO};border-radius:14px">
+<a data-botao href="${esc(url)}" style="display:inline-block;padding:14px 28px;font-family:${SANS};font-size:15px;font-weight:700;color:${CREME};text-decoration:none;border-radius:14px">${esc(rotulo)}</a>
 </td></tr></table>
-<p style="margin:10px 0 0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.6;color:#8F887E">Se o botão não abrir, copie este endereço no navegador:<br><span style="color:#7E6836;word-break:break-all">${esc(url)}</span></p>`;
+<p style="margin:12px 0 0;font-family:${SANS};font-size:12px;line-height:1.6;color:${TINTA_2}">Se o botão não abrir, copie este endereço no navegador:<br><span style="color:${ACENTO};word-break:break-all">${esc(url)}</span></p>`;
 }
 
 export type Renderizado = { assunto: string; html: string; texto: string };
@@ -255,6 +293,8 @@ export function renderizar(template: Template, dados: Dados): Renderizado {
   const link = dados.link ? String(dados.link) : "";
   const cta = template.cta?.trim();
 
+  const assunto = interpolar(template.assunto, dados, false).replace(/\s+/g, " ").trim();
+
   const html = moldura(
     linhas.map((l) => `<p style="margin:0 0 14px">${l}</p>`).join("\n") +
       (cta && link ? botao(cta, link) : ""),
@@ -267,17 +307,14 @@ export function renderizar(template: Template, dados: Dados): Renderizado {
     template.banner?.trim() && template.banner_alt?.trim()
       ? bannerHtml(template.banner.trim(), template.banner_alt.trim())
       : "",
+    assunto,
   );
 
   const texto =
     paragrafos(interpolar(template.corpo, dados, false)).join("\n\n") +
     (cta && link ? `\n\n${cta}: ${link}` : "") +
-    "\n\nFormação do BlockTrends, com chancela institucional de VEJA Negócios.";
+    "\n\nVEJA Negócios | Estratégia Internacional\nPowered by BlockTrends · contato@blocktrends.com.br";
 
-  return {
-    // Assunto é cabeçalho: sem escape e sem quebra de linha, senão o cliente trunca ou parte.
-    assunto: interpolar(template.assunto, dados, false).replace(/\s+/g, " ").trim(),
-    html,
-    texto,
-  };
+  // Assunto é cabeçalho: sem escape e sem quebra de linha, senão o cliente trunca ou parte.
+  return { assunto, html, texto };
 }

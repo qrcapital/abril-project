@@ -19,6 +19,7 @@ import {
 } from "@/app/admin/_ui/tabela";
 import { ROTULO_ESTADO, estadoDaMatricula } from "@/lib/matricula-estado";
 import { podeSegundaChamada } from "@/lib/prova-correcao";
+import { exigirAdmin } from "@/lib/admin-guarda";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = { title: "Aluno" };
@@ -85,6 +86,9 @@ export default async function Aluno({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ ok?: string; erro?: string }>;
 }) {
+  // Antes de qualquer leitura com a service role: layout e página rodam em paralelo, e a guarda
+  // do layout não segura a consulta daqui (ver `lib/admin-guarda.ts`).
+  await exigirAdmin();
   const [{ id }, { ok, erro }] = await Promise.all([params, searchParams]);
   // Sem isto, um id malformado viraria erro de banco (uuid inválido) e o aluno veria a tela de
   // erro em vez de um 404 honesto.

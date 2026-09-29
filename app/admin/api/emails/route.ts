@@ -1,9 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { papelAtual } from "@/lib/admin";
+import { origemValida } from "@/lib/admin-guarda";
 import contato from "@/lib/contato.json";
 import { carregarTemplate, enviarAcesso, enviarEmail } from "@/lib/email";
 import { BANNER, DESCRICOES, renderizar, variaveisInvalidas, VARIAVEIS } from "@/lib/email-render";
+import { esc } from "@/lib/html-slice";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -92,9 +94,11 @@ function voltar(req: NextRequest, params: Record<string, string>) {
  */
 function dadosExemplo(chave: string) {
   const site = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  // `recovery` nos dois links de senha: é o tipo que o envio real usa desde 29/set/2026 (ver
+  // `gerarLinkDeSenha` em `lib/email.ts`).
   const link =
-    chave === "boas-vindas"
-      ? `${site}/auth/confirm?token_hash=EXEMPLO&type=invite`
+    chave === "boas-vindas" || chave === "redefinicao-senha"
+      ? `${site}/auth/confirm?token_hash=EXEMPLO&type=recovery`
       : chave === "resultado-aprovado"
         ? `${site}/app/certificado`
         : contato.whatsapp;
@@ -124,8 +128,8 @@ export async function GET(req: NextRequest) {
   // O assunto não aparece no corpo do e-mail, então a prévia o mostra numa faixa: metade do
   // trabalho de escrever e-mail é o assunto, e revisar sem ele seria revisar meio e-mail.
   const faixa =
-    `<div style="font:13px/1.5 'Helvetica Neue',Arial,sans-serif;background:#0B2D20;color:#D9BE85;` +
-    `padding:10px 16px">Assunto: <strong style="color:#F7F5F2">${assunto}</strong>` +
+    `<div style="font:13px/1.5 -apple-system,'Helvetica Neue',Arial,sans-serif;background:#1a1815;color:#e2dacd;` +
+    `padding:10px 16px">Assunto: <strong style="color:#f7f4ee">${esc(assunto)}</strong>` +
     `<span style="float:right;opacity:.7">prévia com dados de exemplo</span></div>`;
 
   return new NextResponse(html.replace(/(<body[^>]*>)/, `$1${faixa}`), {
@@ -136,6 +140,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const autor = await papelAtual();
   if (autor.papel !== "admin") return new NextResponse(null, { status: 404 });
+  // Cookie o navegador manda sozinho; o `Origin` ele não deixa outra página forjar. POST vindo de
+  // outro site com a sessão do admin é recusado antes de tocar em qualquer dado.
+  if (!origemValida(req)) return new NextResponse(null, { status: 403 });
 
   const form = await req.formData();
   const texto = (campo: string) => String(form.get(campo) ?? "").trim();

@@ -11,6 +11,7 @@ import {
   situacaoProva,
 } from "@/app/admin/_ui/tabela";
 import { ROTULO_ESTADO, estadoDaMatricula, type EstadoAcesso } from "@/lib/matricula-estado";
+import { exigirAdmin } from "@/lib/admin-guarda";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = { title: "Alunos" };
@@ -58,6 +59,9 @@ export default async function Alunos({
 }: {
   searchParams: Promise<{ q?: string; st?: string }>;
 }) {
+  // Antes de qualquer leitura com a service role: layout e página rodam em paralelo, e a guarda
+  // do layout não segura a consulta daqui (ver `lib/admin-guarda.ts`).
+  await exigirAdmin();
   const { q = "", st = "" } = await searchParams;
   const termo = q.trim();
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import BotaoPapel from "./BotaoPapel";
-import { papelAtual } from "@/lib/admin";
+import { exigirAdmin } from "@/lib/admin-guarda";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = { title: "Equipe" };
@@ -48,11 +48,13 @@ export default async function Equipe({
 }: {
   searchParams: Promise<{ q?: string; ok?: string; erro?: string }>;
 }) {
+  // Antes de qualquer leitura com a service role: layout e página rodam em paralelo, e a guarda
+  // do layout não segura a consulta daqui (ver `lib/admin-guarda.ts`).
+  const eu = await exigirAdmin();
   const { q = "", ok, erro } = await searchParams;
   const termo = q.trim();
 
   const db = createAdminClient();
-  const eu = await papelAtual();
 
   const [busca, listaAdmins] = await Promise.all([
     termo ? db.rpc("buscar_usuarios", { termo, limite: 20 }) : Promise.resolve({ data: [] }),

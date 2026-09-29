@@ -13,31 +13,46 @@ const BADGE_NEUTRO = `${BADGE_BASE};background:#EDE6DD;border:1px solid #E0D3BE;
 // resultado da prova (DESIGN.md §2): cor como informação, não como decoração.
 const BADGE_TRAVADO = `${BADGE_BASE};background:#F7E3BE;border:1px solid #E8CE97;color:#7A4E06`;
 
+/**
+ * Por que um módulo está fechado, na língua do card. Monta quem conhece o calendário (a página
+ * da home); o template só escreve.
+ *
+ * - `data`: abre numa data conhecida, já formatada ("13/10", fuso de Brasília).
+ * - `apos`: espera o aluno concluir outro módulo, sem data ainda (`rotulo` = "Módulo I").
+ * - `breve`: fechado sem data (política em breve, 0016).
+ */
+export type Travamento =
+  | { tipo: "data"; texto: string }
+  | { tipo: "apos"; rotulo: string }
+  | { tipo: "breve" };
+
 function card(
   c: Curriculo,
   idx: number,
   concluidas: Set<number>,
-  travadoEm: number | "breve" | null,
+  espera: Travamento | null,
 ): string {
-  // `travadoEm` é o número de dias que faltam; `"breve"` é fechado sem data (política em
-  // breve, 0016); `null` quer dizer aberto.
+  // `espera` nula quer dizer aberto.
   const m = c.modulos[idx];
   const aulas = c.aulas.filter((a) => a.modulo === idx);
   const total = aulas.length;
   // Módulo sem aula nenhuma (recém-criado no admin) se comporta como travado: não há para
   // onde ir, e o fallback do destino mandaria o clique para a boas-vindas. O `data-travado`
   // é o que o HomeClient já usa para não navegar.
-  const travado = travadoEm !== null || total === 0;
+  const travado = espera !== null || total === 0;
   const done = aulas.filter((a) => concluidas.has(a.n)).length;
   const emAndamento =
     (done > 0 && done < total) || aulas.some((a) => a.n === c.aulaAtual(concluidas).n);
 
+  // A data, e não mais a contagem ("ABRE EM 6 DIAS"), desde 29/set: com a esteira semanal o
+  // aluno planeja a semana pelo dia em que o módulo sai, e uma contagem que muda todo dia
+  // obriga a fazer a conta de cabeça. Pedido do Pedro, no molde do Cademi.
   const badgeText = travado
-    ? total === 0 || travadoEm === "breve"
+    ? total === 0 || espera === null || espera.tipo === "breve"
       ? "EM BREVE"
-      : travadoEm === 1
-        ? "ABRE AMANHÃ"
-        : `ABRE EM ${travadoEm} DIAS`
+      : espera.tipo === "data"
+        ? `LIBERA EM ${espera.texto}`
+        : esc(`APÓS O ${espera.rotulo.toUpperCase()}`)
     : idx === 0
       ? "BOAS-VINDAS"
       : emAndamento
@@ -146,8 +161,8 @@ export function fillHome(
   html: string,
   c: Curriculo,
   concluidas: Set<number>,
-  /** Dias que faltam por módulo; `null` no valor = em breve, sem data (política, 0016). */
-  travados: Map<number, number | null> = new Map(),
+  /** Módulos fechados e o porquê; módulo fora do mapa está aberto. */
+  travados: Map<number, Travamento> = new Map(),
   /** Tentativa de 2ª chamada liberada e não iniciada. Vem do banco, nunca da URL. */
   segundaChamada = false,
   /** Em que ponto da prova este aluno está. Decide a linha e o clique do card da Prova Final. */
@@ -211,12 +226,7 @@ export function fillHome(
     const { start, end } = innerOfDiv(out, openIdx);
     out = out.slice(0, start) +
       c.modulos
-        .map((_, i) => {
-          // O Map fala a língua da tela (null = em breve); o card fala a do template
-          // (null = aberto). A tradução vive aqui, num lugar só.
-          const t = travados.has(i) ? (travados.get(i) ?? "breve") : null;
-          return card(c, i, concluidas, t);
-        })
+        .map((_, i) => card(c, i, concluidas, travados.get(i) ?? null))
         .join("") +
       out.slice(end);
   }

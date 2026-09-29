@@ -1,0 +1,574 @@
+/* ============================================================================
+   Telas da sala escritas em JSX: "Comece por aqui" (/app/comece), página do
+   módulo (/app/modulo/[m]), notebook (/app/modulo/[m]/notebook) e a aula em modo
+   teatro (/app/modulo/[m]/aula/[n]). Nasceram em 29/set/2026.
+
+   POR QUE UMA FOLHA NOVA, E NÃO O styles.css. O styles.css é o CSS do porte:
+   quase tudo nele é regra de apoio a style inline (`[style-hover=...]`). Estas
+   telas são componentes do React com classes, e misturar as duas famílias no
+   mesmo arquivo faria cada ajuste aqui passar pelo medo de quebrar a home.
+
+   TUDO ESCOPADO EM `.sl`, pelo mesmo motivo do `.au` das telas de acesso: o
+   layout de /app injeta as três folhas em toda rota da área, e nenhuma regra
+   daqui pode vazar para a home portada, a prova ou o certificado.
+
+   Os tokens são os de `app/_design/sistema.css` e do `.au`, copiados pelo mesmo
+   motivo que o `auth.css` explica: injetar o sistema inteiro mudaria o reset de
+   telas que não foram refeitas.
+   ========================================================================== */
+
+.sl {
+  --sl-papel: #f7f4ee;
+  --sl-papel-baixo: #f1ece2;
+  --sl-creme: #fdfbf6;
+  --sl-creme-2: #fdfaf5;
+  --sl-tinta: #1a1815;
+  --sl-tinta-2: #6b655c;
+  --sl-tinta-3: #6f6860;
+  --sl-linha: rgba(26, 24, 21, .11);
+  --sl-linha-forte: rgba(26, 24, 21, .19);
+  --sl-borda: #e2dacd;
+  --sl-acento: #C1121F;
+  --sl-fundo: #8E1522;
+  --sl-fundo-2: #6B111C;
+  --sl-regua: #a98e4e;
+  --sl-ouro: #7e6836;
+  --sl-palha: #e8d9b5;
+  /* O palco da aula: a tinta da casa, um passo mais fundo. Preto puro seria o
+     único preto do produto e brigaria com o creme ao redor. */
+  --sl-palco: #14120f;
+  --sl-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue",
+             system-ui, sans-serif;
+  --sl-serifa: "Playfair Display", Georgia, "Times New Roman", serif;
+
+  background: var(--sl-papel);
+  color: var(--sl-tinta);
+  font-family: var(--sl-sans);
+  font-variant-numeric: lining-nums;
+  min-height: calc(100vh - 58px);
+  padding-bottom: 72px;
+  -webkit-font-smoothing: antialiased;
+}
+.sl *, .sl *::before, .sl *::after { box-sizing: border-box }
+.sl h1, .sl h2, .sl h3, .sl h4, .sl p, .sl ol, .sl ul, .sl figure, .sl blockquote, .sl dl, .sl dd { margin: 0 }
+.sl ol, .sl ul { padding: 0; list-style: none }
+.sl img { display: block; max-width: 100% }
+.sl a { color: var(--sl-acento); text-decoration: none }
+.sl a:hover { color: var(--sl-fundo) }
+
+/* Foco de teclado visível em tudo, em dois pares: vermelho no papel, palha no
+   vermelho e no palco escuro (o vermelho sobre o vinho não se vê). */
+.sl :focus-visible { outline: 2px solid var(--sl-acento); outline-offset: 3px; border-radius: 4px }
+.sl .sl-escuro :focus-visible { outline-color: var(--sl-palha) }
+
+.sl-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px }
+.sl-wrap-largo { max-width: 1340px; margin: 0 auto; padding: 0 28px }
+
+.sl-so-leitor {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---- tipografia comum ----------------------------------------------------- */
+
+.sl-eyebrow {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--sl-ouro);
+}
+.sl-eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--sl-regua) }
+.sl-escuro .sl-eyebrow { color: var(--sl-palha) }
+.sl-escuro .sl-eyebrow::before { background: var(--sl-palha) }
+
+.sl-h2 {
+  font-family: var(--sl-serifa); font-weight: 600;
+  font-size: clamp(26px, 2.6vw, 34px); line-height: 1.12; letter-spacing: -.015em;
+  color: var(--sl-tinta);
+}
+.sl-sub { margin-top: 10px; font-size: 15px; line-height: 1.6; color: var(--sl-tinta-2); max-width: 62ch }
+.sl-secao { margin-top: 72px }
+.sl-secao-cabeca { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 28px }
+
+/* ---- botões e selos ------------------------------------------------------- */
+
+.sl-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 46px; padding: 12px 22px;
+  border: 1px solid var(--sl-acento); border-radius: 14px;
+  background: var(--sl-acento); color: var(--sl-creme) !important;
+  font: 700 13px/1.2 var(--sl-sans); letter-spacing: .04em;
+  cursor: pointer; text-decoration: none;
+  transition: transform .15s ease, background-color .15s ease, border-color .15s ease;
+}
+.sl-btn:hover { background: var(--sl-fundo); border-color: var(--sl-fundo); transform: translateY(-1px) }
+.sl-btn-claro { background: var(--sl-creme); border-color: var(--sl-creme); color: var(--sl-acento) !important }
+.sl-btn-claro:hover { background: #fff; border-color: #fff; color: var(--sl-fundo) !important }
+.sl-btn-linha { background: transparent; border-color: var(--sl-linha-forte); color: var(--sl-tinta) !important }
+.sl-btn-linha:hover { background: transparent; border-color: var(--sl-acento); color: var(--sl-acento) !important }
+.sl-btn-vidro { background: rgba(253, 250, 245, .08); border-color: rgba(253, 250, 245, .34); color: var(--sl-creme) !important }
+.sl-btn-vidro:hover { background: rgba(253, 250, 245, .16); border-color: rgba(253, 250, 245, .6) }
+.sl-btn[aria-disabled="true"], .sl-btn:disabled { opacity: .45; cursor: not-allowed; transform: none }
+
+.sl-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 11px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  border: 1px solid var(--sl-borda); background: var(--sl-creme); color: var(--sl-ouro);
+}
+/* O selo de demonstração é âmbar, o mesmo par do "libera em" da home: é aviso,
+   não decoração. #7A4E06 sobre #F7E3BE dá 6,4:1. */
+.sl-chip-demo { background: #F7E3BE; border-color: #E8CE97; color: #7A4E06 }
+.sl-chip-demo::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #B7791F }
+.sl-chip-ok { background: rgba(31, 138, 91, .08); border-color: rgba(31, 138, 91, .35); color: #1B6E47 }
+.sl-chip-trava { background: var(--sl-papel-baixo); color: var(--sl-tinta-2) }
+
+/* ---- hero do "Comece por aqui" (painel vermelho, globo e olho) ------------ */
+
+.sl-hero {
+  position: relative; overflow: hidden; isolation: isolate;
+  background: linear-gradient(150deg, var(--sl-fundo) 0%, var(--sl-fundo-2) 100%);
+  border-bottom: 1px solid rgba(169, 142, 78, .5);
+  color: var(--sl-creme);
+}
+.sl-hero-globo { position: absolute; inset: 0; pointer-events: none; z-index: 0 }
+.sl-hero-globo img {
+  position: absolute; right: -14%; top: 50%; transform: translateY(-50%);
+  width: min(1180px, 95vw); max-width: none; height: auto;
+  opacity: .16; filter: brightness(0) invert(1);
+}
+/* `multiply` apaga o halo branco do olho contra o vermelho e deixa só a
+   gravura, como no painel das telas de acesso. O `isolation` do hero prende a
+   mistura aqui dentro. */
+.sl-hero-olho {
+  position: absolute; right: clamp(40px, 9vw, 150px); top: 47%; transform: translateY(-50%);
+  width: clamp(260px, 29vw, 440px); height: auto;
+  mix-blend-mode: multiply; pointer-events: none; z-index: 1;
+}
+.sl-hero-miolo { position: relative; z-index: 2; padding-top: clamp(56px, 7vw, 96px); padding-bottom: clamp(120px, 12vw, 160px) }
+.sl-hero-texto { max-width: 720px }
+.sl-display {
+  margin-top: 22px;
+  font-family: var(--sl-serifa); font-weight: 600;
+  font-size: clamp(42px, 5.6vw, 80px); line-height: 1.02; letter-spacing: -.025em;
+  color: var(--sl-creme);
+}
+.sl-display em { font-style: italic; font-weight: 500; color: var(--sl-palha) }
+.sl-hero-lead { margin-top: 24px; max-width: 54ch; font-size: clamp(15px, 1.2vw, 17px); line-height: 1.6; color: rgba(253, 250, 245, .86) }
+.sl-hero-acoes { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px }
+.sl-hero-fatos {
+  display: flex; flex-wrap: wrap; gap: 10px 34px; margin-top: 44px; padding-top: 22px;
+  border-top: 1px solid rgba(253, 250, 245, .2); max-width: 640px;
+}
+.sl-hero-fatos dd { display: flex; flex-direction: column; gap: 4px }
+.sl-hero-fatos b { font-family: var(--sl-serifa); font-size: 30px; font-weight: 600; line-height: 1; color: var(--sl-creme) }
+.sl-hero-fatos span { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(253, 250, 245, .78) }
+
+/* ---- as aulas de abertura, montadas sobre a borda do hero ----------------- */
+
+.sl-intro { position: relative; z-index: 3; margin-top: clamp(-120px, -9vw, -80px) }
+.sl-intro-grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px }
+.sl-aulacard {
+  display: flex; flex-direction: column;
+  background: var(--sl-creme); border: 1px solid var(--sl-borda); border-radius: 20px;
+  overflow: hidden; box-shadow: 0 26px 60px rgba(26, 24, 21, .16);
+}
+.sl-aulacard-corpo { padding: 22px 26px 26px; display: flex; flex-direction: column; gap: 10px; flex: 1 }
+.sl-aulacard-topo { display: flex; align-items: center; justify-content: space-between; gap: 12px }
+.sl-aulacard-rotulo { font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--sl-ouro) }
+.sl-aulacard h3 { font-family: var(--sl-serifa); font-weight: 600; font-size: 24px; line-height: 1.15 }
+.sl-aulacard p { font-size: 14px; line-height: 1.6; color: var(--sl-tinta-2) }
+.sl-aulacard-acoes { margin-top: auto; padding-top: 10px; display: flex; gap: 10px; flex-wrap: wrap }
+.sl-aulacard-vazia { box-shadow: none; border-style: dashed; background: rgba(253, 251, 246, .7) }
+
+/* Player 16:9: caixa de razão fixa, iframe ou vídeo ocupando tudo. */
+.sl-player { position: relative; aspect-ratio: 16 / 9; background: var(--sl-palco) center / cover no-repeat; overflow: hidden }
+.sl-player iframe, .sl-player video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #000 }
+
+/* Capa quando a aula ainda não tem vídeo no Panda, ou o módulo está fechado. */
+.sl-capa {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  background:
+    radial-gradient(520px 260px at 50% 45%, rgba(142, 21, 34, .55), transparent 72%),
+    var(--sl-palco);
+  color: rgba(253, 250, 245, .82); text-decoration: none; text-align: center; padding: 20px;
+}
+a.sl-capa:hover { color: var(--sl-creme) }
+.sl-capa-play {
+  width: 76px; height: 76px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid rgba(253, 250, 245, .75); background: rgba(193, 18, 31, .5);
+  transition: transform .2s ease, background-color .2s ease;
+}
+a.sl-capa:hover .sl-capa-play { transform: scale(1.06); background: var(--sl-acento) }
+.sl-capa span { font-size: 11px; letter-spacing: .2em; text-transform: uppercase }
+
+/* ---- "como funciona" ------------------------------------------------------ */
+
+.sl-como { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--sl-linha-forte) }
+.sl-como li { padding: 26px 26px 6px 0; border-right: 1px solid var(--sl-linha) }
+.sl-como li + li { padding-left: 26px }
+.sl-como li:last-child { border-right: 0 }
+.sl-como-num { font-family: var(--sl-serifa); font-size: 15px; font-style: italic; color: var(--sl-acento) }
+.sl-como h3 { margin-top: 8px; font-family: var(--sl-serifa); font-weight: 600; font-size: 20px; line-height: 1.2 }
+.sl-como p { margin-top: 8px; font-size: 14px; line-height: 1.6; color: var(--sl-tinta-2) }
+
+/* ---- a trilha ------------------------------------------------------------- */
+
+.sl-trilha { position: relative; padding-top: 44px }
+.sl-trilha-lista { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr) }
+/* O trilho corre pelo centro das bolinhas; o preenchimento vermelho vai até o
+   módulo atual, e a largura dele vem inline, calculada no servidor. */
+.sl-trilha-trilho, .sl-trilha-feito {
+  position: absolute; top: calc(44px + 25px); height: 2px; left: calc(100% / var(--n) / 2);
+}
+.sl-trilha-trilho { right: calc(100% / var(--n) / 2); background: repeating-linear-gradient(90deg, var(--sl-linha-forte) 0 6px, transparent 6px 11px) }
+.sl-trilha-feito { background: var(--sl-acento) }
+
+.sl-no { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 10px }
+.sl-no-link { display: flex; flex-direction: column; align-items: center; gap: 0; color: inherit !important; text-decoration: none; border-radius: 16px; padding: 0 6px 10px }
+.sl-no-bola {
+  position: relative; z-index: 1;
+  width: 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--sl-serifa); font-weight: 600; font-size: 18px;
+  background: var(--sl-papel); border: 2px solid var(--sl-linha-forte); color: var(--sl-tinta-2);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.sl-no-link:hover .sl-no-bola { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(72, 60, 42, .16) }
+.sl-no.is-aberto .sl-no-bola { border-color: var(--sl-acento); color: var(--sl-acento) }
+.sl-no.is-feito .sl-no-bola { background: var(--sl-acento); border-color: var(--sl-acento); color: var(--sl-creme) }
+.sl-no.is-atual .sl-no-bola {
+  width: 60px; height: 60px; margin-top: -4px; font-size: 21px;
+  background: var(--sl-tinta); border-color: var(--sl-tinta); color: var(--sl-creme);
+  box-shadow: 0 0 0 6px rgba(193, 18, 31, .14);
+}
+.sl-no.is-travado .sl-no-bola { border-style: dashed; color: var(--sl-tinta-3) }
+.sl-no-texto { display: flex; flex-direction: column; align-items: center }
+.sl-no-rotulo { margin-top: 14px; font-size: 10.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--sl-ouro) }
+.sl-no-titulo { margin-top: 4px; font-family: var(--sl-serifa); font-weight: 600; font-size: 16px; line-height: 1.2; color: var(--sl-tinta); max-width: 18ch }
+.sl-no-docente { margin-top: 8px; display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--sl-tinta-2) }
+.sl-no-docente img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; object-position: top }
+.sl-no-estado { margin-top: 10px }
+.sl-no.is-travado .sl-no-titulo { color: var(--sl-tinta-2) }
+
+/* O marcador "Você está aqui", preso acima da bolinha do módulo atual. */
+.sl-aqui {
+  position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+  white-space: nowrap; padding: 6px 12px; border-radius: 12px;
+  background: var(--sl-acento); color: var(--sl-creme);
+  font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+}
+.sl-aqui::after {
+  content: ""; position: absolute; left: 50%; bottom: -5px; margin-left: -5px;
+  border: 5px solid transparent; border-bottom: 0; border-top-color: var(--sl-acento);
+}
+
+/* ---- teaser do notebook --------------------------------------------------- */
+
+.sl-teaser {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 0;
+  background: var(--sl-creme); border: 1px solid var(--sl-borda); border-radius: 20px; overflow: hidden;
+}
+.sl-teaser-texto { padding: 40px 42px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start }
+.sl-teaser-texto h2 { font-family: var(--sl-serifa); font-weight: 600; font-size: 32px; line-height: 1.1; letter-spacing: -.01em }
+.sl-teaser-texto p { font-size: 15px; line-height: 1.65; color: var(--sl-tinta-2) }
+.sl-teaser-visual { background: var(--sl-papel-baixo); border-left: 1px solid var(--sl-borda); padding: 34px 36px; display: flex; flex-direction: column; justify-content: center; gap: 12px }
+.sl-teaser-legenda { font-size: 12px; color: var(--sl-tinta-2) }
+
+/* ---- cabeça do módulo ----------------------------------------------------- */
+
+.sl-cabeca {
+  position: relative; overflow: hidden; isolation: isolate;
+  background: linear-gradient(150deg, var(--sl-fundo) 0%, var(--sl-fundo-2) 100%);
+  color: var(--sl-creme); border-bottom: 1px solid rgba(169, 142, 78, .5);
+}
+.sl-cabeca .sl-hero-globo img { width: min(900px, 80vw); right: -10%; }
+.sl-cabeca-miolo { position: relative; z-index: 2; padding: 34px 0 44px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 36px; align-items: end }
+.sl-numeral {
+  font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(96px, 11vw, 168px); line-height: .8;
+  color: transparent; -webkit-text-stroke: 1.5px rgba(232, 217, 181, .75);
+}
+.sl-cabeca h1 { margin-top: 12px; font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(34px, 4vw, 54px); line-height: 1.05; letter-spacing: -.02em }
+.sl-cabeca-lateral { display: flex; flex-direction: column; gap: 16px; min-width: 260px }
+.sl-migalha { font-size: 12px; color: rgba(253, 250, 245, .78) }
+.sl-migalha a { color: var(--sl-creme) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(253, 250, 245, .4) }
+.sl-migalha-claro { color: var(--sl-tinta-2) }
+.sl-migalha-claro a { color: var(--sl-tinta-2) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--sl-linha-forte) }
+
+/* Progresso: a barra e o número. Duas variantes de fundo. */
+.sl-progresso { display: flex; flex-direction: column; gap: 8px }
+.sl-progresso-linha { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 12px }
+.sl-progresso-linha b { font-family: var(--sl-serifa); font-size: 22px; font-weight: 600 }
+.sl-barra { height: 5px; border-radius: 3px; background: var(--sl-papel-baixo); overflow: hidden }
+.sl-barra i { display: block; height: 100%; background: var(--sl-acento); border-radius: 3px }
+.sl-escuro .sl-barra { background: rgba(253, 250, 245, .18) }
+.sl-escuro .sl-barra i { background: var(--sl-creme) }
+
+/* ---- docente -------------------------------------------------------------- */
+
+.sl-docente { display: flex; align-items: center; gap: 12px }
+.sl-docente img, .sl-docente-inicial {
+  width: 48px; height: 48px; border-radius: 50%; object-fit: cover; object-position: top; flex: none;
+  border: 1px solid var(--sl-borda);
+}
+.sl-docente-inicial { display: flex; align-items: center; justify-content: center; background: var(--sl-papel-baixo); font-family: var(--sl-serifa); font-size: 20px; color: var(--sl-ouro) }
+.sl-docente-nome { display: block; font-weight: 700; font-size: 14px }
+.sl-docente-cred { display: block; font-size: 12.5px; color: var(--sl-tinta-2) }
+.sl-escuro .sl-docente img { border-color: rgba(253, 250, 245, .35) }
+.sl-escuro .sl-docente-cred { color: rgba(253, 250, 245, .78) }
+
+/* ---- corpo da página do módulo -------------------------------------------- */
+
+.sl-modulo-grade { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 40px; margin-top: 48px; align-items: start }
+.sl-lista { border-top: 1px solid var(--sl-linha-forte) }
+.sl-lista li { border-bottom: 1px solid var(--sl-linha) }
+.sl-lista-item {
+  display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 18px; align-items: center;
+  padding: 20px 8px; color: inherit !important; text-decoration: none; border-radius: 12px;
+  transition: background-color .15s ease;
+}
+a.sl-lista-item:hover { background: var(--sl-creme) }
+.sl-lista-num { font-family: var(--sl-serifa); font-size: 28px; font-weight: 600; color: var(--sl-regua); line-height: 1 }
+.sl-lista-item h3 { font-family: var(--sl-serifa); font-weight: 600; font-size: 19px; line-height: 1.25 }
+.sl-lista-item p { margin-top: 4px; font-size: 13.5px; line-height: 1.55; color: var(--sl-tinta-2) }
+.sl-lista-item.is-travado h3 { color: var(--sl-tinta-2) }
+
+.sl-cartao { background: var(--sl-creme); border: 1px solid var(--sl-borda); border-radius: 16px; padding: 24px 26px }
+.sl-cartao + .sl-cartao { margin-top: 16px }
+.sl-cartao h2, .sl-cartao h3 { font-family: var(--sl-serifa); font-weight: 600; font-size: 21px; line-height: 1.2 }
+.sl-cartao p { margin-top: 8px; font-size: 14px; line-height: 1.6; color: var(--sl-tinta-2) }
+.sl-cartao .sl-btn { margin-top: 16px }
+.sl-cartao-rotulo { display: block; margin-bottom: 8px; font-size: 10.5px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--sl-ouro) }
+.sl-cartao-nb { border-color: var(--sl-tinta); background: var(--sl-tinta); color: var(--sl-creme) }
+.sl-cartao-nb p { color: rgba(253, 250, 245, .8) }
+.sl-cartao-nb .sl-cartao-rotulo { color: var(--sl-palha) }
+
+.sl-aviso {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 22px 24px; border-radius: 16px;
+  background: rgba(169, 142, 78, .08); border: 1px solid rgba(169, 142, 78, .4);
+}
+.sl-aviso svg { flex: none; margin-top: 2px }
+.sl-aviso h2 { font-family: var(--sl-serifa); font-weight: 600; font-size: 22px; line-height: 1.2 }
+.sl-aviso p { margin-top: 6px; font-size: 14.5px; line-height: 1.6; color: var(--sl-tinta-2) }
+
+/* ---- notebook ------------------------------------------------------------- */
+
+.sl-nb-cabeca { padding: 40px 0 36px; border-bottom: 1px solid var(--sl-linha-forte) }
+.sl-nb-cabeca h1 { margin-top: 18px; font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(40px, 5vw, 68px); line-height: 1.02; letter-spacing: -.025em; max-width: 18ch }
+.sl-nb-cabeca .sl-sub { font-size: 17px; max-width: 60ch }
+.sl-nb-meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 22px }
+
+.sl-nb { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 56px; margin-top: 44px; align-items: start }
+.sl-nb-indice { position: sticky; top: 86px }
+.sl-nb-indice h2 { font-size: 10.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--sl-ouro); margin-bottom: 14px }
+.sl-nb-indice ol { border-left: 1px solid var(--sl-linha-forte) }
+.sl-nb-indice a {
+  display: flex; gap: 10px; padding: 9px 0 9px 16px; margin-left: -1px;
+  border-left: 2px solid transparent;
+  font-size: 13.5px; line-height: 1.4; color: var(--sl-tinta-2) !important;
+}
+.sl-nb-indice a:hover { color: var(--sl-tinta) !important; border-left-color: var(--sl-acento) }
+.sl-nb-indice a span { font-family: var(--sl-serifa); font-style: italic; color: var(--sl-acento); min-width: 18px }
+.sl-nb-indice-pe { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; font-size: 13px }
+
+.sl-nb-canvas { min-width: 0; display: flex; flex-direction: column; gap: 44px }
+/* Âncora do índice não pode cair embaixo da topbar fixa. */
+.sl-nb-canvas [id] { scroll-margin-top: 90px }
+
+.sl-cap { padding-top: 8px; border-top: 2px solid var(--sl-tinta) }
+.sl-cap-num { display: block; margin-top: 14px; font-family: var(--sl-serifa); font-style: italic; font-size: 18px; color: var(--sl-acento) }
+.sl-cap h2 { margin-top: 4px; font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -.02em; max-width: 22ch }
+.sl-cap p { margin-top: 12px; font-size: 17px; line-height: 1.55; color: var(--sl-tinta-2); max-width: 60ch }
+
+.sl-prosa { max-width: 68ch }
+.sl-prosa p { font-family: var(--sl-serifa); font-size: 19px; line-height: 1.72; color: #2a2723 }
+.sl-prosa p + p { margin-top: 1.1em }
+.sl-prosa.is-capitular p:first-child::first-letter {
+  float: left; margin: 8px 12px 0 0;
+  font-family: var(--sl-serifa); font-weight: 700; font-size: 84px; line-height: .78;
+  color: var(--sl-acento);
+}
+
+.sl-destaque { max-width: 30ch; padding: 6px 0 6px 28px; border-left: 3px solid var(--sl-acento) }
+.sl-destaque p { font-family: var(--sl-serifa); font-style: italic; font-weight: 500; font-size: clamp(26px, 2.8vw, 36px); line-height: 1.25; color: var(--sl-tinta) }
+.sl-destaque footer { margin-top: 14px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--sl-ouro) }
+
+.sl-numero { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 32px; align-items: center; padding: 28px 0; border-top: 1px solid var(--sl-linha-forte); border-bottom: 1px solid var(--sl-linha-forte) }
+.sl-numero-valor { font-family: var(--sl-serifa); font-weight: 700; font-size: clamp(64px, 8vw, 112px); line-height: .9; letter-spacing: -.03em; color: var(--sl-acento); white-space: nowrap }
+.sl-numero-legenda { font-size: 18px; line-height: 1.5; color: var(--sl-tinta); max-width: 44ch }
+.sl-numero-nota { margin-top: 8px; font-size: 12.5px; color: var(--sl-tinta-3) }
+
+.sl-origem { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 12.5px; font-weight: 600 }
+
+/* Figura do gráfico. */
+.sl-fig { background: var(--sl-creme); border: 1px solid var(--sl-borda); border-radius: 16px; padding: 26px 28px 20px }
+.sl-fig-topo { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; flex-wrap: wrap }
+.sl-fig h3 { font-family: var(--sl-serifa); font-weight: 600; font-size: 21px; line-height: 1.25; max-width: 40ch }
+.sl-legenda { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 14px; font-size: 12.5px; color: var(--sl-tinta-2) }
+.sl-legenda li { display: inline-flex; align-items: center; gap: 8px }
+.sl-legenda i { width: 18px; height: 3px; border-radius: 2px; display: inline-block }
+.sl-grafico { position: relative; margin-top: 12px }
+.sl-grafico svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y }
+.sl-grafico svg:focus-visible { outline: 2px solid var(--sl-acento); outline-offset: 4px }
+.sl-grafico text { font-family: var(--sl-sans); font-size: 12px; fill: var(--sl-tinta-3) }
+.sl-dica {
+  position: absolute; pointer-events: none; z-index: 2; transform: translate(-50%, calc(-100% - 12px));
+  min-width: 140px; padding: 9px 12px; border-radius: 12px;
+  background: var(--sl-tinta); color: var(--sl-creme); font-size: 12px; line-height: 1.45;
+  box-shadow: 0 12px 26px rgba(26, 24, 21, .25); white-space: nowrap;
+}
+.sl-dica b { display: block; margin-bottom: 3px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--sl-palha) }
+.sl-dica span { display: flex; align-items: center; gap: 7px }
+.sl-dica i { width: 8px; height: 8px; border-radius: 50%; display: inline-block }
+.sl-fig-nota { margin-top: 12px; font-size: 12.5px; line-height: 1.55; color: var(--sl-tinta-3) }
+.sl-dados { margin-top: 12px; font-size: 13px }
+.sl-dados summary { cursor: pointer; color: var(--sl-ouro); font-weight: 600; width: fit-content; border-radius: 4px }
+.sl-dados summary::-webkit-details-marker { display: none }
+.sl-dados summary::before { content: "+ " }
+.sl-dados[open] summary::before { content: "− " }
+
+.sl-tabela-caixa { overflow-x: auto }
+.sl-tabela { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px }
+.sl-tabela caption { text-align: left; font-family: var(--sl-serifa); font-weight: 600; font-size: 21px; margin-bottom: 12px; color: var(--sl-tinta) }
+.sl-tabela th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--sl-ouro); padding: 10px 14px 10px 0; border-bottom: 2px solid var(--sl-tinta) }
+.sl-tabela td { padding: 13px 14px 13px 0; border-bottom: 1px solid var(--sl-linha); color: var(--sl-tinta); line-height: 1.5; vertical-align: top }
+.sl-tabela tbody th { font-size: 14px; letter-spacing: 0; text-transform: none; color: var(--sl-tinta); border-bottom: 1px solid var(--sl-linha); font-weight: 700 }
+
+/* Simulador. */
+.sl-comp { background: var(--sl-tinta); color: var(--sl-creme); border-radius: 20px; padding: 32px 34px 28px }
+.sl-comp h2 { font-family: var(--sl-serifa); font-weight: 600; font-size: 28px; line-height: 1.15 }
+.sl-comp-desc { margin-top: 8px; font-size: 14.5px; line-height: 1.6; color: rgba(253, 250, 245, .8); max-width: 60ch }
+.sl-comp-grade { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 34px; margin-top: 26px; align-items: start }
+.sl-comp-controles { display: flex; flex-direction: column; gap: 22px }
+.sl-controle label { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 600; color: rgba(253, 250, 245, .9) }
+.sl-controle output { font-family: var(--sl-serifa); font-size: 18px; color: var(--sl-creme) }
+.sl-controle input[type="range"] { width: 100%; margin-top: 10px; accent-color: var(--sl-acento); height: 24px; cursor: pointer }
+.sl-controle small { display: block; margin-top: 2px; font-size: 11.5px; color: rgba(253, 250, 245, .7) }
+.sl-comp-resultado { margin-top: 4px; padding-top: 18px; border-top: 1px solid rgba(253, 250, 245, .2) }
+.sl-comp-resultado b { display: block; font-family: var(--sl-serifa); font-size: 46px; font-weight: 600; line-height: 1; color: var(--sl-creme) }
+.sl-comp-resultado span { display: block; margin-top: 8px; font-size: 13px; line-height: 1.5; color: rgba(253, 250, 245, .82) }
+.sl-comp .sl-fig { background: var(--sl-creme); color: var(--sl-tinta) }
+/* O gráfico do simulador é papel dentro do bloco escuro: o foco volta ao vermelho. */
+.sl .sl-comp .sl-fig :focus-visible { outline-color: var(--sl-acento) }
+.sl-comp-aviso { margin-top: 18px; font-size: 12px; line-height: 1.55; color: rgba(253, 250, 245, .72) }
+.sl-comp .sl-chip-demo { margin-top: 0 }
+
+/* Referências. */
+.sl-refs { border-top: 2px solid var(--sl-tinta); padding-top: 8px }
+.sl-refs h2 { margin-top: 14px; font-family: var(--sl-serifa); font-weight: 600; font-size: 30px }
+.sl-refs ol { margin-top: 18px; counter-reset: ref }
+.sl-refs li { counter-increment: ref; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 8px; padding: 16px 0; border-bottom: 1px solid var(--sl-linha) }
+.sl-refs li::before { content: counter(ref, decimal-leading-zero); font-family: var(--sl-serifa); font-style: italic; color: var(--sl-acento) }
+.sl-refs cite { font-family: var(--sl-serifa); font-style: italic; font-size: 19px; color: var(--sl-tinta) }
+.sl-refs-autor { display: block; margin-top: 2px; font-size: 13.5px; color: var(--sl-tinta-2) }
+.sl-refs-nota { display: block; margin-top: 6px; font-size: 14px; line-height: 1.55; color: var(--sl-tinta-2) }
+
+/* ---- aula em modo teatro -------------------------------------------------- */
+
+.sl-palco { background: var(--sl-palco); color: var(--sl-creme); padding: 28px 0 40px }
+.sl-palco-player { max-width: min(1280px, calc(100% - 56px)); margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 40px 90px rgba(0, 0, 0, .55); border: 1px solid rgba(253, 250, 245, .08) }
+.sl-palco-meta { max-width: min(1280px, calc(100% - 56px)); margin: 28px auto 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px; align-items: end }
+.sl-palco-meta h1 { margin-top: 12px; font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(28px, 3.2vw, 42px); line-height: 1.1; letter-spacing: -.015em; color: var(--sl-creme) }
+.sl-palco-desc { margin-top: 12px; max-width: 70ch; font-size: 15px; line-height: 1.65; color: rgba(253, 250, 245, .78) }
+.sl-palco-migalha { font-size: 12px; color: rgba(253, 250, 245, .7) }
+.sl-palco-migalha a { color: rgba(253, 250, 245, .88) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(253, 250, 245, .3) }
+.sl-palco-migalha a:hover { color: var(--sl-creme) !important }
+.sl-palco-acoes { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; align-items: center }
+.sl-palco-trava { font-size: 12.5px; color: rgba(253, 250, 245, .75); max-width: 26ch; text-align: right }
+
+.sl-concluir {
+  display: inline-flex; align-items: center; gap: 9px; min-height: 46px; padding: 12px 20px;
+  border-radius: 14px; border: 1px solid rgba(253, 250, 245, .34);
+  background: transparent; color: var(--sl-creme);
+  font: 700 13px/1.2 var(--sl-sans); letter-spacing: .03em; cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+.sl-concluir:hover { border-color: var(--sl-creme); background: rgba(253, 250, 245, .06) }
+.sl-concluir.is-feita { border-color: rgba(111, 207, 151, .6); color: #9FE0B9 }
+.sl-concluir:disabled { opacity: .6; cursor: progress }
+.sl-concluir-erro { flex-basis: 100%; text-align: right; font-size: 12.5px; color: #F4B4B0 }
+
+.sl-aula-grade { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 40px; margin-top: 40px; align-items: start }
+.sl-aula-principal { display: flex; flex-direction: column; gap: 16px }
+.sl-materiais li + li { border-top: 1px solid var(--sl-linha) }
+.sl-materiais a { display: flex; align-items: center; gap: 12px; padding: 12px 0; font-size: 14px; color: var(--sl-tinta) !important }
+.sl-materiais a:hover { color: var(--sl-acento) !important }
+.sl-materiais-icone { width: 32px; height: 32px; border-radius: 12px; background: var(--sl-papel-baixo); display: flex; align-items: center; justify-content: center; flex: none }
+.sl-vazio { margin-top: 8px; font-size: 14px; font-style: italic; color: var(--sl-tinta-3) }
+
+.sl-modaulas li + li { border-top: 1px solid var(--sl-linha) }
+.sl-modaulas a, .sl-modaulas span.sl-modaulas-item {
+  display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; align-items: start;
+  padding: 12px 10px; margin: 0 -10px; border-radius: 12px;
+  font-size: 14px; line-height: 1.4; color: var(--sl-tinta-2) !important;
+}
+.sl-modaulas a:hover { background: var(--sl-papel) }
+.sl-modaulas [aria-current="page"] { background: #F6EFE0; color: var(--sl-tinta) !important; font-weight: 700 }
+.sl-ponto { width: 10px; height: 10px; margin-top: 5px; border-radius: 50%; border: 1.5px solid #C9BCA8; display: block }
+.sl-ponto.is-feita { background: var(--sl-acento); border-color: var(--sl-acento) }
+.sl-ponto.is-atual { border-color: var(--sl-acento); background: linear-gradient(90deg, var(--sl-regua) 50%, transparent 50%) }
+
+/* ---- miolo da home (entre o banner portado e a prateleira) ---------------- */
+
+.sl-embutido { min-height: 0; padding-bottom: 0 }
+.sl-chamada {
+  position: relative; overflow: hidden; isolation: isolate; margin-top: 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  padding: 28px 34px; border-radius: 16px;
+  background: var(--sl-tinta); color: var(--sl-creme);
+}
+.sl-chamada .sl-hero-globo img { width: 520px; right: -120px; opacity: .12 }
+.sl-chamada-texto { position: relative; z-index: 1; max-width: 640px }
+.sl-chamada h2 { margin-top: 8px; font-family: var(--sl-serifa); font-weight: 600; font-size: 30px; line-height: 1.1 }
+.sl-chamada p { margin-top: 8px; font-size: 14.5px; line-height: 1.6; color: rgba(253, 250, 245, .8) }
+.sl-chamada .sl-btn { position: relative; z-index: 1 }
+.sl-home-trilha { margin-top: 40px }
+.sl-home-trilha-cabeca { display: flex; align-items: baseline; gap: 14px; padding-bottom: 4px }
+.sl-home-trilha-cabeca i { width: 30px; height: 1px; background: var(--sl-regua) }
+.sl-home-trilha-cabeca h2 { font-family: var(--sl-serifa); font-weight: 600; font-size: 22px }
+
+/* ---- movimento reduzido --------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .sl *, .sl *::before, .sl *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important }
+  .sl-btn:hover, .sl-no-link:hover .sl-no-bola, a.sl-capa:hover .sl-capa-play { transform: none }
+}
+
+/* ---- telas estreitas: o desenho é de desktop, aqui só empilha ------------- */
+
+@media (max-width: 960px) {
+  .sl-intro-grade, .sl-teaser, .sl-modulo-grade, .sl-aula-grade, .sl-nb, .sl-comp-grade { grid-template-columns: minmax(0, 1fr) }
+  .sl-teaser-visual { border-left: 0; border-top: 1px solid var(--sl-borda) }
+  .sl-como { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+  .sl-como li:nth-child(2) { border-right: 0 }
+  .sl-como li:nth-child(3) { padding-left: 0 }
+  .sl-nb-indice { position: static }
+  .sl-cabeca-miolo { grid-template-columns: minmax(0, 1fr) }
+  .sl-numeral { font-size: 88px }
+  .sl-palco-meta { grid-template-columns: minmax(0, 1fr) }
+  .sl-palco-acoes { justify-content: flex-start }
+  .sl-palco-trava, .sl-concluir-erro { text-align: left }
+  .sl-hero-olho { opacity: .35 }
+
+  /* A trilha vira vertical: o trilho desce pela esquerda. */
+  .sl-trilha { padding-top: 8px }
+  .sl-trilha-lista { grid-auto-flow: row; grid-auto-columns: auto; gap: 22px }
+  .sl-trilha-trilho, .sl-trilha-feito { display: none }
+  .sl-no { flex-direction: row; text-align: left; padding: 0 }
+  .sl-no-link { flex-direction: row; align-items: flex-start; gap: 16px; padding: 0 }
+  .sl-no-texto { display: flex; flex-direction: column; align-items: flex-start }
+  .sl-no-rotulo { margin-top: 0 }
+  .sl-no-titulo { max-width: none }
+  .sl-aqui { position: static; transform: none; display: inline-block; margin-bottom: 6px }
+  .sl-aqui::after { display: none }
+}
+@media (max-width: 600px) {
+  .sl-wrap, .sl-wrap-largo { padding: 0 18px }
+  .sl-como { grid-template-columns: minmax(0, 1fr) }
+  .sl-como li, .sl-como li + li { padding: 20px 0 6px; border-right: 0 }
+  .sl-hero-olho { display: none }
+  .sl-teaser-texto, .sl-teaser-visual, .sl-comp { padding: 24px 22px }
+  .sl-numero { grid-template-columns: minmax(0, 1fr); gap: 10px }
+  .sl-palco-player, .sl-palco-meta { max-width: calc(100% - 36px) }
+}

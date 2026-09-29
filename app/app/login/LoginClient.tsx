@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { criarConta } from "./actions";
 import { validarSenha } from "@/lib/senha";
-import { cadastroAberto } from "@/lib/seguranca";
 import { emTrabalho, ligarExigencias, pintarCaixa } from "@/app/app/_ui/feedback";
 
 import contato from "@/lib/contato.json";
@@ -35,10 +34,16 @@ export default function LoginClient({
   html,
   mode,
   aviso,
+  cadastro = false,
 }: {
   html: string;
   mode: "login" | "primeiro";
   aviso?: string;
+  /**
+   * O cadastro livre existe neste ambiente? Vem da página (servidor) porque a chave manual,
+   * `CADASTRO_ABERTO`, é variável só de servidor e não chega ao navegador.
+   */
+  cadastro?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -194,8 +199,8 @@ export default function LoginClient({
       {/* A barra de teste só existe onde o cadastro livre existe. Ela anunciava, na tela de
           login pública, um botão "1º acesso" que cria conta com matrícula ativa sem compra:
           com o domínio da Abril servindo esta branch, isso era a porta aberta com placa na
-          frente. Os dois agora pendem da mesma variável. */}
-      {cadastroAberto(process.env.NEXT_PUBLIC_APP_ENV) && <TestBar router={router} />}
+          frente. Os dois agora pendem da mesma regra (`cadastroAberto`, avaliada na página). */}
+      {cadastro && <TestBar router={router} />}
     </>
   );
 }

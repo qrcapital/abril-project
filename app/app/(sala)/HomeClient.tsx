@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 
 import contato from "@/lib/contato.json";
 
+/** Onde o `home.html` é partido para o React pôr o miolo (ver a prop `meio`). */
+const MEIO = "<!-- sala:meio -->";
+
 /** O que o modal está dizendo. `null` = fechado. */
 type Aviso = {
   titulo: string;
@@ -42,8 +45,16 @@ export default function HomeClient({
   restantes,
   totalAulas,
   travado,
+  meio,
 }: {
   html: string;
+  /**
+   * O que entra entre o banner e a prateleira: o cartão "Comece por aqui" e a trilha, que são
+   * componentes de servidor. O HTML é partido no marcador `<!-- sala:meio -->` de `home.html`.
+   * Nada ali pode usar a classe `mcard`: o clique dos cartões é resolvido pela POSIÇÃO entre os
+   * `.mcard`, e um a mais deslocaria o destino de todos.
+   */
+  meio?: React.ReactNode;
   /** Para onde cada cartão de módulo leva, na ordem deles. */
   destinos: string[];
   /** Destino do "Continuar de onde parou". */
@@ -52,8 +63,11 @@ export default function HomeClient({
   restantes: number;
   /** Total de aulas que contam para o gate (`conta_no_gate`): a copy acompanha o admin. */
   totalAulas: number;
-  /** `dias`/`data` nulos = módulo em breve: fechado sem data marcada (política, 0016). */
-  travado?: { label: string; dias: number | null; data: string | null };
+  /**
+   * `dias`/`data` nulos = fechado sem data: em breve (política, 0016), ou esperando a conclusão
+   * de outro módulo, e então `apos` traz o rótulo dele ("Módulo I", regra `apos_modulo`, 0024).
+   */
+  travado?: { label: string; dias: number | null; data: string | null; apos: string | null };
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -65,23 +79,29 @@ export default function HomeClient({
     travado
       ? {
           titulo: `${travado.label} ainda não abriu`,
-          // Sem data (em breve), a mensagem não inventa prazo: diz que o conteúdo está a
-          // caminho. Com data, mantém a contagem de sempre.
-          corpo:
-            travado.dias === null || travado.data === null ? (
-              <>
-                Este conteúdo está em preparação e será liberado em breve, sem data marcada.
-                Seu acesso às aulas já liberadas continua normal.
-              </>
-            ) : (
-              <>
-                Este módulo abre{" "}
-                <b style={{ color: "#7E6836" }}>
-                  {travado.dias === 1 ? "amanhã" : `em ${travado.dias} dias`}
-                </b>
-                , no dia {travado.data}. Seu acesso às aulas já liberadas continua normal.
-              </>
-            ),
+          // Três casos. Esperando outro módulo (`apos_modulo`): diz qual concluir, que é a única
+          // coisa que o aluno pode fazer para abrir. Sem data (em breve): não inventa prazo, diz
+          // que o conteúdo está a caminho. Com data: a contagem e o dia.
+          corpo: travado.apos ? (
+            <>
+              Este módulo abre quando você concluir todas as aulas do{" "}
+              <b style={{ color: "#7E6836" }}>{travado.apos}</b>. Seu acesso às aulas já
+              liberadas continua normal.
+            </>
+          ) : travado.dias === null || travado.data === null ? (
+            <>
+              Este conteúdo está em preparação e será liberado em breve, sem data marcada.
+              Seu acesso às aulas já liberadas continua normal.
+            </>
+          ) : (
+            <>
+              Este módulo abre{" "}
+              <b style={{ color: "#7E6836" }}>
+                {travado.dias === 1 ? "amanhã" : `em ${travado.dias} dias`}
+              </b>
+              , no dia {travado.data}. Seu acesso às aulas já liberadas continua normal.
+            </>
+          ),
           acao: {
             rotulo: "Continuar de onde parei",
             ir: () => router.push(destinoAtual),
@@ -164,7 +184,17 @@ export default function HomeClient({
 
   return (
     <>
-      <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />
+      <div ref={ref}>
+        {meio && html.includes(MEIO) ? (
+          <>
+            <div dangerouslySetInnerHTML={{ __html: html.slice(0, html.indexOf(MEIO)) }} />
+            {meio}
+            <div dangerouslySetInnerHTML={{ __html: html.slice(html.indexOf(MEIO) + MEIO.length) }} />
+          </>
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: html }} />
+        )}
+      </div>
       {aviso && <Modal aviso={aviso} fechar={() => setAviso(null)} />}
     </>
   );

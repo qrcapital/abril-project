@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { papelAtual } from "@/lib/admin";
+import { origemValida } from "@/lib/admin-guarda";
 import { auditar } from "@/lib/auditoria";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -38,7 +39,7 @@ const UUID = /^[0-9a-f-]{36}$/i;
 /**
  * Endereço de arquivo aceito. A decisão do Pedro em 31/jul foi **URL colada** em vez de upload
  * para o Storage, então o valor vai direto para o `href` do link de material do aluno
- * (`lib/aula-template.ts`). Admin é gente de confiança, mas fronteira de confiança é fronteira:
+ * (`app/app/(sala)/modulo/[m]/aula/[n]/page.tsx`). Admin é gente de confiança, mas fronteira de confiança é fronteira:
  * sem esta linha um `javascript:` colado ali vira script rodando na tela do aluno.
  */
 const ARQUIVO_OK = /^(https?:\/\/|\/)/i;
@@ -54,6 +55,9 @@ function voltar(req: NextRequest, params: Record<string, string>) {
 export async function POST(req: NextRequest) {
   const autor = await papelAtual();
   if (autor.papel !== "admin") return new NextResponse(null, { status: 404 });
+  // Cookie o navegador manda sozinho; o `Origin` ele não deixa outra página forjar. POST vindo de
+  // outro site com a sessão do admin é recusado antes de tocar em qualquer dado.
+  if (!origemValida(req)) return new NextResponse(null, { status: 403 });
 
   const form = await req.formData();
   const texto = (campo: string) => String(form.get(campo) ?? "").trim();

@@ -98,6 +98,15 @@ export default function AreaChrome({
         if (/Suporte|WhatsApp/i.test(txt)) {
           e.preventDefault();
           window.open(WHATSAPP, "_blank", "noopener");
+          return;
+        }
+        // Link interno com endereço real ("Comece por aqui", desde 29/set/2026): navegação do
+        // cliente, sem recarregar a página. Clique com modificador (nova aba) segue nativo.
+        const destino = a.getAttribute("href");
+        const me = e as MouseEvent;
+        if (destino?.startsWith("/app/") && !me.metaKey && !me.ctrlKey && !me.shiftKey && !me.altKey) {
+          e.preventDefault();
+          return router.push(destino);
         }
       }
       // demais links (rodapé com href real) navegam nativamente

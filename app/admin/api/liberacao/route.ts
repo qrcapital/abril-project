@@ -1,12 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { papelAtual } from "@/lib/admin";
+import { origemValida } from "@/lib/admin-guarda";
 import { auditar } from "@/lib/auditoria";
+import { rotuloModulo } from "@/lib/curso";
 import { TIPOS_DE_REGRA } from "@/lib/liberacao";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
- * Escreve as políticas de liberação (migration 0016): criar, salvar, ativar e apagar.
+ * Escreve as políticas de liberação (migrations 0016 e 0024): criar, salvar, ativar e apagar.
  *
  * ┌─ LEIA ISTO ANTES DE MEXER ─────────────────────────────────────────────────────────────┐
  * │ A CHECAGEM DE PAPEL AQUI DENTRO É O ÚNICO GUARDA DESTA ROTA.                            │
@@ -34,11 +36,15 @@ type LinhaNova = {
   tipo: string;
   dias: number | null;
   abre_em: string | null;
+  depende_de_ord: number | null;
 };
 
 export async function POST(req: NextRequest) {
   const autor = await papelAtual();
   if (autor.papel !== "admin") return new NextResponse(null, { status: 404 });
+  // Cookie o navegador manda sozinho; o `Origin` ele não deixa outra página forjar. POST vindo de
+  // outro site com a sessão do admin é recusado antes de tocar em qualquer dado.
+  if (!origemValida(req)) return new NextResponse(null, { status: 403 });
 
   const form = await req.formData();
   const texto = (campo: string) => String(form.get(campo) ?? "").trim();
@@ -100,29 +106,60 @@ export async function POST(req: NextRequest) {
 
   // Valida as regras ANTES de qualquer escrita: ou a política inteira entra, ou nada muda.
   const regras: Omit<LinhaNova, "policy_id">[] = [];
+  const ords = new Set(mods.map((m) => m.ord as number));
+  const tipoDoOrd = new Map<number, string>();
   for (const m of mods) {
+    const ord = m.ord as number;
     const tipo = texto(`tipo_${m.id}`);
     if (!(TIPOS_DE_REGRA as readonly string[]).includes(tipo))
-      return erro(`O módulo ${m.ord} está sem tipo de liberação.`);
+      return erro(`O módulo ${ord} está sem tipo de liberação.`);
 
     let dias: number | null = null;
     let abre_em: string | null = null;
+    let depende_de_ord: number | null = null;
     if (tipo === "dias") {
       const bruto = texto(`dias_${m.id}`);
       // `Number("") === 0`: campo apagado viraria "no ato" em silêncio.
       dias = bruto === "" ? Number.NaN : Number(bruto);
       if (!Number.isInteger(dias) || dias < 0 || dias > 3650)
-        return erro(`Dias do módulo ${m.ord}: use um inteiro entre 0 e 3650.`);
+        return erro(`Dias do módulo ${ord}: use um inteiro entre 0 e 3650.`);
     }
     if (tipo === "data") {
       const bruto = texto(`data_${m.id}`);
       // O admin escolhe um dia pensando no Brasil; meia-noite de Brasília é o instante gravado.
       const data = /^\d{4}-\d{2}-\d{2}$/.test(bruto) ? new Date(`${bruto}T00:00:00-03:00`) : null;
       if (!data || Number.isNaN(data.getTime()))
-        return erro(`Data do módulo ${m.ord}: escolha um dia no calendário.`);
+        return erro(`Data do módulo ${ord}: escolha um dia no calendário.`);
       abre_em = data.toISOString();
     }
-    regras.push({ module_id: m.id as string, tipo, dias, abre_em });
+    if (tipo === "apos_modulo") {
+      // Aqui, ao contrário do tipo `dias`, campo vazio é 0 de propósito: "após concluir" sem
+      // dias extras é o caso comum, e o "+ N dias" é o opcional.
+      const brutoDias = texto(`dias_${m.id}`);
+      dias = brutoDias === "" ? 0 : Number(brutoDias);
+      if (!Number.isInteger(dias) || dias < 0 || dias > 3650)
+        return erro(`Dias do módulo ${ord}: use um inteiro entre 0 e 3650.`);
+      const brutoDep = texto(`depende_${m.id}`);
+      depende_de_ord = brutoDep === "" ? Number.NaN : Number(brutoDep);
+      // Só módulo ANTERIOR e existente. Depender de si ou de um posterior pode fechar ciclo
+      // (II espera o III, III espera o II), e ciclo tranca os dois para sempre sem erro na tela
+      // do aluno. O banco recusa também (trigger da 0024); aqui é para a mensagem ser boa.
+      if (!Number.isInteger(depende_de_ord) || !ords.has(depende_de_ord))
+        return erro(`${rotuloModulo(ord)}: escolha o módulo que precisa ser concluído antes.`);
+      if (depende_de_ord >= ord)
+        return erro(
+          `${rotuloModulo(ord)} não pode depender de si mesmo nem de um módulo posterior.`,
+        );
+      // Em breve não tem aula para concluir: o módulo dependente nunca abriria. A ordem do laço
+      // é a dos ords, então o tipo do anterior já foi lido.
+      if (tipoDoOrd.get(depende_de_ord) === "em_breve")
+        return erro(
+          `${rotuloModulo(ord)} depende do ${rotuloModulo(depende_de_ord)}, que está em breve: ` +
+            "ele nunca abriria. Mude um dos dois.",
+        );
+    }
+    tipoDoOrd.set(ord, tipo);
+    regras.push({ module_id: m.id as string, tipo, dias, abre_em, depende_de_ord });
   }
 
   let policyId = id;
@@ -153,7 +190,14 @@ export async function POST(req: NextRequest) {
     acao: acao === "criar" ? "liberacao.criar" : "liberacao.salvar",
     // O detalhe carrega a política inteira: é pequena (5 regras) e é a resposta da auditoria
     // para "o que exatamente valia quando o aluno reclamou".
-    detalhe: { nome, regras: regras.map((r) => `${r.tipo}${r.dias !== null ? `:${r.dias}` : ""}${r.abre_em ? `:${r.abre_em.slice(0, 10)}` : ""}`) },
+    // `apos_modulo` leva o ord do pré-requisito antes dos dias: "apos_modulo:1:3" = após o I, +3.
+    detalhe: {
+      nome,
+      regras: regras.map(
+        (r) =>
+          `${r.tipo}${r.depende_de_ord !== null ? `:${r.depende_de_ord}` : ""}${r.dias !== null ? `:${r.dias}` : ""}${r.abre_em ? `:${r.abre_em.slice(0, 10)}` : ""}`,
+      ),
+    },
   });
 
   return voltar(req, { ok: acao === "criar" ? "criada" : "salva" });

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import ApagarAula from "./ApagarAula";
 import { Cabecalho, Linha, Quadro, Selo } from "@/app/admin/_ui/tabela";
 import { rotuloModulo } from "@/lib/curso";
+import { exigirAdmin } from "@/lib/admin-guarda";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = { title: "Conteúdo" };
@@ -75,6 +76,9 @@ export default async function Conteudo({
 }: {
   searchParams: Promise<{ m?: string; ok?: string; erro?: string }>;
 }) {
+  // Antes de qualquer leitura com a service role: layout e página rodam em paralelo, e a guarda
+  // do layout não segura a consulta daqui (ver `lib/admin-guarda.ts`).
+  await exigirAdmin();
   const { m, ok, erro } = await searchParams;
   const abrir = m ?? "";
 

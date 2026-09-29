@@ -9,6 +9,8 @@
 // (0..4), que é o `ord` do módulo no banco.
 
 export type Modulo = {
+  /** `modules.id`. Entrou em 29/set para o calendário do aluno (`lib/calendario.ts`). */
+  id: string;
   idx: number;
   label: string; // "Módulo 0", "Módulo I", ...
   titulo: string;

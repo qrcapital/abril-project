@@ -25,6 +25,7 @@ export const getCurriculo = cache(async (): Promise<Curriculo> => {
   if (erroAulas) throw erroAulas;
 
   const modulos: Modulo[] = (mods ?? []).map((m) => ({
+    id: m.id as string,
     idx: m.ord as number,
     label: rotuloModulo(m.ord as number),
     titulo: m.titulo as string,

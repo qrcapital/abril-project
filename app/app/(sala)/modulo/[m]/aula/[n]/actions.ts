@@ -4,9 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getUsuario } from "@/lib/usuario";
-import { getMatricula } from "@/lib/matricula";
-import { liberacao } from "@/lib/liberacao";
-import { getRegras } from "@/lib/politicas";
+import { getCalendario } from "@/lib/calendario";
 import { getCurriculo } from "@/lib/curriculo";
 
 /**
@@ -37,9 +35,8 @@ export async function marcarAula(
   const found = curriculo.acharAula(n);
   if (!found) return { ok: false, erro: "Aula não encontrada." };
 
-  const { inicioEm, liberacaoTotal, politicaId } = await getMatricula();
-  const regras = await getRegras(politicaId);
-  if (!inicioEm || !liberacao(inicioEm, liberacaoTotal, regras).abertos.has(found.aula.modulo))
+  const calendario = await getCalendario();
+  if (!calendario?.abertos.has(found.aula.modulo))
     return { ok: false, erro: "Este módulo ainda não foi liberado." };
 
   const lessonId = found.aula.id;

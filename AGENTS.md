@@ -42,6 +42,13 @@ removido; `git show` no commit anterior recupera.
 acesso (login, senha, termos, acesso bloqueado) já tinham saído do porte e moram em
 `lib/auth-casca.ts` + `app/app/_ui/auth.css`.
 
+**Telas da sala em JSX (29/set/2026).** "Comece por aqui" (`/app/comece`), a página do módulo, o
+notebook e a aula em modo teatro são componentes do React, não HTML portado: classes escopadas em
+`.sl` em `app/app/_ui/sala.css` (injetada pelo layout de /app, como o `auth.css`) e peças em
+`app/app/_ui/sala/`. O conteúdo dos notebooks mora em `content/notebooks/modulo-<n>.ts`, tipado por
+`lib/notebook.ts`; o vídeo da aula sai de `lib/video.ts` (id ou URL do Panda, com self-check em
+`check:video`). A `screens/aula.html` ficou sem uso.
+
 ## Fundação (leia antes de construir)
 
 A planta do projeto está em `docs/`. É a fonte de verdade:

@@ -32,6 +32,13 @@ const authCss = readFileSync(
   "utf8"
 );
 
+// As telas da sala escritas em JSX (comece, módulo, notebook, aula) têm folha própria, escopada em
+// `.sl`. Vem por último pela mesma razão do `auth.css`: ganha do CSS portado onde os dois se tocam.
+const salaCss = readFileSync(
+  join(process.cwd(), "app", "app", "_ui", "sala.css"),
+  "utf8"
+);
+
 export default function AreaLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -53,6 +60,8 @@ export default function AreaLayout({
             areaCss +
             "\n" +
             authCss +
+            "\n" +
+            salaCss +
             "\nhtml{font-variant-numeric:lining-nums}" +
             '\n[style*="tabular-nums"]{font-variant-numeric:lining-nums tabular-nums !important}',
         }}

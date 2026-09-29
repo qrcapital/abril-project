@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { Cabecalho, Linha, Quadro, Selo, Vazio, dataHora } from "@/app/admin/_ui/tabela";
 import { BANNER, DESCRICOES, GATILHOS, ROTULOS, VARIAVEIS, type Template } from "@/lib/email-render";
+import { exigirAdmin } from "@/lib/admin-guarda";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = { title: "E-mails" };
@@ -74,6 +75,9 @@ export default async function Emails({
 }: {
   searchParams: Promise<{ q?: string; ok?: string; erro?: string; abrir?: string }>;
 }) {
+  // Antes de qualquer leitura com a service role: layout e página rodam em paralelo, e a guarda
+  // do layout não segura a consulta daqui (ver `lib/admin-guarda.ts`).
+  await exigirAdmin();
   const { q = "", ok, erro, abrir } = await searchParams;
   const termo = q.trim();
 

@@ -23,7 +23,19 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  */
 
 export type TipoDocumento = "politica" | "termos";
-export type Origem = "primeiro-acesso" | "lista-de-espera" | "signup-homolog";
+export type Origem = "primeiro-acesso" | "lista-de-espera" | "signup-homolog" | "checkout-guru";
+
+/**
+ * A frase gravada no aceite que acontece no checkout do Guru, registrado quando o webhook recebe a
+ * compra aprovada.
+ *
+ * É DESCRIÇÃO, NÃO CITAÇÃO, e diz isso: a caixa de aceite do checkout é configurada no painel do
+ * Guru e a gente não recebe o texto dela no webhook. Gravar o `TEXTO_ACEITE` aqui afirmaria que o
+ * comprador leu uma frase que talvez nunca tenha visto. O `primeiro-acesso` continua sendo o aceite
+ * com o texto exato, colhido na nossa tela.
+ */
+export const TEXTO_ACEITE_CHECKOUT =
+  "Aceite dos Termos de Uso e da Política de Privacidade registrado no checkout do Guru, ao concluir a compra deste pedido. O texto exibido ao comprador é o configurado no checkout do Guru.";
 
 /**
  * A frase que fica ao lado da caixa, e que vai congelada em cada linha do log.
@@ -168,13 +180,22 @@ export async function registrarConsentimento(
      * consentimento que a pessoa não deu. Log que infla é tão ruim quanto log que falta.
      */
     tipos?: TipoDocumento[];
+    /**
+     * Colher IP e navegador desta requisição. Desligue quando quem chama NÃO é o titular: no
+     * webhook do Guru, o IP seria o do servidor do Guru, e IP errado num log de consentimento é
+     * pior que IP ausente (ver `ipDaRequisicao`).
+     */
+    daRequisicao?: boolean;
   },
 ): Promise<number> {
   const todas = versoesVigentes();
   const versoes = dados.tipos ? todas.filter((v) => dados.tipos!.includes(v.tipo)) : todas;
   if (versoes.length === 0) return 0;
 
-  const [ip, userAgent] = await Promise.all([ipDaRequisicao(), userAgentDaRequisicao()]);
+  const [ip, userAgent] =
+    dados.daRequisicao === false
+      ? [null, null]
+      : await Promise.all([ipDaRequisicao(), userAgentDaRequisicao()]);
 
   // `documento_id` é conveniência para quem consulta o log por SQL, não requisito: a versão já
   // vai congelada na linha. Se a tabela de documentos não tiver a versão cadastrada, o aceite é

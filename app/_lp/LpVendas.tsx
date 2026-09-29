@@ -22,13 +22,34 @@ import DolarVivo from "./DolarVivo";
 // A leitura fica DENTRO do componente (roda no build p/ o SSG; em dev, a cada
 // request) para que edições no body.html/styles.css apareçam sem reiniciar o
 // dev server — o readFileSync em escopo de módulo era cacheado pelo Next.
+/**
+ * O destino do "GARANTIR MINHA VAGA": o checkout do Guru, de `NEXT_PUBLIC_CHECKOUT_URL`.
+ *
+ * O botão apontava para `/app/login?s=primeiro`, o cadastro livre de homolog, que em produção é
+ * fechado (`cadastroAberto`). Ou seja: com as vendas abertas, o botão principal da página levaria
+ * a uma tela que recusa o cadastro. O `body.html` agora traz o marcador `{{CHECKOUT_URL}}`, e a
+ * troca acontece aqui, no build.
+ *
+ * Só `https://` passa. A variável é colada à mão no painel da Netlify, e um `javascript:` ou um
+ * endereço sem protocolo viraria um botão que executa código ou leva a lugar nenhum. Sem ela, o
+ * botão aponta para a própria seção da oferta: não vende, mas também não quebra.
+ */
+function destinoDoCheckout(): string {
+  const url = (process.env.NEXT_PUBLIC_CHECKOUT_URL ?? "").trim();
+  if (!/^https:\/\/[^\s"'<>]+$/i.test(url)) return "#oferta";
+  return url.replace(/&/g, "&amp;");
+}
+
 export default function LpVendas() {
   const dir = join(process.cwd(), "app", "_lp");
   // Sistema primeiro, estilo da LP depois: ele declara tokens e primitivas, e o
   // styles.css especializa por cima. Ver app/_design/sistema.css.
   const sistema = readFileSync(join(process.cwd(), "app", "_design", "sistema.css"), "utf8");
   const lpCss = readFileSync(join(dir, "styles.css"), "utf8");
-  const lpBody = readFileSync(join(dir, "body.html"), "utf8");
+  const lpBody = readFileSync(join(dir, "body.html"), "utf8").replaceAll(
+    "{{CHECKOUT_URL}}",
+    destinoDoCheckout(),
+  );
   return (
     <>
       {/* Marca .tem-js no <html> ANTES da primeira pintura. Todo estado

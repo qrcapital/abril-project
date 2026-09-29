@@ -5,6 +5,7 @@ import { Selo, Vazio } from "@/app/admin/_ui/tabela";
 import { rotuloModulo } from "@/lib/curso";
 import { LETRAS, META_POR_MODULO, ORDS_AVALIADOS, POR_MODULO } from "@/lib/questoes";
 import { TOTAL_QUESTOES } from "@/lib/prova-correcao";
+import { exigirAdmin } from "@/lib/admin-guarda";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = { title: "Questões" };
@@ -113,6 +114,9 @@ export default async function Questoes({
 }: {
   searchParams: Promise<{ abrir?: string; ok?: string; erro?: string }>;
 }) {
+  // Antes de qualquer leitura com a service role: layout e página rodam em paralelo, e a guarda
+  // do layout não segura a consulta daqui (ver `lib/admin-guarda.ts`).
+  await exigirAdmin();
   const { abrir, ok, erro } = await searchParams;
 
   const db = createAdminClient();

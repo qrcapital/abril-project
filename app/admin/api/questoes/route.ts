@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { papelAtual } from "@/lib/admin";
+import { origemValida } from "@/lib/admin-guarda";
 import { auditar } from "@/lib/auditoria";
 import { ALTERNATIVAS, LETRAS } from "@/lib/questoes";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -61,6 +62,9 @@ function lerAlternativas(form: FormData): { alternativas: string[]; correta: num
 export async function POST(req: NextRequest) {
   const autor = await papelAtual();
   if (autor.papel !== "admin") return new NextResponse(null, { status: 404 });
+  // Cookie o navegador manda sozinho; o `Origin` ele não deixa outra página forjar. POST vindo de
+  // outro site com a sessão do admin é recusado antes de tocar em qualquer dado.
+  if (!origemValida(req)) return new NextResponse(null, { status: 403 });
 
   const form = await req.formData();
   const texto = (campo: string) => String(form.get(campo) ?? "").trim();

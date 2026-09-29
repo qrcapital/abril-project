@@ -129,7 +129,8 @@ const base = (extra: Partial<Template> = {}): Template => ({
   assert.ok(com.texto.includes("Criar minha senha: https://ei.test/senha"));
 
   const sem = renderizar(base(), { nome: "Ana" });
-  assert.ok(!sem.html.includes("<a href"), "sem link, nenhum botao (nao existe CTA para lugar nenhum)");
+  // `data-botao` e não `<a href`: o rodapé tem links próprios (contato, Política, Termos).
+  assert.ok(!sem.html.includes("data-botao"), "sem link, nenhum botao (nao existe CTA para lugar nenhum)");
   assert.ok(
     sem.html.includes("sua matrícula está confirmada"),
     "e o texto continua se explicando sem o botao",
@@ -212,6 +213,35 @@ const base = (extra: Partial<Template> = {}): Template => ({
     r.html.includes("max-height:0;overflow:hidden"),
     "sem preheader, a caixa de entrada pesca o wordmark como previa",
   );
+}
+
+// --- 7. a identidade VEJA Negócios, e nada da anterior ---
+{
+  const r = renderizar(base(), { nome: "Ana", link: "https://ei.test/s" });
+  assert.ok(r.html.includes("#8E1522"), "a faixa vermelha do cabecalho");
+  assert.ok(r.html.includes("VEJA NEGÓCIOS"), "o lockup em texto: SVG nao abre em cliente de e-mail");
+  assert.ok(r.html.includes('bgcolor="#C1121F"'), "o botao no vermelho da campanha");
+  for (const antiga of ["#0B2D20", "#A98E4E", "#D9BE85", "#7E6836"]) {
+    assert.ok(!r.html.includes(antiga), `a paleta verde e dourada saiu: ${antiga} ainda no HTML`);
+  }
+  assert.ok(!r.html.includes("<img"), "sem banner, nenhuma imagem: a marca e texto");
+  assert.ok(r.html.includes("light only"), "pede ao cliente para nao inverter as cores");
+  assert.ok(r.html.includes("max-width:600px"), "600px, a largura que todo cliente respeita");
+  // O título do corpo é o assunto, escapado.
+  const t = renderizar(base({ assunto: "Oi <b>{{nome}}</b>" }), { nome: "Ana" });
+  assert.ok(t.html.includes("Oi &lt;b&gt;Ana&lt;/b&gt;</h1>"), "o assunto vira titulo, escapado no HTML");
+  assert.equal(t.assunto, "Oi <b>Ana</b>", "e continua cru no cabecalho");
+  // Regra da casa (COPY.md): sem travessão em copy nenhuma, e a moldura é copy.
+  assert.ok(!r.html.includes("\u2014") && !r.texto.includes("\u2014"), "travessao na moldura do e-mail");
+  // O rodapé aponta para os documentos no próprio site, em endereço absoluto.
+  assert.ok(r.html.includes('href="https://ei.test/privacidade"'));
+  assert.ok(r.html.includes('href="https://ei.test/termos-de-uso"'));
+}
+
+// --- 8. o template de redefinição está no contrato, com rótulo e gatilho ---
+{
+  assert.deepEqual(VARIAVEIS["redefinicao-senha"], ["nome"]);
+  assert.ok(ROTULOS["redefinicao-senha"] && GATILHOS["redefinicao-senha"]);
 }
 
 console.log(`email-check: ok (${Object.keys(VARIAVEIS).length} templates no contrato)`);
