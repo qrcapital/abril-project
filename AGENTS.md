@@ -31,6 +31,17 @@ Consequência prática, e é o oposto do que valia antes: **`app/_lp/body.html` 
 igualmente definitivos. O bundle em `referencias/htmls/` fica como referência de design,
 não como fonte de build. Para recuperar o script, `git show` no commit anterior a este.
 
+**A área do aluno também deixou de ser gerada (29/set/2026).** Mesmo caminho da LP, pelo
+mesmo motivo: `scripts/port-area.mjs` lia `referencias/htmls/Area-do-Aluno.html` e reescrevia
+`app/app/_ui/styles.css`, `chrome-top.html`, `chrome-foot.html`, as telas de
+`app/app/_ui/screens/` e todo `public/app/`. A migração da área para a identidade VEJA Negócios
+(creme, vermelho, globo) seria apagada na primeira execução dele, sem aviso. O script foi
+removido; `git show` no commit anterior recupera.
+
+**Os arquivos de `app/app/_ui/` e `public/app/` são a fonte agora, edite direto.** As telas de
+acesso (login, senha, termos, acesso bloqueado) já tinham saído do porte e moram em
+`lib/auth-casca.ts` + `app/app/_ui/auth.css`.
+
 ## Fundação (leia antes de construir)
 
 A planta do projeto está em `docs/`. É a fonte de verdade:
