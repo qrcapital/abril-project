@@ -8,16 +8,16 @@ import { trocarSenha } from "./actions";
 
 const WHATSAPP = contato.whatsapp;
 
-// Estilos do formulário, no tema CLARO da área (o miolo das telas de (sala) é #F7F5F2).
+// Estilos do formulário, no tema CLARO da área (o miolo das telas de (sala) é #f7f4ee).
 const ROTULO =
   "display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;" +
-  "color:#8F887E;font-weight:700;margin-bottom:6px";
+  "color:#6f6860;font-weight:700;margin-bottom:6px";
 const CAMPO =
   "width:100%;box-sizing:border-box;background:#fff;border:1px solid #D6C3C2;border-radius:8px;" +
-  "padding:11px 13px;color:#333333;font-family:'Montserrat',sans-serif;font-size:13.5px;" +
+  "padding:11px 13px;color:#1a1815;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;font-size:13.5px;" +
   "margin-bottom:14px;outline:none";
 const SALVAR =
-  "background:#0B2D20;color:#F7F5F2;font-family:'Montserrat',sans-serif;font-weight:700;" +
+  "background:#C1121F;color:#f7f4ee;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;font-weight:700;" +
   "font-size:12.5px;padding:11px 22px;border-radius:8px;border:none;cursor:pointer";
 
 /** Um par rótulo + campo de senha, no estilo da tela. */

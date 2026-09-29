@@ -10,15 +10,15 @@ const CHEV =
   '<svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#A98E4E" stroke-width="2" style="flex:0 0 auto"><path d="M6 9l6 6 6-6"></path></svg>';
 
 const MDOT = {
-  done: "width:10px;height:10px;border-radius:50%;background:#A98E4E;border:1.5px solid #A98E4E;flex:0 0 auto",
+  done: "width:10px;height:10px;border-radius:50%;background:#C1121F;border:1.5px solid #C1121F;flex:0 0 auto",
   progress:
-    "width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg,#A98E4E 50%,transparent 50%);border:1.5px solid #A98E4E;flex:0 0 auto",
+    "width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg,#A98E4E 50%,transparent 50%);border:1.5px solid #C1121F;flex:0 0 auto",
   todo: "width:10px;height:10px;border-radius:50%;background:transparent;border:1.5px solid #C9BCA8;flex:0 0 auto",
 };
 const LDOT = {
-  done: "width:8px;height:8px;border-radius:50%;background:#A98E4E;border:1.5px solid #A98E4E;flex:0 0 auto",
+  done: "width:8px;height:8px;border-radius:50%;background:#C1121F;border:1.5px solid #C1121F;flex:0 0 auto",
   current:
-    "width:8px;height:8px;border-radius:50%;background:linear-gradient(90deg,#A98E4E 50%,transparent 50%);border:1.5px solid #A98E4E;flex:0 0 auto",
+    "width:8px;height:8px;border-radius:50%;background:linear-gradient(90deg,#A98E4E 50%,transparent 50%);border:1.5px solid #C1121F;flex:0 0 auto",
   todo: "width:8px;height:8px;border-radius:50%;background:transparent;border:1.5px solid #C9BCA8;flex:0 0 auto",
 };
 
@@ -36,9 +36,9 @@ function summary(
 ): string {
   const m = c.modulos[idx];
   const dot = done === total ? MDOT.done : done > 0 || hasCurrent ? MDOT.progress : MDOT.todo;
-  const countColor = done === 0 && !hasCurrent ? "#8F887E" : "#7E6836";
+  const countColor = done === 0 && !hasCurrent ? "#6f6860" : "#7E6836";
   const count = done === total ? `${done}/${total} ✓` : `${done}/${total}`;
-  return `<summary style="list-style:none;cursor:pointer;padding:13px 15px;font-size:11.5px;font-weight:700;color:#0B2D20;display:flex;align-items:center;gap:10px" style-hover="background:#FAF7F1"><span style="${dot}"></span><span style="flex:1">${m.label} · ${esc(m.titulo)}</span><span style="font-size:9px;color:${countColor};font-weight:700">${count}</span>${CHEV}</summary>`;
+  return `<summary style="list-style:none;cursor:pointer;padding:13px 15px;font-size:11.5px;font-weight:700;color:#1a1815;display:flex;align-items:center;gap:10px" style-hover="background:#FAF7F1"><span style="${dot}"></span><span style="flex:1">${m.label} · ${esc(m.titulo)}</span><span style="font-size:9px;color:${countColor};font-weight:700">${count}</span>${CHEV}</summary>`;
 }
 
 function row(a: Aula, currentN: number, concluidas: Set<number>): string {
@@ -47,7 +47,7 @@ function row(a: Aula, currentN: number, concluidas: Set<number>): string {
     return `<div data-href="${href(a)}" style="display:flex;align-items:center;gap:10px;padding:9px 15px 9px 22px;font-size:11px;color:#7E6836;font-weight:600;border-top:1px solid #EFE7DB;background:#F6EFE0;cursor:pointer"><span style="${LDOT.current}"></span> ${label}</div>`;
   }
   const dot = concluidas.has(a.n) ? LDOT.done : LDOT.todo;
-  return `<div data-href="${href(a)}" style="display:flex;align-items:center;gap:10px;padding:9px 15px 9px 22px;font-size:11px;color:#565049;border-top:1px solid #EFE7DB;cursor:pointer" style-hover="background:#FAF7F1"><span style="${dot}"></span> ${label}</div>`;
+  return `<div data-href="${href(a)}" style="display:flex;align-items:center;gap:10px;padding:9px 15px 9px 22px;font-size:11px;color:#6b655c;border-top:1px solid #EFE7DB;cursor:pointer" style-hover="background:#FAF7F1"><span style="${dot}"></span> ${label}</div>`;
 }
 
 export function renderSidebar(c: Curriculo, currentN: number, concluidas: Set<number>): string {
@@ -75,14 +75,14 @@ export function renderSidebar(c: Curriculo, currentN: number, concluidas: Set<nu
  */
 export function estadoConcluir(concluida: boolean): { style: string; rotulo: string } {
   const base =
-    "margin:2px 0 26px;border-radius:8px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:12.5px;padding:12px 22px;letter-spacing:.03em";
+    "margin:2px 0 26px;border-radius:8px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;font-weight:700;font-size:12.5px;padding:12px 22px;letter-spacing:.03em";
   return concluida
     ? {
         style: `${base};border:1px solid #1F8A5B;background:rgba(31,138,91,.08);color:#1F8A5B;cursor:pointer`,
         rotulo: "✓ Aula concluída · desmarcar",
       }
     : {
-        style: `${base};border:none;background:linear-gradient(160deg,#D9BE85,#A98E4E);color:#0A2B1E;cursor:pointer;box-shadow:0 6px 16px rgba(169,142,78,.26)`,
+        style: `${base};border:none;background:#C1121F;color:#fdfbf6;cursor:pointer;box-shadow:0 6px 16px rgba(169,142,78,.26)`,
         rotulo: "Marcar aula como concluída",
       };
 }
@@ -94,10 +94,10 @@ function concluirBtn(aula: Aula, concluidas: Set<number>): string {
 
 function prevBtn(prev?: Aula): string {
   const base =
-    "border-radius:6px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:12.5px;padding:11px 16px;background:#fff;border:1px solid #D6C3C2;color:#565049";
+    "border-radius:6px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;font-weight:700;font-size:12.5px;padding:11px 16px;background:#fff;border:1px solid #D6C3C2;color:#6b655c";
   if (!prev) return `<button disabled style="${base};opacity:.4;cursor:not-allowed">← Anterior</button>`;
   const label = prev.numero ? `← Aula ${prev.n}` : "← Boas-vindas";
-  return `<button data-nav="${href(prev)}" style="${base};cursor:pointer" style-hover="border-color:#A98E4E;color:#7E6836">${label}</button>`;
+  return `<button data-nav="${href(prev)}" style="${base};cursor:pointer" style-hover="border-color:#C1121F;color:#C1121F">${label}</button>`;
 }
 
 // Vídeo de exemplo tocando no player (placeholder do Panda Video). Quando o Panda
@@ -117,7 +117,7 @@ const ICONE_DOC =
   'width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6"></path></svg></span>';
 
 const LINHA_MATERIAL =
-  "display:flex;align-items:center;gap:12px;padding:11px 0;font-size:13px;color:#333333;" +
+  "display:flex;align-items:center;gap:12px;padding:11px 0;font-size:13px;color:#1a1815;" +
   "border-top:1px solid #EFE7DB;margin-top:8px";
 
 /**
@@ -130,7 +130,7 @@ const LINHA_MATERIAL =
 function linhasDeMaterial(materiais: Material[]): string {
   if (!materiais.length)
     return (
-      `<p style="${LINHA_MATERIAL};color:#8F887E;font-style:italic">` +
+      `<p style="${LINHA_MATERIAL};color:#6f6860;font-style:italic">` +
       "Os materiais desta aula chegam em breve.</p>"
     );
   return materiais
@@ -180,7 +180,7 @@ export function fillAula(
     // título + descrição
     .replace(">Comprando ações nos EUA</h1>", () => `>${esc(aula.titulo)}</h1>`)
     .replace(
-      /(<p style="font-size:14px;color:#565049;max-width:660px;margin:0 0 26px">)[\s\S]*?(<\/p>)/,
+      /(<p style="font-size:14px;color:#6b655c;max-width:660px;margin:0 0 26px">)[\s\S]*?(<\/p>)/,
       (_m, abre, fecha) => `${abre}${esc(aula.descricao)}${fecha}${concluirBtn(aula, concluidas)}`
     )
     // navegação

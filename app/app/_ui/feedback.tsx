@@ -18,7 +18,7 @@ import { EXIGENCIAS } from "@/lib/senha";
  */
 
 const BASE: CSSProperties = {
-  fontFamily: "'Montserrat',system-ui,sans-serif",
+  fontFamily: "-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif",
   fontSize: "12.5px",
   lineHeight: "1.5",
   borderRadius: "8px",
@@ -57,11 +57,11 @@ export const CAIXA: Record<"erro" | "sucesso" | "aviso", CSSProperties> = {
 
 /**
  * O mesmo par para as telas CLARAS. A área do aluno não é escura como o login: o chrome é
- * escuro e o miolo de toda tela de `(sala)` é `#F7F5F2` com texto `#333333`. Os hexes de
+ * escuro e o miolo de toda tela de `(sala)` é `#f7f4ee` com texto `#1a1815`. Os hexes de
  * cima ficam ilegíveis ali, então o padrão precisa das duas versões desde o começo, senão a
  * primeira tela clara que precisar de caixa inventa a sua.
  *
- * Contrastes medidos sobre `#F7F5F2`: erro 6,47:1, sucesso 10,60:1, aviso 4,66:1.
+ * Contrastes medidos sobre `#f7f4ee`: erro 6,47:1, sucesso 10,60:1, aviso 4,66:1.
  * Dois achados da medição, que explicam por que estes hexes e não os óbvios:
  * o `--gold-dark` `#7E6836` sobre tinta dourada a 10% dá 4,49:1 e falha AA por 0,01, então
  * o sucesso claro leva texto de corpo com o dourado na borda; e o aviso, que é o único que
@@ -78,7 +78,7 @@ export const CAIXA_CLARO: Record<"erro" | "sucesso" | "aviso", CSSProperties> = 
     ...BASE,
     background: "rgba(169,142,78,.10)",
     border: "1px solid rgba(169,142,78,.38)",
-    color: "#333333",
+    color: "#1a1815",
   },
   aviso: {
     ...BASE,
@@ -151,7 +151,7 @@ export function pintarCaixa(
  * grupo `(sala)`. Existe como componente e não copiado três vezes porque é o critério do
  * DESIGN.md §8 (mesmo pattern em três telas).
  *
- * Repete o envelope das telas portadas (`#F7F5F2`, `#333333`, `100vh - 58px` descontando a
+ * Repete o envelope das telas portadas (`#f7f4ee`, `#1a1815`, `100vh - 58px` descontando a
  * topbar) para o recado cair dentro do chrome como qualquer outra tela, em vez de romper o
  * layout. Título em Playfair, corpo em Montserrat, como manda o DESIGN.md §2.
  */
@@ -167,8 +167,8 @@ export function Painel({
   return (
     <div
       style={{
-        background: "#F7F5F2",
-        color: "#333333",
+        background: "#f7f4ee",
+        color: "#1a1815",
         minHeight: "calc(100vh - 58px)",
         display: "flex",
         alignItems: "center",
@@ -184,7 +184,7 @@ export function Painel({
             fontSize: "clamp(24px, 4vw, 34px)",
             lineHeight: 1.2,
             margin: "0 0 12px",
-            color: "#0B2D20",
+            color: "#1a1815",
           }}
         >
           {titulo}
@@ -197,23 +197,24 @@ export function Painel({
 
 /** Botão sólido da plataforma (DESIGN.md §3, "botão secundário / ação da plataforma"). */
 export const BOTAO: CSSProperties = {
-  background: "#0B2D20",
-  color: "#F7F5F2",
-  fontFamily: "'Montserrat',system-ui,sans-serif",
-  fontWeight: 700,
+  background: "#C1121F",
+  color: "#fdfbf6",
+  fontFamily: "-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif",
+  fontWeight: 600,
   fontSize: "13px",
-  padding: "11px 22px",
-  borderRadius: "8px",
+  padding: "12px 24px",
+  // 14, o raio de botão da escala da campanha (campo 12, botão 14, card 20).
+  borderRadius: "14px",
   border: "none",
   cursor: "pointer",
 };
 
 /** Corpo de texto dos painéis, no secundário claro do DESIGN.md §2. */
 export const CORPO: CSSProperties = {
-  fontFamily: "'Montserrat',system-ui,sans-serif",
+  fontFamily: "-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif",
   fontSize: "14px",
   lineHeight: 1.6,
-  color: "#6D6D6D",
+  color: "#6b655c",
   margin: "0 0 22px",
 };
 
@@ -234,11 +235,11 @@ export function ligarExigencias(
 ): HTMLUListElement {
   const claro = tema === "claro";
   const cor = {
-    pendente: claro ? "#6D6D6D" : "#8FA398",
-    cumprido: claro ? "#333333" : "#EDE6DD",
+    pendente: claro ? "#6f6860" : "#8FA398",
+    cumprido: claro ? "#1a1815" : "#EDE6DD",
     borda: claro ? "#D6C3C2" : "#3C5346",
-    marca: "#A98E4E",
-    glifo: claro ? "#F7F5F2" : "#0A2B1E",
+    marca: "#C1121F",
+    glifo: claro ? "#f7f4ee" : "#0A2B1E",
   };
 
   const ul = document.createElement("ul");
@@ -248,7 +249,7 @@ export function ligarExigencias(
   const itens = EXIGENCIAS.map((e) => {
     const li = document.createElement("li");
     li.style.cssText =
-      "display:flex;align-items:center;gap:8px;font-family:'Montserrat',system-ui,sans-serif;" +
+      "display:flex;align-items:center;gap:8px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;" +
       "font-size:11px;line-height:1.4;transition:color .18s ease";
     const marca = document.createElement("span");
     marca.textContent = "✓";
@@ -312,7 +313,7 @@ function garantirBackdrop(): void {
   if (document.getElementById(CONFIRMA_ID)) return;
   const s = document.createElement("style");
   s.id = CONFIRMA_ID;
-  s.textContent = "dialog.ei-confirma::backdrop{background:rgba(11,45,32,.55)}";
+  s.textContent = "dialog.ei-confirma::backdrop{background:rgba(26,24,21,.55)}";
   document.head.append(s);
 }
 
@@ -335,21 +336,21 @@ export function confirmar(opts: {
   const dlg = document.createElement("dialog");
   dlg.className = "ei-confirma";
   dlg.style.cssText =
-    "position:fixed;margin:auto;border:1px solid #E4DACC;border-radius:12px;padding:26px 26px 22px;" +
-    "background:#fff;color:#333333;width:min(520px,calc(100vw - 40px));max-height:calc(100vh - 80px);" +
-    "box-shadow:0 24px 60px rgba(11,45,32,.28);font-family:'Montserrat',system-ui,sans-serif";
+    "position:fixed;margin:auto;border:1px solid #e2dacd;border-radius:20px;padding:26px 26px 22px;" +
+    "background:#fff;color:#1a1815;width:min(520px,calc(100vw - 40px));max-height:calc(100vh - 80px);" +
+    "box-shadow:0 24px 60px rgba(26,24,21,.22);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif";
 
   const h = document.createElement("h2");
   h.id = "ei-confirma-titulo";
   h.textContent = opts.titulo;
   h.style.cssText =
     "font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:21px;line-height:1.3;" +
-    "color:#0B2D20;margin:0 0 10px";
+    "color:#1a1815;margin:0 0 10px";
   dlg.setAttribute("aria-labelledby", h.id);
 
   const p = document.createElement("p");
   p.textContent = opts.corpo;
-  p.style.cssText = "font-size:13.5px;line-height:1.6;color:#333333;margin:0 0 18px";
+  p.style.cssText = "font-size:13.5px;line-height:1.6;color:#1a1815;margin:0 0 18px";
   if (opts.destaque) {
     const corte = opts.corpo.indexOf(opts.destaque);
     // Trecho ausente da frase: fica sem negrito, em vez de sumir do corpo.
@@ -370,16 +371,16 @@ export function confirmar(opts: {
   cancelar.textContent = opts.cancelar;
   cancelar.autofocus = true;
   cancelar.style.cssText =
-    "border-radius:6px;font-family:inherit;font-weight:700;font-size:12.5px;padding:12px 20px;" +
-    "cursor:pointer;background:#fff;border:1px solid #D6C3C2;color:#565049";
+    "border-radius:14px;font-family:inherit;font-weight:600;font-size:12.5px;padding:12px 20px;" +
+    "cursor:pointer;background:#fff;border:1px solid #e2dacd;color:#6b655c";
 
   const ok = document.createElement("button");
   ok.type = "button";
   ok.textContent = opts.confirmar;
   ok.style.cssText =
-    "border:none;border-radius:6px;font-family:inherit;font-weight:700;font-size:12.5px;" +
-    "letter-spacing:.06em;padding:13px 24px;cursor:pointer;color:#0A2B1E;" +
-    "background:linear-gradient(160deg,#D9BE85,#A98E4E);box-shadow:0 8px 20px rgba(169,142,78,.3)";
+    "border:none;border-radius:14px;font-family:inherit;font-weight:600;font-size:12.5px;" +
+    "letter-spacing:.06em;padding:13px 24px;cursor:pointer;color:#fdfbf6;" +
+    "background:#C1121F;box-shadow:0 8px 20px rgba(193,18,31,.22)";
 
   acoes.append(cancelar, ok);
   dlg.append(h, p);

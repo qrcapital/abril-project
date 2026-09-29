@@ -205,7 +205,7 @@ function Modal({ aviso, fechar }: { aviso: Aviso; fechar: () => void }) {
           padding: "34px 32px 28px",
           textAlign: "center",
           boxShadow: "0 30px 70px rgba(0,0,0,.35)",
-          fontFamily: "'Montserrat',system-ui,sans-serif",
+          fontFamily: "-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif",
         }}
       >
         <div
@@ -231,13 +231,13 @@ function Modal({ aviso, fechar }: { aviso: Aviso; fechar: () => void }) {
             fontFamily: "'Playfair Display',serif",
             fontSize: 21,
             fontWeight: 600,
-            color: "#0B2D20",
+            color: "#1a1815",
             margin: "0 0 8px",
           }}
         >
           {aviso.titulo}
         </h3>
-        <p style={{ fontSize: 13.5, color: "#565049", lineHeight: 1.6, margin: "0 0 22px" }}>
+        <p style={{ fontSize: 13.5, color: "#6b655c", lineHeight: 1.6, margin: "0 0 22px" }}>
           {aviso.corpo}
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -248,13 +248,13 @@ function Modal({ aviso, fechar }: { aviso: Aviso; fechar: () => void }) {
                 border: "none",
                 borderRadius: 8,
                 padding: "13px",
-                fontFamily: "'Montserrat',sans-serif",
+                fontFamily: "-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif",
                 fontWeight: 700,
                 fontSize: 13,
                 letterSpacing: ".04em",
                 cursor: "pointer",
-                background: "linear-gradient(160deg,#D9BE85,#A98E4E)",
-                color: "#0A2B1E",
+                background: "#C1121F",
+                color: "#fdfbf6",
                 boxShadow: "0 6px 16px rgba(169,142,78,.26)",
               }}
             >
@@ -267,12 +267,12 @@ function Modal({ aviso, fechar }: { aviso: Aviso; fechar: () => void }) {
               border: "1px solid #E4DACC",
               borderRadius: 8,
               padding: "12px",
-              fontFamily: "'Montserrat',sans-serif",
+              fontFamily: "-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif",
               fontWeight: 600,
               fontSize: 13,
               cursor: "pointer",
               background: "#fff",
-              color: "#565049",
+              color: "#6b655c",
             }}
           >
             Entendi

@@ -7,7 +7,7 @@ import { esc, innerOfDiv } from "./html-slice.ts";
 
 const BADGE_BASE =
   "position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:800;letter-spacing:.14em;border-radius:4px;padding:3px 7px";
-const BADGE_ATIVO = `${BADGE_BASE};background:linear-gradient(160deg,#D9BE85,#A98E4E);color:#0A2B1E`;
+const BADGE_ATIVO = `${BADGE_BASE};background:#C1121F;color:#fdfbf6`;
 const BADGE_NEUTRO = `${BADGE_BASE};background:#EDE6DD;border:1px solid #E0D3BE;color:#7E6836`;
 // Módulo ainda fechado pela esteira. Pill âmbar, o mesmo par do módulo deficitário no
 // resultado da prova (DESIGN.md §2): cor como informação, não como decoração.
@@ -48,11 +48,11 @@ function card(
   const label = esc((m.docente ? `${m.label} · ${m.docente}` : m.label).toUpperCase());
   const pct = total === 0 ? 0 : Math.round((done / total) * 100);
   const count = done === total ? `${done}/${total} ✓` : `${done}/${total}`;
-  const countColor = done > 0 ? "#7E6836" : "#8F887E";
+  const countColor = done > 0 ? "#7E6836" : "#6f6860";
   const aulasTxt = total === 1 ? "1 aula" : `${total} aulas`;
 
   const trava = travado ? "opacity:.72;cursor:default" : "cursor:pointer";
-  return `<div class="mcard"${travado ? ' data-travado="1"' : ""} style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;${trava};position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(11,45,32,.05)"><span style="${badge}">${badgeText}</span><div style="position:relative;aspect-ratio:3/3.5;flex:0 0 auto;background:linear-gradient(160deg,#F0EADF,#E7DECF)"><div class="art-slot">Arte do módulo</div></div><div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1"><span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">${label}</span><h3 style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;margin:3px 0 9px;line-height:1.2;color:#0B2D20">${esc(m.titulo)}</h3><div style="height:4px;border-radius:2px;background:#EDE6DD;overflow:hidden"><i style="display:block;height:100%;width:${pct}%;background:#A98E4E;border-radius:2px"></i></div><div style="display:flex;justify-content:space-between;font-size:9.5px;color:#8F887E;margin-top:7px"><span>${aulasTxt}</span><span style="color:${countColor};font-weight:600">${count}</span></div></div></div>`;
+  return `<div class="mcard"${travado ? ' data-travado="1"' : ""} style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;${trava};position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(11,45,32,.05)"><span style="${badge}">${badgeText}</span><div style="position:relative;aspect-ratio:3/3.5;flex:0 0 auto;background:linear-gradient(160deg,#F0EADF,#E7DECF)"><div class="art-slot">Arte do módulo</div></div><div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1"><span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">${label}</span><h3 style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;margin:3px 0 9px;line-height:1.2;color:#1a1815">${esc(m.titulo)}</h3><div style="height:4px;border-radius:2px;background:#EDE6DD;overflow:hidden"><i style="display:block;height:100%;width:${pct}%;background:#C1121F;border-radius:2px"></i></div><div style="display:flex;justify-content:space-between;font-size:9.5px;color:#6f6860;margin-top:7px"><span>${aulasTxt}</span><span style="color:${countColor};font-weight:600">${count}</span></div></div></div>`;
 }
 
 /**
@@ -136,7 +136,7 @@ function cardSegundaChamada(): string {
     '<div style="flex:1">' +
     '<span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">SEGUNDA CHAMADA</span>' +
     '<h3 style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:600;' +
-    'margin:3px 0 5px;color:#0B2D20">Sua nova tentativa está liberada</h3>' +
+    'margin:3px 0 5px;color:#1a1815">Sua nova tentativa está liberada</h3>' +
     '<div style="font-size:11px;color:#7E6836;line-height:1.5">Com questões sorteadas de novo.</div>' +
     "</div></div>"
   );

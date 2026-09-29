@@ -44,7 +44,7 @@ export default function Erro({
           style={{
             ...BOTAO,
             background: "transparent",
-            color: "#0B2D20",
+            color: "#1a1815",
             border: "1.5px solid #0B2D20",
             textDecoration: "none",
             display: "inline-block",
@@ -54,7 +54,7 @@ export default function Erro({
         </a>
       </div>
       {error.digest && (
-        <p style={{ ...CORPO, fontSize: "11px", color: "#8F887E", margin: "18px 0 0" }}>
+        <p style={{ ...CORPO, fontSize: "11px", color: "#6f6860", margin: "18px 0 0" }}>
           Se for falar com o suporte, cite este código: {error.digest}
         </p>
       )}

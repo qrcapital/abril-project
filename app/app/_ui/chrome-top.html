@@ -1,21 +1,29 @@
-<div style="position: sticky; top: 0; z-index: 90; backdrop-filter: saturate(140%) blur(10px); -webkit-backdrop-filter: saturate(140%) blur(10px); border-bottom: 1px solid rgba(217,190,133,.18); background-color: #091F16F0">
-  <div style="display:flex;align-items:center;gap:22px;max-width:1180px;margin:0 auto;padding:11px 28px">
-    <div data-home="1" style="cursor:pointer;flex:0 0 auto">
-      <b style="display:block;font-family:'Playfair Display',serif;font-size:18px;letter-spacing:.26em;font-weight:500;color:#F7F5F2;line-height:1;white-space:nowrap;padding-left:.26em;text-align:center">ESTRATÉGIA</b>
-      <span style="display:flex;align-items:center;gap:9px;font-size:7px;letter-spacing:.44em;color:#EDE6DD;font-weight:600;margin-top:5px;white-space:nowrap"><i style="flex:1;height:1px;background:#A98E4E;min-width:14px"></i>INTERNACIONAL<i style="flex:1;height:1px;background:#A98E4E;min-width:14px"></i></span>
+<!-- Topo da área do aluno, na identidade da campanha desde 29/set/2026. Mesma barra escura do
+     site (a topbar da LP), com o mesmo lockup: marca da VEJA Negócios, filete em pé e o nome do
+     curso em duas linhas. Os marcadores data-home, data-account-toggle, #account-menu e data-u são
+     o contrato com AreaChrome.tsx e usuario-template.ts: não renomear. -->
+<div style="position:sticky;top:0;z-index:90;backdrop-filter:saturate(140%) blur(10px);-webkit-backdrop-filter:saturate(140%) blur(10px);border-bottom:1px solid rgba(253,250,245,.08);background-color:rgba(26,24,21,.94)">
+  <div style="display:flex;align-items:center;gap:22px;max-width:1180px;margin:0 auto;padding:12px 28px">
+    <div data-home="1" style="cursor:pointer;flex:0 0 auto;display:flex;align-items:center;gap:13px" aria-label="Estratégia Internacional, início">
+      <img src="/marca/veja-negocios-escuro.svg" alt="VEJA Negócios" style="height:26px;width:auto;display:block">
+      <i aria-hidden="true" style="display:block;width:1px;height:27px;background:rgba(253,250,245,.3)"></i>
+      <span style="display:block;font-size:11.5px;letter-spacing:.17em;text-transform:uppercase;line-height:1.22;color:#fdfaf5;white-space:nowrap">Estratégia<br>Internacional</span>
     </div>
-    <nav class="topbar-nav" style="display:flex;gap:24px;margin-left:20px">
-      <a data-home="1" style="color:#D9BE85;font-size:12.5px;font-weight:600;cursor:pointer">Início</a>
-      <a href="#" style="color:#B9C4BC;font-size:12.5px;font-weight:600" style-hover="color:#D9BE85">FAQ</a>
-      <a href="#" title="Suporte via WhatsApp" style="color:#B9C4BC;font-size:12.5px;font-weight:600" style-hover="color:#D9BE85">Suporte</a>
+    <nav class="topbar-nav" style="display:flex;gap:24px;margin-left:24px">
+      <a data-home="1" style="color:#fdfaf5;font-size:13px;font-weight:600;cursor:pointer">Início</a>
+      <a href="#" style="color:rgba(253,250,245,.68);font-size:13px;font-weight:500" style-hover="color:#fdfaf5">FAQ</a>
+      <a href="#" title="Suporte via WhatsApp" style="color:rgba(253,250,245,.68);font-size:13px;font-weight:500" style-hover="color:#fdfaf5">Suporte</a>
     </nav>
     <div style="margin-left:auto;display:flex;align-items:center;gap:14px;position:relative">
-      <span style="font-size:11.5px;color:#8FA398">Olá, <span data-u="first">Pedro</span></span>
-      <div data-account-toggle="1" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(150deg,#1c4a36,#0a271b);border:1.5px solid rgba(217,190,133,.5);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-style:italic;font-size:14px;color:#D9BE85;cursor:pointer"><span data-u="initial">P</span></div>
+      <span style="font-size:12px;color:rgba(253,250,245,.62)">Olá, <span data-u="first">Pedro</span>
+</span>
+      <div data-account-toggle="1" style="width:36px;height:36px;border-radius:50%;background:#C1121F;border:1.5px solid rgba(253,250,245,.22);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-style:italic;font-size:15px;color:#fdfaf5;cursor:pointer">
+<span data-u="initial">P</span>
+</div>
       
-      <div id="account-menu" hidden style="position:absolute;top:46px;right:0;background:#0F3526;border:1px solid rgba(217,190,133,.28);border-radius:10px;padding:6px;min-width:170px;box-shadow:0 18px 40px rgba(0,0,0,.45);z-index:120">
-        <a style="display:block;padding:10px 14px;font-size:12.5px;color:#EDE6DD;border-radius:7px;cursor:pointer" style-hover="background:rgba(217,190,133,.12)">Minha conta</a>
-        <a style="display:block;padding:10px 14px;font-size:12.5px;color:#B9C4BC;border-radius:7px;cursor:pointer" style-hover="background:rgba(217,190,133,.12)">Sair</a>
+      <div id="account-menu" hidden style="position:absolute;top:46px;right:0;background:#fdfaf5;border:1px solid #e2dacd;border-radius:12px;padding:6px;min-width:180px;box-shadow:0 18px 40px rgba(26,24,21,.22);z-index:120">
+        <a style="display:block;padding:10px 14px;font-size:13px;color:#1a1815;border-radius:8px;cursor:pointer" style-hover="background:#f1ece2">Minha conta</a>
+        <a style="display:block;padding:10px 14px;font-size:13px;color:#6b655c;border-radius:8px;cursor:pointer" style-hover="background:#f1ece2">Sair</a>
       </div>
       
     </div>

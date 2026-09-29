@@ -92,7 +92,8 @@ export default function AreaChrome({
         }
         if (/FAQ/i.test(txt)) {
           e.preventDefault();
-          return router.push("/#faq");
+          // /curso e não a raiz: desde 13/out a raiz do domínio é a pré-lista, que não tem FAQ.
+          return router.push("/curso#faq");
         }
         if (/Suporte|WhatsApp/i.test(txt)) {
           e.preventDefault();

@@ -1,33 +1,36 @@
-<footer style="background:#081F16;color:#8FA398;padding:64px 0 26px;font-family:'Montserrat',system-ui,sans-serif">
-<div style="max-width:1180px;margin:0 auto;padding:0 28px;display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap">
-<div style="flex:1 1 300px;min-width:240px">
-<a href="/" style="display:inline-block;color:#F7F5F2;text-decoration:none">
-<b style="display:block;font-family:'Playfair Display',serif;font-size:20px;letter-spacing:.26em;font-weight:500;color:#F7F5F2;line-height:1;white-space:nowrap">ESTRATÉGIA</b>
-<span style="display:flex;align-items:center;gap:10px;font-size:8px;letter-spacing:.44em;color:#EDE6DD;font-weight:600;margin-top:5px;white-space:nowrap"><i style="flex:1;height:1px;background:#A98E4E;min-width:16px"></i>INTERNACIONAL<i style="flex:1;height:1px;background:#A98E4E;min-width:16px"></i></span>
-</a>
-<p style="font-size:12.5px;line-height:1.7;margin:18px 0 0;max-width:300px;color:#8FA398">Formação em dolarização de patrimônio e investimento internacional. BlockTrends, com chancela institucional da VEJA Negócios.</p>
+<!-- Rodapé da área do aluno, na identidade da campanha desde 29/set/2026: o mesmo preto e a
+     mesma linha da Abril embaixo da marca do Grupo Abril que o rodapé do site usa. Os links
+     institucionais apontam para /curso, que é onde a página do curso mora enquanto a raiz do
+     domínio é a pré-lista (ver app/_lp/fase.ts). "Ferramentas" saiu: a âncora #entregaveis não
+     existe mais na página. O data-scrolltop é contrato com AreaChrome.tsx. -->
+<footer style="background:#000;color:#B3A9A6;padding:52px 0 28px">
+<div style="max-width:1180px;margin:0 auto;padding:0 28px;display:flex;justify-content:space-between;align-items:flex-start;gap:48px;flex-wrap:wrap">
+<div style="flex:0 1 300px;min-width:240px">
+<img src="/lp/grupo_abril.svg" alt="Grupo Abril" width="150" style="display:block;width:150px;height:auto">
+<p style="font-size:12px;line-height:1.6;margin:18px 0 0;max-width:300px;color:#8a8a8a">Abril Comunicações S.A., CNPJ 44.597.052/0001-62&nbsp;- Todos os direitos reservados.</p>
 </div>
-<nav style="display:flex;flex-direction:column;gap:12px;flex:0 0 auto">
-<div style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:#D9BE85;margin-bottom:4px">Institucional</div>
-<a href="/#docentes" style="color:#8FA398;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#F7F5F2">Professores</a>
-<a href="/#curriculo" style="color:#8FA398;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#F7F5F2">Formação</a>
-<a href="/#entregaveis" style="color:#8FA398;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#F7F5F2">Ferramentas</a>
-<a href="/#chancela" style="color:#8FA398;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#F7F5F2">Idealizadores</a>
-<a href="/#faq" style="color:#8FA398;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#F7F5F2">FAQ</a>
+<div style="display:flex;gap:56px;flex-wrap:wrap;margin-top:-3px">
+<nav style="display:flex;flex-direction:column;gap:11px;flex:0 0 auto">
+<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:#DCCFCC;margin-bottom:8px">Institucional</div>
+<a href="/curso#docentes" style="color:#B3A9A6;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#fff">Professores</a>
+<a href="/curso#curriculo" style="color:#B3A9A6;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#fff">Programa</a>
+<a href="/curso#chancela" style="color:#B3A9A6;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#fff">Idealizadores</a>
+<a href="/curso#faq" style="color:#B3A9A6;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#fff">Dúvidas</a>
 </nav>
-<div style="display:flex;flex-direction:column;gap:12px;flex:0 0 auto">
-<div style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:#D9BE85;margin-bottom:4px">Políticas</div>
-<a href="#" style="color:#8FA398;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#F7F5F2">Termos de uso</a>
-<a href="#" style="color:#8FA398;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#F7F5F2">Privacidade · LGPD</a>
+<div style="display:flex;flex-direction:column;gap:11px;flex:0 0 auto">
+<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:#DCCFCC;margin-bottom:8px">Políticas</div>
+<a href="/termos-de-uso" style="color:#B3A9A6;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#fff">Termos de uso</a>
+<a href="/privacidade" style="color:#B3A9A6;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#fff">Privacidade · LGPD</a>
 </div>
-<div style="display:flex;flex-direction:column;gap:12px;flex:0 0 auto">
-<div style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:#D9BE85;margin-bottom:4px">Contato</div>
-<a href="https://wa.me/message/W2USYZZK75FMC1" target="_blank" rel="noopener" style="color:#8FA398;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#F7F5F2">Suporte no WhatsApp</a>
-<a href="mailto:contato@blocktrends.com.br" style="color:#8FA398;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#F7F5F2">DPO · contato@blocktrends.com.br</a>
+<div style="display:flex;flex-direction:column;gap:11px;flex:0 0 auto">
+<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:#DCCFCC;margin-bottom:8px">Contato</div>
+<a href="https://wa.me/message/W2USYZZK75FMC1" target="_blank" rel="noopener" style="color:#B3A9A6;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#fff">Suporte no WhatsApp</a>
+<a href="mailto:contato@blocktrends.com.br" style="color:#B3A9A6;font-size:13px;text-decoration:none;transition:color .2s ease" style-hover="color:#fff">Encarregado · contato@blocktrends.com.br</a>
 </div>
 </div>
-<div style="max-width:1180px;margin:34px auto 0;padding:22px 28px 0;border-top:1px solid rgba(217,190,133,.14);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
-<span style="font-size:11.5px;color:#5F7469">Abril Comunicações S.A. · CNPJ 44.597.052/0001-62 · Todos os direitos reservados.</span>
-<a href="#" data-scrolltop="1" style="color:#8FA398;font-size:11.5px;text-decoration:none;transition:color .2s ease" style-hover="color:#D9BE85">Voltar ao topo ↑</a>
+</div>
+<div style="max-width:1180px;margin:34px auto 0;padding:20px 28px 0;border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+<span style="display:flex;align-items:center;gap:8px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#6f6f6f">Powered by <img src="/marca/blocktrends-branco.svg" alt="BlockTrends" style="height:11px;width:auto;opacity:.6;display:block"></span>
+<a href="#" data-scrolltop="1" style="color:#8a8a8a;font-size:12px;text-decoration:none;transition:color .2s ease" style-hover="color:#fff">Voltar ao topo ↑</a>
 </div>
 </footer>

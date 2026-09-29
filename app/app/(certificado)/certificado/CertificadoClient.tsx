@@ -39,7 +39,7 @@ export default function CertificadoClient({
 
     // NPS
     const nps = [...root.querySelectorAll<HTMLElement>("[data-nps]")];
-    const SEL = ";background:#A98E4E;color:#fff;border-color:#A98E4E";
+    const SEL = ";background:#C1121F;color:#fff;border-color:#C1121F";
     const base = nps.map((b) => b.getAttribute("style") || "");
     nps.forEach((b, i) =>
       b.addEventListener("click", () => {
@@ -138,7 +138,7 @@ async function baixarPdf(btn: HTMLButtonElement, caixa: HTMLElement) {
 
     const canvas = await html2canvas(el, {
       scale: 2,
-      backgroundColor: "#F7F5F2",
+      backgroundColor: "#f7f4ee",
       useCORS: true,
       logging: false,
       onclone: (doc) => {

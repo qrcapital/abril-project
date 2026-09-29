@@ -1,273 +1,7 @@
-/* cyrillic-ext */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url("/app/5884abf5-538b-40ad-88bb-43e36cb6f458.woff2") format('woff2');
-  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-}
-/* cyrillic */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url("/app/e16d677e-b536-4d75-9bdc-19905f51374c.woff2") format('woff2');
-  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-/* vietnamese */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url("/app/99c61736-e445-445d-a4fb-8dc04beca790.woff2") format('woff2');
-  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url("/app/33b14664-147f-4d30-b788-bdb24b0eb01c.woff2") format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url("/app/65b747ad-93b8-49da-be1a-ac50e93086ac.woff2") format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* cyrillic-ext */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/app/5884abf5-538b-40ad-88bb-43e36cb6f458.woff2") format('woff2');
-  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-}
-/* cyrillic */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/app/e16d677e-b536-4d75-9bdc-19905f51374c.woff2") format('woff2');
-  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-/* vietnamese */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/app/99c61736-e445-445d-a4fb-8dc04beca790.woff2") format('woff2');
-  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/app/33b14664-147f-4d30-b788-bdb24b0eb01c.woff2") format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/app/65b747ad-93b8-49da-be1a-ac50e93086ac.woff2") format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* cyrillic-ext */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("/app/5884abf5-538b-40ad-88bb-43e36cb6f458.woff2") format('woff2');
-  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-}
-/* cyrillic */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("/app/e16d677e-b536-4d75-9bdc-19905f51374c.woff2") format('woff2');
-  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-/* vietnamese */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("/app/99c61736-e445-445d-a4fb-8dc04beca790.woff2") format('woff2');
-  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("/app/33b14664-147f-4d30-b788-bdb24b0eb01c.woff2") format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("/app/65b747ad-93b8-49da-be1a-ac50e93086ac.woff2") format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* cyrillic-ext */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url("/app/5884abf5-538b-40ad-88bb-43e36cb6f458.woff2") format('woff2');
-  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-}
-/* cyrillic */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url("/app/e16d677e-b536-4d75-9bdc-19905f51374c.woff2") format('woff2');
-  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-/* vietnamese */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url("/app/99c61736-e445-445d-a4fb-8dc04beca790.woff2") format('woff2');
-  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url("/app/33b14664-147f-4d30-b788-bdb24b0eb01c.woff2") format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url("/app/65b747ad-93b8-49da-be1a-ac50e93086ac.woff2") format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* cyrillic-ext */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("/app/5884abf5-538b-40ad-88bb-43e36cb6f458.woff2") format('woff2');
-  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-}
-/* cyrillic */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("/app/e16d677e-b536-4d75-9bdc-19905f51374c.woff2") format('woff2');
-  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-/* vietnamese */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("/app/99c61736-e445-445d-a4fb-8dc04beca790.woff2") format('woff2');
-  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("/app/33b14664-147f-4d30-b788-bdb24b0eb01c.woff2") format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("/app/65b747ad-93b8-49da-be1a-ac50e93086ac.woff2") format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* cyrillic-ext */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url("/app/5884abf5-538b-40ad-88bb-43e36cb6f458.woff2") format('woff2');
-  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-}
-/* cyrillic */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url("/app/e16d677e-b536-4d75-9bdc-19905f51374c.woff2") format('woff2');
-  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-/* vietnamese */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url("/app/99c61736-e445-445d-a4fb-8dc04beca790.woff2") format('woff2');
-  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url("/app/33b14664-147f-4d30-b788-bdb24b0eb01c.woff2") format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url("/app/65b747ad-93b8-49da-be1a-ac50e93086ac.woff2") format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
+/* A Montserrat saiu da área do aluno em 29/set/2026, junto com a identidade verde. As 30
+   declarações @font-face dela moravam aqui e foram removidas: a sans agora é a do sistema,
+   a mesma do site e das telas de acesso. Ficam só as da Playfair Display, que continua sendo
+   a serifa de título da campanha. */
 /* cyrillic */
 @font-face {
   font-family: 'Playfair Display';
@@ -487,20 +221,22 @@
 
 
 html{scroll-behavior:smooth}
-body{margin:0;padding:0;font-family:'Montserrat',system-ui,sans-serif;color:#F7F5F2;background:#0A2B1E;line-height:1.6;-webkit-font-smoothing:antialiased}
-a{color:#D9BE85;text-decoration:none}
-a:hover{color:#EDE6DD}
+body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif;color:#1a1815;background:#f7f4ee;line-height:1.6;-webkit-font-smoothing:antialiased}
+/* Link padrão no acento da campanha. Era o dourado claro, pensado para o fundo verde escuro;
+   sobre o creme ele dava 1,7:1. Os links do chrome escuro têm cor própria inline. */
+a{color:#C1121F;text-decoration:none}
+a:hover{color:#8E1522}
 summary::-webkit-details-marker{display:none}
-.dotstex{position:absolute;inset:0;background-image:radial-gradient(rgba(247,245,242,.06) 1.3px,transparent 1.3px);background-size:30px 30px;pointer-events:none}
-@keyframes goldGlow{0%,100%{box-shadow:0 12px 30px rgba(11,45,32,.35),0 0 0 1px rgba(217,190,133,.4)}50%{box-shadow:0 18px 50px rgba(217,190,133,.4),0 0 0 2px rgba(217,190,133,.85)}}
-.glow{animation:goldGlow 3s ease-in-out infinite}
+/* A textura de pontos (.dotstex) saiu com a identidade verde: no hero da home o fundo passou a
+   ser o globo dourado, como nas telas de acesso. As regras .glow/goldGlow saíram junto, eram
+   mortas desde o porte. */
 .mcard{transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
-.mcard:hover{transform:translateY(-6px);border-color:rgba(217,190,133,.6);box-shadow:0 22px 44px rgba(0,0,0,.35)}
+.mcard:hover{transform:translateY(-6px);border-color:rgba(193,18,31,.35);box-shadow:0 22px 44px rgba(72,60,42,.18)}
 .pnav-toggle{transition:transform .15s ease}
 .pnav-toggle:hover{transform:translateY(-1px)}
 .modacc .chev{transition:transform .25s ease}
 .modacc[open] .chev{transform:rotate(180deg)}
-.modacc[open]{border-color:#D9BE85 !important}
+.modacc[open]{border-color:#C1121F !important}
 @media (max-width:920px){
   .rail{display:flex !important;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;padding-bottom:10px;scrollbar-width:none}
   .rail::-webkit-scrollbar{display:none}
@@ -514,21 +250,24 @@ summary::-webkit-details-marker{display:none}
 }
 
 /* placeholder de arte de modulo (x-import image-slot pendente) */
-.art-slot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f3226,#17513a);color:#7c9184;font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:10px}
+.art-slot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(150deg,#8E1522,#6B111C);color:rgba(253,250,245,.6);font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:10px}
 /* glow pulsante (mesmo da LP: card de preco / secao A Diferenca) */
 .vs-hl{animation:vsGlow 2.6s ease-in-out infinite;will-change:box-shadow}
-@keyframes vsGlow{0%,100%{box-shadow:0 12px 30px rgba(11,45,32,.18),0 0 0 1px rgba(217,190,133,.35)}50%{box-shadow:0 22px 66px rgba(217,190,133,.55),0 0 0 3px rgba(217,190,133,.8)}}
+@keyframes vsGlow{0%,100%{box-shadow:0 12px 30px rgba(72,60,42,.14),0 0 0 1px rgba(169,142,78,.35)}50%{box-shadow:0 22px 66px rgba(169,142,78,.45),0 0 0 3px rgba(169,142,78,.7)}}
 /* Hover e foco do bundle (atributos style-hover/style-focus) como CSS nativo.
    Ver scripts/comum.mjs: uma regra por valor distinto, !important por causa do
    style inline, hover restrito a ponteiro fino. */
 @media (hover:hover){
 [style-hover="color:#D9BE85"]:hover{color:#D9BE85!important}
 [style-hover="background:rgba(217,190,133,.12)"]:hover{background:rgba(217,190,133,.12)!important}
-[style-hover="color:#F7F5F2"]:hover{color:#F7F5F2!important}
+[style-hover="color:#f7f4ee"]:hover{color:#f7f4ee!important}
+[style-hover="color:#fdfaf5"]:hover{color:#fdfaf5!important}
+[style-hover="background:#f1ece2"]:hover{background:#f1ece2!important}
+[style-hover="color:#fff"]:hover{color:#fff!important}
 [style-hover="transform:translateY(-1px)"]:hover{transform:translateY(-1px)!important}
-[style-hover="border-color:#A98E4E;color:#7E6836"]:hover{border-color:#A98E4E!important;color:#7E6836!important}
+[style-hover="border-color:#C1121F;color:#C1121F"]:hover{border-color:#C1121F!important;color:#C1121F!important}
 [style-hover="color:#7E6836"]:hover{color:#7E6836!important}
 [style-hover="background:#FAF7F1"]:hover{background:#FAF7F1!important}
-[style-hover="background:#A98E4E;color:#fff;border-color:#A98E4E"]:hover{background:#A98E4E!important;color:#fff!important;border-color:#A98E4E!important}
+[style-hover="background:#C1121F;color:#fff;border-color:#C1121F"]:hover{background:#C1121F!important;color:#fff!important;border-color:#C1121F!important}
 }
-[style-focus="border-color:#A98E4E"]:focus{border-color:#A98E4E!important}
+[style-focus="border-color:#C1121F"]:focus{border-color:#C1121F!important}

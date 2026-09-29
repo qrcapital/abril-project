@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { iniciarProva } from "./actions";
 
 const GOLD =
-  "background:linear-gradient(160deg,#D9BE85,#A98E4E);color:#0A2B1E;cursor:pointer;box-shadow:0 6px 16px rgba(169,142,78,.26)";
+  "background:#C1121F;color:#fdfbf6;cursor:pointer;box-shadow:0 6px 16px rgba(169,142,78,.26)";
 
 /**
  * Prova — instruções (design portado). O botão "INICIAR PROVA" vem desabilitado;
@@ -51,7 +51,7 @@ export default function ProvaClient({ html }: { html: string }) {
       if (checked) {
         box.setAttribute(
           "style",
-          boxBase + ";background:#A98E4E;border-color:#A98E4E;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700"
+          boxBase + ";background:#C1121F;border-color:#C1121F;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700"
         );
         box.textContent = "✓";
         btn.setAttribute("style", btnEnabled);
@@ -111,7 +111,7 @@ export default function ProvaClient({ html }: { html: string }) {
             border: "1px solid rgba(176,65,62,.35)",
             background: "rgba(176,65,62,.06)",
             color: "#b0413e",
-            fontFamily: "'Montserrat',system-ui,sans-serif",
+            fontFamily: "-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','Helvetica Neue',system-ui,sans-serif",
             fontSize: 13,
             textAlign: "center",
           }}

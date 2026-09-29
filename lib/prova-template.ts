@@ -24,14 +24,14 @@ import { esc, exigir } from "./html-slice.ts";
 const ALT_BASE =
   "display:flex;align-items:center;gap:14px;padding:15px 18px;border-radius:10px;cursor:pointer;margin-bottom:10px;transition:all .14s ease";
 const ALT_OFF = `${ALT_BASE};border:1.5px solid #E4DACC;background:#fff`;
-const ALT_ON = `${ALT_BASE};border:1.5px solid #A98E4E;background:#FBF6EC`;
+const ALT_ON = `${ALT_BASE};border:1.5px solid #C1121F;background:#FBF6EC`;
 
 const BOLA_BASE =
   "width:26px;height:26px;flex:0 0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700";
 const BOLA_OFF = `${BOLA_BASE};border:1.5px solid #C9BCA8;color:#7E6836`;
-const BOLA_ON = `${BOLA_BASE};border:1.5px solid #A98E4E;background:#A98E4E;color:#fff`;
+const BOLA_ON = `${BOLA_BASE};border:1.5px solid #C1121F;background:#C1121F;color:#fff`;
 
-const TEXTO_ALT = "font-size:13.5px;color:#333333;line-height:1.4";
+const TEXTO_ALT = "font-size:13.5px;color:#1a1815;line-height:1.4";
 
 export function fillQuestao(
   html: string,
