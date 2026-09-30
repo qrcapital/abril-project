@@ -33,7 +33,14 @@ import { createClient } from "@/lib/supabase/server";
  * histórico do navegador nem escapa por `Referer`.
  */
 
-const TIPOS = new Set(["recovery", "invite"]);
+/**
+ * `magiclink` e `email` entraram em 30/set/2026: são o "Send magic link" do painel do Supabase.
+ * O modelo de e-mail do painel foi apontado para esta rota (antes ele levava à raiz do site, que é
+ * a pré-lista da live). Esse link não cria senha, só abre sessão, então o destino é outro: o admin
+ * vai para o `/admin`, o aluno para o `/app`.
+ */
+const TIPOS = new Set(["recovery", "invite", "magiclink", "email"]);
+const ENTRADA = new Set(["magiclink", "email"]);
 const DESTINO_PADRAO = "/app/redefinir-senha";
 
 // A guarda de destino (`destinoSeguro`) mora em `lib/seguranca.ts`, puro, porque este route
@@ -49,7 +56,7 @@ export async function GET(req: NextRequest) {
   const tipo = searchParams.get("type");
   if (!tokenHash || !tipo || !TIPOS.has(tipo)) return paraRecuperar(req, "invalido");
 
-  const next = destinoSeguro(searchParams.get("next"), DESTINO_PADRAO);
+  const next = destinoSeguro(searchParams.get("next"), ENTRADA.has(tipo) ? "/app" : DESTINO_PADRAO);
 
   return new NextResponse(pagina({ tokenHash, tipo, next }), {
     headers: {
@@ -74,7 +81,8 @@ export async function POST(req: NextRequest) {
 
   const supabase = await createClient();
   const { error } = await supabase.auth.verifyOtp({
-    type: tipo as "recovery" | "invite",
+    // `magiclink` é o nome antigo do tipo `email`; o Auth aceita os dois, mas o SDK tipa só o novo.
+    type: (ENTRADA.has(tipo) ? "email" : tipo) as "recovery" | "invite" | "email",
     token_hash: tokenHash,
   });
 
@@ -83,6 +91,12 @@ export async function POST(req: NextRequest) {
     // casos, para não virar oráculo de token válido.
     console.warn("[auth/confirm] verifyOtp falhou:", error.message);
     return paraRecuperar(req, "expirado");
+  }
+
+  if (ENTRADA.has(tipo)) {
+    // Link de entrada: admin cai no painel, aluno na sala. Mesma regra do login com senha.
+    const { data: admin } = await supabase.rpc("is_admin");
+    return NextResponse.redirect(new URL(admin === true ? "/admin" : "/app", req.nextUrl.origin), 303);
   }
 
   const destino = destinoSeguro(String(form?.get("next") ?? ""), DESTINO_PADRAO);
@@ -120,7 +134,7 @@ function pagina({ tokenHash, tipo, next }: { tokenHash: string; tipo: string; ne
   <div class="faixa">VEJA NEGÓCIOS&nbsp;&nbsp;|&nbsp;&nbsp;ESTRATÉGIA INTERNACIONAL</div>
   <div class="miolo">
     <h1>Falta um clique</h1>
-    <p>Continue para criar sua senha. O link do e-mail vale uma vez só, e por isso ele só é usado quando você clica no botão.</p>
+    <p>${ENTRADA.has(tipo) ? "Continue para entrar na sua conta." : "Continue para criar sua senha."} O link do e-mail vale uma vez só, e por isso ele só é usado quando você clica no botão.</p>
     <form method="post" action="/auth/confirm">
       <input type="hidden" name="token_hash" value="${esc(tokenHash)}">
       <input type="hidden" name="type" value="${esc(tipo)}">
