@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { LOGIN } from "@/lib/auth-casca";
-import { cadastroAberto } from "@/lib/seguranca";
 import LoginClient from "./LoginClient";
 
 export const metadata: Metadata = { title: "Entrar" };
@@ -26,10 +25,6 @@ export default async function LoginPage({
       html={variants[s ?? "regular"] ?? variants.regular}
       mode={s === "primeiro" ? "primeiro" : "login"}
       aviso={estado ? AVISOS[estado] : undefined}
-      // Avaliado AQUI, no servidor, e não no componente: a regra lê `CADASTRO_ABERTO`, que não
-      // tem prefixo `NEXT_PUBLIC_` e por isso não existe no navegador. É a mesma chamada que a
-      // action `criarConta` faz, então a barra de teste e a porta abrem e fecham juntas.
-      cadastro={cadastroAberto()}
     />
   );
 }

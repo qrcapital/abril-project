@@ -16,13 +16,6 @@ const WHATSAPP = contato.whatsapp;
 // vem do Guru e o campo não aparece.
 const PEDIR_NOME = process.env.NEXT_PUBLIC_APP_ENV !== "production";
 
-const TEST_STATES: { label: string; s?: string }[] = [
-  { label: "Normal" },
-  { label: "Senha errada", s: "erro" },
-  { label: "Pagamento processando", s: "pendente" },
-  { label: "1º acesso", s: "primeiro" },
-];
-
 /**
  * Login / primeiro acesso com Supabase Auth (email + senha).
  * - modo "primeiro": signUp (cria a conta e a senha); em homolog simula a compra.
@@ -34,16 +27,10 @@ export default function LoginClient({
   html,
   mode,
   aviso,
-  cadastro = false,
 }: {
   html: string;
   mode: "login" | "primeiro";
   aviso?: string;
-  /**
-   * O cadastro livre existe neste ambiente? Vem da página (servidor) porque a chave manual,
-   * `CADASTRO_ABERTO`, é variável só de servidor e não chega ao navegador.
-   */
-  cadastro?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -196,57 +183,9 @@ export default function LoginClient({
   return (
     <>
       <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />
-      {/* A barra de teste só existe onde o cadastro livre existe. Ela anunciava, na tela de
-          login pública, um botão "1º acesso" que cria conta com matrícula ativa sem compra:
-          com o domínio da Abril servindo esta branch, isso era a porta aberta com placa na
-          frente. Os dois agora pendem da mesma regra (`cadastroAberto`, avaliada na página). */}
-      {cadastro && <TestBar router={router} />}
+      {/* A barra "Teste (homolog)" que ficava fixa no pé desta tela saiu em 30/set/2026, a
+          pedido do Marcelo: a tela é a do domínio público. As variantes continuam acessíveis
+          por URL (`?s=erro`, `?s=pendente`, `?s=primeiro`) para quem precisar conferir. */}
     </>
-  );
-}
-
-function TestBar({ router }: { router: ReturnType<typeof useRouter> }) {
-  return (
-    <div
-      style={{
-        position: "fixed",
-        left: "50%",
-        bottom: 16,
-        transform: "translateX(-50%)",
-        zIndex: 200,
-        display: "flex",
-        gap: 8,
-        alignItems: "center",
-        flexWrap: "wrap",
-        justifyContent: "center",
-        background: "rgba(26,24,21,.9)",
-        border: "1px solid rgba(253,250,245,.18)",
-        borderRadius: 10,
-        padding: "8px 12px",
-        backdropFilter: "blur(6px)",
-      }}
-    >
-      <span style={{ fontSize: 9, letterSpacing: ".1em", textTransform: "uppercase", color: "rgba(253,250,245,.6)", fontWeight: 600 }}>
-        Teste (homolog)
-      </span>
-      {TEST_STATES.map((t) => (
-        <button
-          key={t.label}
-          onClick={() => router.push(t.s ? `/app/login?s=${t.s}` : "/app/login")}
-          style={{
-            border: "1px solid rgba(253,250,245,.28)",
-            color: "#fdfaf5",
-            background: "transparent",
-            borderRadius: 6,
-            padding: "6px 10px",
-            fontSize: 11,
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          {t.label}
-        </button>
-      ))}
-    </div>
   );
 }
