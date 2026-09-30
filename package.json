@@ -22,7 +22,8 @@
     "check:mestre": "node scripts/mestre-check.mjs",
     "check:matricula": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/matricula-check.mts",
     "check:email": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/email-check.mts",
-    "check:certificado": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/certificado-check.mts"
+    "check:certificado": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/certificado-check.mts",
+    "transcrever": "node scripts/transcrever.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",
@@ -35,6 +36,9 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1143.0",
+    "@aws-sdk/client-transcribe": "^3.1143.0",
+    "@aws-sdk/lib-storage": "^3.1143.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
