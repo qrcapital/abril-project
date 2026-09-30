@@ -42,6 +42,26 @@ export default function LoginClient({
     const ac = new AbortController();
     const opts = { signal: ac.signal };
 
+    // LINK DE ENTRADA DO PAINEL DO SUPABASE ("Send magic link"). Sem SMTP próprio o modelo do
+    // e-mail não é editável, e ele chega aqui (Site URL do projeto) com a sessão no fragmento:
+    // `#access_token=...&refresh_token=...`. O cliente do @supabase/ssr está em PKCE e não lê o
+    // fragmento sozinho, então a sessão é aplicada à mão. O fragmento some da barra antes de
+    // qualquer outra coisa, para o token não ficar no histórico.
+    const frag = new URLSearchParams(window.location.hash.slice(1));
+    const accessToken = frag.get("access_token");
+    const refreshToken = frag.get("refresh_token");
+    if (accessToken && refreshToken) {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      supabase.auth
+        .setSession({ access_token: accessToken, refresh_token: refreshToken })
+        .then(async ({ error }) => {
+          if (error) return;
+          const { data: admin } = await supabase.rpc("is_admin");
+          router.push(admin === true ? "/admin" : "/app");
+          router.refresh();
+        });
+    }
+
     const inputs = [...root.querySelectorAll<HTMLInputElement>("input")];
     inputs.forEach((i) => (i.value = "")); // limpa os valores de exemplo do design
     const emailInput = inputs.find((i) => i.type === "email");
