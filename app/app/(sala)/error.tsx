@@ -6,10 +6,10 @@ import contato from "@/lib/contato.json";
 import { BOTAO, CORPO, Painel } from "@/app/app/_ui/feedback";
 
 /**
- * Tela de erro da área do aluno. Deixou de ser hipótese em 28/jul: o motor da prova
- * **estoura de propósito** em duas situações (o `exigir` dos templates quando o porte muda
- * o markup, e o `abrirTentativa` com módulo de menos de 5 questões ativas). Falhar alto é a
- * decisão certa nas duas, mas sem esta tela o aluno via o erro cru do Next, fora da marca.
+ * Tela de erro da área do aluno. Deixou de ser hipótese em 28/jul, quando o motor da prova
+ * (que saiu do curso em 30/set/2026) passou a **estourar de propósito** em situações de dado
+ * torto. Falhar alto continua sendo a regra para o que resta (o currículo que não carrega, um
+ * template sem a âncora esperada), mas sem esta tela o aluno via o erro cru do Next, fora da marca.
  *
  * Não explica a causa: o que quebrou é problema nosso, e detalhe técnico aqui só assusta.
  * Oferece as duas saídas que resolvem de verdade (tentar de novo, falar com o suporte) e

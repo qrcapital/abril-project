@@ -285,7 +285,7 @@ export function ligarExigencias(
  * Padrão 5 do DESIGN.md §3: confirmação de ação irreversível.
  *
  * Substitui o `window.confirm`, que é cinza do sistema, não diz o que está em jogo e aparece
- * no momento mais tenso da jornada (o envio da prova, tentativa única). Devolve `true` para
+ * no momento mais tenso da ação (apagar, limpar progresso). Devolve `true` para
  * confirmado e `false` para cancelado, inclusive por Esc e por clique fora.
  *
  * `<dialog>` nativo com `showModal()`, e não div com overlay à mão, porque a plataforma já
@@ -328,7 +328,7 @@ export function confirmar(opts: {
    * servidor, e destaque não é motivo para abrir `innerHTML`.
    */
   destaque?: string;
-  /** Conteúdo opcional entre o corpo e os botões — a grade de questões da prova entra aqui. */
+  /** Conteúdo opcional entre o corpo e os botões, para o que não cabe numa frase. */
   extra?: HTMLElement;
 }): Promise<boolean> {
   garantirBackdrop();

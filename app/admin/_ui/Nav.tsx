@@ -17,7 +17,6 @@ import { createClient } from "@/lib/supabase/client";
 const ITENS = [
   { href: "/admin", rotulo: "Painel", pronto: true },
   { href: "/admin/alunos", rotulo: "Alunos", pronto: true },
-  { href: "/admin/questoes", rotulo: "Questões", pronto: true },
   { href: "/admin/conteudo", rotulo: "Conteúdo", pronto: true },
   // Liberação mora ao lado de Conteúdo porque é a outra pergunta sobre a mesma coisa: Conteúdo
   // diz O QUE existe, Liberação diz QUANDO cada módulo abre (migration 0016).

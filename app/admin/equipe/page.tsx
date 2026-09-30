@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Equipe" };
  * Quem tem acesso de admin, e como dar ou tirar (PLANO-ADMIN §8).
  *
  * Tela própria em vez de um botão dentro de `/admin/alunos` (§4.2): admin é da equipe interna,
- * e a lista de Alunos é uma lista de compradores, com progresso e situação de prova. Procurar um
+ * e a lista de Alunos é uma lista de compradores, com progresso e certificado. Procurar um
  * colega numa tela dessas seria procurar no lugar errado, e a pessoa pode nem ser aluna.
  *
  * A busca é um `<form method="get">` e o termo vive na URL. Nenhuma linha de JS, a busca fica
@@ -75,8 +75,8 @@ export default async function Equipe({
       <header className="mb-6">
         <h1 className="text-[26px] text-tinta">Equipe</h1>
         <p className="mt-1 max-w-2xl text-[13px] text-medio">
-          Quem tem acesso a este painel. Admin vê e edita tudo, incluindo o banco de questões com
-          o gabarito da prova.
+          Quem tem acesso a este painel. Admin vê e edita tudo, incluindo os dados dos alunos, o
+          conteúdo do curso e os e-mails.
         </p>
       </header>
 

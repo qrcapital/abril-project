@@ -22,8 +22,8 @@ export const metadata: Metadata = { title: "Liberação" };
  * A tela AVISA e não trava (decisão de 17/ago), em dois casos:
  * - política que deixa o curso concluível dentro da janela de arrependimento de
  *   {DIAS_GARANTIA} dias (o risco: certificado emitido e reembolso pedido em seguida);
- * - módulo avaliado (I a IV) em breve: a prova sorteia questões dele, e o gate de 16/16 aulas
- *   fica inalcançável enquanto ele não abrir.
+ * - módulo avaliado (I a IV) em breve: as aulas dele contam para o certificado, e ninguém conclui
+ *   a formação enquanto ele não abrir.
  *
  * Sem JS, como as outras telas: um `<form method="post">` por política, ação no `name`/`value`
  * do botão. Os únicos clientes são os diálogos de confirmação de ativar e apagar.

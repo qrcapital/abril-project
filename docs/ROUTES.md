@@ -76,22 +76,28 @@ provisionamento, não prazo vencido).
 > `(sala)` para o grupo `(certificado)`, com guarda própria, porque **o diploma é do aluno e não
 > do prazo dele**: quem concluiu continua baixando depois de o acesso terminar. A URL não muda.
 > Duas travas continuam valendo: **matrícula revogada** bloqueia (reembolso ou chargeback desfez
-> a compra, e manter o certificado seria entregar o produto de graça), e **sem aprovação na
-> prova ninguém entra**, com acesso válido ou não. Esta segunda trava **não existia** até 29/jul:
-> qualquer conta logada abria a tela e baixava um PDF com o próprio nome, apesar de a linha de
-> `/app/certificado` desta tabela já prometer o contrário desde o começo.
+> a compra, e manter o certificado seria entregar o produto de graça), e **sem certificado
+> emitido e sem todas as aulas que contam concluídas ninguém entra**, com acesso válido ou não.
+> Até 30/set/2026 a segunda trava era a aprovação na prova final; ver a nota abaixo.
+
+> **O curso não tem prova final nem e-book (decisão do dono, 30/set/2026).** As rotas
+> `/app/prova`, `/app/prova/questao/:q` e `/app/prova/resultado` foram apagadas; qualquer endereço
+> sob `/app/prova` redireciona (307) para `/app`, pelo `redirects()` do `next.config.ts`. O
+> **certificado passou a sair na conclusão**: quando o aluno marca a última aula que conta
+> (`lessons.conta_no_gate`, em todos os módulos), a action `marcarAula` emite o certificado (mesmo
+> gerador de código, idempotente pelo índice único de `certificates(user_id)`) e manda o e-mail
+> `certificado` (migration `0026`). Concluir um módulo pelo admin tem o mesmo efeito. Certificado
+> já emitido pela prova continua valendo, com o mesmo código.
 
 | Rota | Descrição |
 |---|---|
-| `/app` | Home em vitrine. Banner hero: vídeo de boas-vindas; com progresso, overlay "Continue de onde parou → Módulo X · Aula Y" e CTA de retomada apontando para a última aula não concluída. Prateleira "A Formação" (Módulo 0 a IV, cada card com arte, contador X/N e estado). Prateleira "Materiais e Certificação" (apostilas, e-book, Prova Final bloqueada até 16/16, card de 2ª chamada oculto até liberação do admin). Sem progresso: banner convida ao Módulo 0 / Aula 1 |
-| `/app/comece` | "Comece por aqui" (29/set/2026), a porta do Módulo 0 e o destino depois de criar ou redefinir a senha. Hero no painel vermelho, as aulas de abertura do Módulo 0 (embed do Panda quando a aula tem `panda_video_id`; sempre dois lugares, o que falta aparece "em breve"), "como a formação funciona", a trilha de `getCalendario()` com "Você está aqui" e a amostra do notebook do Módulo 0 |
-| `/app/modulo/:m` | Página do módulo (29/set/2026): número, título, docente, progresso, lista de aulas e cartão do notebook. **Módulo fechado mostra a página**, sem link nas aulas, com a data ou o motivo da abertura. `/app/modulo/0` redireciona para `/app/comece` |
-| `/app/modulo/:m/notebook` | Notebook do módulo (29/set/2026): conteúdo de `content/notebooks/modulo-<n>.ts` (tipos em `lib/notebook.ts`), índice lateral, blocos de texto, gráfico SVG, número, destaque, tabela, simulador e referências. Segue a liberação do módulo: fechado, só o aviso e a trilha |
-| `/app/modulo/:m/aula/:n` | **Módulo ainda fechado pela esteira não abre, nem pela URL** (guarda de 29/jul; sem ela o gotejamento seria decorativo, porque as aulas são alcançáveis digitando o endereço). Página da aula, em modo teatro desde 29/set/2026 (palco escuro, player largo, docente, materiais, link para o notebook, aulas do módulo). Player Panda Video 16:9 com retomada, cabeçalho "Módulo X · Aula N de 16", título e descrição, navegação Anterior / Concluir e próxima, bloco "Materiais desta aula" (download do Storage), sidebar "Meu progresso — X% · n de 16" com módulos em acordeão e estado por aula. Conclui automaticamente com `watched_pct ≥ 90` ou pelo botão. Materiais ainda não enviados: seção some ou mostra "em breve", sem link quebrado |
-| `/app/prova` | **Duas travas, e a de calendário é a que tem dente** (29/jul): a prova só abre quando TODOS os módulos já foram liberados, conferido no servidor pela matrícula, e só então o gate de 16/16 aulas concluídas vale. O gate de aulas sozinho lê um cookie que o aluno edita, então não impede nada. Instruções da prova. Regras (20 questões, 70%, 120 min, tentativa única, 2ª chamada via suporte) + checkbox "estou ciente das regras e de que esta é uma tentativa única" + "Iniciar prova". Acessível só com 16/16 aulas avaliadas concluídas; caso contrário redireciona para `/app` com aviso de bloqueio. Iniciar grava `deadline` = agora + 120 min e vai para `/app/prova/questao/1` |
-| `/app/prova/questao/:q` | Questão q de 20. Cronômetro visível, barra "n respondidas", 4 alternativas, Anterior / Próxima, "Enviar prova" na última (ou a qualquer momento). Refresh ou reentrada não reinicia: o `deadline` persistido manda e retoma as respostas. Deadline estourado: corrige o respondido e vai para o resultado. Sem prova iniciada: redireciona para `/app/prova` |
-| `/app/prova/resultado` | Resultado da última tentativa. Aprovado (≥ 70%): nota /100, desempenho por módulo, CTA "Emitir certificado" → `/app/certificado`. Reprovado: nota /100, desempenho por módulo (onde revisar), CTA "Solicitar 2ª chamada no WhatsApp" (link pré-preenchido). Sem tentativa submetida: redireciona para `/app/prova` |
-| `/app/certificado` | Certificado. Preview (wordmark, olho, gravuras, nome, 30h, assinaturas), "Baixar PDF", "Compartilhar no LinkedIn", bloco de NPS (0 a 10). Só acessível com prova aprovada; senão redireciona para `/app/prova/resultado` ou `/app`. Código `EI-2026-XXXX` exibido, com link para `/verificar/:codigo`. Reemissão reusa o mesmo código |
+| `/app` | Home em vitrine. Banner hero: vídeo de boas-vindas; com progresso, overlay "Continue de onde parou → Módulo X · Aula Y" (Y é a posição da aula no módulo) e CTA de retomada apontando para a primeira aula não concluída, no teatro da página do módulo dela. Prateleira "A Formação" (Módulo 0 a IV, cada card com arte, contador X/N e estado; o clique leva a `/app/modulo/:m`). Card do certificado: "sai ao concluir as N aulas · faltam X" ou "emitido", que leva a `/app/certificado`. Sem e-book e sem card de prova desde 30/set/2026 |
+| `/app/comece` | "Comece por aqui" (29/set/2026), a porta de boas-vindas e o destino depois de criar ou redefinir a senha. Hero no painel vermelho, as aulas de abertura do Módulo 0 (embed do Panda quando a aula tem `panda_video_id`; sempre dois lugares, o que falta aparece "em breve"; os links levam a `/app/modulo/0?aula=:n#aula-:n`), "como a formação funciona", a trilha de `getCalendario()` com "Você está aqui" e a amostra do notebook do Módulo 0 (link para `/app/modulo/0#notebook`) |
+| `/app/modulo/:m?aula=:n#aula-:n` | **A página do módulo é a sala de aula (30/set/2026)**, inclusive a do Módulo 0 (que deixou de redirecionar para `/app/comece`). De cima para baixo: (1) **teatro**: palco escuro, player 16:9 da aula escolhida, título, "Marcar como concluída" (`AulaClient` + action `marcarAula`, mesmo contrato `data-concluir`), bio curta do docente, anterior/próxima, materiais da aula (tipo `ebook` filtrado) e, quando a última aula do módulo está concluída, um cartão de fim de módulo com o próximo módulo ou a data em que ele abre; (2) **playlist**: as aulas do módulo em fila horizontal ("Aula 1", "Aula 2"..., título, duração quando houver, concluída, atual em destaque), cada cartão um link para `?aula=:n#aula-:n`; (3) **notebook**: um documento só para o módulo, uma seção por aula com `id="aula-:n"`, índice lateral fixo. `:n` é a **posição da aula no módulo** (1, 2, 3...), não o número global. Sem `?aula=` ou com valor inválido, toca a primeira aula não concluída (todas concluídas: a primeira). A seleção é do servidor: funciona sem JS e o endereço é compartilhável; com JS, `AncoraDaAula` mantém o vídeo à vista e rola a caixa do notebook até a seção. **Módulo fechado mostra a página sem teatro**: cabeça com a data ou o motivo da abertura, aviso, títulos das aulas sem link, trilha; nada de vídeo, material ou notebook. A guarda é `getCalendario()` (regra de `lib/liberacao.ts`), a mesma da action |
+| `/app/modulo/:m/aula/:n` | **Redirect** (30/set/2026) para `/app/modulo/:m?aula=:pos#aula-:pos`. Aqui `:n` é o número GLOBAL da aula (0 a 16, o dos links antigos e e-mails); a rota converte para a posição no módulo real da aula. Aula inexistente: 404 |
+| `/app/modulo/:m/notebook` | **Redirect** (30/set/2026) para `/app/modulo/:m#notebook`. O notebook deixou de ter página própria |
+| `/app/prova/*` | **Removida** (30/set/2026). Redirect 307 para `/app` no `next.config.ts` |
+| `/app/certificado` | Certificado. Preview (wordmark, olho, gravuras, nome, 30h, assinaturas), "Baixar PDF", "Compartilhar no LinkedIn", bloco de NPS (0 a 10). Entra quem já tem certificado ou concluiu todas as aulas que contam; senão redireciona para `/app` (ou `/app/acesso`, sem acesso ativo). O texto diz que o aluno "concluiu todas as aulas". Sem código no banco (conclusão anterior à emissão automática), a tela emite no resgate e manda o e-mail. Código `EI-XXXX-XXXX` exibido, com link para `/verificar/:codigo`. Reemissão reusa o mesmo código |
 | `/app/conta` | Minha conta. Dados (nome, e-mail com "alterar via suporte", trocar senha self-service), Acesso ("liberado por 1 ano", disponível até `accessUntil`), Suporte (atalho WhatsApp). Acesso expirado: abre, mas o conteúdo do curso fica bloqueado com via de renovação |
 | `/app/acesso` | Tela de renovação e bloqueio. **Fora do grupo `(sala)`** (lá dentro, a guarda se redirecionaria para si mesma em laço) e **sem chrome**, porque a navegação do chrome leva ao curso, que é o que está bloqueado. Destino da guarda nos estados `expirada`, `revogada` e `ausente`, cada um com texto próprio; o estado vem **do banco, nunca da URL**. Oferece o suporte e "trocar de conta" (que faz `signOut` antes, senão a sessão antiga empurra de volta para cá em laço). Progresso preservado, e a tela diz isso. Quem tem acesso ativo é devolvido para `/app` |
 
@@ -115,11 +121,11 @@ de um mestre.
 
 | Rota | Estado | Descrição |
 |---|---|---|
-| `/admin` | **no ar** | Painel. Quatro cards de número real: matrículas (e quantas ativas), conclusão de aulas, aprovação na prova, certificados. Sem NPS enquanto a pesquisa não existir, e sem atalhos para telas que ainda não existem |
-| `/admin/alunos` | **no ar** | Lista de todas as contas: nome, e-mail, acesso, progresso X/16, situação da prova. Busca por nome ou e-mail e filtro por status, os dois na URL via `<form method="get">` |
-| `/admin/alunos/:id` | **no ar**, somente leitura | Cadastro, datas, progresso por módulo (com a coluna "conta no gate") e tentativas de prova. As ações (reenviar acesso, trocar e-mail, liberar 2ª chamada, revogar ou estender) são Fase 3, presas em Guru e SES |
+| `/admin` | **no ar** | Painel. Quatro cards de número real: matrículas (e quantas ativas), conclusão de aulas, formação concluída, certificados. Funil do acesso ao certificado, sem etapas de prova desde 30/set/2026 |
+| `/admin/alunos` | **no ar** | Lista de todas as contas: nome, e-mail, acesso, progresso X/N, certificado (código ou "não emitido"). Busca por nome ou e-mail e filtro por status, os dois na URL via `<form method="get">` |
+| `/admin/alunos/:id` | **no ar** | Cadastro, datas, liberação, progresso por módulo (com a coluna "conta no gate" e concluir/limpar por módulo) e o certificado (código com link para a verificação, ou quantas aulas faltam). Concluir o último módulo pendente emite o certificado. A liberação de 2ª chamada saiu com a prova |
 | `/admin/equipe` | **no ar** | Quem tem acesso ao painel. Busca por e-mail, dar e remover acesso de admin. Escopo novo de 30/jul, não previsto na planta original |
-| `/admin/questoes` | a fazer | CRUD das questões da prova, por módulo (enunciado, 4 alternativas, correta, ativo) |
+| `/admin/questoes` | **removida** | Saiu com a prova (30/set/2026), junto com `/admin/api/questoes` e `/admin/api/prova`. Redirect 307 para `/admin` |
 | `/admin/conteudo` | a fazer | Módulos, aulas e materiais (`PLANO-ADMIN.md` §4.6). Depende de três decisões do Pedro |
 | `/admin/emails` | a fazer | Leitura do `email_log` (aluno, template, envio, status) |
 
@@ -139,7 +145,7 @@ autenticadas de uma vez. Antes não existiam em lugar nenhum do projeto.
 | Arquivo | Quando aparece |
 |---|---|
 | `(sala)/loading.tsx` | Transição entre telas. Toda rota de `/app/*` lê o usuário no servidor antes de responder, então em conexão lenta o clique ficava sem resposta |
-| `(sala)/error.tsx` | Exceção de servidor na área. Deixou de ser hipótese quando o motor da prova passou a estourar de propósito em duas situações. Oferece recarregar, aponta o suporte e mostra o `digest`, que é o identificador do log |
+| `(sala)/error.tsx` | Exceção de servidor na área. Oferece recarregar, aponta o suporte e mostra o `digest`, que é o identificador do log |
 | `(sala)/not-found.tsx` | 404 dentro do chrome da área. Atende quem chama `notFound()` no ramo, como a aula inexistente |
 | `(sala)/[...resto]/page.tsx` | Catch-all que chama `notFound()`. Existe porque `not-found.tsx` aninhado **não** atende URL sem rota nenhuma: ela cairia no 404 global, que é do layout raiz e vem no tema claro da LP. Rota explícita sempre vence catch-all |
 
@@ -153,8 +159,8 @@ Renderizados como variação da mesma tela (não têm URL distinta), listados pa
 
 - **Login**: normal, primeiro acesso, erro de credencial, pagamento pendente (variações de `/app/login` e `/app/primeiro-acesso/:token`), e **sessão expirada** (`?estado=expirou`, mandado pelo proxy só para quem tinha sessão de fato).
 - **Card de módulo**: concluído (✓), em andamento, não iniciado (variações do card em `/app`).
-- **Prova**: aprovado, reprovado (variações de `/app/prova/resultado`).
-- **Prova, card na home**: bloqueada (até 16/16), desbloqueada, 2ª chamada liberada (variações do card em `/app`).
+- **Certificado, card na home**: pendente (com quantas aulas faltam), aulas concluídas sem código ainda, emitido (variações do card em `/app`).
+- **Página do módulo**: aberto com teatro, fechado (sem teatro), aberto sem aulas publicadas; fim de módulo (cartão no palco).
 
 ## Deep links de e-mail
 
@@ -165,10 +171,8 @@ Cada e-mail transacional (PRD seção 14) aponta para uma rota:
 | Boas-vindas + acesso (3) | `/auth/confirm?token_hash={{ .TokenHash }}&type=invite` → `/app/redefinir-senha` |
 | Reset de senha (4) | `/auth/confirm?token_hash={{ .TokenHash }}&type=recovery` → `/app/redefinir-senha` |
 | D+3 sem login (5) / D+14 inativo (7) | `/app` |
-| Módulo concluído (6) | `/app` (ou próximo módulo) |
-| Prova liberada (8) | `/app/prova` |
-| Resultado da prova (9) | `/app/prova/resultado` |
-| Certificado emitido (10) | `/app/certificado` |
+| Módulo concluído (6) | `/app` (ou `/app/modulo/:m` do próximo módulo) |
+| Certificado emitido (template `certificado`, migration 0026) | `/app/certificado` |
 | Pedido recebido (1) / cartão recusado (2) / carrinho abandonado (12 a 14) | checkout Guru (externo) |
 | Reembolso confirmado (11) | sem destino de app (informacional) |
 

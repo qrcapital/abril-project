@@ -4,6 +4,7 @@ import { papelAtual } from "@/lib/admin";
 import { origemValida } from "@/lib/admin-guarda";
 import { diferencas, validarDados, type DadosAluno } from "@/lib/aluno-dados";
 import { auditar } from "@/lib/auditoria";
+import { emitirSeConcluiu } from "@/lib/certificados";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -21,8 +22,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * ┌─ O NOME MORA EM DOIS LUGARES, E OS DOIS PRECISAM SER ESCRITOS ─────────────────────────┐
  * │ `profiles.nome`      → lido pelo admin E pela verificação PÚBLICA do certificado         │
  * │                        (`verify_certificate`, migration 0001).                           │
- * │ `user_metadata.nome` → lido pelas telas do aluno (`usuario-template.ts`) e pelos e-mails │
- * │                        de resultado (`prova.ts`, `prova-expiradas.ts`).                  │
+ * │ `user_metadata.nome` → lido pelas telas do aluno (`usuario-template.ts`) e pelo e-mail   │
+ * │                        do certificado (`lib/certificados.ts`).                           │
  * │                                                                                         │
  * │ O trigger `handle_new_user` copia um do outro UMA VEZ, no cadastro; depois disso eles    │
  * │ andam sozinhos. Gravar só um deixa o certificado público com um nome e a tela do aluno   │
@@ -255,6 +256,9 @@ async function salvarProgresso(
       { onConflict: "user_id,lesson_id" },
     );
     if (error) return voltar(req, alvo, { erro: "Não deu para gravar o progresso." });
+    // Concluir pelo aluno é o mesmo que ele concluir: se isso fechou todas as aulas que contam, o
+    // certificado sai agora, com o e-mail, pelo mesmo gatilho da action `marcarAula`. Não lança.
+    await emitirSeConcluiu(db, alvo);
   } else {
     // APAGA a linha em vez de voltar o status para 'started'. É o que o
     // `scripts/progresso-conta.mjs --limpar` faz, e é o estado de quem nunca abriu a aula; deixar
@@ -263,8 +267,8 @@ async function salvarProgresso(
     if (error) return voltar(req, alvo, { erro: "Não deu para limpar o progresso." });
   }
 
-  // O RASTRO GUARDA QUANTAS AULAS, porque esta ação mexe no gate de 16/16 que libera a prova: é a
-  // única edição desta tela que pode dar (ou tirar) acesso à prova final.
+  // O RASTRO GUARDA QUANTAS AULAS, porque esta ação mexe no gate que emite o certificado: é a
+  // única edição desta tela que pode fazer um certificado sair.
   await auditar(db, {
     autor,
     acao: marcar ? "aluno.progresso-marcar" : "aluno.progresso-limpar",

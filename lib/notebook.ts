@@ -8,75 +8,85 @@
 // tipado dá erro de build quando um bloco sai torto, e o dia em que houver tela de edição a
 // migração é trocar o `carregar` de `content/notebooks/index.ts` por uma consulta.
 //
-// Puro, sem import: os arquivos de `content/notebooks/` importam só os tipos daqui.
+// Puro, sem import: os arquivos de `content/notebooks/` importam os tipos e as contas daqui.
 
 /** Formatação dos números de um gráfico ou de um resultado. */
 export type Formato = { prefixo?: string; sufixo?: string; casas?: number };
 
 export type Serie = { nome: string; valores: number[] };
 
-type Base = {
-  /**
-   * A aula de onde o bloco vem, pelo `ord` dela DENTRO do módulo (1 = primeira aula do módulo).
-   * A tela transforma em link para a aula. Opcional: nem todo bloco nasce de uma aula só.
-   */
-  aula?: number;
-};
+// A FORMA MUDOU EM 30/SET/2026. Era um notebook por módulo com uma lista corrida de blocos, cada
+// bloco apontando para a aula de origem por um `aula?` opcional, e morava numa página à parte
+// (`/app/modulo/[m]/notebook`). Agora ele é UM documento longo dentro da página do módulo, dividido
+// em uma seção por aula (`aulas[]`), e a seção é a âncora que a playlist usa (`#aula-<n>`). O `aula`
+// de cada bloco saiu porque a seção já diz de onde o bloco vem.
 
-export type Bloco = Base &
-  (
-    | {
-        tipo: "capitulo";
-        /** Âncora do índice lateral. Só letras minúsculas, números e hífen. */
-        id: string;
-        titulo: string;
-        resumo?: string;
-      }
-    | {
-        tipo: "texto";
-        /** Parágrafos de prosa. O primeiro do notebook ganha capitular, se `capitular`. */
-        paragrafos: string[];
-        capitular?: boolean;
-      }
-    | { tipo: "destaque"; texto: string; fonte?: string }
-    | { tipo: "numero"; valor: string; legenda: string; nota?: string }
-    | {
-        tipo: "grafico";
-        titulo: string;
-        forma: "linha" | "barra" | "area";
-        /** Rótulos do eixo X, um por ponto de cada série. */
-        eixoX: string[];
-        series: Serie[];
-        formato?: Formato;
-        /** Rodapé do gráfico: premissas, fonte. Obrigatório dizer se é ilustrativo. */
-        nota?: string;
-        /** Dado de exemplo, não estatística real. A tela põe o selo "Ilustrativo". */
-        ilustrativo?: boolean;
-      }
-    | {
-        tipo: "comparador";
-        /** Âncora do índice lateral. */
-        id: string;
-        titulo: string;
-        descricao?: string;
-      } & (
-        | {
-            /** Volatilidade de uma carteira Brasil + exterior conforme a fatia no exterior. */
-            modelo: "diversificacao";
-            hipoteses: { volBrasil: number; volExterior: number; correlacao: number; fatia: number };
-          }
-        | {
-            /** Poder de compra em dólar com o real perdendo valor a uma taxa fixa hipotética. */
-            modelo: "cambio";
-            hipoteses: { depreciacao: number; anos: number; fatia: number };
-          }
-      )
-    | { tipo: "tabela"; titulo?: string; colunas: string[]; linhas: string[][]; nota?: string }
-    | {
-        tipo: "referencias";
-        itens: { autor: string; titulo: string; ano: number; nota?: string }[];
-      }
-  );
+export type Bloco =
+  | {
+      /**
+       * Subtítulo DENTRO da seção de uma aula, para aula longa que pede divisão. A seção da aula já
+       * tem título próprio, então este não aparece no índice lateral.
+       */
+      tipo: "capitulo";
+      /** Âncora. Só letras minúsculas, números e hífen, e sem começar por `aula-` (reservado). */
+      id: string;
+      titulo: string;
+      resumo?: string;
+    }
+  | {
+      tipo: "texto";
+      /** Parágrafos de prosa. O primeiro da seção ganha capitular, se `capitular`. */
+      paragrafos: string[];
+      capitular?: boolean;
+    }
+  | { tipo: "destaque"; texto: string; fonte?: string }
+  | { tipo: "numero"; valor: string; legenda: string; nota?: string }
+  | {
+      tipo: "grafico";
+      titulo: string;
+      forma: "linha" | "barra" | "area";
+      /** Rótulos do eixo X, um por ponto de cada série. */
+      eixoX: string[];
+      series: Serie[];
+      formato?: Formato;
+      /** Rodapé do gráfico: premissas, fonte. Obrigatório dizer se é ilustrativo. */
+      nota?: string;
+      /** Dado de exemplo, não estatística real. A tela põe o selo "Ilustrativo". */
+      ilustrativo?: boolean;
+    }
+  | ({
+      tipo: "comparador";
+      /** Âncora do simulador. */
+      id: string;
+      titulo: string;
+      descricao?: string;
+    } & (
+      | {
+          /** Volatilidade de uma carteira Brasil + exterior conforme a fatia no exterior. */
+          modelo: "diversificacao";
+          hipoteses: { volBrasil: number; volExterior: number; correlacao: number; fatia: number };
+        }
+      | {
+          /** Poder de compra em dólar com o real perdendo valor a uma taxa fixa hipotética. */
+          modelo: "cambio";
+          hipoteses: { depreciacao: number; anos: number; fatia: number };
+        }
+    ))
+  | { tipo: "tabela"; titulo?: string; colunas: string[]; linhas: string[][]; nota?: string }
+  | {
+      tipo: "referencias";
+      itens: { autor: string; titulo: string; ano: number; nota?: string }[];
+    };
+
+/** O conteúdo de UMA aula dentro do notebook do módulo. */
+export type SecaoDaAula = {
+  /**
+   * A posição da aula DENTRO do módulo, a partir de 1: a mesma do `?aula=` da URL e do "Aula 3" da
+   * playlist (`Aula.pos` em `lib/curso.ts`). Não é o número global da aula.
+   */
+  aula: number;
+  blocos: Bloco[];
+};
 
 export type Notebook = {
   /** `ord` do módulo. */
@@ -88,25 +98,20 @@ export type Notebook = {
    * selo é mudar para `false`, nada mais.
    */
   demo: boolean;
-  blocos: Bloco[];
+  /**
+   * Uma seção por aula, em qualquer ordem (a tela ordena pela posição). Aula sem seção aqui aparece
+   * no notebook com o aviso de conteúdo em produção, e seção de uma aula que não existe no banco
+   * não aparece: o título da seção vem do banco, e não haveria o que escrever nele.
+   */
+  aulas: SecaoDaAula[];
 };
 
-/** Uma entrada do índice lateral. */
-export type EntradaIndice = { id: string; rotulo: string; numero: number | null };
+/** A âncora da seção de uma aula no notebook. Um lugar só, porque a playlist e o índice usam. */
+export const ancoraDaAula = (pos: number) => `aula-${pos}`;
 
-/**
- * O índice lateral: os capítulos numerados em ordem, o simulador e as referências. O número do
- * capítulo sai daqui, e não do arquivo, para dois capítulos nunca dizerem "02" por descuido.
- */
-export function indiceDo(nb: Notebook): EntradaIndice[] {
-  let n = 0;
-  const out: EntradaIndice[] = [];
-  for (const b of nb.blocos) {
-    if (b.tipo === "capitulo") out.push({ id: b.id, rotulo: b.titulo, numero: ++n });
-    else if (b.tipo === "comparador") out.push({ id: b.id, rotulo: b.titulo, numero: null });
-    else if (b.tipo === "referencias") out.push({ id: "referencias", rotulo: "Referências", numero: null });
-  }
-  return out;
+/** A seção de uma aula, ou `null` quando o notebook ainda não tem conteúdo para ela. */
+export function secaoDaAula(nb: Notebook | null, pos: number): SecaoDaAula | null {
+  return nb?.aulas.find((s) => s.aula === pos && s.blocos.length > 0) ?? null;
 }
 
 // ---- contas dos simuladores e dos gráficos de demonstração ----------------------------------

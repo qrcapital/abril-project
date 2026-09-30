@@ -84,6 +84,20 @@ export function normalizarCodigo(entrada: string): string | null {
   return `${PREFIXO}-${corpo.slice(0, 4)}-${corpo.slice(4)}`;
 }
 
+/**
+ * A REGRA DO CERTIFICADO desde 30/set/2026: todas as aulas que contam (`lessons.conta_no_gate`)
+ * concluídas. O curso deixou de ter prova, e a conclusão virou a única condição.
+ *
+ * Lista vazia NÃO conclui. `[].every()` é `true`, e um admin que desmarcasse todo `conta_no_gate`
+ * pelo painel emitiria certificado para a base inteira no primeiro clique de qualquer aluno.
+ *
+ * Pura, para o `check:certificado` exercitar sem banco: quem busca as duas listas é
+ * `lib/certificados.ts`.
+ */
+export function concluiuTodasAsAulas(queContam: readonly string[], concluidas: ReadonlySet<string>): boolean {
+  return queContam.length > 0 && queContam.every((id) => concluidas.has(id));
+}
+
 /** URL de "adicionar certificação" ao perfil do LinkedIn. */
 export function linkedinAddUrl(origin: string, codigo: string, emissao: Date): string {
   const p = new URLSearchParams({

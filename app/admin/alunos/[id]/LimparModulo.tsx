@@ -7,8 +7,9 @@ import { confirmar, emTrabalho } from "@/app/app/_ui/feedback";
  * padrão 5 do `DESIGN.md` §3, e não `window.confirm`.
  *
  * A confirmação diz a CONSEQUÊNCIA MEDIDA, e aqui ela tem duas partes: as aulas que o aluno perde e,
- * quando o módulo conta para o gate, o fato de que a prova final pode fechar. Essa segunda é a que
- * ninguém lembra na hora de clicar, e é a que gera o ticket.
+ * quando o módulo conta para o gate, o efeito no certificado. Desde 30/set/2026 o certificado sai na
+ * conclusão das aulas e não é revogado ao desmarcar, então o efeito é só para quem ainda não tem: a
+ * emissão espera ele concluir de novo.
  *
  * Marcar como concluído não tem diálogo: é reversível por este mesmo botão e não tira nada de
  * ninguém.
@@ -36,7 +37,7 @@ export default function LimparModulo({
       corpo:
         `O aluno volta a 0 aula concluída em ${titulo}, e ${concluidas === 1 ? "a aula marcada" : `as ${concluidas} aulas marcadas`} some${concluidas === 1 ? "" : "m"} do histórico.` +
         (contaNoGate
-          ? " Este módulo conta para as 16 aulas que liberam a Prova Final, então o acesso à prova fecha até ele concluir de novo."
+          ? " Este módulo conta para a conclusão da formação: se o aluno ainda não tem certificado, a emissão espera ele concluir de novo. Certificado já emitido não é revogado."
           : ""),
       destaque: titulo,
       confirmar: "Limpar progresso",

@@ -17,8 +17,6 @@ const ler = (p: string) => readFileSync(`app/app/_ui/${p}`, "utf8");
 const ESPERADO: [string, string[]][] = [
   ["chrome-top.html", ['data-u="first"', 'data-u="initial"']],
   ["screens/home.html", ['data-u="first"']],
-  ["screens/resultado.html", ['data-u="first"']],
-  ["screens/resultado-reprovado.html", ['data-u="first"']],
   ["screens/conta.html", ['data-u="full"', "data-email", "data-acesso"]],
   // `data-cert` entrou em 31/jul/2026, com a emissão real: sem ele, a tela volta a servir o código
   // do design (`EI-2026-4817`) como se fosse o do aluno, e ele era o MESMO para todos.

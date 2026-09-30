@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 
 import type { EstadoAcesso } from "@/lib/matricula-estado";
-import { NOTA_MINIMA } from "@/lib/prova-correcao";
 
 /**
  * Peças de tabela do admin (PLANO-ADMIN §3, "estados de tabela: padrões reutilizáveis").
@@ -100,32 +99,3 @@ export const TOM_ESTADO: Record<EstadoAcesso, keyof typeof TONS> = {
   revogada: "ruim",
   ausente: "neutro",
 };
-
-/**
- * Situação da prova em uma linha, com o tom. `null` em `status` é quem nunca abriu.
- *
- * Os quatro estados do enum viram cinco textos, porque `submitted` sem nota é anomalia e merece
- * nome próprio.
- *
- * O corte de aprovação vem do `NOTA_MINIMA` de `lib/prova-correcao.ts`, e não de um `70` escrito
- * aqui: a nota de corte é regra de produto (PRD §7) e já tem um dono.
- */
-export function situacaoProva(
-  status: string | null,
-  score: number | null,
-): { texto: string; tom: keyof typeof TONS } {
-  if (!status) return { texto: "não iniciou", tom: "neutro" };
-  // `available` é a 2ª chamada liberada e não começada. Ele PRECISA vir antes do teste de nota nula
-  // abaixo: sem esta linha, uma tentativa liberada cai em "entregue, sem nota" e o suporte lê que
-  // aconteceu uma entrega anômala quando o aluno nem abriu a prova. Foi o que a tela mostrou no teste
-  // de 31/jul, minutos depois de a liberação passar a existir — o enum tinha esse valor desde o
-  // início e nunca havia sido usado, então nenhuma tela sabia nomeá-lo.
-  if (status === "available") return { texto: "liberada, não iniciada", tom: "atencao" };
-  if (status === "in_progress") return { texto: "em andamento", tom: "atencao" };
-  // Entregue sem nota é anomalia, não estado normal: a correção grava a nota no mesmo update do
-  // envio. Merece aparecer como "atenção" em vez de virar um zero silencioso.
-  if (score === null) return { texto: "entregue, sem nota", tom: "atencao" };
-  return score >= NOTA_MINIMA
-    ? { texto: `aprovado, ${score}%`, tom: "ok" }
-    : { texto: `reprovado, ${score}%`, tom: "ruim" };
-}

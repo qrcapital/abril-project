@@ -4,14 +4,19 @@
 //   node scripts/progresso-conta.mjs <email> --tudo     # conclui as 17
 //   node scripts/progresso-conta.mjs <email> --limpar   # zera
 //
-// Por que existe: até 29/jul o progresso era um cookie, e quem precisava testar o gate da prova
-// simplesmente escrevia o cookie no console. Agora o dado é do servidor, e é bom que seja: essa
+// Por que existe: até 29/jul o progresso era um cookie, e quem precisava testar o gate (na época o
+// da prova, hoje o do certificado) simplesmente escrevia o cookie no console. Agora o dado é do servidor, e é bom que seja: essa
 // facilidade era o furo. Este script é a via legítima, e só roda com a service role.
 //
 // Cheguei a escrever no lugar dele uma migração automática que semeava o banco a partir do
 // cookie do aluno, para ninguém perder progresso. Removi ao testar: com o cookie forjado e o
 // banco vazio, a prova abria. Semear a partir de um dado que o aluno escreve é reabrir o buraco
 // com outro nome.
+//
+// Também é o caminho para revisar o certificado em homolog (o `aprovar-conta.mjs`, que fabricava
+// uma aprovação na prova, saiu com a prova em 30/set/2026): com `--tudo`, a tela do certificado
+// deixa entrar e emite no resgate. O script escreve direto no banco e não passa pela action, então
+// o e-mail só sai quando a tela emite.
 //
 // SÓ PARA HOMOLOG: está na lista de atalhos de teste a remover antes do go-live.
 

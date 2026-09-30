@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { emitirSeConcluiu } from "@/lib/certificados";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getUsuario } from "@/lib/usuario";
 import { getCalendario } from "@/lib/calendario";
@@ -12,17 +13,22 @@ import { getCurriculo } from "@/lib/curriculo";
  *
  * Escreve pela SERVICE ROLE desde a 0019, e o motivo é o inverso do que este comentário dizia
  * antes: enquanto o aluno tinha grant de escrita em `progress`, a policy amarrava só o
- * `user_id` — segurava CONTRA QUEM ele escreve, não O QUE. Pelo PostgREST dava para marcar
- * aula de módulo fechado e completar o gate da prova sem passar por aqui. O grant caiu, esta
+ * `user_id`: segurava CONTRA QUEM ele escreve, não O QUE. Pelo PostgREST dava para marcar
+ * aula de módulo fechado e completar o gate sem passar por aqui. O grant caiu, esta
  * action virou a única porta de escrita, e a checagem de liberação abaixo virou garantia em
  * vez de cortesia.
  *
  * Com a service role, o `user_id` explícito (do upsert e do delete) é O guarda contra gravar
  * no progresso de outro aluno — ele vem da sessão resolvida no servidor, nunca de parâmetro.
  *
- * A checagem de liberação é repetida aqui de propósito. A página da aula já barra módulo
+ * A checagem de liberação é repetida aqui de propósito. A página do módulo já barra módulo
  * fechado, mas server action é uma porta própria: quem chamar direto, sem passar pela tela,
  * marcaria aulas de módulos que ainda nem abriram e furaria a esteira por fora.
+ *
+ * É TAMBÉM O GATILHO DO CERTIFICADO desde 30/set/2026, quando o curso deixou de ter prova: depois de
+ * marcar, se todas as aulas que contam estão concluídas e ainda não há certificado, ele é emitido e
+ * o aluno recebe o e-mail `certificado`. Mora aqui, na única porta de escrita do progresso, para não
+ * depender de o aluno visitar tela nenhuma.
  */
 export async function marcarAula(
   n: number,
@@ -61,8 +67,13 @@ export async function marcarAula(
     return { ok: false, erro: "Não foi possível salvar. Tente de novo." };
   }
 
-  // A sidebar, o percentual e o gate da prova são renderizados no servidor a partir deste
-  // dado, então a árvore precisa ser revalidada para eles acompanharem.
+  // Só na marcação: desmarcar não emite e não revoga (ver `emitirSeConcluiu`). A função não lança, e
+  // a aula já está gravada, então uma falha aqui não vira erro para o aluno; o certificado ainda
+  // tem o resgate na tela dele.
+  if (concluida) await emitirSeConcluiu(db, user.id);
+
+  // A playlist, o percentual e o cartão do certificado são renderizados no servidor a partir
+  // deste dado, então a árvore precisa ser revalidada para eles acompanharem.
   revalidatePath("/app", "layout");
   return { ok: true };
 }

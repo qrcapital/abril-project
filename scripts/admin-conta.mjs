@@ -12,7 +12,7 @@
 // admite mestre que não seja admin.
 //
 // ISTO NÃO É ATALHO DE TESTE, e não entra na lista de coisas a remover antes do go-live
-// (ao contrário do `aprovar-conta.mjs`, que fabrica uma prova que não aconteceu).
+// (ao contrário do `progresso-conta.mjs`, que fabrica progresso que não aconteceu).
 //
 // Ele existe porque a migration `0003` fechou a escalada de privilégio: `profiles.is_admin`
 // só muda pela service role ou por um admin que já era admin. Isso resolve a segurança e

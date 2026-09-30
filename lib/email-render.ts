@@ -52,16 +52,15 @@ export const BANNER = {
  */
 export const VARIAVEIS: Record<string, string[]> = {
   "boas-vindas": ["nome"],
-  "resultado-aprovado": ["nome", "nota", "codigo"],
-  "resultado-reprovado": ["nome", "nota"],
+  "certificado": ["nome", "codigo"],
   "redefinicao-senha": ["nome"],
 };
 
 /**
  * O que cada variável significa e um exemplo do valor. **É a legenda que a tela mostra ao redator.**
  *
- * Existe porque listar `{{nota}}` sem dizer o que ele é obriga quem escreve a adivinhar se vem "82",
- * "82%" ou "oitenta e dois", e a única forma de descobrir era mandar um teste. O exemplo aqui é o
+ * Existe porque listar `{{codigo}}` sem dizer o que ele é obriga quem escreve a adivinhar o formato,
+ * e a única forma de descobrir era mandar um teste. O exemplo aqui é o
  * mesmo que a pré-visualização usa, então o que a legenda promete é o que a prévia mostra.
  *
  * A descrição é por NOME e não por template, porque `nome` significa a mesma coisa nos três. O
@@ -71,7 +70,6 @@ export const VARIAVEIS: Record<string, string[]> = {
  */
 export const DESCRICOES: Record<string, { texto: string; exemplo: string }> = {
   nome: { texto: "Primeiro nome do aluno. Fica vazio em conta sem nome no cadastro.", exemplo: "Ana" },
-  nota: { texto: "Nota da prova em porcentagem, só o número.", exemplo: "82" },
   codigo: {
     texto: "Código de verificação do certificado, único por aluno.",
     exemplo: "EI-K6MC-4RMC",
@@ -81,16 +79,14 @@ export const DESCRICOES: Record<string, { texto: string; exemplo: string }> = {
 /** Rótulo humano de cada template, para a tela do admin. */
 export const ROTULOS: Record<string, string> = {
   "boas-vindas": "Boas-vindas e criação de senha",
-  "resultado-aprovado": "Prova aprovada e certificado disponível",
-  "resultado-reprovado": "Prova reprovada e caminho da segunda chamada",
+  "certificado": "Certificado de conclusão disponível",
   "redefinicao-senha": "Redefinição de senha",
 };
 
 /** Quando cada um dispara, em uma linha, para ninguém editar às cegas. */
 export const GATILHOS: Record<string, string> = {
   "boas-vindas": "Compra aprovada no webhook do Guru, com o link de criação de senha.",
-  "resultado-aprovado": "Envio da prova com nota igual ou acima do mínimo.",
-  "resultado-reprovado": "Envio da prova com nota abaixo do mínimo.",
+  "certificado": "Conclusão da última aula que conta para o certificado, na primeira emissão. Uma vez por aluno.",
   "redefinicao-senha": "Pedido em \"Esqueci minha senha\", com o link de uso único para criar uma senha nova.",
 };
 

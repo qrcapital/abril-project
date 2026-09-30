@@ -18,8 +18,6 @@ import { readFileSync } from "node:fs";
 
 import { createClient } from "@supabase/supabase-js";
 
-import { ORDS_AVALIADOS, POR_MODULO } from "../lib/questoes.ts";
-
 let env: Record<string, string> = {};
 try {
   env = Object.fromEntries(
@@ -75,41 +73,20 @@ const idsDeModulo = new Set(mods.map((m) => m.id));
 for (const a of aulas)
   assert.ok(idsDeModulo.has(a.module_id), `aula "${a.titulo}" aponta para modulo inexistente`);
 
-// --- o gate da prova ---
+// --- o gate do certificado ---
+// Era o gate da prova até 30/set/2026, quando a prova saiu do curso: hoje é o conjunto de aulas que,
+// concluídas, emitem o certificado. Zero aulas no gate e o certificado nunca sairia.
 const noGate = aulas.filter((a) => a.conta_no_gate).length;
-assert.ok(noGate > 0, "nenhuma aula conta para o gate: a prova nunca abriria");
+assert.ok(noGate > 0, "nenhuma aula conta para o gate: o certificado nunca seria emitido");
 // O piso é a única invariante que restou aqui. A composição do gate deixou de ser regra de
 // código em 17/ago/2026: o Pedro marcou a boas-vindas pelo painel de propósito, e o
 // `conta_no_gate` passou a ser lido pelo app (antes o checkbox gravava e ninguém lia). Quantas
 // e quais aulas contam agora é escolha da tela de Conteúdo, não deste check.
-
-// --- o banco de questões sustenta um sorteio completo ---
-// Acrescentado em 31/jul/2026, junto com a tela de Questões. O `sortear_prova` tira POR_MODULO de
-// cada módulo I..IV; com menos ativas em qualquer um deles, ele devolve menos que o total, o
-// `abrirTentativa` estoura de propósito e A PROVA PARA DE ABRIR PARA TODOS. Isso passa por build e
-// por lint, e apareceria como "a prova não abre" no suporte. Apagar ou desativar questão pela tela
-// nova é o caminho mais curto para cair aqui.
-const { data: questoes, error: erroQuestoes } = await db
-  .from("questions")
-  .select("module_id, ativo");
-if (erroQuestoes) throw erroQuestoes;
-
-for (const ord of ORDS_AVALIADOS) {
-  const modulo = mods.find((m) => m.ord === ord);
-  assert.ok(modulo, `modulo de ord ${ord} nao existe: o sorteio da prova conta com I..IV`);
-  const ativas = questoes.filter((q) => q.module_id === modulo.id && q.ativo).length;
-  assert.ok(
-    ativas >= POR_MODULO,
-    `modulo ${ord} ("${modulo.titulo}") tem ${ativas} questoes ativas e o sorteio precisa de ` +
-      `${POR_MODULO}: a prova nao abriria para nenhum aluno`,
-  );
-}
 
 // --- títulos preenchidos: título vazio vira card em branco na vitrine ---
 for (const m of mods) assert.ok(m.titulo?.trim(), `modulo ${m.ord} sem titulo`);
 for (const a of aulas) assert.ok(a.titulo?.trim(), `aula ${a.id} sem titulo`);
 
 console.log(
-  `curriculo-check: ok (${mods.length} modulos, ${aulas.length} aulas, ${noGate} valem para o gate, ` +
-    `${questoes.filter((q) => q.ativo).length} questoes ativas)`,
+  `curriculo-check: ok (${mods.length} modulos, ${aulas.length} aulas, ${noGate} valem para o gate)`,
 );

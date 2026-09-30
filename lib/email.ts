@@ -4,10 +4,11 @@
 //
 // TRÊS DECISÕES QUE MOLDAM ESTE ARQUIVO:
 //
-// 1. **O cliente do Supabase entra por parâmetro**, como no `lib/prova-expiradas.ts`, e este módulo
-//    não tem `server-only`. Ele precisa rodar em mais de um runtime: no Next (webhook, prova,
-//    admin) e numa Netlify function agendada. Importar `lib/supabase/admin.ts` amarraria ele ao
-//    bundle do Next, e o dia em que um cron precisar mandar e-mail seria um dia de refactor.
+// 1. **O cliente do Supabase entra por parâmetro**, como no `lib/certificados.ts`, e este módulo
+//    não tem `server-only`. Ele precisa rodar em mais de um runtime: no Next (webhook, conclusão
+//    de aula, admin) e em rotina fora do bundle, se um dia houver. Importar
+//    `lib/supabase/admin.ts` amarraria ele ao bundle do Next, e o dia em que um cron precisar
+//    mandar e-mail seria um dia de refactor.
 // 2. **`enviarEmail` nunca lança.** Ela é chamada de dentro do webhook de compra aprovada: se o
 //    e-mail derrubasse o handler, o Guru receberia erro e reentregaria o evento, e uma falha de
 //    entrega de e-mail viraria matrícula duplicada. Falha de e-mail é falha de e-mail.

@@ -96,23 +96,16 @@
 
     </div>
 
+    <!-- O card do e-book saiu em 30/set/2026 (o curso não entrega e-book), e o da prova final virou o
+         do certificado: sem prova, ele sai ao concluir as aulas. `lib/home-template.ts` troca a linha
+         de baixo e marca o `data-certificado`, ancorado no rótulo CERTIFICADO. -->
     <div class="milestones" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px;margin-top:16px">
-      <div class="mcard" style="background:#fff;border:1px solid #E4DACC;border-radius:14px;padding:22px 24px;cursor:pointer;display:flex;align-items:center;gap:18px;box-shadow:0 6px 18px rgba(72,60,42,.05)">
-        <div style="width:52px;height:52px;border-radius:13px;background:#EDE6DD;display:flex;align-items:center;justify-content:center;flex:0 0 auto"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7E6836" stroke-width="1.6"><path d="M4 5a2 2 0 0 1 2-2h10l4 4v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"></path><path d="M9 10h6M9 14h6"></path></svg></div>
-        <div style="flex:1">
-          <span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">BÔNUS</span>
-          <h3 style="font-family:'Playfair Display',serif;font-size:17px;font-weight:600;margin:3px 0 3px;color:#1a1815">E-book "Título A Definir"</h3>
-          <span style="font-size:11px;color:#6f6860">PDF · liberado para download</span>
-        </div>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7E6836" stroke-width="1.8" style="flex:0 0 auto"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"></path></svg>
-      </div>
-
       <div class="mcard" style="background:linear-gradient(150deg,#FFFDF7,#F6EFE0);border:1.5px solid #a98e4e;border-radius:14px;padding:22px 24px;cursor:pointer;display:flex;align-items:center;gap:18px;box-shadow:0 8px 22px rgba(169,142,78,.14)">
         <div style="position:relative;width:52px;height:52px;flex:0 0 auto"><img src="/app/dec6993b-f88c-4b38-a7bb-33d730441044.svg" alt="Selo do curso" style="width:52px;height:52px;display:block;transform:rotate(-38deg)"><img src="/lp/f2070b29-906c-48d8-92c7-0948fe19573b.webp" alt="" style="position:absolute;top:49%;left:50%;transform:translate(-50%,-50%);width:26px;height:auto;display:block"></div>
         <div style="flex:1">
-          <span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">PROVA FINAL</span>
+          <span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">CERTIFICADO</span>
           <h3 style="font-family:'Playfair Display',serif;font-size:17px;font-weight:600;margin:3px 0 5px;color:#1a1815">Certificado de 30 horas</h3>
-          <div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#7E6836"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7E6836" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg> desbloqueia com 16/16 aulas</div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#7E6836"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7E6836" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg> emitido ao concluir as 16 aulas</div>
         </div>
       </div>
     </div>

@@ -16,7 +16,7 @@ import { getConclusoesDasAulas } from "./progresso";
 // O calendário do aluno logado, pronto para tela: matrícula + política + módulos + progresso,
 // numa chamada só. Nasceu em 29/set/2026 com a regra `apos_modulo`, quando a liberação passou
 // a depender do progresso e cada guarda teria de juntar as quatro fontes por conta própria. As
-// guardas (aula, marcar aula, prova) e a home leem daqui, e a tela de boas-vindas e a trilha do
+// guardas (página do módulo, marcar aula) e a home leem daqui, e a tela de boas-vindas e a trilha do
 // curso vão ler também: um cálculo só, para a trilha nunca dizer "aberto" de um módulo que a
 // guarda da aula recusa.
 //
@@ -54,7 +54,7 @@ export type ModuloCalendario = {
   abreEm: Date | null;
   /** `abreEm` como "13/10", no fuso America/Sao_Paulo. `null` junto com `abreEm`. */
   abreEmTexto: string | null;
-  /** O aluno pode entrar nas aulas agora. É o mesmo veredito das guardas da aula e da prova. */
+  /** O aluno pode entrar nas aulas agora. É o mesmo veredito da guarda da página do módulo. */
   aberto: boolean;
   /** Todas as aulas concluídas (módulo sem aula nunca está concluído). */
   concluido: boolean;
@@ -72,7 +72,10 @@ export type Calendario = {
   modulos: ModuloCalendario[];
   /** Ords abertos, para as guardas (`abertos.has(aula.modulo)`). */
   abertos: Set<number>;
-  /** Todo módulo exigido (não em breve) aberto: é a trava de calendário da prova. */
+  /**
+   * Todo módulo exigido (não em breve) aberto. Era a trava de calendário da prova, que saiu do
+   * curso em 30/set/2026; fica exposto porque é a regra de `liberacao()` e tem self-check.
+   */
   completo: boolean;
 };
 

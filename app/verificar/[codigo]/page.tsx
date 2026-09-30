@@ -39,7 +39,7 @@ function fontesPlayfair(): string {
  *
  * Chama a função `verify_certificate` com o cliente **anon**, e isso é o desenho, não um atalho: a
  * função é `security definer`, está concedida a `anon`, e devolve só nome, código e data. A tabela
- * `certificates` continua fechada, e nada aqui expõe `user_id`, e-mail ou nota. Página pública tem
+ * `certificates` continua fechada, e nada aqui expõe `user_id` ou e-mail. Página pública tem
  * que funcionar sem sessão, então a service role estaria errada por definição.
  *
  * O código é normalizado antes da consulta, porque ele chega **digitado de um PDF**: em minúsculas,
@@ -169,7 +169,8 @@ export default async function VerificarPage({
               {cert.nome || "Aluno sem nome no cadastro"}
             </h1>
             <p style={{ fontSize: 15, lineHeight: 1.6, color: "#6b655c", margin: "0 0 24px" }}>
-              concluiu a formação <b style={{ color: "#1a1815" }}>{CURSO}</b>, com carga horária de{" "}
+              concluiu todas as aulas da formação <b style={{ color: "#1a1815" }}>{CURSO}</b>, com carga
+              horária de{" "}
               <b style={{ color: "#1a1815" }}>{HORAS} horas</b>, emitido em{" "}
               {meses[cert.emissao.getMonth()]} de {cert.emissao.getFullYear()}.
             </p>

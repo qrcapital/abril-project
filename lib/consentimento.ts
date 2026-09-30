@@ -101,7 +101,10 @@ type Versao = { tipo: TipoDocumento; versao: string };
  */
 export const VERSOES: Record<TipoDocumento, string> = {
   politica: "2026-09-28",
-  termos: "2026-09-28",
+  // Revisão de 30/set/2026: o certificado deixou de depender de Avaliação Final e passou a sair na
+  // conclusão das aulas (decisão do dono). Texto ajustado só nas cláusulas da avaliação; a linha
+  // do histórico está na migration 0026.
+  termos: "2026-09-30",
 };
 
 const VIGENTES: Versao[] = (Object.keys(VERSOES) as TipoDocumento[]).map((tipo) => ({

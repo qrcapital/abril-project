@@ -49,7 +49,8 @@ export default function AreaLayout({
           port-area.mjs. No <html> porque cada rota monta o próprio documento, então não
           vaza para a LP nem para o admin.
 
-          A segunda regra existe por causa do cronômetro da prova: o markup portado traz
+          A segunda regra nasceu com o cronômetro da prova (que saiu em 30/set/2026) e fica
+          porque vale para todo número do porte: o markup portado traz
           `font-variant-numeric:tabular-nums` inline, que SUBSTITUI o valor herdado, e o
           tabular do Playfair sem lining sai oldstyle do mesmo jeito (medido no browser).
           !important porque inline ganha de stylesheet; o seletor mira exatamente esse

@@ -9,8 +9,8 @@ const BADGE_BASE =
   "position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:800;letter-spacing:.14em;border-radius:4px;padding:3px 7px";
 const BADGE_ATIVO = `${BADGE_BASE};background:#C1121F;color:#fdfbf6`;
 const BADGE_NEUTRO = `${BADGE_BASE};background:#EDE6DD;border:1px solid #E0D3BE;color:#7E6836`;
-// Módulo ainda fechado pela esteira. Pill âmbar, o mesmo par do módulo deficitário no
-// resultado da prova (DESIGN.md §2): cor como informação, não como decoração.
+// Módulo ainda fechado pela esteira. Pill âmbar (DESIGN.md §2): cor como informação, não como
+// decoração.
 const BADGE_TRAVADO = `${BADGE_BASE};background:#F7E3BE;border:1px solid #E8CE97;color:#7A4E06`;
 
 /**
@@ -71,90 +71,29 @@ function card(
 }
 
 /**
- * O QUE O CARD DA PROVA FINAL DIZ E PARA ONDE ELE LEVA, por estado do aluno.
- *
- * Até 31/jul/2026 ele era **estático**: dizia "desbloqueia com 16/16 aulas" com um cadeado para todo
- * mundo, inclusive para quem já tinha as 16, para quem estava com a prova aberta e para quem já havia
- * reprovado. Era a única informação desatualizada de uma tela que o aluno vê todo dia.
- *
- * O caso que o Pedro pediu em 31/jul é o `reprovado`: depois de reprovar, o card **não leva mais à
- * prova** (a prova é de tentativa única, então clicar ali só podia dar em frustração) e passa a dizer
- * o único caminho que existe, que é falar com o suporte. O clique abre o WhatsApp.
- *
- * `aprovado` e `liberada` entraram junto porque a linha que eu ia reescrever era a mesma, e deixá-las
- * dizendo "desbloqueia com 16/16" seria consertar meio card.
+ * O CARD DO CERTIFICADO, por estado do aluno. Até 30/set/2026 era o card da Prova Final, com seis
+ * estados (bloqueada, liberada, em andamento, reprovado, aprovado, 2ª chamada). O curso deixou de ter
+ * prova e o certificado passou a sair ao concluir as aulas, então sobraram dois: ainda não emitido,
+ * com quantas aulas faltam, e emitido, que leva à tela do certificado.
  */
-export type EstadoCardProva =
-  | "bloqueada"
-  | "liberada"
-  | "andamento"
-  | "reprovado"
-  | "aprovado"
-  | "segunda";
+export type EstadoCardCertificado = "pendente" | "emitido";
 
 const CADEADO =
   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7E6836" stroke-width="2">' +
   '<rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>';
-const RELOGIO =
-  '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7E6836" stroke-width="2">' +
-  '<circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>';
 const CHECK =
   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1B7A50" stroke-width="2">' +
   '<circle cx="12" cy="12" r="9"></circle><path d="M8.3 12.3l2.4 2.4 5-5.4"></path></svg>';
-const ZAP =
-  '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7E6836" stroke-width="2">' +
-  '<path d="M21 11.5a8.5 8.5 0 1 1-4.2-7.3L21 3l-1.2 4.2a8.4 8.4 0 0 1 1.2 4.3z"></path></svg>';
 
-// A FORMA DAS SEIS LINHAS, fechada pelo Pedro em 31/jul depois de ver as duas primeiras na tela:
-// maiúscula no início da frase e o **"·" do design** como separador, sem ponto final. As duas que ele
-// escreveu (reprovado e aprovado) nasceram com ponto e foram trazidas para essa forma; as outras
-// quatro ganharam a maiúscula. Uma regra só, para ninguém decidir de novo a cada estado novo.
-const LINHA_PROVA: Record<EstadoCardProva, { icone: string; texto: string }> = {
-  bloqueada: { icone: CADEADO, texto: "Desbloqueia com 16/16 aulas" },
-  liberada: { icone: RELOGIO, texto: "Liberada · 20 questões em 120 minutos" },
-  andamento: { icone: RELOGIO, texto: "Prova em andamento · continue de onde parou" },
-  // A copy do reprovado é do Pedro, em duas rodadas de 31/jul: primeiro ele pediu que a home diga o
-  // VEREDITO (eu havia posto só o caminho), e depois encurtou a frase porque a quebra de linha ficava
-  // ruim no card. "Clique aqui" é literal: o card inteiro é clicável e abre o WhatsApp.
-  reprovado: { icone: ZAP, texto: "Você reprovou · clique aqui e entre em contato com o Suporte" },
-  aprovado: { icone: CHECK, texto: "Aprovado · baixe seu certificado" },
-  segunda: { icone: RELOGIO, texto: "2ª chamada liberada" },
-};
-
-/**
- * O card de 2ª chamada, escondido até um admin liberar (PRD §5, "oculto até liberado pelo admin").
- *
- * ELE EXISTE PORQUE A LIBERAÇÃO ERA INVISÍVEL. Até 31/jul/2026 o admin criava a tentativa e o aluno
- * não tinha como saber: o card da prova continuava dizendo "desbloqueia com 16/16 aulas", e quem
- * acabou de reprovar não tem motivo para clicar nele de novo. A 2ª chamada só chegava pelo WhatsApp do
- * suporte dizendo "entra lá e clica".
- *
- * Reaproveita a moldura do card da Prova Final em vez de inventar uma: é a mesma família visual (a
- * borda dourada da certificação) e o aluno já sabe o que aquele bloco significa. O que muda é o
- * kicker, o título e a linha de baixo.
- *
- * A COPY CABE EM UMA LINHA, e isso é requisito e não gosto. O card é item de uma prateleira de três
- * colunas (~340px), então cada linha a mais o deixa mais alto que os vizinhos e a fileira fica torta.
- * Foram duas rodadas de encurtamento com o Pedro olhando a tela: a primeira versão tinha o aviso dos
- * 120 minutos (que a tela de instruções já dá, no clique seguinte) e a segunda ainda quebrava em duas.
- * Ao mexer nesta frase, conte os caracteres.
- */
-function cardSegundaChamada(): string {
-  return (
-    '<div class="mcard" data-segunda="1" style="background:linear-gradient(150deg,#FFFDF7,#F6EFE0);' +
-    "border:1.5px solid #a98e4e;border-radius:14px;padding:22px 24px;cursor:pointer;display:flex;" +
-    'align-items:center;gap:18px;box-shadow:0 8px 22px rgba(169,142,78,.14)">' +
-    '<div style="position:relative;width:52px;height:52px;flex:0 0 auto;display:flex;' +
-    'align-items:center;justify-content:center;border-radius:50%;background:#F0E9D8">' +
-    '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7E6836" stroke-width="1.8">' +
-    '<path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg></div>' +
-    '<div style="flex:1">' +
-    '<span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">SEGUNDA CHAMADA</span>' +
-    '<h3 style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:600;' +
-    'margin:3px 0 5px;color:#1a1815">Sua nova tentativa está liberada</h3>' +
-    '<div style="font-size:11px;color:#7E6836;line-height:1.5">Com questões sorteadas de novo.</div>' +
-    "</div></div>"
-  );
+/** A linha de baixo do card. Cabe em uma linha do card da prateleira; ao mexer, conte os caracteres. */
+function linhaCertificado(c: Curriculo, concluidas: Set<number>, estado: EstadoCardCertificado): string {
+  if (estado === "emitido") return `${CHECK} Emitido · baixe seu certificado`;
+  const faltam = c.aulasRestantes(concluidas);
+  // Tudo concluído e sem linha no banco: a emissão falhou ou a conclusão é anterior a ela. O clique
+  // leva à tela do certificado, que emite no resgate.
+  if (faltam === 0 && c.totalAvaliadas > 0) return `${CHECK} Aulas concluídas · abra seu certificado`;
+  // O total sai do currículo, não da frase: ele acompanha o `conta_no_gate` que o admin edita.
+  return `${CADEADO} Sai ao concluir as ${c.totalAvaliadas} aulas · ${faltam === 1 ? "falta 1" : `faltam ${faltam}`}`;
 }
 
 export function fillHome(
@@ -163,60 +102,34 @@ export function fillHome(
   concluidas: Set<number>,
   /** Módulos fechados e o porquê; módulo fora do mapa está aberto. */
   travados: Map<number, Travamento> = new Map(),
-  /** Tentativa de 2ª chamada liberada e não iniciada. Vem do banco, nunca da URL. */
-  segundaChamada = false,
-  /** Em que ponto da prova este aluno está. Decide a linha e o clique do card da Prova Final. */
-  estadoProva: EstadoCardProva = "bloqueada",
+  /** O certificado já existe no banco para este aluno? Decide a linha e o clique do card. */
+  certificado: EstadoCardCertificado = "pendente",
 ): string {
   const atual = c.aulaAtual(concluidas);
   const mod = c.modulos[atual.modulo];
   // `esc` no título (o admin edita) e replacement por função (um `$&` no título viraria
-  // referência de grupo numa string de replacement).
+  // referência de grupo numa string de replacement). O número da aula é a posição dentro do
+  // módulo desde 30/set/2026, o mesmo "Aula 3" da playlist da página do módulo.
   const linha = atual.numero
-    ? `${mod.label} · Aula ${atual.n} · ${esc(atual.titulo)}`
+    ? `${mod.label} · Aula ${atual.pos} · ${esc(atual.titulo)}`
     : `${mod.label} · ${esc(atual.titulo)}`;
 
   let out = html
     .replace("Módulo II · Aula 7 · Comprando ações nos EUA", () => linha)
-    .replace("Continuar Aula 7", atual.numero ? `Continuar Aula ${atual.n}` : "Começar formação");
+    .replace("Continuar Aula 7", atual.numero ? `Continuar Aula ${atual.pos}` : "Começar formação");
 
-  // A linha de baixo do card da Prova Final e o `data-prova` que diz ao cliente para onde o clique
-  // vai. O atributo existe para o clique NÃO depender de ler o texto do card: a rota do reprovado é o
-  // WhatsApp, e amarrar isso a uma frase que alguém vai reescrever no futuro é armadilha.
-  const linhaProva = LINHA_PROVA[estadoProva];
-  // O total do estado bloqueado sai do currículo, não da frase: o gate lê `conta_no_gate`
-  // desde 17/ago, então o número acompanha o checkbox do admin em vez de morar na copy.
-  const textoProva =
-    estadoProva === "bloqueada"
-      ? `Desbloqueia com ${c.totalAvaliadas}/${c.totalAvaliadas} aulas`
-      : linhaProva.texto;
+  // A linha de baixo do card do certificado e o `data-certificado` que diz ao cliente para onde o
+  // clique vai. O atributo existe para o clique NÃO depender de ler o texto do card.
   out = out.replace(
-    /<div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#7E6836">.*?desbloqueia com 16\/16 aulas<\/div>/,
-    `<div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#7E6836">${linhaProva.icone} ${textoProva}</div>`,
+    /<div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#7E6836">.*?emitido ao concluir as 16 aulas<\/div>/,
+    () =>
+      `<div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#7E6836">${linhaCertificado(c, concluidas, certificado)}</div>`,
   );
   {
-    const provaIdx = out.indexOf("PROVA FINAL");
-    const abre = provaIdx >= 0 ? out.lastIndexOf('<div class="mcard"', provaIdx) : -1;
+    const idx = out.indexOf(">CERTIFICADO<");
+    const abre = idx >= 0 ? out.lastIndexOf('<div class="mcard"', idx) : -1;
     if (abre >= 0)
-      out = `${out.slice(0, abre)}<div class="mcard" data-prova="${estadoProva}"${out.slice(abre + '<div class="mcard"'.length)}`;
-  }
-
-  // O card de 2ª chamada entra DEPOIS do card da Prova Final, por decisão do Pedro ao ver os três
-  // juntos: a prateleira fica bônus, prova final, segunda chamada. A primeira versão o punha em
-  // primeiro, com o argumento de que é a novidade; vendo na tela, ele lê melhor como consequência do
-  // card da prova, ao lado dele.
-  //
-  // Injetado aqui, no template, e não por edição do HTML gerado, que o próximo porte apagaria. Para
-  // inserir DEPOIS é preciso achar o fim do card da prova, e é o que o `innerOfDiv` faz: ele devolve o
-  // fim do conteúdo interno, então o `</div>` de fechamento vem logo em seguida.
-  if (segundaChamada) {
-    const provaIdx = out.indexOf("PROVA FINAL");
-    const abre = provaIdx >= 0 ? out.lastIndexOf('<div class="mcard"', provaIdx) : -1;
-    if (abre >= 0) {
-      const { end } = innerOfDiv(out, abre);
-      const depois = end + "</div>".length;
-      out = out.slice(0, depois) + cardSegundaChamada() + out.slice(depois);
-    }
+      out = `${out.slice(0, abre)}<div class="mcard" data-certificado="${certificado}"${out.slice(abre + '<div class="mcard"'.length)}`;
   }
 
   // regenera os cards da prateleira "A Formação"

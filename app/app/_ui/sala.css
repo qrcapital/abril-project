@@ -1,7 +1,7 @@
 /* ============================================================================
-   Telas da sala escritas em JSX: "Comece por aqui" (/app/comece), página do
-   módulo (/app/modulo/[m]), notebook (/app/modulo/[m]/notebook) e a aula em modo
-   teatro (/app/modulo/[m]/aula/[n]). Nasceram em 29/set/2026.
+   Telas da sala escritas em JSX: "Comece por aqui" (/app/comece) e a página do
+   módulo (/app/modulo/[m]), que desde 30/set/2026 junta o teatro da aula, a
+   playlist e o notebook do módulo numa tela só. Nasceram em 29/set/2026.
 
    POR QUE UMA FOLHA NOVA, E NÃO O styles.css. O styles.css é o CSS do porte:
    quase tudo nele é regra de apoio a style inline (`[style-hover=...]`). Estas
@@ -10,7 +10,7 @@
 
    TUDO ESCOPADO EM `.sl`, pelo mesmo motivo do `.au` das telas de acesso: o
    layout de /app injeta as três folhas em toda rota da área, e nenhuma regra
-   daqui pode vazar para a home portada, a prova ou o certificado.
+   daqui pode vazar para a home portada, a conta ou o certificado.
 
    Os tokens são os de `app/_design/sistema.css` e do `.au`, copiados pelo mesmo
    motivo que o `auth.css` explica: injetar o sistema inteiro mudaria o reset de
@@ -361,7 +361,7 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 
 .sl-nb { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 56px; margin-top: 44px; align-items: start }
 .sl-nb-indice { position: sticky; top: 86px }
-.sl-nb-indice h2 { font-size: 10.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--sl-ouro); margin-bottom: 14px }
+.sl-nb-indice h3 { font-size: 10.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--sl-ouro); margin-bottom: 14px }
 .sl-nb-indice ol { border-left: 1px solid var(--sl-linha-forte) }
 .sl-nb-indice a {
   display: flex; gap: 10px; padding: 9px 0 9px 16px; margin-left: -1px;
@@ -369,6 +369,7 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
   font-size: 13.5px; line-height: 1.4; color: var(--sl-tinta-2) !important;
 }
 .sl-nb-indice a:hover { color: var(--sl-tinta) !important; border-left-color: var(--sl-acento) }
+.sl-nb-indice a[aria-current] { color: var(--sl-tinta) !important; border-left-color: var(--sl-acento); font-weight: 600 }
 .sl-nb-indice a span { font-family: var(--sl-serifa); font-style: italic; color: var(--sl-acento); min-width: 18px }
 .sl-nb-indice-pe { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; font-size: 13px }
 
@@ -376,10 +377,19 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 /* Âncora do índice não pode cair embaixo da topbar fixa. */
 .sl-nb-canvas [id] { scroll-margin-top: 90px }
 
-.sl-cap { padding-top: 8px; border-top: 2px solid var(--sl-tinta) }
-.sl-cap-num { display: block; margin-top: 14px; font-family: var(--sl-serifa); font-style: italic; font-size: 18px; color: var(--sl-acento) }
-.sl-cap h2 { margin-top: 4px; font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -.02em; max-width: 22ch }
-.sl-cap p { margin-top: 12px; font-size: 17px; line-height: 1.55; color: var(--sl-tinta-2); max-width: 60ch }
+/* Seção de uma aula no notebook do módulo: o filete forte marca onde a aula começa, e o
+   subtítulo (`capitulo`) dentro dela fica um degrau abaixo. */
+.sl-nb-secao { display: flex; flex-direction: column; gap: 36px; padding-top: 10px; border-top: 2px solid var(--sl-tinta) }
+.sl-nb-secao-cabeca h3 {
+  margin-top: 10px; font-family: var(--sl-serifa); font-weight: 600;
+  font-size: clamp(28px, 3vw, 40px); line-height: 1.1; letter-spacing: -.02em; max-width: 26ch;
+}
+.sl-nb-secao-num { font-style: italic; font-weight: 500; color: var(--sl-acento) }
+.sl-nb-secao .sl-vazio { margin-top: -12px }
+
+.sl-cap { padding-top: 16px; border-top: 1px solid var(--sl-linha-forte) }
+.sl-cap h4 { font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(22px, 2.2vw, 28px); line-height: 1.15; letter-spacing: -.01em; max-width: 30ch }
+.sl-cap p { margin-top: 10px; font-size: 16.5px; line-height: 1.55; color: var(--sl-tinta-2); max-width: 60ch }
 
 .sl-prosa { max-width: 68ch }
 .sl-prosa p { font-family: var(--sl-serifa); font-size: 19px; line-height: 1.72; color: #2a2723 }
@@ -437,7 +447,7 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 
 /* Simulador. */
 .sl-comp { background: var(--sl-tinta); color: var(--sl-creme); border-radius: 20px; padding: 32px 34px 28px }
-.sl-comp h2 { font-family: var(--sl-serifa); font-weight: 600; font-size: 28px; line-height: 1.15 }
+.sl-comp h4 { font-family: var(--sl-serifa); font-weight: 600; font-size: 28px; line-height: 1.15 }
 .sl-comp-desc { margin-top: 8px; font-size: 14.5px; line-height: 1.6; color: rgba(253, 250, 245, .8); max-width: 60ch }
 .sl-comp-grade { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 34px; margin-top: 26px; align-items: start }
 .sl-comp-controles { display: flex; flex-direction: column; gap: 22px }
@@ -456,7 +466,7 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 
 /* Referências. */
 .sl-refs { border-top: 2px solid var(--sl-tinta); padding-top: 8px }
-.sl-refs h2 { margin-top: 14px; font-family: var(--sl-serifa); font-weight: 600; font-size: 30px }
+.sl-refs h4 { margin-top: 14px; font-family: var(--sl-serifa); font-weight: 600; font-size: 30px }
 .sl-refs ol { margin-top: 18px; counter-reset: ref }
 .sl-refs li { counter-increment: ref; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 8px; padding: 16px 0; border-bottom: 1px solid var(--sl-linha) }
 .sl-refs li::before { content: counter(ref, decimal-leading-zero); font-family: var(--sl-serifa); font-style: italic; color: var(--sl-acento) }
@@ -466,10 +476,41 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 
 /* ---- aula em modo teatro -------------------------------------------------- */
 
-.sl-palco { background: var(--sl-palco); color: var(--sl-creme); padding: 28px 0 40px }
+.sl-palco { background: var(--sl-palco); color: var(--sl-creme); padding: 20px 0 36px }
+/* A linha de cima do palco: onde o aluno está e quanto do módulo já fez. */
+.sl-palco-topo {
+  max-width: min(1280px, calc(100% - 56px)); margin: 0 auto 16px;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap;
+}
+.sl-palco-progresso { font-size: 12px; color: rgba(253, 250, 245, .7) }
+.sl-palco-docente { margin-top: 18px }
+.sl-palco-docente .sl-docente img, .sl-palco-docente .sl-docente-inicial { width: 40px; height: 40px }
+
+/* O cartão de fim de módulo, no palco, depois da última aula concluída. */
+.sl-palco-fim {
+  max-width: min(1280px, calc(100% - 56px)); margin: 26px auto 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  padding: 20px 24px; border-radius: 16px;
+  background: rgba(253, 250, 245, .06); border: 1px solid rgba(232, 217, 181, .35);
+}
+.sl-palco-fim .sl-cartao-rotulo { color: var(--sl-palha) }
+.sl-palco-fim-titulo { font-family: var(--sl-serifa); font-weight: 600; font-size: 21px; line-height: 1.25; color: var(--sl-creme) }
+.sl-palco-fim p + p { margin-top: 6px; font-size: 14px; line-height: 1.55; color: rgba(253, 250, 245, .8) }
+
+/* Materiais da aula, em linha no palco: link de download, sem cartão. */
+.sl-palco-materiais {
+  max-width: min(1280px, calc(100% - 56px)); margin: 26px auto 0; padding-top: 18px;
+  border-top: 1px solid rgba(253, 250, 245, .12);
+  display: flex; align-items: baseline; gap: 10px 20px; flex-wrap: wrap;
+}
+.sl-palco-materiais .sl-cartao-rotulo { margin: 0; color: var(--sl-palha) }
+.sl-palco-materiais ul { display: flex; flex-wrap: wrap; gap: 8px 18px }
+.sl-palco-materiais a { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--sl-creme) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(253, 250, 245, .3) }
+.sl-palco-materiais a:hover { text-decoration-color: var(--sl-creme) }
+.sl-palco-materiais p { font-size: 13px; font-style: italic; color: rgba(253, 250, 245, .7) }
 .sl-palco-player { max-width: min(1280px, calc(100% - 56px)); margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 40px 90px rgba(0, 0, 0, .55); border: 1px solid rgba(253, 250, 245, .08) }
-.sl-palco-meta { max-width: min(1280px, calc(100% - 56px)); margin: 28px auto 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px; align-items: end }
-.sl-palco-meta h1 { margin-top: 12px; font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(28px, 3.2vw, 42px); line-height: 1.1; letter-spacing: -.015em; color: var(--sl-creme) }
+.sl-palco-meta { max-width: min(1280px, calc(100% - 56px)); margin: 24px auto 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px; align-items: end }
+.sl-palco-meta h1 { margin-top: 10px; font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(28px, 3.2vw, 42px); line-height: 1.1; letter-spacing: -.015em; color: var(--sl-creme) }
 .sl-palco-desc { margin-top: 12px; max-width: 70ch; font-size: 15px; line-height: 1.65; color: rgba(253, 250, 245, .78) }
 .sl-palco-migalha { font-size: 12px; color: rgba(253, 250, 245, .7) }
 .sl-palco-migalha a { color: rgba(253, 250, 245, .88) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(253, 250, 245, .3) }
@@ -509,6 +550,48 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 .sl-ponto.is-feita { background: var(--sl-acento); border-color: var(--sl-acento) }
 .sl-ponto.is-atual { border-color: var(--sl-acento); background: linear-gradient(90deg, var(--sl-regua) 50%, transparent 50%) }
 
+/* ---- playlist do módulo --------------------------------------------------- */
+
+/* Fila horizontal: rola de lado com o trackpad, a roda com shift ou o teclado (o Tab percorre os
+   links e o navegador traz o cartão focado para dentro). O `scroll-snap` é leve, `proximity`, para
+   não brigar com quem arrasta devagar. */
+.sl-pl-secao { margin-top: 30px }
+.sl-pl-fila {
+  display: flex; gap: 14px; overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity; padding: 4px 2px 14px; scrollbar-width: thin;
+}
+.sl-pl-fila > li { flex: 0 0 clamp(220px, 21vw, 280px); scroll-snap-align: start; display: flex }
+.sl-pl-item {
+  flex: 1; display: flex; flex-direction: column; gap: 8px; min-height: 132px;
+  padding: 16px 18px; border: 1px solid var(--sl-borda); border-radius: 14px;
+  background: var(--sl-creme); color: var(--sl-tinta) !important; text-decoration: none;
+  transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px) }
+.sl-pl-item.is-atual { border-color: var(--sl-acento); background: #fff; box-shadow: 0 0 0 1px var(--sl-acento), 0 12px 26px rgba(72, 60, 42, .12) }
+.sl-pl-item.is-travado { background: var(--sl-papel-baixo); color: var(--sl-tinta-2) !important }
+.sl-pl-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px }
+.sl-pl-rotulo { font-size: 10.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--sl-ouro) }
+.sl-pl-ok { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #1B6E47 }
+.sl-pl-titulo { font-family: var(--sl-serifa); font-weight: 600; font-size: 16.5px; line-height: 1.25 }
+.sl-pl-pe { margin-top: auto; display: flex; gap: 12px; font-size: 12px; color: var(--sl-tinta-2) }
+.sl-pl-agora { font-weight: 700; color: var(--sl-acento) }
+
+/* ---- notebook do módulo --------------------------------------------------- */
+
+.sl-nbm { margin-top: 56px }
+.sl-nbm-cabeca { padding-bottom: 26px; border-bottom: 1px solid var(--sl-linha-forte) }
+.sl-nbm-cabeca .sl-h2 { margin-top: 14px }
+.sl-nb-rolagem { min-width: 0 }
+.sl-nb-rolagem:focus-visible { outline-offset: 6px }
+/* No desktop o miolo rola dentro da própria caixa, da altura da janela, e o índice fica parado ao
+   lado: é o que deixa a playlist levar o notebook à seção da aula sem tirar o vídeo da tela (ver
+   `AncoraDaAula`). A rolagem encadeia na janela nas pontas, sem prender o aluno. */
+@media (min-width: 961px) {
+  .sl-nb-rolagem { max-height: calc(100vh - 110px); overflow-y: auto; padding: 0 14px 40px 0; scrollbar-width: thin }
+  .sl-nb-rolagem [id] { scroll-margin-top: 12px }
+}
+
 /* ---- miolo da home (entre o banner portado e a prateleira) ---------------- */
 
 .sl-embutido { min-height: 0; padding-bottom: 0 }
@@ -532,7 +615,7 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 
 @media (prefers-reduced-motion: reduce) {
   .sl *, .sl *::before, .sl *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important }
-  .sl-btn:hover, .sl-no-link:hover .sl-no-bola, a.sl-capa:hover .sl-capa-play { transform: none }
+  .sl-btn:hover, .sl-no-link:hover .sl-no-bola, a.sl-capa:hover .sl-capa-play, a.sl-pl-item:hover { transform: none }
 }
 
 /* ---- telas estreitas: o desenho é de desktop, aqui só empilha ------------- */
@@ -570,5 +653,6 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
   .sl-hero-olho { display: none }
   .sl-teaser-texto, .sl-teaser-visual, .sl-comp { padding: 24px 22px }
   .sl-numero { grid-template-columns: minmax(0, 1fr); gap: 10px }
-  .sl-palco-player, .sl-palco-meta { max-width: calc(100% - 36px) }
+  .sl-palco-player, .sl-palco-meta, .sl-palco-topo, .sl-palco-fim, .sl-palco-materiais { max-width: calc(100% - 36px) }
+  .sl-pl-fila > li { flex-basis: 78vw }
 }

@@ -15,7 +15,10 @@ import { marcarAula } from "./actions";
  * navegação virou link de verdade (abre em nova aba, aparece no leitor de tela) e o que precisa
  * de estado ficou só aqui. O contrato continua o mesmo: `data-concluir` com o número da aula, a
  * server action `marcarAula` como única porta de escrita, e `router.refresh()` depois dela para
- * a lista do módulo, o percentual e o gate da prova acompanharem.
+ * a playlist, o percentual e o cartão de fim de módulo acompanharem.
+ *
+ * Mudou de pasta em 30/set/2026, junto com a aula, que passou a tocar no teatro da página do
+ * módulo (`/app/modulo/[m]?aula=<n>`). O componente e a action não mudaram.
  *
  * Marcação otimista: repinta antes da ida ao servidor, porque botão que não reage parece
  * quebrado; se a gravação falhar, desfaz e diz o porquê. Deixar a tela dizendo "concluída"
@@ -23,8 +26,13 @@ import { marcarAula } from "./actions";
  *
  * A página monta este componente com `key` no estado do servidor, então o refresh que traz um
  * estado novo recria o botão em vez de brigar com o estado local.
+ *
+ * `pos` existe por uma armadilha da página do módulo: sem `?aula=` na URL, o teatro toca a primeira
+ * aula NÃO concluída. Um `refresh` depois de concluir recalcularia essa escolha e trocaria o vídeo
+ * no meio da aula. Por isso, quando a URL não fixa a aula, a volta do servidor vem por `replace`
+ * com `?aula=<pos>`, que prende o teatro na aula que o aluno acabou de marcar.
  */
-export default function AulaClient({ n, concluida }: { n: number; concluida: boolean }) {
+export default function AulaClient({ n, pos, concluida }: { n: number; pos: number; concluida: boolean }) {
   const router = useRouter();
   const [feita, setFeita] = useState(concluida);
   const [ocupado, setOcupado] = useState(false);
@@ -40,7 +48,13 @@ export default function AulaClient({ n, concluida }: { n: number; concluida: boo
     const r = await marcarAula(n, alvo);
     setOcupado(false);
     if (r.ok) {
-      router.refresh();
+      const url = new URL(window.location.href);
+      if (url.searchParams.get("aula") === String(pos)) {
+        router.refresh();
+      } else {
+        url.searchParams.set("aula", String(pos));
+        router.replace(`${url.pathname}${url.search}${url.hash}`, { scroll: false });
+      }
       return;
     }
     setFeita(!alvo);

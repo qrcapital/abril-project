@@ -3,9 +3,8 @@ import { rotuloModulo } from "@/lib/curso";
 import { dataLonga } from "@/lib/liberacao";
 
 /**
- * O estado "ainda não abriu" de um módulo, com o motivo por extenso. Usado pela página do módulo
- * e pelo notebook: nos dois a tela aparece inteira, com a data, em vez de devolver o aluno para a
- * home. Bounce sem motivo é o pior tipo de bloqueio (ver `HomeClient`).
+ * O estado "ainda não abriu" de um módulo, com o motivo por extenso. Usado pela página do módulo,
+ * que aparece inteira, com a data, em vez de devolver o aluno para a home. Bounce sem motivo é o pior tipo de bloqueio (ver `HomeClient`).
  *
  * `cal` nulo (sem calendário) cai no "em breve": sem âncora de matrícula não há data honesta.
  */

@@ -94,10 +94,10 @@ import { descrever, rotularAcao } from "../lib/auditoria-texto.ts";
 
   assert.equal(rotularAcao("conteudo.aula-apagar"), "Apagou aula");
   assert.deepEqual(descrever("conteudo.mover", { direcao: "subir" }), ["para cima"]);
-  // Tirar uma aula do gate muda o 16/16 de todo mundo; tem que aparecer no detalhe.
+  // Tirar uma aula do gate muda o que emite o certificado para todo mundo; tem que aparecer no detalhe.
   assert.deepEqual(descrever("conteudo.aula", { titulo: "ETFs", gate: false }), [
     "“ETFs”",
-    "fora do gate da prova",
+    "fora do gate do certificado",
   ]);
   assert.deepEqual(descrever("conteudo.material", { titulo: "Apostila", arquivo: "https://x/a.pdf" }), [
     "“Apostila”",

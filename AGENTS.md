@@ -42,12 +42,31 @@ removido; `git show` no commit anterior recupera.
 acesso (login, senha, termos, acesso bloqueado) já tinham saído do porte e moram em
 `lib/auth-casca.ts` + `app/app/_ui/auth.css`.
 
-**Telas da sala em JSX (29/set/2026).** "Comece por aqui" (`/app/comece`), a página do módulo, o
-notebook e a aula em modo teatro são componentes do React, não HTML portado: classes escopadas em
-`.sl` em `app/app/_ui/sala.css` (injetada pelo layout de /app, como o `auth.css`) e peças em
-`app/app/_ui/sala/`. O conteúdo dos notebooks mora em `content/notebooks/modulo-<n>.ts`, tipado por
-`lib/notebook.ts`; o vídeo da aula sai de `lib/video.ts` (id ou URL do Panda, com self-check em
-`check:video`). A `screens/aula.html` ficou sem uso.
+**Telas da sala em JSX (29/set/2026).** "Comece por aqui" (`/app/comece`) e a página do módulo são
+componentes do React, não HTML portado: classes escopadas em `.sl` em `app/app/_ui/sala.css`
+(injetada pelo layout de /app, como o `auth.css`) e peças em `app/app/_ui/sala/`. O vídeo da aula
+sai de `lib/video.ts` (id ou URL do Panda, com self-check em `check:video`). A `screens/aula.html`
+ficou sem uso.
+
+**A página do módulo é a sala de aula (30/set/2026).** `/app/modulo/[m]?aula=<n>#aula-<n>` mostra,
+de cima para baixo: o teatro com a aula escolhida (player, título, "marcar como concluída", bio do
+docente, materiais), a playlist horizontal das aulas do módulo e o notebook do módulo, um documento
+só com uma seção por aula (`id="aula-<n>"`). O `<n>` é a **posição da aula no módulo** (`Aula.pos`,
+1, 2, 3...), não o número global; `href(aula)` de `lib/curso.ts` monta o endereço. A seleção é da
+URL e renderizada no servidor. `/app/modulo/[m]/aula/[n]` (n global) e `/app/modulo/[m]/notebook`
+viraram redirects. Vale para o Módulo 0 também; `/app/comece` segue como porta de boas-vindas.
+
+**O notebook** mora em `content/notebooks/modulo-<n>.ts`, tipado por `lib/notebook.ts`, na forma
+`{ modulo, titulo, subtitulo, demo, aulas: [{ aula: 1, blocos: [...] }, ...] }`, com `aula` sendo a
+posição da aula no módulo. Os blocos são `texto`, `destaque`, `numero`, `grafico`, `comparador`,
+`tabela`, `referencias` e `capitulo` (subtítulo dentro da seção). O título de cada seção vem do banco
+(o da aula); aula sem seção no arquivo aparece com "Conteúdo desta aula em produção".
+
+**Sem prova final e sem e-book (decisão do dono, 30/set/2026).** O certificado sai quando o aluno
+conclui todas as aulas com `conta_no_gate`, disparado pela action `marcarAula` (e pela conclusão de
+módulo no admin) via `emitirSeConcluiu` de `lib/certificados.ts`, com o e-mail `certificado`. As
+tabelas e funções da prova (`questions`, `exams`, `sortear_prova`) ficam no banco, sem leitor no
+código; materiais do tipo `ebook` são filtrados da tela do aluno.
 
 ## Fundação (leia antes de construir)
 
@@ -72,8 +91,8 @@ TypeScript · Next.js 16 (App Router, RSC) · Tailwind v4 · Supabase (Postgres,
 - **Design:** só usar os tokens do Meridiano. Cores por nome (`bg-verde`, `text-gold`), fontes `font-serif` (Playfair) e `font-sans` (Montserrat). Teto de radius 14px. Seguir o anti-slop checklist do `DESIGN.md`.
   **Onde os tokens moram de fato** (corrigido em 30/jul/2026): o `app/globals.css` que esta linha citava **nunca existiu**. A LP e a área do aluno são HTML portado, cada uma com o próprio CSS injetado, e não usam Tailwind. O único lugar onde o Tailwind roda é o **admin**, e o bloco `@theme` vive em `app/admin/admin.css`. Tela nova de admin herda os tokens dali; tela nova de LP ou de área do aluno passa pelo porte, não por classe Tailwind.
 - **Copy:** livre no texto, mas com o guia de estilo: **sem travessão**, tom editorial sóbrio, sem hype, números concretos. Vale para UI, e-mails, erros. **BlockTrends é masculino** (decisão do Pedro, 18/ago/2026): sempre "o/do/pelo BlockTrends", e concordância no masculino ("emissor", nunca "emissora").
-- **Supabase:** RLS ligada em tudo. No app, usar o cliente anon (`lib/supabase/server.ts` / `client.ts`) que respeita a RLS. Escritas confiáveis (webhook, correção de prova, certificado, admin) usam a service role (`lib/supabase/admin.ts`), só no servidor.
-- **Segurança:** a tabela `questions` guarda a resposta correta e nunca é lida pelo aluno; o sorteio da prova é a função `sortear_prova()` (server-side). Certificado tem verificação pública via `verify_certificate()`.
+- **Supabase:** RLS ligada em tudo. No app, usar o cliente anon (`lib/supabase/server.ts` / `client.ts`) que respeita a RLS. Escritas confiáveis (webhook, progresso das aulas, certificado, admin) usam a service role (`lib/supabase/admin.ts`), só no servidor.
+- **Segurança:** certificado tem verificação pública via `verify_certificate()`. A tabela `questions` (da prova que saiu do curso em 30/set/2026) guarda gabarito e continua fechada para o aluno, mesmo sem uso.
 - **Duas armadilhas de privilégio no Postgres, as duas já custaram um vazamento latente aqui** (28/jul/2026, detalhe no `HANDOFF.md` §6):
   - `revoke execute ... from anon, authenticated` **não fecha uma função**. O Postgres concede `EXECUTE` a **PUBLIC** por padrão ao criar função, e os dois papéis herdam disso. O que fecha é `revoke execute ... from public`. Conferir sempre com `has_function_privilege('anon', oid, 'EXECUTE')`, nunca por consulta em `information_schema` filtrando nome de role: a herança de PUBLIC não aparece como linha de grantee.
   - `revoke select (coluna) ...` **não subtrai uma coluna** de um grant de tabela, e o Supabase concede SELECT no nível da tabela. É preciso revogar a tabela e reconceder a lista de colunas permitidas, como está feito em `exams` para esconder o `questions_snapshot`, que carrega o gabarito. Coluna nova em `exams` não fica legível para o aluno até entrar nessa lista.
@@ -90,8 +109,8 @@ descrição, link de vídeo e materiais pelo painel (`PLANO-ADMIN.md` §4.6), e 
 código. Consequência prática: **mudar conteúdo no banco muda a tela sem deploy**, e o seed
 deixou de duplicar o código para virar a carga inicial.
 
-**O progresso também é do banco** (tabela `progress`), e não mais um cookie. O gate de 16/16 que
-libera a prova era conferido contra um dado que o próprio aluno escrevia; isso foi explorado
+**O progresso também é do banco** (tabela `progress`), e não mais um cookie. O gate de aulas (na
+época o da prova, hoje o que emite o certificado) era conferido contra um dado que o próprio aluno escrevia; isso foi explorado
 três vezes em 29/jul. Se precisar de progresso para testar, use
 `scripts/progresso-conta.mjs`, que escreve pelo servidor.
 
@@ -101,7 +120,7 @@ três vezes em 29/jul. Se precisar de progresso para testar, use
 npm run dev           # dev server
 npm run build         # build de produção — NÃO rodar com o dev de pé (ver abaixo)
 npm run lint
-npm run check         # 10 self-checks offline (prova, senha, usuário, liberação, currículo, matrícula, e-mail, certificado, aluno, auditoria)
+npm run check         # self-checks offline (senha, usuário, liberação, currículo, matrícula, e-mail, certificado, aluno, auditoria, segurança, ses, guru, vídeo)
 npm run check:rls     # contra o banco: aluno não vira admin (precisa de rede + .env.local)
 npm run check:mestre  # contra o banco: regras do admin mestre (idem)
 ```
@@ -112,20 +131,20 @@ produto. Detalhe e o diagnóstico de dez segundos no `HANDOFF.md` §6.
 Variáveis em `.env.local` (ver `.env.example`). Sem elas, o app sobe mas as integrações ficam inertes.
 
 O `npm run check` roda os scripts de `scripts/*-check.mts` em node puro, sem framework de teste.
-Cobrem as regras que doem quando quebram: a correção da prova (nota de corte, questão em
-branco, desempenho por módulo), a política de senha, os **marcadores de usuário** do markup
+Cobrem as regras que doem quando quebram: a regra de emissão do certificado (todas as aulas que
+contam, nunca uma lista vazia), a política de senha, os **marcadores de usuário** do markup
 portado, o **calendário de liberação** (a regra pura das políticas da 0016; desde 17/ago a
 proteção da janela de arrependimento é AVISO na tela de Liberação, não trava de build — o
 check exercita a regra, é detector e não porteiro), as **invariantes do currículo** no banco, o
 **estado de acesso** derivado da matrícula e as **regras de borda** de `lib/seguranca.ts` (cadastro
 fechado em produção, destino de redirect). Rodam também as âncoras de HTML dos templates, para uma mudança no porte estourar ali
-em vez de servir placeholder do design como se fosse conteúdo real. **Ao mexer em nota, senha,
+em vez de servir placeholder do design como se fosse conteúdo real. **Ao mexer no certificado, senha,
 nos dados do aluno ou nos templates de tela, rode antes de commitar.**
 
 **Lógica que precisa de check não pode morar no módulo que importa Supabase.** Quem puxa
 `lib/supabase/server.ts` puxa `next/headers` por baixo e **não roda fora do Next**: o node do
 `npm run check` estoura com `ERR_MODULE_NOT_FOUND` apontando para um arquivo que existe. É a razão
-dos pares `prova-correcao`/`prova`, `usuario-template`/`usuario` e `matricula-estado`/`matricula`.
+dos pares `certificado`/`certificados`, `usuario-template`/`usuario` e `matricula-estado`/`matricula`.
 Regra pura no módulo sem IO, IO importando dela. Detalhe no `HANDOFF.md` §6.
 
 O `check:matricula` guarda a derivação de ativa/expirada/revogada/**ausente**, que desde 30/jul tem
@@ -177,8 +196,11 @@ pública mostrava o nome escrito nela para qualquer consulta.
 - **O alfabeto do código não tem `I`, `O`, `L`, `U`, `0` nem `1`.** O código é ditado por telefone e
   digitado de um PDF; símbolo ambíguo vira "inválido" para um certificado verdadeiro. Mexer no
   alfabeto ou no formato quebra códigos já emitidos e já publicados em perfil de LinkedIn.
-- **Emissão na aprovação, nos dois caminhos** (`lib/prova.ts` e `lib/prova-expiradas.ts`), mais o
+- **Emissão na conclusão das aulas** (desde 30/set/2026; antes era na aprovação da prova): a action
+  `marcarAula` e a conclusão de módulo pelo admin chamam `emitirSeConcluiu`, que confere todas as
+  aulas com `conta_no_gate`, emite e manda o e-mail `certificado` só na primeira emissão. Mais o
   resgate na tela. É idempotente, e o índice único de `certificates(user_id)` é quem decide a corrida.
+  Desmarcar aula não revoga certificado.
 - **A verificação pública usa o cliente anon** e a função `verify_certificate`. Página pública não
   pode depender de sessão, e a service role ali estaria errada por definição.
 - **O código entra no markup por marcador `data-cert`**, emitido pelo `port-area.mjs`. Editar o HTML

@@ -99,7 +99,7 @@ function dadosExemplo(chave: string) {
   const link =
     chave === "boas-vindas" || chave === "redefinicao-senha"
       ? `${site}/auth/confirm?token_hash=EXEMPLO&type=recovery`
-      : chave === "resultado-aprovado"
+      : chave === "certificado"
         ? `${site}/app/certificado`
         : contato.whatsapp;
   // Os exemplos saem da legenda (`DESCRICOES`), para a prévia mostrar exatamente o valor que a tela
@@ -107,7 +107,6 @@ function dadosExemplo(chave: string) {
   const exemplo = (campo: string) => DESCRICOES[campo]?.exemplo ?? "";
   return {
     nome: exemplo("nome"),
-    nota: exemplo("nota"),
     codigo: exemplo("codigo"),
     link,
   };

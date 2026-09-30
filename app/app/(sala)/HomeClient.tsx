@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import contato from "@/lib/contato.json";
-
 /** Onde o `home.html` é partido para o React pôr o miolo (ver a prop `meio`). */
 const MEIO = "<!-- sala:meio -->";
 
@@ -20,20 +18,19 @@ type Aviso = {
  * Home da área (vitrine).
  *
  * **O cliente não conhece mais o currículo.** Ele recebe prontos os destinos de cada cartão, o
- * do "continuar" e os dois números do gate da prova. Antes importava cinco funções de
- * `lib/curso`, que passou a depender do banco em 29/jul e não pode ser lido daqui.
+ * do "continuar" e os números da conclusão. Antes importava cinco funções de `lib/curso`, que
+ * passou a depender do banco em 29/jul e não pode ser lido daqui.
  *
- * - cards de módulo → primeira aula do módulo, se o módulo já abriu;
- * - card de 2ª chamada (só existe se um admin liberou) → /app/prova, direto;
- * - card da Prova Final → roteia pelo `data-prova`: reprovado abre o WhatsApp (tentativa única, não
- *   há para onde ir no produto), aprovado vai ao certificado, bloqueada abre o modal, o resto vai
- *   para /app/prova;
- * - "Continuar" → aula atual.
+ * - cards de módulo → página do módulo, se o módulo já abriu;
+ * - card do certificado → a tela do certificado quando ele existe (ou quando todas as aulas já
+ *   estão concluídas, e a tela emite no resgate); senão, o modal com quantas aulas faltam. Até
+ *   30/set/2026 era o card da Prova Final, com seis estados e o WhatsApp do reprovado;
+ * - "Continuar" → aula atual, no teatro da página do módulo dela.
  * Delegação de evento (sobrevive à re-render ao abrir/fechar o modal).
  *
- * `travado` chega do servidor quando o aluno tentou uma aula de módulo ainda fechado e foi
- * devolvido para cá. A guarda que redireciona está na página da aula; esta prop carrega só a
- * **explicação**, porque bounce sem motivo é o pior tipo de bloqueio: o aluno acha que clicou
+ * `travado` chega do servidor quando a URL traz `?travado=<ord>`. Até 30/set/2026 era a página da
+ * aula que devolvia para cá; hoje a página do módulo fechado mostra o aviso ela mesma, e o parâmetro
+ * sobrevive para links antigos. Esta prop carrega só a **explicação**, porque bounce sem motivo é o pior tipo de bloqueio: o aluno acha que clicou
  * errado. O servidor confere a trava no banco antes de mandar a mensagem, então um `?travado=`
  * digitado à mão para um módulo já aberto não abre modal nenhum.
  */
@@ -41,7 +38,7 @@ export default function HomeClient({
   html,
   destinos,
   destinoAtual,
-  provaLiberada,
+  certificadoEmitido,
   restantes,
   totalAulas,
   travado,
@@ -59,9 +56,11 @@ export default function HomeClient({
   destinos: string[];
   /** Destino do "Continuar de onde parou". */
   destinoAtual: string;
-  provaLiberada: boolean;
+  /** Já existe linha em `certificates` para este aluno. Vem do banco, nunca da URL. */
+  certificadoEmitido: boolean;
+  /** Aulas que contam para o certificado e ainda não foram concluídas. */
   restantes: number;
-  /** Total de aulas que contam para o gate (`conta_no_gate`): a copy acompanha o admin. */
+  /** Total de aulas que contam para o certificado (`conta_no_gate`): a copy acompanha o admin. */
   totalAulas: number;
   /**
    * `dias`/`data` nulos = fechado sem data: em breve (política, 0016), ou esperando a conclusão
@@ -124,33 +123,19 @@ export default function HomeClient({
         if (card.dataset.travado === "1") return;
         const i = [...root.querySelectorAll<HTMLElement>(".mcard")].indexOf(card);
         if (i >= 0 && i < destinos.length) return router.push(destinos[i]);
-        // O card de 2ª chamada vem antes do da prova e cai no mesmo teste de texto ("tentativa nova
-        // da prova final"), então ele é tratado ANTES e por atributo, não por texto: sem isto, ele
-        // dependeria do gate de 16/16 que o aluno já cumpriu e daria no mesmo, mas por coincidência.
-        if (card.dataset.segunda === "1") return router.push("/app/prova");
 
-        // O CARD DA PROVA FINAL ROTEIA POR ESTADO, e o estado vem em `data-prova` do servidor. Antes
-        // ele só sabia duas coisas (liberada ou não) e mandava todo mundo para /app/prova.
-        //
-        // O caso do reprovado é o que o Pedro pediu em 31/jul: a prova é de tentativa única, então
-        // depois de reprovar não existe para onde clicar dentro do produto. Em vez de levar a uma tela
-        // que devolve, o clique abre o WhatsApp, que é o único caminho real. `noopener` porque abrir
-        // aba externa sem ele dá acesso ao nosso `window` para a página de destino.
-        const prova = card.dataset.prova;
-        if (prova === "reprovado") {
-          window.open(contato.whatsapp, "_blank", "noopener");
-          return;
-        }
-        if (prova === "aprovado") return router.push("/app/certificado");
-        if (prova && prova !== "bloqueada") return router.push("/app/prova");
-
-        if (/Prova|Certifica/i.test(card.textContent || "")) {
-          if (provaLiberada) return router.push("/app/prova");
+        // O CARD DO CERTIFICADO roteia pelo `data-certificado`, que vem do servidor, e não pelo
+        // texto do card. Com todas as aulas concluídas ele também leva à tela, mesmo sem a linha no
+        // banco: a tela emite no resgate, e mandar o aluno de volta às aulas seria dizer que falta
+        // algo que ele já fez.
+        if (card.dataset.certificado) {
+          if (certificadoEmitido || restantes === 0) return router.push("/app/certificado");
           setAviso({
-            titulo: "Prova Final ainda bloqueada",
+            titulo: "Certificado ainda não emitido",
             corpo: (
               <>
-                Conclua as {totalAulas} aulas da formação para liberar a Prova Final.{" "}
+                O certificado sai quando você conclui as {totalAulas} aulas da formação, e chega também
+                por e-mail.{" "}
                 {restantes > 0 && (
                   <>
                     Falta{restantes > 1 ? "m" : ""}{" "}
@@ -173,7 +158,7 @@ export default function HomeClient({
 
     root.addEventListener("click", onClick);
     return () => root.removeEventListener("click", onClick);
-  }, [router, destinos, destinoAtual, provaLiberada, restantes, totalAulas]);
+  }, [router, destinos, destinoAtual, certificadoEmitido, restantes, totalAulas]);
 
   useEffect(() => {
     if (!aviso) return;
@@ -201,9 +186,9 @@ export default function HomeClient({
 }
 
 /**
- * Modal de bloqueio da home. Nasceu para a prova e passou a servir também o módulo fechado em
- * 29/jul; o que muda entre os dois é o texto, não a peça, então virou componente em vez de uma
- * segunda cópia de oitenta linhas de JSX.
+ * Modal de bloqueio da home. Nasceu para a prova (que saiu do curso em 30/set/2026), passou a
+ * servir o módulo fechado em 29/jul e hoje serve também o certificado ainda não emitido; o que muda
+ * entre eles é o texto, não a peça.
  */
 function Modal({ aviso, fechar }: { aviso: Aviso; fechar: () => void }) {
   return (

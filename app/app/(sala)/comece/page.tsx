@@ -5,7 +5,7 @@ import { getCalendario } from "@/lib/calendario";
 import { getCurriculo } from "@/lib/curriculo";
 import { href, rotuloModulo } from "@/lib/curso";
 import { getConcluidas } from "@/lib/progresso";
-import { MINUTOS, NOTA_MINIMA, TOTAL_QUESTOES } from "@/lib/prova-correcao";
+import { HORAS } from "@/lib/certificado";
 import { getUsuario } from "@/lib/usuario";
 import { fonteDoVideo } from "@/lib/video";
 import { notebookDoModulo } from "@/content/notebooks";
@@ -23,6 +23,10 @@ export const metadata: Metadata = { title: "Comece por aqui" };
  *
  * Ordem da página: o hero no painel vermelho, as aulas de abertura montadas sobre a borda dele,
  * como a formação funciona, a trilha com a data de cada módulo e a amostra do notebook.
+ *
+ * Desde 30/set/2026 o Módulo 0 também tem a página de módulo (`/app/modulo/0`), com o teatro, a
+ * playlist e o notebook. Esta continua sendo a porta de boas-vindas, e as aulas de abertura daqui
+ * levam para lá (`/app/modulo/0?aula=<n>#aula-<n>`).
  *
  * Mora dentro de `(sala)`, então a matrícula e o aceite dos termos já foram conferidos pelo layout.
  */
@@ -59,7 +63,7 @@ export default async function ComecePage() {
     : "Todos os módulos já estão abertos para você.";
 
   const nb = notebookDoModulo(0);
-  const graficoNb = nb?.blocos.find((b) => b.tipo === "grafico");
+  const graficoNb = nb?.aulas.flatMap((s) => s.blocos).find((b) => b.tipo === "grafico");
 
   return (
     <div className="sl">
@@ -106,9 +110,9 @@ export default async function ComecePage() {
                 </dd>
               </div>
               <div>
-                <dt className="sl-so-leitor">Certificação</dt>
+                <dt className="sl-so-leitor">Certificado</dt>
                 <dd>
-                  <b>1</b> <span>prova e certificado</span>
+                  <b>{HORAS}h</b> <span>de certificado</span>
                 </dd>
               </div>
             </dl>
@@ -209,14 +213,14 @@ export default async function ComecePage() {
           <li>
             <span className="sl-como-num">03</span>
             <h3>Um notebook por módulo</h3>
-            <p>Gráficos, texto longo e simuladores tirados das aulas, para consultar sem voltar ao vídeo.</p>
+            <p>Logo abaixo do vídeo, uma seção por aula com gráficos, texto longo e simuladores, para consultar sem voltar ao vídeo.</p>
           </li>
           <li>
             <span className="sl-como-num">04</span>
-            <h3>Prova final e certificado</h3>
+            <h3>Certificado ao concluir</h3>
             <p>
-              {TOTAL_QUESTOES} questões em {MINUTOS} minutos, liberada quando você concluir as{" "}
-              {curriculo.totalAvaliadas} aulas. Com {NOTA_MINIMA}% de acerto, o certificado é emitido na hora.
+              Concluiu as {curriculo.totalAvaliadas} aulas, o certificado de {HORAS} horas é emitido na hora,
+              com código de verificação, e o aviso chega por e-mail.
             </p>
           </li>
         </ol>
@@ -249,7 +253,7 @@ export default async function ComecePage() {
               </h2>
               <p>{nb.subtitulo}</p>
               {nb.demo && <span className="sl-chip sl-chip-demo">Conteúdo de demonstração</span>}
-              <Link className="sl-btn" href="/app/modulo/0/notebook">
+              <Link className="sl-btn" href="/app/modulo/0#notebook">
                 Abrir o notebook
               </Link>
             </div>

@@ -73,7 +73,7 @@ const NENHUMA: Conclusoes = new Map();
 
 /**
  * O instante em que cada módulo ficou concluído: todas as aulas dele concluídas, e a data é a
- * da ÚLTIMA delas. Conta TODAS as aulas do módulo, e não só as que valem para o gate da prova,
+ * da ÚLTIMA delas. Conta TODAS as aulas do módulo, e não só as que valem para o certificado,
  * porque o Módulo 0 não tem aula avaliada nenhuma e "concluir o Módulo 0" viraria verdade vazia,
  * abrindo o módulo seguinte no ato. Pela mesma razão, módulo sem aula não conta como concluído.
  *
@@ -180,7 +180,7 @@ export function calendarioDoAluno({
 export type Liberacao = {
   /** Índices de módulo já abertos. */
   abertos: Set<number>;
-  /** Todos os módulos que NÃO estão em breve, abertos? É o que a prova exige, além das aulas. */
+  /** Todos os módulos que NÃO estão em breve, abertos? Era o que a prova exigia (até 30/set/2026). */
   completo: boolean;
 };
 
@@ -188,8 +188,8 @@ export type Liberacao = {
  * O que este aluno pode ver agora: o `calendarioDoAluno` resumido no que as guardas usam.
  *
  * - `completo` ignora os módulos em breve (decisão do Pedro, 17/ago): eles são material
- *   complementar e não seguram a prova. Se um módulo AVALIADO for posto em breve, quem segura
- *   a prova é o gate de aulas (16/16), e a tela de políticas avisa.
+ *   complementar e não seguram a conclusão. Se um módulo AVALIADO for posto em breve, quem
+ *   segura o certificado é o gate de aulas, e a tela de políticas avisa.
  * - `conclusoes` só importa para regra `apos_modulo`; sem ela, esses módulos ficam fechados
  *   (o erro seguro), então quem guarda porta precisa passar as conclusões do aluno.
  */
@@ -252,10 +252,10 @@ function aberturasMaisCedo(
 }
 
 /**
- * Quando o curso fica concluível (a última abertura entre os módulos que a prova exige), para
+ * Quando o curso fica concluível (a última abertura entre os módulos exigidos), para
  * quem começa em `inicioEm` e anda na velocidade máxima. `null` quando não há data: nenhum
  * módulo exigido (política toda em breve), ou um exigido depende de outro que nunca abre.
- * Módulo em breve não entra: ele não segura a prova.
+ * Módulo em breve não entra: ele não segura o certificado.
  */
 export function concluivelEm(inicioEm: Date, regras: readonly (Regra | undefined)[]): Date | null {
   const cedo = aberturasMaisCedo(inicioEm, regras);

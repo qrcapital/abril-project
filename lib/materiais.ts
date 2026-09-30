@@ -29,10 +29,14 @@ export const getMateriais = cache(async (numeroDaAula: number): Promise<Material
   const filtros = [`lesson_id.eq.${aula.id}`];
   if (linha?.module_id) filtros.push(`module_id.eq.${linha.module_id}`);
 
+  // O tipo `ebook` fica fora da tela desde 30/set/2026: o curso não entrega e-book (decisão do dono).
+  // O valor continua no enum do banco porque apagar valor de enum no Postgres é migração cara e sem
+  // ganho; o filtro aqui é o que garante que uma linha antiga desse tipo não apareça para o aluno.
   const { data, error } = await supabase
     .from("materials")
     .select("titulo,arquivo")
-    .or(filtros.join(","));
+    .or(filtros.join(","))
+    .neq("tipo", "ebook");
 
   if (error) {
     // Falha de leitura NÃO vira "em breve": dizer que não há material quando a consulta é que

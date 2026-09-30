@@ -8,8 +8,8 @@ import {
   Selo,
   TOM_ESTADO,
   Vazio,
-  situacaoProva,
 } from "@/app/admin/_ui/tabela";
+import { codigosPorAluno } from "@/lib/certificados";
 import { ROTULO_ESTADO, estadoDaMatricula, type EstadoAcesso } from "@/lib/matricula-estado";
 import { exigirAdmin } from "@/lib/admin-guarda";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -41,9 +41,6 @@ type Aluno = {
   expires_at: string | null;
   liberacao_total: boolean;
   concluidas: number;
-  prova_status: string | null;
-  prova_score: number | null;
-  prova_tentativas: number;
 };
 
 const FILTROS: { valor: string; rotulo: string }[] = [
@@ -66,9 +63,12 @@ export default async function Alunos({
   const termo = q.trim();
 
   const db = createAdminClient();
-  const [lista, gate] = await Promise.all([
+  // A `listar_alunos` (0006) ainda devolve as colunas da prova; a tela as ignora desde 30/set/2026,
+  // quando o curso deixou de ter prova. O certificado vem da tabela dele.
+  const [lista, gate, codigos] = await Promise.all([
     db.rpc("listar_alunos", { termo, limite: 200 }),
     db.from("lessons").select("id", { count: "exact", head: true }).eq("conta_no_gate", true),
+    codigosPorAluno(db),
   ]);
 
   const total_gate = gate.count ?? 0;
@@ -83,8 +83,8 @@ export default async function Alunos({
       <header className="mb-6">
         <h1 className="text-[26px] text-tinta">Alunos</h1>
         <p className="mt-1 max-w-2xl text-[13px] text-medio">
-          Todas as contas do ambiente, com acesso, progresso e situação da prova. O progresso conta
-          só as {total_gate} aulas que liberam a prova.
+          Todas as contas do ambiente, com acesso, progresso e certificado. O progresso conta só as{" "}
+          {total_gate} aulas que valem para o certificado, que sai quando o aluno conclui todas.
         </p>
       </header>
 
@@ -133,10 +133,10 @@ export default async function Alunos({
       ) : (
         <Quadro>
           <table className="w-full min-w-[720px] border-collapse text-left">
-            <Cabecalho colunas={["Aluno", "Acesso", "Progresso", "Prova", ""]} />
+            <Cabecalho colunas={["Aluno", "Acesso", "Progresso", "Certificado", ""]} />
             <tbody>
               {alunos.map((a) => {
-                const prova = situacaoProva(a.prova_status, a.prova_score);
+                const codigo = codigos.get(a.id);
                 return (
                   <Linha key={a.id}>
                     <td className="px-4 py-3">
@@ -157,11 +157,13 @@ export default async function Alunos({
                       {a.concluidas}/{total_gate}
                     </td>
                     <td className="px-4 py-3">
-                      <Selo tom={prova.tom}>{prova.texto}</Selo>
-                      {a.prova_tentativas > 1 && (
-                        <span className="mt-1 block text-[11px] text-medio">
-                          {a.prova_tentativas} tentativas
-                        </span>
+                      {codigo ? (
+                        <>
+                          <Selo tom="ok">emitido</Selo>
+                          <span className="mt-1 block text-[11px] text-medio">{codigo}</span>
+                        </>
+                      ) : (
+                        <Selo tom="neutro">não emitido</Selo>
                       )}
                     </td>
                     <td className="px-4 py-3 text-right">

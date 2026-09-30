@@ -26,7 +26,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * a rota existe.
  *
  * Toda ação é auditada (plano de correções de 17/ago, item 19): esta rota muda o que o aluno
- * vê e o que conta para o gate da prova, sem deploy — mudança de conteúdo sem rastro é a
+ * vê e o que conta para o certificado, sem deploy, e mudança de conteúdo sem rastro é a
  * pergunta "quem apagou a aula 12?" sem resposta. Apagar lê o título antes, porque depois do
  * delete o id não aponta mais para nada. O `alvo` fica de fora de propósito: a tela de
  * Auditoria o resolve como PESSOA, e um id de aula ali vira "conta apagada". Quem identifica
@@ -39,7 +39,7 @@ const UUID = /^[0-9a-f-]{36}$/i;
 /**
  * Endereço de arquivo aceito. A decisão do Pedro em 31/jul foi **URL colada** em vez de upload
  * para o Storage, então o valor vai direto para o `href` do link de material do aluno
- * (`app/app/(sala)/modulo/[m]/aula/[n]/page.tsx`). Admin é gente de confiança, mas fronteira de confiança é fronteira:
+ * (`app/app/(sala)/modulo/[m]/page.tsx`, no palco da aula). Admin é gente de confiança, mas fronteira de confiança é fronteira:
  * sem esta linha um `javascript:` colado ali vira script rodando na tela do aluno.
  */
 const ARQUIVO_OK = /^(https?:\/\/|\/)/i;
@@ -99,8 +99,8 @@ export async function POST(req: NextRequest) {
         })
         .eq("id", id);
       if (error) return erro("A gravação falhou.");
-      // O `gate` entra no detalhe porque é a parte da edição que mexe na prova: desmarcar uma
-      // aula muda o 16/16 de todo mundo.
+      // O `gate` entra no detalhe porque é a parte da edição que mexe no certificado: desmarcar
+      // uma aula muda o que "concluir a formação" quer dizer para todo mundo.
       await auditar(db, { autor, acao: "conteudo.aula", detalhe: { titulo, gate } });
       return voltar(req, { m, ok: "aula" });
     }

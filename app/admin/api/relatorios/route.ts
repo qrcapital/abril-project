@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { papelAtual } from "@/lib/admin";
 import { auditar } from "@/lib/auditoria";
+import { codigosPorAluno } from "@/lib/certificados";
 import { descrever, rotularAcao } from "@/lib/auditoria-texto";
 import { ROTULO_ESTADO, estadoDaMatricula } from "@/lib/matricula-estado";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -13,7 +14,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
  *
  * ┌─ LEIA ISTO ANTES DE MEXER ─────────────────────────────────────────────────────────────┐
  * │ A CHECAGEM DE PAPEL AQUI DENTRO É O ÚNICO GUARDA DESTA ROTA (route handler não passa    │
- * │ por layout), e ela devolve DADO DE ALUNO EM MASSA: e-mail, telefone, progresso, nota.   │
+ * │ por layout), e ela devolve DADO DE ALUNO EM MASSA: e-mail, telefone, progresso.         │
  * │ Por isso toda exportação entra na auditoria, com o tipo e o tamanho.                    │
  * └──────────────────────────────────────────────────────────────────────────────────────────┘
  *
@@ -64,7 +65,10 @@ export async function GET(req: NextRequest) {
   let linhas = 0;
 
   if (tipo === "alunos") {
-    const { data, error } = await db.rpc("listar_alunos", { termo: "", limite: TETO.alunos });
+    const [{ data, error }, codigos] = await Promise.all([
+      db.rpc("listar_alunos", { termo: "", limite: TETO.alunos }),
+      codigosPorAluno(db),
+    ]);
     if (error) return new NextResponse("O relatório falhou. Tente de novo.", { status: 500 });
     const rows = data ?? [];
     linhas = rows.length;
@@ -77,9 +81,7 @@ export async function GET(req: NextRequest) {
         "inicio do calendario",
         "liberacao total",
         "aulas concluidas",
-        "prova",
-        "nota",
-        "tentativas",
+        "certificado",
         "conta criada",
       ],
       rows.map((a: Record<string, unknown>) => [
@@ -92,9 +94,9 @@ export async function GET(req: NextRequest) {
         dataBR(a.inicio_em),
         a.liberacao_total ? "sim" : "não",
         a.concluidas,
-        a.prova_status ?? "não iniciada",
-        a.prova_score ?? "",
-        a.prova_tentativas ?? 0,
+        // Sem prova desde 30/set/2026: as colunas de prova da `listar_alunos` ficam de fora, e o
+        // CSV traz o código do certificado, que é o que alguém procura numa planilha de alunos.
+        codigos.get(a.id as string) ?? "não emitido",
         dataBR(a.criado_em),
       ]),
     );

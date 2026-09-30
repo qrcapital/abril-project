@@ -8,7 +8,13 @@
 
 import { rotuloModulo } from "./curso";
 import { DIAS_GARANTIA, violaGarantia, type Regra } from "./liberacao";
-import { ORDS_AVALIADOS } from "./questoes";
+
+/**
+ * Os módulos cujas aulas contam para o certificado (I a IV; o Módulo 0 é boas-vindas). Morava em
+ * `lib/questoes.ts` como "os módulos que entram na prova", e ficou aqui quando a prova saiu do curso
+ * (30/set/2026): o aviso abaixo continua valendo, porque o gate agora é o do certificado.
+ */
+export const ORDS_AVALIADOS = [1, 2, 3, 4];
 
 export function avisosDaPolitica(
   regras: readonly Regra[],
@@ -25,8 +31,8 @@ export function avisosDaPolitica(
     .map((ord) => rotuloModulo(ord));
   if (avaliadosEmBreve.length)
     avisos.push(
-      `${avaliadosEmBreve.join(", ")} em breve: a prova sorteia questões desse conteúdo, e o ` +
-        "gate de 16 aulas fica inalcançável enquanto ele não abrir.",
+      `${avaliadosEmBreve.join(", ")} em breve: as aulas desse módulo contam para o certificado, e ` +
+        "ninguém conclui a formação enquanto ele não abrir.",
     );
   return avisos;
 }

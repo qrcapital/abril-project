@@ -5,7 +5,6 @@ import { notFound } from "next/navigation";
 import DadosEditaveis from "./DadosEditaveis";
 import LimparModulo from "./LimparModulo";
 import ReenviarAcesso from "./ReenviarAcesso";
-import SegundaChamada from "./SegundaChamada";
 
 import {
   Cabecalho,
@@ -15,10 +14,8 @@ import {
   TOM_ESTADO,
   Vazio,
   dataHora as data,
-  situacaoProva,
 } from "@/app/admin/_ui/tabela";
 import { ROTULO_ESTADO, estadoDaMatricula } from "@/lib/matricula-estado";
-import { podeSegundaChamada } from "@/lib/prova-correcao";
 import { exigirAdmin } from "@/lib/admin-guarda";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -27,15 +24,10 @@ export const metadata: Metadata = { title: "Aluno" };
 /**
  * Detalhe do aluno (PLANO-ADMIN §4.3), somente leitura.
  *
- * Das AÇÕES do §4.3, duas saíram em 31/jul/2026: **reenviar acesso**, a mais pedida no suporte, e
- * **liberar 2ª chamada**, que era prometida em dois textos nossos (a tela do reprovado e o e-mail de
- * resultado) e não existia em lugar nenhum — o primeiro aluno a reprovar em produção geraria um ticket
- * sem resposta possível.
- *
- * A segunda destravou junto com a **auditoria** (`admin_audit`, migration `0014`), que o §2 pedia desde
- * o plano e as três telas anteriores foram empurrando com `console.log`. Liberar tentativa de prova é
- * decisão caso a caso sobre uma prova de tentativa única: é a ação que mais precisa responder "quem
- * liberou e por quê" meses depois.
+ * Das AÇÕES do §4.3, a primeira a sair (31/jul/2026) foi **reenviar acesso**, a mais pedida no
+ * suporte. A **liberação de 2ª chamada** da prova saiu junto com a prova, em 30/set/2026: o curso
+ * deixou de ter prova final, e o certificado passou a sair na conclusão das aulas. No lugar da seção
+ * da prova, a tela mostra o certificado: o código, ou o que falta para ele sair.
  *
  * **Editar nome, e-mail, telefone e o progresso por módulo** entrou em 31/jul/2026, a pedido do
  * Pedro, e com isso a tela deixou de ser só leitura. Revogar e estender acesso seguem fora: elas
@@ -64,20 +56,11 @@ type Modulo = {
 /** O que cada `?ok=` diz na volta da rota. Um lugar só, porque agora são cinco. */
 const MENSAGENS: Record<string, string> = {
   acesso: "E-mail de acesso reenviado, com link novo.",
-  "segunda-chamada": "Tentativa liberada. O aluno recomeça pelas instruções, com sorteio novo.",
   "progresso-marcado": "Módulo marcado como concluído.",
   "progresso-limpo": "Progresso do módulo apagado.",
   politica: "Política de liberação trocada. Vale na próxima tela que o aluno abrir.",
 };
 
-type Exame = {
-  attempt: number;
-  status: string;
-  score: number | null;
-  started_at: string | null;
-  submitted_at: string | null;
-  deadline: string | null;
-};
 
 export default async function Aluno({
   params,
@@ -95,7 +78,7 @@ export default async function Aluno({
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   const db = createAdminClient();
-  const [conta, perfil, matriculas, modulos, provas, politicas] = await Promise.all([
+  const [conta, perfil, matriculas, modulos, certificado, politicas] = await Promise.all([
     db.auth.admin.getUserById(id),
     db.from("profiles").select("nome, telefone, guru_customer_id, is_admin, is_master").eq("id", id).maybeSingle(),
     db
@@ -104,11 +87,7 @@ export default async function Aluno({
       .eq("user_id", id)
       .order("expires_at", { ascending: false }),
     db.rpc("aluno_modulos", { alvo: id }),
-    db
-      .from("exams")
-      .select("attempt, status, score, started_at, submitted_at, deadline")
-      .eq("user_id", id)
-      .order("attempt", { ascending: true }),
+    db.from("certificates").select("codigo, issued_at").eq("user_id", id).maybeSingle(),
     db.from("release_policies").select("id, nome, ativa").order("created_at"),
   ]);
 
@@ -120,16 +99,7 @@ export default async function Aluno({
   const estado = estadoDaMatricula(atual?.status, atual?.expires_at);
 
   const mods = (modulos.data ?? []) as Modulo[];
-  const exames = (provas.data ?? []) as Exame[];
-  // A última tentativa decide se a 2ª chamada pode ser liberada, e a decisão é da
-  // `podeSegundaChamada`: a tela passa dado cru e não calcula "aprovado". A primeira versão calculava
-  // aqui de um jeito e na rota de outro, e a tela oferecia o botão que a rota deveria recusar.
-  const ultima = exames[exames.length - 1];
-  const decisao = podeSegundaChamada(
-    ultima
-      ? { status: ultima.status as "available" | "in_progress" | "submitted", nota: ultima.score }
-      : null,
-  );
+  const cert = certificado.data as { codigo: string; issued_at: string } | null;
 
   const gate = mods.filter((m) => m.conta_no_gate);
   const feitasGate = gate.reduce((s, m) => s + m.concluidas, 0);
@@ -173,7 +143,7 @@ export default async function Aluno({
                 conta, e não na tela de E-mails, porque quem chega aqui chega pelo nome da pessoa, e
                 quando o e-mail nunca saiu não existe linha no log para clicar. */}
             {user.email && <ReenviarAcesso userId={user.id} email={user.email} />}
-            {/* Mensagens das ações que ainda navegam (progresso, 2ª chamada, reenviar acesso). A
+            {/* Mensagens das ações que ainda navegam (progresso, política, reenviar acesso). A
                 edição dos dados não passa por aqui: ela avisa no próprio editor, sem recarregar. */}
             {ok && MENSAGENS[ok] && <span className="text-[12px] text-sucesso">{MENSAGENS[ok]}</span>}
             {erro && <span className="text-[12px] text-falha">{erro}</span>}
@@ -233,7 +203,7 @@ export default async function Aluno({
         <h2 className="mb-3 text-[15px] text-tinta">
           Progresso{" "}
           <span className="font-sans text-[12px] font-normal text-pedra">
-            ({feitasGate}/{totalGate} no gate da prova)
+            ({feitasGate}/{totalGate} aulas que contam para o certificado)
           </span>
         </h2>
         {mods.length === 0 ? (
@@ -294,53 +264,26 @@ export default async function Aluno({
       </section>
 
       <section>
-        <h2 className="mb-3 text-[15px] text-tinta">Prova</h2>
-        {exames.length === 0 ? (
-          <Vazio>Nunca abriu a prova.</Vazio>
+        <h2 className="mb-3 text-[15px] text-tinta">Certificado</h2>
+        {/* O certificado sai sozinho quando o aluno conclui a última aula que conta (e também quando
+            o "Concluir" acima fecha o gate por ele). Aqui só a leitura: o código é o que o suporte
+            precisa para responder "meu certificado é válido?", e a verificação pública é o link. */}
+        {cert ? (
+          <p className="text-[13px] text-grafite">
+            <Selo tom="ok">emitido</Selo> em {data(cert.issued_at)}, código{" "}
+            <a
+              href={`/verificar/${cert.codigo}`}
+              className="font-semibold text-gold-dark underline decoration-areia underline-offset-2 hover:decoration-acento"
+            >
+              {cert.codigo}
+            </a>
+          </p>
         ) : (
-          <Quadro>
-            <table className="w-full min-w-[620px] border-collapse text-left">
-              <Cabecalho
-                colunas={["Tentativa", "Situação", "Início", "Prazo", "Entrega"]}
-              />
-              <tbody>
-                {exames.map((e) => {
-                  const s = situacaoProva(e.status, e.score);
-                  return (
-                    <Linha key={e.attempt}>
-                      <td className="px-4 py-3 text-[13px] text-grafite">{e.attempt}</td>
-                      <td className="px-4 py-3">
-                        <Selo tom={s.tom}>{s.texto}</Selo>
-                      </td>
-                      <td className="px-4 py-3 text-[12px] text-medio">{data(e.started_at)}</td>
-                      <td className="px-4 py-3 text-[12px] text-medio">{data(e.deadline)}</td>
-                      <td className="px-4 py-3 text-[12px] text-medio">{data(e.submitted_at)}</td>
-                    </Linha>
-                  );
-                })}
-              </tbody>
-            </table>
-          </Quadro>
+          <Vazio>
+            Ainda não emitido. Sai quando o aluno concluir as {totalGate} aulas que contam
+            {totalGate > feitasGate ? `; faltam ${totalGate - feitasGate}.` : "."}
+          </Vazio>
         )}
-        {/* A LIBERAÇÃO DE 2ª CHAMADA, que era promessa em dois textos nossos e não existia em lugar
-            nenhum: a tela do aluno reprovado manda pedir no WhatsApp e o e-mail diz que é liberada
-            caso a caso. A decisão de quem pode receber vem da `podeSegundaChamada`, a mesma que a
-            rota reconfere, e quando ela recusa a tela mostra o MOTIVO em vez de esconder o botão:
-            aqui, ao contrário da tela de Equipe, o motivo é a informação que o suporte precisa para
-            responder o aluno. */}
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          {decisao.ok ? (
-            <SegundaChamada
-              userId={user.id}
-              nome={perfil.data?.nome || user.email || "Este aluno"}
-              nota={ultima?.score ?? null}
-            />
-          ) : (
-            <p className="max-w-2xl border-l-2 border-areia pl-3 text-[12px] text-medio">
-              <strong>2ª chamada:</strong> {decisao.motivo}
-            </p>
-          )}
-        </div>
 
         <p className="mt-4 max-w-2xl border-l-2 border-gold-soft pl-4 text-[12px] text-medio">
           Revogar e estender acesso seguem fora: mexem em acesso pago e falta decidir o que fazer

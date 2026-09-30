@@ -1,8 +1,8 @@
 import type { ModuloCalendario } from "@/lib/calendario";
 import { rotuloModulo } from "@/lib/curso";
 
-// A leitura de um módulo do calendário na língua da tela. Uma função só para a trilha, a página
-// do módulo, o notebook e a aula: se cada tela escrevesse o "Libera em" do seu jeito, a trilha
+// A leitura de um módulo do calendário na língua da tela. Uma função só para a trilha e a página
+// do módulo (que é também a sala de aula): se cada tela escrevesse o "Libera em" do seu jeito, a trilha
 // diria uma coisa e o cadeado da aula outra.
 
 export type EstadoModulo = {
@@ -27,5 +27,9 @@ export function estadoDoModulo(m: ModuloCalendario): EstadoModulo {
   return { classe: "is-aberto", texto: m.concluidas > 0 ? aulas : "Aberto" };
 }
 
-/** Para onde leva o módulo: o 0 é o "Comece por aqui", os demais têm página própria. */
-export const hrefDoModulo = (ord: number) => (ord === 0 ? "/app/comece" : `/app/modulo/${ord}`);
+/**
+ * Para onde leva o módulo: a página dele, com o teatro, a playlist e o notebook. Vale para o Módulo 0
+ * também desde 30/set/2026; até ali ele levava ao "Comece por aqui", que continua sendo a porta de
+ * boas-vindas mas deixou de ser a página do módulo.
+ */
+export const hrefDoModulo = (ord: number) => `/app/modulo/${ord}`;

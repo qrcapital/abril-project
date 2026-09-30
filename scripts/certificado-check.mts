@@ -18,6 +18,7 @@ import assert from "node:assert/strict";
 import {
   ALFABETO,
   SIMBOLOS,
+  concluiuTodasAsAulas,
   gerarCodigo,
   linkedinAddUrl,
   normalizarCodigo,
@@ -111,6 +112,18 @@ import {
   assert.equal(url.searchParams.get("issueYear"), "2026");
   assert.equal(url.searchParams.get("issueMonth"), "9", "mes do LinkedIn e 1..12, nao o 0..11 do JS");
   assert.equal(url.searchParams.get("organizationName"), "BlockTrends", "quem emite e o BlockTrends");
+}
+
+// --- 6. a regra da emissão: todas as aulas que contam, e nunca uma lista vazia ---
+// Desde 30/set/2026 o certificado sai na conclusão das aulas, sem prova. O caso que dói é a lista
+// vazia: `[].every()` é true, e um `conta_no_gate` todo desmarcado no painel daria certificado a
+// qualquer aluno que marcasse uma aula.
+{
+  const contam = ["a1", "a2", "a3"];
+  assert.equal(concluiuTodasAsAulas(contam, new Set(["a1", "a2", "a3"])), true);
+  assert.equal(concluiuTodasAsAulas(contam, new Set(["a1", "a2", "a3", "boas-vindas"])), true);
+  assert.equal(concluiuTodasAsAulas(contam, new Set(["a1", "a3"])), false, "faltando uma, nao emite");
+  assert.equal(concluiuTodasAsAulas([], new Set(["a1"])), false, "nenhuma aula contando nao pode emitir");
 }
 
 console.log(`certificado-check: ok (alfabeto de ${ALFABETO.length} simbolos, ${SIMBOLOS} posicoes)`);

@@ -61,7 +61,7 @@ function dataBR(iso: string): string {
 /**
  * Põe o código do certificado no markup portado.
  *
- * Separado do `preencherUsuario` porque o código não vem do `User` do Auth: ele nasce na aprovação e
+ * Separado do `preencherUsuario` porque o código não vem do `User` do Auth: ele nasce na conclusão e
  * mora em `certificates`. O marcador é `data-cert`, emitido pelo `port-area.mjs` em volta do código
  * de exemplo do design.
  *

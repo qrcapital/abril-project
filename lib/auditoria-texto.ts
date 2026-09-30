@@ -18,6 +18,8 @@
 export const ROTULO_ACAO: Record<string, string> = {
   "papel.promover": "Promoveu a admin",
   "papel.revogar": "Revogou admin",
+  // Ações da prova final, que saiu do curso em 30/set/2026. Nenhuma tela gera mais estes registros;
+  // os rótulos ficam para as linhas antigas de `admin_audit` continuarem legíveis.
   "prova.segunda-chamada": "Liberou 2ª chamada",
   "aluno.dados": "Editou dados",
   "aluno.progresso-marcar": "Marcou módulo",
@@ -124,7 +126,7 @@ export function descrever(acao: string, detalhe: Record<string, unknown> | null)
     return [
       d.titulo ? aspas(d.titulo) : "",
       d.direcao ? `para ${d.direcao === "subir" ? "cima" : "baixo"}` : "",
-      d.gate === false ? "fora do gate da prova" : "",
+      d.gate === false ? "fora do gate do certificado" : "",
       d.arquivo ? String(d.arquivo) : "",
     ].filter(Boolean);
   }

@@ -119,7 +119,7 @@ export default async function Conteudo({
           próxima visita, sem deploy.
         </p>
         <p className="mt-2 text-[12px] text-pedra">
-          {todasAulas.length} aulas, {noGate} contam para o gate de conclusão que libera a prova.
+          {todasAulas.length} aulas, {noGate} contam para o gate de conclusão que emite o certificado.
         </p>
       </header>
 

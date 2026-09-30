@@ -4,8 +4,6 @@ import { dataHora, Selo } from "./_ui/tabela";
 import { rotularAcao } from "@/lib/auditoria-texto";
 import { avisosDaPolitica } from "@/lib/politica-avisos";
 import { getRegras } from "@/lib/politicas";
-import { NOTA_MINIMA } from "@/lib/prova-correcao";
-import { META_POR_MODULO, ORDS_AVALIADOS, POR_MODULO } from "@/lib/questoes";
 import { exigirAdmin } from "@/lib/admin-guarda";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -18,7 +16,11 @@ import { createAdminClient } from "@/lib/supabase/admin";
  *    da tela que resolve. Nada pendente também é informação, e vira uma linha.
  * 3. **Formação** — o funil do acesso ao certificado (ONDE os alunos param) e as últimas
  *    entradas da auditoria (decisão do Pedro: auditoria aqui, não um feed com nome de aluno).
- * 4. **Saúde do sistema** — política de liberação, banco de questões, e-mails de 24 h.
+ * 4. **Saúde do sistema**: política de liberação e e-mails de 24 h.
+ *
+ * Desde 30/set/2026 o curso não tem prova final: o certificado sai quando o aluno conclui todas as
+ * aulas que contam. Saíram o card de aprovação, as etapas de prova do funil, o banco de questões e o
+ * aviso de prova com prazo estourado; o funil vai do acesso direto ao certificado.
  * 5. **Relatórios** — os CSVs (rota `api/relatorios`, exportação auditada).
  *
  * Leitura pela service role, como manda o §2: o admin vê o agregado de TODOS os alunos, e a
@@ -62,20 +64,11 @@ export default async function AdminPainel() {
 
   // ponytail: as leituras de `todas` trazem linhas (não count) para agregar por aluno em JS.
   // Com ~milhares de alunos ainda é barato; se a base crescer a ponto de doer, vira uma RPC.
-  const [
-    contagens,
-    questoes,
-    ativosIds,
-    progressoTudo,
-    progressoGate,
-    exames,
-  ] = await Promise.all([
+  const [contagens, ativosIds, progressoTudo, progressoGate] = await Promise.all([
     Promise.all([
       db.from("enrollments").select("id", { count: "exact", head: true }),
       db.from("enrollments").select("id", { count: "exact", head: true }).eq("status", "active").gt("expires_at", iso),
       db.from("lessons").select("id", { count: "exact", head: true }).eq("conta_no_gate", true),
-      db.from("exams").select("id", { count: "exact", head: true }).eq("status", "submitted"),
-      db.from("exams").select("id", { count: "exact", head: true }).eq("status", "submitted").gte("score", NOTA_MINIMA),
       db.from("certificates").select("id", { count: "exact", head: true }),
       db.from("email_log").select("id", { count: "exact", head: true }).gte("sent_at", ha24h),
       db.from("email_log").select("id", { count: "exact", head: true }).gte("sent_at", ha24h).eq("status", "enviado"),
@@ -86,7 +79,6 @@ export default async function AdminPainel() {
         .eq("status", "active")
         .gt("expires_at", iso)
         .lte("expires_at", em30d),
-      db.from("exams").select("id", { count: "exact", head: true }).eq("status", "in_progress").lt("deadline", iso),
       // `.order("ord")` importa: o `avisosDaPolitica` alinha `regras[i]` com `ords[i]`, e o
       // `getRegras` devolve as regras na ordem dos módulos por ord.
       db.from("modules").select("id, ord").order("ord"),
@@ -94,9 +86,6 @@ export default async function AdminPainel() {
       db.from("release_policies").select("nome").eq("ativa", true).maybeSingle(),
       db.from("enrollments").select("id", { count: "exact", head: true }).not("release_policy_id", "is", null),
     ] as const),
-    todas<{ module_id: string; ativo: boolean }>((de, ate) =>
-      db.from("questions").select("module_id, ativo").range(de, ate),
-    ),
     todas<{ user_id: string }>((de, ate) =>
       db.from("enrollments").select("user_id").eq("status", "active").gt("expires_at", iso).range(de, ate),
     ),
@@ -111,22 +100,16 @@ export default async function AdminPainel() {
         .eq("lessons.conta_no_gate", true)
         .range(de, ate),
     ),
-    todas<{ user_id: string; status: string; score: number | null }>((de, ate) =>
-      db.from("exams").select("user_id, status, score").range(de, ate),
-    ),
   ]);
   const [
     matriculas,
     ativos,
     aulasGate,
-    provas,
-    aprovadas,
     certificados,
     emails24,
     enviados24,
     falhas24,
     expirando,
-    estouradas,
     mods,
     auditoria,
     politicaAtiva,
@@ -143,6 +126,14 @@ export default async function AdminPainel() {
   // aluno expirado/revogado e o card passava de 100% sem mentir em nenhuma parcela.
   const concluidasAtivos = [...gatePorAluno.values()].reduce((s, c) => s + c, 0);
 
+  // ---- funil ------------------------------------------------------------------------------
+  const comecaram = new Set(
+    progressoTudo.map((r) => r.user_id).filter((id) => idsAtivos.has(id)),
+  ).size;
+  const totalGate = n(aulasGate);
+  const metadeGate = [...gatePorAluno.values()].filter((c) => c >= Math.ceil(totalGate / 2)).length;
+  const gateCompleto = [...gatePorAluno.values()].filter((c) => totalGate > 0 && c >= totalGate).length;
+
   // ---- os quatro números de sempre --------------------------------------------------------
   const possiveis = n(ativos) * n(aulasGate);
   const pct = (parte: number, total: number) =>
@@ -155,12 +146,9 @@ export default async function AdminPainel() {
       nota: `${concluidasAtivos} de ${possiveis} possíveis (${n(aulasGate)} aulas no gate)`,
     },
     {
-      rotulo: "Aprovação na prova",
-      valor: pct(n(aprovadas), n(provas)),
-      nota:
-        n(provas) > 0
-          ? `${n(aprovadas)} de ${n(provas)} provas entregues, corte ${NOTA_MINIMA}%`
-          : "nenhuma prova entregue ainda",
+      rotulo: "Formação concluída",
+      valor: pct(gateCompleto, n(ativos)),
+      nota: `${gateCompleto} de ${n(ativos)} com acesso ativo concluíram as ${n(aulasGate)} aulas`,
     },
     { rotulo: "Certificados", valor: n(certificados), nota: "emitidos até agora" },
   ];
@@ -173,39 +161,14 @@ export default async function AdminPainel() {
   );
   const paradosHa7d = [...idsAtivos].filter((id) => !ativosComAtividade7d.has(id)).length;
 
-  const ordDoModulo = new Map((mods.data ?? []).map((m) => [m.id as string, m.ord as number]));
-  const ativasPorOrd = new Map<number, number>();
-  for (const q of questoes) {
-    if (!q.ativo) continue;
-    const ord = ordDoModulo.get(q.module_id);
-    if (ord !== undefined) ativasPorOrd.set(ord, (ativasPorOrd.get(ord) ?? 0) + 1);
-  }
-  const abaixoDoPiso = ORDS_AVALIADOS.filter((ord) => (ativasPorOrd.get(ord) ?? 0) < POR_MODULO);
-  const totalAtivas = ORDS_AVALIADOS.reduce((s, ord) => s + (ativasPorOrd.get(ord) ?? 0), 0);
-  const metaTotal = META_POR_MODULO * ORDS_AVALIADOS.length;
-
   type ItemFila = { grave: boolean; texto: string; href: string; chamada: string };
   const fila: ItemFila[] = [];
-  if (abaixoDoPiso.length > 0)
-    fila.push({
-      grave: true,
-      texto: `Módulo${abaixoDoPiso.length > 1 ? "s" : ""} ${abaixoDoPiso.join(", ")} abaixo do piso de ${POR_MODULO} questões ativas: a prova não abre para ninguém`,
-      href: "/admin/questoes",
-      chamada: "Ver Questões",
-    });
   if (n(falhas24) > 0)
     fila.push({
       grave: true,
       texto: `${n(falhas24)} e-mail${n(falhas24) > 1 ? "s" : ""} falhou${n(falhas24) > 1 ? "" : ""} nas últimas 24 h`,
       href: "/admin/emails",
       chamada: "Ver no log",
-    });
-  if (n(estouradas) > 0)
-    fila.push({
-      grave: false,
-      texto: `${n(estouradas)} prova${n(estouradas) > 1 ? "s" : ""} em andamento com prazo estourado, esperando o fechamento`,
-      href: "/admin/alunos",
-      chamada: "Ver Alunos",
     });
   if (n(expirando) > 0)
     fila.push({
@@ -221,44 +184,15 @@ export default async function AdminPainel() {
       href: "/admin/alunos",
       chamada: "Ver Alunos",
     });
-  if (abaixoDoPiso.length === 0 && totalAtivas < metaTotal)
-    fila.push({
-      grave: false,
-      texto: `Banco de questões em ${totalAtivas} de ${metaTotal}: com banco pequeno, dois alunos veem quase a mesma prova`,
-      href: "/admin/questoes",
-      chamada: "Ver Questões",
-    });
 
-  // ---- funil ------------------------------------------------------------------------------
-  const comecaram = new Set(
-    progressoTudo.map((r) => r.user_id).filter((id) => idsAtivos.has(id)),
-  ).size;
-  const totalGate = n(aulasGate);
-  const metadeGate = [...gatePorAluno.values()].filter((c) => c >= Math.ceil(totalGate / 2)).length;
-  const gateCompleto = [...gatePorAluno.values()].filter((c) => totalGate > 0 && c >= totalGate).length;
-  const entregaram = new Set(
-    exames
-      .filter((e) => e.status === "submitted" && idsAtivos.has(e.user_id))
-      .map((e) => e.user_id),
-  );
-  const aprovaram = new Set(
-    exames
-      .filter(
-        (e) =>
-          e.status === "submitted" &&
-          (e.score ?? 0) >= NOTA_MINIMA &&
-          idsAtivos.has(e.user_id),
-      )
-      .map((e) => e.user_id),
-  );
-
+  // "Certificado emitido" conta a base inteira, e as outras etapas só quem tem acesso ativo: o
+  // certificado sobrevive ao fim do acesso (é do aluno, não do prazo), então ele pode passar da
+  // etapa anterior sem nada estar errado.
   const funil = [
     { rotulo: "Com acesso ativo", valor: n(ativos) },
     { rotulo: "Começaram uma aula", valor: comecaram },
-    { rotulo: "Metade do gate", valor: metadeGate },
-    { rotulo: `Gate completo (${totalGate}/${totalGate})`, valor: gateCompleto },
-    { rotulo: "Prova entregue", valor: entregaram.size },
-    { rotulo: "Aprovados", valor: aprovaram.size },
+    { rotulo: "Metade das aulas", valor: metadeGate },
+    { rotulo: `Todas as aulas (${totalGate}/${totalGate})`, valor: gateCompleto },
     { rotulo: "Certificado emitido", valor: n(certificados) },
   ];
   const topoFunil = Math.max(1, n(ativos));
@@ -293,7 +227,7 @@ export default async function AdminPainel() {
       <h2 className="mt-8 mb-3 text-[15px] text-tinta">Precisa de você</h2>
       {fila.length === 0 ? (
         <p className="rounded-lg border border-areia bg-white px-4 py-3 text-[13px] text-medio">
-          Nada pendente. E-mails saindo, banco de questões no piso, nenhuma matrícula vencendo.
+          Nada pendente. E-mails saindo, nenhuma matrícula vencendo.
         </p>
       ) : (
         <div className="flex flex-col gap-2">
@@ -362,7 +296,7 @@ export default async function AdminPainel() {
       </div>
 
       <h2 className="mt-8 mb-3 text-[15px] text-tinta">Saúde do sistema</h2>
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-lg border border-areia bg-white px-5 py-4 text-[12.5px]">
           <p className="mb-2 text-[11px] tracking-[0.12em] text-pedra uppercase">Política de liberação</p>
           <b className="font-semibold">{politicaAtiva.data?.nome ?? "nenhuma ativa"}</b>{" "}
@@ -376,23 +310,6 @@ export default async function AdminPainel() {
               ? "todos os alunos no padrão"
               : `${n(comPoliticaPropria)} aluno${n(comPoliticaPropria) > 1 ? "s" : ""} com política própria`}
           </p>
-        </div>
-        <div className="rounded-lg border border-areia bg-white px-5 py-4 text-[12.5px]">
-          <p className="mb-2 text-[11px] tracking-[0.12em] text-pedra uppercase">Banco de questões</p>
-          <div className="my-2 h-1.5 overflow-hidden rounded-[3px] bg-bege">
-            <i
-              className="block h-full bg-acento"
-              style={{ width: `${Math.min(100, Math.round((totalAtivas / metaTotal) * 100))}%` }}
-            />
-          </div>
-          {totalAtivas} de {metaTotal} na meta{" "}
-          {abaixoDoPiso.length > 0 ? (
-            <Selo tom="ruim">abaixo do piso</Selo>
-          ) : totalAtivas < metaTotal ? (
-            <Selo tom="atencao">piso ok, meta longe</Selo>
-          ) : (
-            <Selo tom="ok">na meta</Selo>
-          )}
         </div>
         <div className="rounded-lg border border-areia bg-white px-5 py-4 text-[12.5px]">
           <p className="mb-2 text-[11px] tracking-[0.12em] text-pedra uppercase">E-mails · 24 h</p>

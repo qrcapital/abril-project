@@ -19,7 +19,7 @@ export const getCurriculo = cache(async (): Promise<Curriculo> => {
   const db = createAdminClient();
   const [{ data: mods, error: erroMods }, { data: linhas, error: erroAulas }] = await Promise.all([
     db.from("modules").select("id,ord,titulo,docente").order("ord"),
-    db.from("lessons").select("id,module_id,ord,titulo,descricao,panda_video_id,conta_no_gate"),
+    db.from("lessons").select("id,module_id,ord,titulo,descricao,panda_video_id,duracao,conta_no_gate"),
   ]);
   if (erroMods) throw erroMods;
   if (erroAulas) throw erroAulas;
@@ -45,15 +45,20 @@ export const getCurriculo = cache(async (): Promise<Curriculo> => {
       titulo: l.titulo as string,
       descricao: (l.descricao as string | null) ?? "",
       video: (l.panda_video_id as string | null) ?? null,
+      duracao: (l.duracao as number | null) ?? null,
       avaliada: Boolean(l.conta_no_gate),
     }))
     .sort((x, y) => x.modulo - y.modulo || x.ord - y.ord)
-    .map((l, i) => ({
+    .map((l, i, todas) => ({
       id: l.id,
       n: i,
       modulo: l.modulo,
       // O Módulo 0 é boas-vindas e não recebe numeral; as demais numeram 01 em diante.
       numero: i === 0 ? "" : String(i).padStart(2, "0"),
+      // Contada na lista já ordenada, e não lida do `ord` do banco: o admin pode deixar buraco na
+      // ordem (apagar a aula 2 de 4), e a URL `?aula=` precisa continuar 1, 2, 3 sem pular.
+      pos: todas.slice(0, i + 1).filter((x) => x.modulo === l.modulo).length,
+      duracao: l.duracao,
       titulo: l.titulo,
       descricao: l.descricao,
       video: l.video,

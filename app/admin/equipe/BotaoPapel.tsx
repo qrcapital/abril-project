@@ -34,7 +34,7 @@ export default function BotaoPapel({
       promover
         ? {
             titulo: "Dar acesso de admin?",
-            corpo: `${email} passa a ver e editar tudo neste painel, incluindo o banco de questões com o gabarito da prova.`,
+            corpo: `${email} passa a ver e editar tudo neste painel, incluindo os dados dos alunos, o conteúdo do curso e os e-mails.`,
             destaque: email,
             confirmar: "Dar acesso",
             cancelar: "Cancelar",

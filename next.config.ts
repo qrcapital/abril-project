@@ -20,9 +20,28 @@ const SEGURANCA = [
   { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
 ];
 
+/**
+ * Endereços que deixaram de existir e ainda circulam (favorito, e-mail antigo, histórico).
+ *
+ * A prova final saiu do curso em 30/set/2026 (decisão do dono), e com ela as telas do aluno e a de
+ * Questões do admin. Quem chega por um link antigo vai para o início da área dele, em vez de um 404
+ * que pareceria defeito. Temporário (307) e não permanente de propósito: um 308 fica gravado no
+ * navegador, e o dia em que alguma coisa voltar a morar nesses endereços ninguém consegue desfazer.
+ *
+ * Os redirects da aula e do notebook antigos NÃO estão aqui: eles precisam do currículo para
+ * converter o número da aula, e moram nas próprias rotas (`app/app/(sala)/modulo/[m]/...`).
+ */
+const ENDERECOS_ANTIGOS = [
+  { source: "/app/prova/:resto*", destination: "/app", permanent: false },
+  { source: "/admin/questoes/:resto*", destination: "/admin", permanent: false },
+];
+
 const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: SEGURANCA }];
+  },
+  async redirects() {
+    return ENDERECOS_ANTIGOS;
   },
 };
 

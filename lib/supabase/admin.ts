@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 /**
  * Cliente Supabase com a service role: IGNORA a RLS.
  * Uso EXCLUSIVO no servidor, para operações confiáveis:
- * webhook do Guru (criar usuário, matrícula), correção da prova,
+ * webhook do Guru (criar usuário, matrícula), progresso das aulas,
  * emissão de certificado, ações do admin. Nunca expor ao navegador.
  */
 export function createAdminClient() {

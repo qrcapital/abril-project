@@ -19,7 +19,7 @@ export default function Comparador({ bloco, demo }: { bloco: BlocoComparador; de
   return (
     <section className="sl-comp sl-escuro" id={bloco.id} aria-labelledby={`${bloco.id}-titulo`}>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap", alignItems: "flex-start" }}>
-        <h2 id={`${bloco.id}-titulo`}>{bloco.titulo}</h2>
+        <h4 id={`${bloco.id}-titulo`}>{bloco.titulo}</h4>
         {demo && <span className="sl-chip sl-chip-demo">Simulação ilustrativa</span>}
       </div>
       {bloco.descricao && <p className="sl-comp-desc">{bloco.descricao}</p>}

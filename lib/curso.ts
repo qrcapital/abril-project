@@ -29,11 +29,23 @@ export type Aula = {
   n: number; // número na URL (0..16)
   modulo: number; // índice do módulo (0..4)
   numero: string; // rótulo exibido ("" para boas-vindas, "01".."16")
+  /**
+   * Posição da aula DENTRO do módulo, a partir de 1. Entrou em 30/set/2026 com a página do módulo:
+   * é o "Aula 3" da playlist, o `?aula=3` da URL e o `#aula-3` da seção do notebook. O `n` global
+   * continua sendo a chave do progresso; a posição é só endereço e rótulo.
+   */
+  pos: number;
+  /** `lessons.duracao`, em segundos. Nulo enquanto ninguém cadastrou. */
+  duracao: number | null;
   titulo: string;
   descricao: string;
   /** `lessons.panda_video_id`. Nulo enquanto o vídeo real não existe. */
   video: string | null;
-  /** `lessons.conta_no_gate`: entra na conta que libera a prova. É o checkbox do admin. */
+  /**
+   * `lessons.conta_no_gate`: entra na conta que emite o certificado. É o checkbox do admin. O nome
+   * da coluna é de quando o curso tinha prova e o gate liberava a prova; o sentido hoje é "conta
+   * para a conclusão".
+   */
   avaliada: boolean;
 };
 
@@ -41,19 +53,26 @@ export type Aula = {
 export type Curriculo = {
   modulos: Modulo[];
   aulas: Aula[];
-  /** Aulas que contam para o gate da prova (`conta_no_gate` do banco). */
+  /** Aulas que contam para a conclusão e o certificado (`conta_no_gate` do banco). */
   totalAvaliadas: number;
   primeiraAulaDoModulo(idx: number): Aula;
   aulaAtual(concluidas: Set<number>): Aula;
-  provaLiberada(concluidas: Set<number>): boolean;
+  formacaoConcluida(concluidas: Set<number>): boolean;
   aulasRestantes(concluidas: Set<number>): number;
   acharAula(n: number): { aula: Aula; pos: number } | null;
   progressoPct(concluidas: Set<number>): number;
 };
 
-/** URL da aula. Não depende do currículo, só do que a própria aula carrega. */
+/**
+ * URL da aula. Não depende do currículo, só do que a própria aula carrega.
+ *
+ * Desde 30/set/2026 a aula não tem página própria: ela toca no teatro da página do módulo, e o
+ * `?aula=` escolhe qual. A seleção fica na URL, e não em estado de cliente, para o link funcionar
+ * sem JS, ser compartilhável e sair certo num e-mail. O `#aula-<pos>` é a seção da aula no notebook
+ * do módulo. A rota antiga (`/app/modulo/[m]/aula/[n]`) virou redirect para cá.
+ */
 export function href(a: Aula): string {
-  return `/app/modulo/${a.modulo}/aula/${a.n}`;
+  return `/app/modulo/${a.modulo}?aula=${a.pos}#aula-${a.pos}`;
 }
 
 /**
@@ -84,10 +103,11 @@ export function montarCurriculo(modulos: Modulo[], aulas: Aula[]): Curriculo {
     aulaAtual: (concluidas) =>
       aulas.find((a) => !concluidas.has(a.n)) ?? aulas[aulas.length - 1],
 
-    // Prova Final libera só com as aulas avaliadas todas concluídas. Zero avaliadas NÃO
-    // libera: `[].every()` é true, e um admin que desmarcasse todo `conta_no_gate` abriria
-    // a prova para a base inteira sem tocar em prova nenhuma.
-    provaLiberada: (concluidas) =>
+    // A formação está concluída quando todas as aulas que contam estão concluídas, e é isso que
+    // emite o certificado desde 30/set/2026 (o curso deixou de ter prova). Zero avaliadas NÃO
+    // conclui: `[].every()` é true, e um admin que desmarcasse todo `conta_no_gate` daria o
+    // certificado à base inteira sem ninguém ter assistido a nada.
+    formacaoConcluida: (concluidas) =>
       avaliadas.length > 0 && avaliadas.every((a) => concluidas.has(a.n)),
     aulasRestantes: (concluidas) => avaliadas.filter((a) => !concluidas.has(a.n)).length,
 

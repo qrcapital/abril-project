@@ -10,7 +10,7 @@ import { estadoDoModulo, hrefDoModulo } from "./estado";
  * A trilha do curso: os módulos em linha, com "Você está aqui" no atual, o concluído cheio, o
  * aberto contornado e o fechado tracejado com a data (ou o motivo) de abertura.
  *
- * Lê só o `getCalendario()`, que é o mesmo veredito das guardas da aula e da prova. Por isso um nó
+ * Lê só o `getCalendario()`, que é o mesmo veredito da guarda da página do módulo. Por isso um nó
  * aberto aqui nunca leva a uma aula que a guarda recusa. Nó fechado não é link: o destino só
  * repetiria a data que o próprio nó já mostra.
  *

@@ -2,7 +2,7 @@
 //
 // Existem porque as telas são markup portado, não JSX: para injetar dado real a gente
 // substitui trechos em cima do HTML do design. Três consumidores hoje:
-// `home-template.ts`, `prova-template.ts` e `senha-template.ts`.
+// `home-template.ts` e `senha-template.ts` (e, até 30/set/2026, o `prova-template.ts`).
 
 /**
  * Conteúdo interno (com divs balanceadas) de um `<div>`, a partir do índice do seu `<div`.
