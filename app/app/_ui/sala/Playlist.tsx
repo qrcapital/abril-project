@@ -3,7 +3,7 @@ import Link from "next/link";
 import { href, type Aula } from "@/lib/curso";
 
 /** "12 min" a partir dos segundos de `lessons.duracao`. Abaixo de um minuto arredonda para 1. */
-function minutos(segundos: number): string {
+export function minutos(segundos: number): string {
   return `${Math.max(1, Math.round(segundos / 60))} min`;
 }
 

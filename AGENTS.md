@@ -58,8 +58,11 @@ viraram redirects. Vale para o Módulo 0 também; `/app/comece` segue como porta
 
 **O notebook** mora em `content/notebooks/modulo-<n>.ts`, tipado por `lib/notebook.ts`, na forma
 `{ modulo, titulo, subtitulo, demo, aulas: [{ aula: 1, blocos: [...] }, ...] }`, com `aula` sendo a
-posição da aula no módulo. Os blocos são `texto`, `destaque`, `numero`, `grafico`, `comparador`,
-`tabela`, `referencias` e `capitulo` (subtítulo dentro da seção). O título de cada seção vem do banco
+posição da aula no módulo. Os blocos são `texto`, `destaque`, `numero`, `grafico`, `kpis`,
+`comparativo`, `linhaDoTempo`, `fluxo`, `matriz`, `simulador`, `conceito`, `tabela`, `referencias`
+e `capitulo` (subtítulo dentro da seção); `comparador` segue aceito nos demos e cai no `simulador`.
+**Quem escreve conteúdo lê `docs/NOTEBOOK.md`** (exemplo de cada bloco e regras visuais; os
+exemplos moram em `content/notebooks/exemplos.ts` e o `check:notebook` valida tudo). O título de cada seção vem do banco
 (o da aula); aula sem seção no arquivo aparece com "Conteúdo desta aula em produção".
 
 **Sem prova final e sem e-book (decisão do dono, 30/set/2026).** O certificado sai quando o aluno

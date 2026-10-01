@@ -352,128 +352,6 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 .sl-aviso h2 { font-family: var(--sl-serifa); font-weight: 600; font-size: 22px; line-height: 1.2 }
 .sl-aviso p { margin-top: 6px; font-size: 14.5px; line-height: 1.6; color: var(--sl-tinta-2) }
 
-/* ---- notebook ------------------------------------------------------------- */
-
-.sl-nb-cabeca { padding: 40px 0 36px; border-bottom: 1px solid var(--sl-linha-forte) }
-.sl-nb-cabeca h1 { margin-top: 18px; font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(40px, 5vw, 68px); line-height: 1.02; letter-spacing: -.025em; max-width: 18ch }
-.sl-nb-cabeca .sl-sub { font-size: 17px; max-width: 60ch }
-.sl-nb-meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 22px }
-
-.sl-nb { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 56px; margin-top: 44px; align-items: start }
-.sl-nb-indice { position: sticky; top: 86px }
-.sl-nb-indice h3 { font-size: 10.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--sl-ouro); margin-bottom: 14px }
-.sl-nb-indice ol { border-left: 1px solid var(--sl-linha-forte) }
-.sl-nb-indice a {
-  display: flex; gap: 10px; padding: 9px 0 9px 16px; margin-left: -1px;
-  border-left: 2px solid transparent;
-  font-size: 13.5px; line-height: 1.4; color: var(--sl-tinta-2) !important;
-}
-.sl-nb-indice a:hover { color: var(--sl-tinta) !important; border-left-color: var(--sl-acento) }
-.sl-nb-indice a[aria-current] { color: var(--sl-tinta) !important; border-left-color: var(--sl-acento); font-weight: 600 }
-.sl-nb-indice a span { font-family: var(--sl-serifa); font-style: italic; color: var(--sl-acento); min-width: 18px }
-.sl-nb-indice-pe { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; font-size: 13px }
-
-.sl-nb-canvas { min-width: 0; display: flex; flex-direction: column; gap: 44px }
-/* Âncora do índice não pode cair embaixo da topbar fixa. */
-.sl-nb-canvas [id] { scroll-margin-top: 90px }
-
-/* Seção de uma aula no notebook do módulo: o filete forte marca onde a aula começa, e o
-   subtítulo (`capitulo`) dentro dela fica um degrau abaixo. */
-.sl-nb-secao { display: flex; flex-direction: column; gap: 36px; padding-top: 10px; border-top: 2px solid var(--sl-tinta) }
-.sl-nb-secao-cabeca h3 {
-  margin-top: 10px; font-family: var(--sl-serifa); font-weight: 600;
-  font-size: clamp(28px, 3vw, 40px); line-height: 1.1; letter-spacing: -.02em; max-width: 26ch;
-}
-.sl-nb-secao-num { font-style: italic; font-weight: 500; color: var(--sl-acento) }
-.sl-nb-secao .sl-vazio { margin-top: -12px }
-
-.sl-cap { padding-top: 16px; border-top: 1px solid var(--sl-linha-forte) }
-.sl-cap h4 { font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(22px, 2.2vw, 28px); line-height: 1.15; letter-spacing: -.01em; max-width: 30ch }
-.sl-cap p { margin-top: 10px; font-size: 16.5px; line-height: 1.55; color: var(--sl-tinta-2); max-width: 60ch }
-
-.sl-prosa { max-width: 68ch }
-.sl-prosa p { font-family: var(--sl-serifa); font-size: 19px; line-height: 1.72; color: #2a2723 }
-.sl-prosa p + p { margin-top: 1.1em }
-.sl-prosa.is-capitular p:first-child::first-letter {
-  float: left; margin: 8px 12px 0 0;
-  font-family: var(--sl-serifa); font-weight: 700; font-size: 84px; line-height: .78;
-  color: var(--sl-acento);
-}
-
-.sl-destaque { max-width: 30ch; padding: 6px 0 6px 28px; border-left: 3px solid var(--sl-acento) }
-.sl-destaque p { font-family: var(--sl-serifa); font-style: italic; font-weight: 500; font-size: clamp(26px, 2.8vw, 36px); line-height: 1.25; color: var(--sl-tinta) }
-.sl-destaque footer { margin-top: 14px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--sl-ouro) }
-
-.sl-numero { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 32px; align-items: center; padding: 28px 0; border-top: 1px solid var(--sl-linha-forte); border-bottom: 1px solid var(--sl-linha-forte) }
-.sl-numero-valor { font-family: var(--sl-serifa); font-weight: 700; font-size: clamp(64px, 8vw, 112px); line-height: .9; letter-spacing: -.03em; color: var(--sl-acento); white-space: nowrap }
-.sl-numero-legenda { font-size: 18px; line-height: 1.5; color: var(--sl-tinta); max-width: 44ch }
-.sl-numero-nota { margin-top: 8px; font-size: 12.5px; color: var(--sl-tinta-3) }
-
-.sl-origem { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 12.5px; font-weight: 600 }
-
-/* Figura do gráfico. */
-.sl-fig { background: var(--sl-creme); border: 1px solid var(--sl-borda); border-radius: 16px; padding: 26px 28px 20px }
-.sl-fig-topo { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; flex-wrap: wrap }
-.sl-fig h3 { font-family: var(--sl-serifa); font-weight: 600; font-size: 21px; line-height: 1.25; max-width: 40ch }
-.sl-legenda { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 14px; font-size: 12.5px; color: var(--sl-tinta-2) }
-.sl-legenda li { display: inline-flex; align-items: center; gap: 8px }
-.sl-legenda i { width: 18px; height: 3px; border-radius: 2px; display: inline-block }
-.sl-grafico { position: relative; margin-top: 12px }
-.sl-grafico svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y }
-.sl-grafico svg:focus-visible { outline: 2px solid var(--sl-acento); outline-offset: 4px }
-.sl-grafico text { font-family: var(--sl-sans); font-size: 12px; fill: var(--sl-tinta-3) }
-.sl-dica {
-  position: absolute; pointer-events: none; z-index: 2; transform: translate(-50%, calc(-100% - 12px));
-  min-width: 140px; padding: 9px 12px; border-radius: 12px;
-  background: var(--sl-tinta); color: var(--sl-creme); font-size: 12px; line-height: 1.45;
-  box-shadow: 0 12px 26px rgba(26, 24, 21, .25); white-space: nowrap;
-}
-.sl-dica b { display: block; margin-bottom: 3px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--sl-palha) }
-.sl-dica span { display: flex; align-items: center; gap: 7px }
-.sl-dica i { width: 8px; height: 8px; border-radius: 50%; display: inline-block }
-.sl-fig-nota { margin-top: 12px; font-size: 12.5px; line-height: 1.55; color: var(--sl-tinta-3) }
-.sl-dados { margin-top: 12px; font-size: 13px }
-.sl-dados summary { cursor: pointer; color: var(--sl-ouro); font-weight: 600; width: fit-content; border-radius: 4px }
-.sl-dados summary::-webkit-details-marker { display: none }
-.sl-dados summary::before { content: "+ " }
-.sl-dados[open] summary::before { content: "− " }
-
-.sl-tabela-caixa { overflow-x: auto }
-.sl-tabela { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px }
-.sl-tabela caption { text-align: left; font-family: var(--sl-serifa); font-weight: 600; font-size: 21px; margin-bottom: 12px; color: var(--sl-tinta) }
-.sl-tabela th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--sl-ouro); padding: 10px 14px 10px 0; border-bottom: 2px solid var(--sl-tinta) }
-.sl-tabela td { padding: 13px 14px 13px 0; border-bottom: 1px solid var(--sl-linha); color: var(--sl-tinta); line-height: 1.5; vertical-align: top }
-.sl-tabela tbody th { font-size: 14px; letter-spacing: 0; text-transform: none; color: var(--sl-tinta); border-bottom: 1px solid var(--sl-linha); font-weight: 700 }
-
-/* Simulador. */
-.sl-comp { background: var(--sl-tinta); color: var(--sl-creme); border-radius: 20px; padding: 32px 34px 28px }
-.sl-comp h4 { font-family: var(--sl-serifa); font-weight: 600; font-size: 28px; line-height: 1.15 }
-.sl-comp-desc { margin-top: 8px; font-size: 14.5px; line-height: 1.6; color: rgba(253, 250, 245, .8); max-width: 60ch }
-.sl-comp-grade { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 34px; margin-top: 26px; align-items: start }
-.sl-comp-controles { display: flex; flex-direction: column; gap: 22px }
-.sl-controle label { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 600; color: rgba(253, 250, 245, .9) }
-.sl-controle output { font-family: var(--sl-serifa); font-size: 18px; color: var(--sl-creme) }
-.sl-controle input[type="range"] { width: 100%; margin-top: 10px; accent-color: var(--sl-acento); height: 24px; cursor: pointer }
-.sl-controle small { display: block; margin-top: 2px; font-size: 11.5px; color: rgba(253, 250, 245, .7) }
-.sl-comp-resultado { margin-top: 4px; padding-top: 18px; border-top: 1px solid rgba(253, 250, 245, .2) }
-.sl-comp-resultado b { display: block; font-family: var(--sl-serifa); font-size: 46px; font-weight: 600; line-height: 1; color: var(--sl-creme) }
-.sl-comp-resultado span { display: block; margin-top: 8px; font-size: 13px; line-height: 1.5; color: rgba(253, 250, 245, .82) }
-.sl-comp .sl-fig { background: var(--sl-creme); color: var(--sl-tinta) }
-/* O gráfico do simulador é papel dentro do bloco escuro: o foco volta ao vermelho. */
-.sl .sl-comp .sl-fig :focus-visible { outline-color: var(--sl-acento) }
-.sl-comp-aviso { margin-top: 18px; font-size: 12px; line-height: 1.55; color: rgba(253, 250, 245, .72) }
-.sl-comp .sl-chip-demo { margin-top: 0 }
-
-/* Referências. */
-.sl-refs { border-top: 2px solid var(--sl-tinta); padding-top: 8px }
-.sl-refs h4 { margin-top: 14px; font-family: var(--sl-serifa); font-weight: 600; font-size: 30px }
-.sl-refs ol { margin-top: 18px; counter-reset: ref }
-.sl-refs li { counter-increment: ref; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 8px; padding: 16px 0; border-bottom: 1px solid var(--sl-linha) }
-.sl-refs li::before { content: counter(ref, decimal-leading-zero); font-family: var(--sl-serifa); font-style: italic; color: var(--sl-acento) }
-.sl-refs cite { font-family: var(--sl-serifa); font-style: italic; font-size: 19px; color: var(--sl-tinta) }
-.sl-refs-autor { display: block; margin-top: 2px; font-size: 13.5px; color: var(--sl-tinta-2) }
-.sl-refs-nota { display: block; margin-top: 6px; font-size: 14px; line-height: 1.55; color: var(--sl-tinta-2) }
-
 /* ---- aula em modo teatro -------------------------------------------------- */
 
 .sl-palco { background: var(--sl-palco); color: var(--sl-creme); padding: 20px 0 36px }
@@ -577,11 +455,43 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 .sl-pl-pe { margin-top: auto; display: flex; gap: 12px; font-size: 12px; color: var(--sl-tinta-2) }
 .sl-pl-agora { font-weight: 700; color: var(--sl-acento) }
 
-/* ---- notebook do módulo --------------------------------------------------- */
+/* ---- notebook --------------------------------------------------------------
+   Linguagem visual de 01/out/2026 (guia em docs/NOTEBOOK.md). O tom pedido pelo
+   dono: terminal financeiro com acabamento de aplicativo de finanças, denso e
+   calmo. Na prática:
+   - uma família só para interface e números, a sans nativa que a LP também usa
+     (o Jost da LP é o wordmark do curso e só ele), com algarismos tabulares
+     em todo número;
+   - a serifa (Playfair) só no título de cada aula e na citação em destaque;
+   - rótulos em caixa normal e tracking normal, sem sobrancelha em versalete;
+   - papel e tinta, filetes finos, UM vermelho para a série ou o número que o
+     texto discute, cinzas quentes para o resto, dourado raro, verde e
+     vermelho semânticos só onde o sinal do dado importa;
+   - toda figura termina na linha de origem (Fonte ou Ilustrativo), em cinza.
+   ------------------------------------------------------------------------- */
+
+.sl-num, .sl-nbm .sl-tabela, .sl-g-valor { font-variant-numeric: tabular-nums lining-nums }
 
 .sl-nbm { margin-top: 56px }
-.sl-nbm-cabeca { padding-bottom: 26px; border-bottom: 1px solid var(--sl-linha-forte) }
-.sl-nbm-cabeca .sl-h2 { margin-top: 14px }
+.sl-nbm-cabeca { padding-bottom: 24px; border-bottom: 1px solid var(--sl-linha-forte) }
+.sl-nbm-rotulo { font-size: 13px; font-weight: 500; color: var(--sl-tinta-2) }
+.sl-nbm-cabeca .sl-h2 { margin-top: 6px }
+.sl-nb-meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px }
+
+.sl-nb { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 52px; margin-top: 36px; align-items: start }
+.sl-nb-indice { position: sticky; top: 86px }
+.sl-nb-indice h3 { font-size: 13px; font-weight: 600; color: var(--sl-tinta-2); margin-bottom: 10px }
+.sl-nb-indice ol { border-left: 1px solid var(--sl-linha-forte) }
+.sl-nb-indice a {
+  display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 6px; padding: 8px 0 8px 14px; margin-left: -1px;
+  border-left: 2px solid transparent;
+  font-size: 13.5px; line-height: 1.4; color: var(--sl-tinta-2) !important;
+}
+.sl-nb-indice a:hover { color: var(--sl-tinta) !important; border-left-color: var(--sl-linha-forte) }
+.sl-nb-indice a[aria-current] { color: var(--sl-tinta) !important; border-left-color: var(--sl-acento); font-weight: 600 }
+.sl-nb-indice a span { font-variant-numeric: tabular-nums; font-weight: 500; color: var(--sl-tinta-3) }
+.sl-nb-indice a[aria-current] span { color: var(--sl-acento) }
+
 .sl-nb-rolagem { min-width: 0 }
 .sl-nb-rolagem:focus-visible { outline-offset: 6px }
 /* No desktop o miolo rola dentro da própria caixa, da altura da janela, e o índice fica parado ao
@@ -590,6 +500,335 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 @media (min-width: 961px) {
   .sl-nb-rolagem { max-height: calc(100vh - 110px); overflow-y: auto; padding: 0 14px 40px 0; scrollbar-width: thin }
   .sl-nb-rolagem [id] { scroll-margin-top: 12px }
+}
+
+.sl-nb-canvas { min-width: 0; display: flex; flex-direction: column; gap: 64px }
+/* Âncora do índice não pode cair embaixo da topbar fixa. */
+.sl-nb-canvas [id] { scroll-margin-top: 90px }
+
+/* Seção de uma aula: filete de tinta, a linha de meta (número, duração, assistir) e o título na
+   serifa, o único lugar do notebook, fora a citação, onde ela aparece. */
+.sl-nb-secao { display: flex; flex-direction: column; gap: 30px; padding-top: 12px; border-top: 2px solid var(--sl-tinta) }
+.sl-nb-secao-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; font-size: 13px; color: var(--sl-tinta-2); font-variant-numeric: tabular-nums }
+.sl-nb-secao-num { color: var(--sl-tinta); font-weight: 600 }
+.sl-nb-secao-meta a, .sl-nb-secao-agora { margin-left: auto; font-weight: 600 }
+.sl-nb-secao-agora { display: inline-flex; align-items: center; gap: 7px; color: var(--sl-acento) }
+.sl-nb-secao-agora::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--sl-acento) }
+.sl-nb-secao-cabeca h3 {
+  margin-top: 8px; font-family: var(--sl-serifa); font-weight: 600;
+  font-size: clamp(28px, 3vw, 38px); line-height: 1.1; letter-spacing: -.015em; max-width: 28ch;
+}
+.sl-nb-secao .sl-vazio { margin-top: -10px }
+
+.sl-bloco { display: flex; flex-direction: column; gap: 10px; min-width: 0 }
+
+/* "Na aula, 12:34": atalho para o momento da aula. */
+.sl-naaula {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px 4px 8px; border: 1px solid var(--sl-linha-forte); border-radius: 8px;
+  font-size: 12.5px; font-weight: 500; color: var(--sl-tinta-2) !important; background: transparent;
+  transition: color .15s ease, border-color .15s ease;
+}
+.sl-naaula:hover { color: var(--sl-acento) !important; border-color: var(--sl-acento) }
+.sl-naaula svg { color: var(--sl-acento) }
+
+/* ---- texto, destaque, número, capítulo ------------------------------------ */
+
+.sl-cap { padding-top: 4px }
+.sl-cap h4 { font-weight: 600; font-size: 22px; line-height: 1.25; letter-spacing: -.01em; max-width: 34ch; color: var(--sl-tinta) }
+.sl-cap p { margin-top: 6px; font-size: 15.5px; line-height: 1.55; color: var(--sl-tinta-2); max-width: 62ch }
+
+.sl-prosa { max-width: 68ch }
+.sl-prosa p { font-size: 17px; line-height: 1.7; color: #2a2723 }
+.sl-prosa p + p { margin-top: 1em }
+.sl-prosa.is-abertura p:first-child { font-size: 19.5px; line-height: 1.6; color: var(--sl-tinta) }
+
+.sl-destaque { max-width: 32ch; padding: 4px 0 4px 24px; border-left: 2px solid var(--sl-acento) }
+.sl-destaque p { font-family: var(--sl-serifa); font-style: italic; font-weight: 500; font-size: clamp(24px, 2.6vw, 32px); line-height: 1.28; color: var(--sl-tinta) }
+.sl-destaque footer { margin-top: 12px; font-size: 13px; color: var(--sl-tinta-2) }
+
+.sl-numero { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 28px; align-items: center; padding: 22px 0; border-top: 1px solid var(--sl-tinta); border-bottom: 1px solid var(--sl-linha-forte) }
+.sl-numero-valor { font-weight: 600; font-size: clamp(52px, 6.4vw, 84px); line-height: .95; letter-spacing: -.035em; color: var(--sl-acento); white-space: nowrap; font-variant-numeric: tabular-nums lining-nums }
+.sl-numero-legenda { font-size: 17px; line-height: 1.5; color: var(--sl-tinta); max-width: 46ch }
+.sl-numero-nota { margin-top: 6px; font-size: 12.5px; color: var(--sl-tinta-3) }
+
+/* ---- figura: a caixa comum de gráfico, comparativo, linha do tempo, fluxo,
+   matriz e simulador -------------------------------------------------------- */
+
+.sl-fig, .sl-cmp, .sl-tempo, .sl-fluxo, .sl-matriz, .sl-sim {
+  background: var(--sl-creme); border: 1px solid var(--sl-borda); border-radius: 12px; padding: 22px 24px 16px; min-width: 0;
+}
+.sl-fig-titulo { font-weight: 600; font-size: 17px; line-height: 1.3; letter-spacing: -.005em; color: var(--sl-tinta); max-width: 56ch }
+.sl-fig-sub { margin-top: 4px; font-size: 13.5px; line-height: 1.5; color: var(--sl-tinta-2); max-width: 70ch }
+
+/* Linha de origem: "Fonte: ..." ou "Ilustrativo: ...", sempre visível. */
+.sl-origem { margin-top: 12px; font-size: 12px; line-height: 1.5; color: var(--sl-tinta-3); max-width: 90ch }
+.sl-origem > span { font-weight: 600; color: var(--sl-tinta-2) }
+
+/* Legenda: cada série é um botão que liga e desliga. */
+.sl-legenda { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 12px }
+.sl-legenda button {
+  display: inline-flex; align-items: center; gap: 8px; padding: 3px 0; border: 0; background: none; cursor: pointer;
+  font: 500 12.5px/1.3 var(--sl-sans); color: var(--sl-tinta-2);
+}
+.sl-legenda button:hover { color: var(--sl-tinta) }
+.sl-legenda button[aria-pressed="false"] { color: var(--sl-tinta-3); text-decoration: line-through; text-decoration-color: rgba(26, 24, 21, .35) }
+.sl-legenda button[aria-pressed="false"] i { opacity: .3 }
+.sl-legenda i { width: 16px; height: 2.5px; border-radius: 2px; display: inline-block }
+.sl-legenda i[data-forma="barra"] { width: 10px; height: 10px; border-radius: 2px }
+
+.sl-grafico { position: relative; margin-top: 10px }
+.sl-grafico svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y }
+.sl-grafico svg:focus-visible { outline: 2px solid var(--sl-acento); outline-offset: 4px }
+.sl-grafico text, .sl-tempo-svg text { font-family: var(--sl-sans); font-size: 11.5px; fill: var(--sl-tinta-3); font-variant-numeric: tabular-nums lining-nums }
+.sl-g-grade line { stroke: rgba(26, 24, 21, .08); stroke-width: 1 }
+.sl-g-grade line[data-zero] { stroke: rgba(26, 24, 21, .5) }
+.sl-g-faixa rect { fill: rgba(26, 24, 21, .045) }
+.sl .sl-g-faixa text { fill: var(--sl-tinta-2); font-size: 11px }
+.sl-g-banda { fill: rgba(26, 24, 21, .05) }
+.sl-g-marco line { stroke: rgba(26, 24, 21, .55); stroke-width: 1; stroke-dasharray: 2 3 }
+.sl .sl-g-marco text { fill: var(--sl-tinta); font-weight: 500 }
+.sl-g-ref line { stroke: var(--sl-regua); stroke-width: 1; stroke-dasharray: 4 3 }
+.sl .sl-g-ref text { fill: var(--sl-ouro) }
+.sl-g-cruz line { stroke: rgba(26, 24, 21, .45); stroke-width: 1 }
+.sl-g-coluna line { stroke: var(--sl-linha-forte) }
+.sl .sl-g-coluna text { fill: var(--sl-tinta); font-weight: 600; font-size: 12.5px }
+.sl .sl-g-valor { font-weight: 600; font-size: 12px }
+.sl-g-nome { font-weight: 500 }
+.sl-g-barra { transform-box: fill-box }
+
+/* Dica do ponto: tinta, números tabulares alinhados à direita. */
+.sl-dica {
+  position: absolute; pointer-events: none; z-index: 2;
+  min-width: 168px; max-width: 280px; padding: 9px 11px; border-radius: 8px;
+  background: var(--sl-tinta); color: var(--sl-creme); font-size: 12px; line-height: 1.45;
+  box-shadow: 0 10px 24px rgba(26, 24, 21, .22);
+}
+.sl-dica[data-lado="dir"] { transform: translateX(14px) }
+.sl-dica[data-lado="esq"] { transform: translateX(calc(-100% - 14px)) }
+.sl-dica[data-lado="centro"] { transform: translateX(-50%) }
+.sl-dica b { display: block; margin-bottom: 4px; font-weight: 600; color: rgba(253, 250, 245, .72) }
+.sl-dica span { display: grid; grid-template-columns: 8px minmax(0, 1fr) auto; gap: 8px; align-items: center }
+.sl-dica i { width: 8px; height: 8px; border-radius: 2px; display: inline-block }
+.sl-dica em { font-style: normal; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums lining-nums }
+.sl-dica .sl-dica-total { grid-template-columns: minmax(0, 1fr) auto; margin-top: 4px; padding-top: 4px; border-top: 1px solid rgba(253, 250, 245, .18); color: rgba(253, 250, 245, .8) }
+
+.sl-dados { margin-top: 8px; font-size: 12.5px }
+.sl-dados summary { cursor: pointer; color: var(--sl-tinta-2); font-weight: 500; width: fit-content; border-radius: 4px; list-style: none }
+.sl-dados summary:hover { color: var(--sl-tinta) }
+.sl-dados summary::-webkit-details-marker { display: none }
+.sl-dados summary::before { content: "+ "; font-variant-numeric: tabular-nums }
+.sl-dados[open] summary::before { content: "\2212  " }
+
+/* ---- tabela --------------------------------------------------------------- */
+
+.sl-tabela-caixa { overflow-x: auto }
+.sl-tabela { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13.5px }
+.sl-tabela caption { text-align: left; font-weight: 600; font-size: 17px; margin-bottom: 10px; color: var(--sl-tinta) }
+.sl-tabela th { text-align: left; font-size: 12px; font-weight: 600; color: var(--sl-tinta-2); padding: 8px 14px 8px 0; border-bottom: 1px solid var(--sl-tinta); vertical-align: bottom }
+.sl-tabela td { padding: 10px 14px 10px 0; border-bottom: 1px solid var(--sl-linha); color: var(--sl-tinta); line-height: 1.5; vertical-align: top }
+.sl-tabela tbody th { font-size: 13.5px; color: var(--sl-tinta); border-bottom: 1px solid var(--sl-linha); font-weight: 600; vertical-align: top }
+.sl-tabela .is-num, .sl-tabela-num td, .sl-tabela-num thead th + th { text-align: right; font-variant-numeric: tabular-nums lining-nums; white-space: nowrap }
+.sl-tabela-num td:last-child, .sl-tabela-num th:last-child { padding-right: 0 }
+
+/* ---- KPIs ----------------------------------------------------------------- */
+
+.sl-kpis .sl-fig-titulo { margin-bottom: 10px }
+.sl-kpis-grade { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--sl-tinta); border-bottom: 1px solid var(--sl-linha-forte) }
+.sl-kpis[data-n="2"] .sl-kpis-grade { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+.sl-kpis[data-n="3"] .sl-kpis-grade { grid-template-columns: repeat(3, minmax(0, 1fr)) }
+.sl-kpi { padding: 14px 18px 16px 0; min-width: 0 }
+.sl-kpi + .sl-kpi { padding-left: 18px; border-left: 1px solid var(--sl-linha) }
+.sl-kpi dt { font-size: 13px; line-height: 1.35; font-weight: 500; color: var(--sl-tinta-2) }
+.sl-kpi-valor { margin-top: 8px; font-weight: 600; font-size: clamp(28px, 3.2vw, 40px); line-height: 1; letter-spacing: -.025em; color: var(--sl-tinta); font-variant-numeric: tabular-nums lining-nums; white-space: nowrap }
+.sl-kpi.is-destaque .sl-kpi-valor { color: var(--sl-acento) }
+.sl-kpi-var { margin-top: 8px; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums lining-nums; color: var(--sl-tinta-2) }
+.sl-kpi-var[data-tom="bom"] { color: #2f6b4f }
+.sl-kpi-var[data-tom="ruim"] { color: var(--sl-acento) }
+.sl-kpi-var > span[aria-hidden] { font-size: 9px; vertical-align: 1px }
+.sl-kpi-var-rot { font-weight: 400; color: var(--sl-tinta-3) }
+.sl-kpi-nota { margin-top: 4px; font-size: 12px; color: var(--sl-tinta-3) }
+
+/* ---- comparativo ---------------------------------------------------------- */
+
+.sl-cmp-tabela { width: 100%; margin-top: 14px; border-collapse: collapse; table-layout: fixed; font-variant-numeric: tabular-nums lining-nums }
+.sl-cmp-tabela thead th { text-align: left; vertical-align: bottom; padding: 10px 16px 12px; border-bottom: 1px solid var(--sl-tinta); font-weight: 400 }
+.sl-cmp-tabela thead td { width: 30%; border-bottom: 1px solid var(--sl-tinta) }
+.sl-cmp-nome { display: block; font-weight: 600; font-size: 15px; line-height: 1.3; color: var(--sl-tinta) }
+.sl-cmp-resumo { display: block; margin-top: 3px; font-size: 12.5px; line-height: 1.4; color: var(--sl-tinta-2) }
+.sl-cmp-tabela th.is-destaque { box-shadow: inset 0 2px 0 var(--sl-acento) }
+.sl-cmp-tabela th.is-destaque .sl-cmp-nome { color: var(--sl-acento) }
+.sl-cmp-tabela .is-destaque { background: rgba(193, 18, 31, .035) }
+.sl-cmp-tabela tbody th { text-align: left; padding: 12px 12px 12px 0; font-size: 13px; line-height: 1.4; font-weight: 500; color: var(--sl-tinta-2); border-bottom: 1px solid var(--sl-linha); vertical-align: top }
+.sl-cmp-tabela td { padding: 12px 16px; border-bottom: 1px solid var(--sl-linha); vertical-align: top }
+.sl-cmp-valor { display: block; font-weight: 600; font-size: 16px; color: var(--sl-tinta); white-space: nowrap }
+.sl-cmp-tabela .is-recua .sl-cmp-valor { font-weight: 500; color: var(--sl-tinta-2) }
+.sl-cmp-barra { display: block; height: 4px; margin-top: 8px; border-radius: 2px; background: rgba(26, 24, 21, .06); overflow: hidden }
+.sl-cmp-barra i { display: block; height: 100%; border-radius: 2px; background: #a59d92; transform-origin: left center }
+.sl-cmp-tabela .is-destaque .sl-cmp-barra i { background: var(--sl-acento) }
+
+/* ---- linha do tempo ------------------------------------------------------- */
+
+.sl-tempo-rolagem { overflow-x: auto; margin: 14px -24px 0; padding: 0 24px 8px; scrollbar-width: thin; overscroll-behavior-x: contain }
+.sl-tempo-rolagem:focus-visible { outline-offset: -2px }
+.sl-tempo-trilho { position: relative; width: max(100%, calc(var(--n) * 188px)) }
+.sl-tempo-svg { display: block; overflow: visible }
+.sl .sl-tempo-serie { fill: var(--sl-tinta-2); font-size: 12px }
+.sl-tempo-area { fill: rgba(26, 24, 21, .045) }
+.sl-tempo-linha { stroke: var(--sl-tinta-2); stroke-width: 1.5; stroke-linejoin: round }
+.sl-tempo-base { stroke: var(--sl-linha-forte); stroke-width: 1 }
+.sl-tempo-fio { stroke: rgba(26, 24, 21, .22); stroke-width: 1 }
+.sl-tempo-evento circle { fill: #a59d92 }
+.sl-tempo-evento.is-aceso .sl-tempo-fio { stroke: var(--sl-acento); stroke-width: 1.25 }
+.sl-tempo-evento.is-aceso circle { fill: var(--sl-acento) }
+.sl-tempo-eventos { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)) }
+.sl-tempo-eventos li { padding: 10px 12px 6px; border-top: 2px solid var(--sl-linha-forte); outline-offset: -2px; transition: border-color .15s ease }
+.sl-tempo-eventos li.is-aceso { border-top-color: var(--sl-acento) }
+.sl-tempo-data { display: block; font-size: 12.5px; font-weight: 600; color: var(--sl-tinta-2); font-variant-numeric: tabular-nums lining-nums }
+.sl-tempo-eventos li.is-aceso .sl-tempo-data { color: var(--sl-acento) }
+.sl-tempo-titulo { margin-top: 3px; font-weight: 600; font-size: 14px; line-height: 1.3; color: var(--sl-tinta) }
+.sl-tempo-texto { margin-top: 4px; font-size: 12.5px; line-height: 1.45; color: var(--sl-tinta-2) }
+.sl-tempo-valor { margin-top: 6px; font-size: 12px; color: var(--sl-tinta-3); font-variant-numeric: tabular-nums lining-nums }
+
+/* ---- fluxo ---------------------------------------------------------------- */
+
+.sl-fluxo-lista { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); column-gap: 60px; margin-top: 18px }
+.sl-fluxo-passo { position: relative; display: flex; min-width: 0 }
+.sl-fluxo-no { flex: 1; padding: 12px 14px 14px; border: 1px solid var(--sl-borda); border-radius: 10px; background: var(--sl-papel) }
+.sl-fluxo-no.is-fim { border-color: var(--sl-tinta); background: #fff }
+.sl-fluxo-num { font-size: 12px; font-weight: 500; color: var(--sl-tinta-3); font-variant-numeric: tabular-nums }
+.sl-fluxo-titulo { margin-top: 4px; font-weight: 600; font-size: 15px; line-height: 1.3; color: var(--sl-tinta) }
+.sl-fluxo-sentido { margin-left: 5px; font-weight: 600; color: var(--sl-acento) }
+.sl-fluxo-texto { margin-top: 5px; font-size: 13px; line-height: 1.45; color: var(--sl-tinta-2) }
+.sl-fluxo-seta {
+  position: absolute; right: 100%; top: 50%; width: 60px; transform: translateY(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--sl-tinta-2); pointer-events: none;
+}
+.sl-fluxo-seta span { font-size: 11.5px; line-height: 1.2; color: var(--sl-tinta-2); white-space: nowrap }
+.sl-fluxo-seta svg { width: 40px; height: 12px; display: block }
+
+/* ---- matriz --------------------------------------------------------------- */
+
+.sl-matriz-corpo { display: grid; grid-template-columns: 22px minmax(0, 1fr); grid-template-rows: auto auto; margin-top: 14px }
+.sl-matriz-eixo-col { grid-column: 2; text-align: center; padding-left: 22%; font-size: 12.5px; font-weight: 600; color: var(--sl-tinta-2) }
+.sl-matriz-eixo-lin { grid-column: 1; grid-row: 2; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; font-size: 12.5px; font-weight: 600; color: var(--sl-tinta-2) }
+.sl-matriz-tabela { grid-column: 2; grid-row: 2; width: 100%; border-collapse: separate; border-spacing: 6px; table-layout: fixed }
+.sl-matriz-tabela thead th { padding: 4px; text-align: center; font-weight: 600; font-size: 13px; color: var(--sl-tinta) }
+.sl-matriz-tabela thead td { width: 22% }
+.sl-matriz-tabela tbody th { text-align: right; padding-right: 8px; font-weight: 600; font-size: 13px; line-height: 1.3; color: var(--sl-tinta) }
+.sl-matriz-tabela tbody td {
+  position: relative; height: 104px; padding: 26px 12px 12px; text-align: center; vertical-align: middle;
+  background: var(--sl-papel); border: 1px solid var(--sl-borda); border-radius: 10px;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.sl-matriz[data-modo="quadrante"] .sl-matriz-tabela tbody td { text-align: left; vertical-align: top; padding-top: 14px }
+.sl-matriz-tabela tbody td.is-ativa { border-color: var(--sl-tinta); background: #fff }
+.sl-matriz-tabela tbody td.is-marca { border: 1.5px solid var(--sl-acento) }
+.sl-matriz-marca { position: absolute; top: 8px; left: 10px; font-size: 11.5px; font-weight: 600; color: var(--sl-acento) }
+.sl-matriz[data-modo="quadrante"] .sl-matriz-marca { position: static; display: block; margin-bottom: 4px }
+.sl-matriz-par { font-weight: 600; font-size: 22px; letter-spacing: -.01em; font-variant-numeric: tabular-nums lining-nums }
+.sl-matriz-par b { color: var(--sl-tinta); font-weight: 600 }
+.sl-matriz-par i { font-style: normal; font-weight: 500; color: var(--sl-tinta-2); margin-left: 4px }
+.sl-matriz-texto { display: block; font-size: 14px; line-height: 1.4; color: var(--sl-tinta) }
+.sl-matriz-par + .sl-matriz-texto { margin-top: 4px; font-size: 12.5px; color: var(--sl-tinta-2) }
+.sl-matriz-painel { margin-top: 10px; min-height: 46px; padding: 12px 14px; border-radius: 8px; background: var(--sl-papel); font-size: 14px; line-height: 1.5; color: var(--sl-tinta) }
+.sl-matriz-painel b { font-weight: 600 }
+.sl-matriz-dica { color: var(--sl-tinta-3) }
+.sl-matriz-legenda { margin-top: 8px; font-size: 12px; color: var(--sl-tinta-3) }
+
+/* ---- simulador ------------------------------------------------------------ */
+
+.sl-sim { padding: 22px 24px 18px }
+.sl-sim-rotulo { font-size: 12.5px; font-weight: 600; color: var(--sl-acento); margin-bottom: 4px }
+.sl-sim-grade { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px; margin-top: 20px; align-items: start }
+.sl-sim-controles { display: flex; flex-direction: column; gap: 18px }
+.sl-controle label { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 13px; line-height: 1.35; font-weight: 500; color: var(--sl-tinta) }
+.sl-controle output { font-weight: 600; font-size: 14px; color: var(--sl-tinta); white-space: nowrap; font-variant-numeric: tabular-nums lining-nums }
+.sl-controle input[type="range"] { width: 100%; margin: 8px 0 0; accent-color: var(--sl-acento); height: 22px; cursor: pointer }
+.sl-controle small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.45; color: var(--sl-tinta-3) }
+.sl-sim-fixos { padding-top: 12px; border-top: 1px solid var(--sl-linha); font-size: 12.5px; line-height: 1.5; color: var(--sl-tinta-2) }
+.sl-sim-resultado { padding-bottom: 14px; border-bottom: 1px solid var(--sl-linha) }
+.sl-sim-resultado b { display: block; font-weight: 600; font-size: clamp(32px, 3.4vw, 44px); line-height: 1; letter-spacing: -.025em; color: var(--sl-acento); font-variant-numeric: tabular-nums lining-nums }
+.sl-sim-resultado p { margin-top: 8px; font-size: 13.5px; line-height: 1.5; color: var(--sl-tinta-2) }
+.sl-sim-extras { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; border-bottom: 1px solid var(--sl-linha) }
+.sl-sim-extras div { padding: 10px 0 }
+.sl-sim-extras dt { font-size: 12px; line-height: 1.35; color: var(--sl-tinta-2) }
+.sl-sim-extras dd { margin-top: 3px; font-weight: 600; font-size: 15px; color: var(--sl-tinta); font-variant-numeric: tabular-nums lining-nums }
+/* O gráfico do simulador mora dentro da caixa do simulador: sem segunda moldura. */
+.sl-sim .sl-fig { border: 0; border-radius: 0; background: transparent; padding: 0; margin-top: 14px }
+
+/* ---- conceito ------------------------------------------------------------- */
+
+.sl-conceito { max-width: 84ch; padding: 2px 0 2px 22px; border-left: 2px solid var(--sl-tinta) }
+.sl-conceito-rotulo { font-size: 12.5px; font-weight: 500; color: var(--sl-tinta-2) }
+.sl-conceito-termo { margin-top: 2px; font-weight: 600; font-size: 20px; line-height: 1.25; letter-spacing: -.01em; color: var(--sl-tinta) }
+.sl-conceito-grade { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; margin-top: 10px }
+.sl-conceito-grade p { font-size: 15px; line-height: 1.6; color: #2a2723 }
+.sl-conceito-pratica { padding-left: 28px; border-left: 1px solid var(--sl-linha) }
+.sl .sl-conceito-sub { margin-bottom: 4px; font-size: 12.5px; font-weight: 600; color: var(--sl-acento) }
+.sl .sl-conceito-formula { display: inline-block; margin-top: 10px; padding: 6px 10px; border-radius: 6px; background: var(--sl-papel-baixo); font-size: 14.5px; font-weight: 500; color: var(--sl-tinta); font-variant-numeric: tabular-nums lining-nums }
+.sl-conceito-ref { margin-top: 12px; font-size: 12.5px; line-height: 1.5; color: var(--sl-tinta-3) }
+.sl-conceito-ref cite { font-style: italic }
+
+/* ---- referências ---------------------------------------------------------- */
+
+.sl-refs { border-top: 1px solid var(--sl-tinta); padding-top: 12px }
+.sl-refs h4 { font-weight: 600; font-size: 17px; color: var(--sl-tinta) }
+.sl-refs ol { margin-top: 8px; counter-reset: ref }
+.sl-refs li { counter-increment: ref; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 6px; padding: 12px 0; border-bottom: 1px solid var(--sl-linha) }
+.sl-refs li::before { content: counter(ref, decimal-leading-zero); padding-top: 2px; font-size: 12.5px; font-weight: 500; color: var(--sl-tinta-3); font-variant-numeric: tabular-nums }
+.sl-refs cite { font-style: italic; font-weight: 500; font-size: 15.5px; color: var(--sl-tinta) }
+.sl-refs-autor { display: block; margin-top: 2px; font-size: 13px; color: var(--sl-tinta-2) }
+.sl-refs-nota { display: block; margin-top: 4px; font-size: 13.5px; line-height: 1.55; color: var(--sl-tinta-2) }
+
+/* ---- entrada (Entrada.tsx) ---------------------------------------------------
+   `fora` só existe com JS e sem movimento reduzido, e só em figura que estava
+   fora da tela ao montar. Os keyframes de opacidade têm só o `from`: o fim é o
+   valor de baixo, e uma série apagada de propósito (inclinação, área) não
+   acende ao fim da animação. */
+
+@keyframes sl-traco { from { stroke-dashoffset: 1 } to { stroke-dashoffset: 0 } }
+@keyframes sl-surge { from { opacity: 0 } }
+@keyframes sl-sobe { from { opacity: 0; transform: translateY(8px) } }
+@keyframes sl-cresce-y { from { transform: scaleY(0) } }
+@keyframes sl-cresce-x { from { transform: scaleX(0) } }
+
+.sl [data-entrada] .sl-g-traco { stroke-dasharray: 1 }
+.sl [data-entrada="fora"] .sl-g-traco { stroke-dashoffset: 1 }
+.sl [data-entrada="entra"] .sl-g-traco { animation: sl-traco 1.15s cubic-bezier(.3, .7, .25, 1) both }
+.sl [data-entrada="fora"] :is(.sl-g-area, .sl-g-rotulo, .sl-g-marco, .sl-g-ref, .sl-tempo-evento, .sl-fluxo-no, .sl-fluxo-seta, .sl-matriz-tabela tbody td) { opacity: 0 }
+.sl [data-entrada="entra"] .sl-g-area { animation: sl-surge .7s ease .45s backwards }
+.sl [data-entrada="entra"] :is(.sl-g-rotulo, .sl-g-marco, .sl-g-ref) { animation: sl-surge .45s ease .9s backwards }
+.sl [data-entrada="entra"] .sl-tempo-evento { animation: sl-surge .4s ease .8s backwards }
+.sl [data-entrada="fora"] .sl-g-barra { transform: scaleY(0) }
+.sl [data-entrada="entra"] .sl-g-barra { animation: sl-cresce-y .75s cubic-bezier(.22, 1, .36, 1) backwards }
+.sl [data-entrada="fora"] .sl-cmp-barra i { transform: scaleX(0) }
+.sl [data-entrada="entra"] .sl-cmp-barra i { animation: sl-cresce-x .8s cubic-bezier(.22, 1, .36, 1) backwards }
+.sl [data-entrada="entra"] :is(.sl-fluxo-no, .sl-fluxo-seta) { animation: sl-sobe .5s ease backwards; animation-delay: calc(var(--i) * 160ms) }
+.sl [data-entrada="entra"] .sl-matriz-tabela tbody td { animation: sl-sobe .45s ease backwards; animation-delay: calc(var(--q) * 90ms) }
+
+/* ---- notebook em tela estreita -------------------------------------------- */
+
+@media (max-width: 960px) {
+  .sl-sim-grade, .sl-conceito-grade { grid-template-columns: minmax(0, 1fr) }
+  .sl-conceito-pratica { padding-left: 0; padding-top: 14px; border-left: 0; border-top: 1px solid var(--sl-linha) }
+  .sl-kpis-grade, .sl-kpis[data-n="3"] .sl-kpis-grade { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+  .sl-kpi:nth-child(odd) { padding-left: 0; border-left: 0 }
+  .sl-kpi:nth-child(n + 3) { border-top: 1px solid var(--sl-linha) }
+}
+@media (max-width: 760px) {
+  .sl-fluxo-lista { grid-template-columns: minmax(0, 1fr); row-gap: 40px }
+  .sl-fluxo-seta { right: auto; left: 18px; top: auto; bottom: 100%; width: auto; height: 40px; transform: none; flex-direction: row-reverse; align-items: center; gap: 8px }
+  .sl-fluxo-seta svg { width: 26px; transform: rotate(90deg) }
+}
+@media (max-width: 600px) {
+  .sl-fig, .sl-cmp, .sl-tempo, .sl-fluxo, .sl-matriz, .sl-sim { padding: 18px 16px 14px; border-radius: 10px }
+  .sl-tempo-rolagem { margin: 14px -16px 0; padding: 0 16px 8px }
+  .sl-numero { grid-template-columns: minmax(0, 1fr); gap: 10px }
+  .sl-sim-extras { grid-template-columns: minmax(0, 1fr) }
+  .sl-cmp-tabela { table-layout: auto; min-width: 460px }
+  .sl-matriz-tabela tbody td { height: 88px; padding: 24px 8px 10px }
+  .sl-matriz-par { font-size: 18px }
 }
 
 /* ---- miolo da home (entre o banner portado e a prateleira) ---------------- */
@@ -621,7 +860,7 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 /* ---- telas estreitas: o desenho é de desktop, aqui só empilha ------------- */
 
 @media (max-width: 960px) {
-  .sl-intro-grade, .sl-teaser, .sl-modulo-grade, .sl-aula-grade, .sl-nb, .sl-comp-grade { grid-template-columns: minmax(0, 1fr) }
+  .sl-intro-grade, .sl-teaser, .sl-modulo-grade, .sl-aula-grade, .sl-nb { grid-template-columns: minmax(0, 1fr) }
   .sl-teaser-visual { border-left: 0; border-top: 1px solid var(--sl-borda) }
   .sl-como { grid-template-columns: repeat(2, minmax(0, 1fr)) }
   .sl-como li:nth-child(2) { border-right: 0 }
@@ -651,8 +890,7 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
   .sl-como { grid-template-columns: minmax(0, 1fr) }
   .sl-como li, .sl-como li + li { padding: 20px 0 6px; border-right: 0 }
   .sl-hero-olho { display: none }
-  .sl-teaser-texto, .sl-teaser-visual, .sl-comp { padding: 24px 22px }
-  .sl-numero { grid-template-columns: minmax(0, 1fr); gap: 10px }
+  .sl-teaser-texto, .sl-teaser-visual { padding: 24px 22px }
   .sl-palco-player, .sl-palco-meta, .sl-palco-topo, .sl-palco-fim, .sl-palco-materiais { max-width: calc(100% - 36px) }
   .sl-pl-fila > li { flex-basis: 78vw }
 }

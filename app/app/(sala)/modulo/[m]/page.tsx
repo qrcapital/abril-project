@@ -10,6 +10,7 @@ import { getConcluidas } from "@/lib/progresso";
 import { getMateriais } from "@/lib/materiais";
 import { fonteDoVideo } from "@/lib/video";
 import { notebookDoModulo } from "@/content/notebooks";
+import { segundosDaUrl } from "@/lib/notebook";
 import AncoraDaAula from "@/app/app/_ui/sala/AncoraDaAula";
 import AvisoTravado from "@/app/app/_ui/sala/Aviso";
 import CartaoDocente from "@/app/app/_ui/sala/CartaoDocente";
@@ -55,7 +56,7 @@ export default async function ModuloPage({
   searchParams,
 }: {
   params: Promise<{ m: string }>;
-  searchParams: Promise<{ aula?: string | string[] }>;
+  searchParams: Promise<{ aula?: string | string[]; t?: string | string[] }>;
 }) {
   const [{ m }, sp] = await Promise.all([params, searchParams]);
   const ord = Number(m);
@@ -134,10 +135,13 @@ export default async function ModuloPage({
           </span>
         </div>
 
-        <div className="sl-palco-player">
+        {/* `id="player"` e `data-player-aula`: o atalho "Na aula, 12:34" do notebook usa os dois
+            (NaAula.tsx), o primeiro como destino do link e o segundo para saber se a aula do bloco
+            é a que está tocando. */}
+        <div className="sl-palco-player" id="player" data-player-aula={aula.pos}>
           {/* `key` pela aula: trocar de aula monta um player novo, em vez de reaproveitar um
               iframe do Panda que já bootou medindo o vídeo anterior. */}
-          <Player key={aula.id} fonte={fonteDoVideo(aula.video)} titulo={aula.titulo} />
+          <Player key={aula.id} fonte={fonteDoVideo(aula.video)} titulo={aula.titulo} inicio={segundosDaUrl(sp.t)} />
         </div>
 
         <div className="sl-palco-meta">

@@ -1,8 +1,18 @@
-import type { Aula } from "@/lib/curso";
-import { ancoraDaAula, secaoDaAula, type Bloco, type Notebook } from "@/lib/notebook";
+import Link from "next/link";
 
-import Comparador from "./Comparador";
+import { href, type Aula } from "@/lib/curso";
+import { ancoraDaAula, deComparador, secaoDaAula, type Bloco, type Notebook } from "@/lib/notebook";
+
+import Comparativo from "./Comparativo";
+import Fluxo from "./Fluxo";
 import Grafico from "./Grafico";
+import Kpis from "./Kpis";
+import LinhaDoTempo from "./LinhaDoTempo";
+import Matriz from "./Matriz";
+import NaAula from "./NaAula";
+import Origem from "./Origem";
+import { minutos } from "./Playlist";
+import Simulador from "./Simulador";
 
 /**
  * O notebook do módulo: UM documento longo, com uma seção por aula (`#aula-<n>`), dentro da página
@@ -19,7 +29,11 @@ import Grafico from "./Grafico";
  * teatro da tela (`AncoraDaAula`). No celular a caixa volta a ser página corrida, porque rolagem
  * dentro de rolagem com o polegar é armadilha.
  *
- * Componente de servidor; só o gráfico (a dica no hover) e o simulador descem para o cliente.
+ * A LINGUAGEM VISUAL (01/out/2026, `docs/NOTEBOOK.md`): papel, tinta e um vermelho; sans da casa
+ * em tudo, com algarismos tabulares; a serifa só no título de cada aula e na citação em destaque.
+ *
+ * Componente de servidor; gráficos, KPIs, linha do tempo, matriz, simulador e o atalho de tempo
+ * descem para o cliente.
  */
 export default function NotebookModulo({
   notebook,
@@ -36,7 +50,7 @@ export default function NotebookModulo({
   return (
     <section className="sl-nbm" id="notebook" aria-labelledby="nb-titulo">
       <header className="sl-nbm-cabeca">
-        <span className="sl-eyebrow">Notebook do módulo</span>
+        <p className="sl-nbm-rotulo">Notebook do módulo</p>
         <h2 className="sl-h2" id="nb-titulo">
           {notebook ? notebook.titulo : "Em preparação"}
         </h2>
@@ -74,15 +88,30 @@ export default function NotebookModulo({
             {aulas.map((a) => {
               const secao = secaoDaAula(notebook, a.pos);
               const ancora = ancoraDaAula(a.pos);
+              const tocando = a.pos === atual;
               return (
                 <section key={a.id} className="sl-nb-secao" id={ancora} aria-labelledby={`${ancora}-titulo`}>
                   <header className="sl-nb-secao-cabeca">
-                    <h3 id={`${ancora}-titulo`}>
-                      <span className="sl-nb-secao-num">Aula {a.pos} ·</span> {a.titulo}
-                    </h3>
+                    <p className="sl-nb-secao-meta">
+                      <span className="sl-nb-secao-num">Aula {String(a.pos).padStart(2, "0")}</span>
+                      {a.duracao ? <span>{minutos(a.duracao)}</span> : null}
+                      {tocando ? (
+                        <span className="sl-nb-secao-agora">No player agora</span>
+                      ) : (
+                        <Link href={href(a)} scroll={false}>
+                          Assistir esta aula
+                        </Link>
+                      )}
+                    </p>
+                    <h3 id={`${ancora}-titulo`}>{a.titulo}</h3>
                   </header>
                   {secao ? (
-                    secao.blocos.map((b, i) => <UmBloco key={i} bloco={b} demo={demo} />)
+                    secao.blocos.map((b, i) => (
+                      <div className="sl-bloco" data-tipo={b.tipo} key={i}>
+                        <UmBloco bloco={b} />
+                        {b.tempo && notebook && <NaAula modulo={notebook.modulo} aula={a.pos} tempo={b.tempo} />}
+                      </div>
+                    ))
                   ) : (
                     <p className="sl-vazio">Conteúdo desta aula em produção.</p>
                   )}
@@ -96,7 +125,10 @@ export default function NotebookModulo({
   );
 }
 
-function UmBloco({ bloco: b, demo }: { bloco: Bloco; demo: boolean }) {
+/** Célula de tabela que é número (valor, percentual, moeda): alinha à direita, em tabular. */
+const NUMERICO = /^[\s(+\-−]*(R\$|US\$|€)?\s*[\d.,]+\s*(%|p\.p\.|×|x|bi|mi|mil)?\)?\s*$/;
+
+function UmBloco({ bloco: b }: { bloco: Bloco }) {
   switch (b.tipo) {
     case "capitulo":
       // Subtítulo dentro da seção da aula. O número de capítulo saiu com as seções: quem numera
@@ -109,7 +141,7 @@ function UmBloco({ bloco: b, demo }: { bloco: Bloco; demo: boolean }) {
       );
     case "texto":
       return (
-        <div className={`sl-prosa${b.capitular ? " is-capitular" : ""}`}>
+        <div className={`sl-prosa${b.capitular ? " is-abertura" : ""}`}>
           {b.paragrafos.map((p, i) => (
             <p key={i}>{p}</p>
           ))}
@@ -136,54 +168,113 @@ function UmBloco({ bloco: b, demo }: { bloco: Bloco; demo: boolean }) {
       return (
         <Grafico
           titulo={b.titulo}
+          subtitulo={b.subtitulo}
           forma={b.forma}
           eixoX={b.eixoX}
           series={b.series}
           formato={b.formato}
-          nota={b.nota}
-          ilustrativo={b.ilustrativo}
-          nivel={4}
+          escala={b.escala}
+          marcos={b.marcos}
+          faixas={b.faixas}
+          referencia={b.referencia}
+          origem={b}
         />
       );
-    case "comparador":
-      return <Comparador bloco={b} demo={demo} />;
-    case "tabela":
+    case "kpis":
+      return <Kpis titulo={b.titulo} itens={b.itens} origem={b} />;
+    case "comparativo":
+      return <Comparativo titulo={b.titulo} subtitulo={b.subtitulo} opcoes={b.opcoes} metricas={b.metricas} origem={b} />;
+    case "linhaDoTempo":
+      return <LinhaDoTempo titulo={b.titulo} subtitulo={b.subtitulo} eventos={b.eventos} serie={b.serie} origem={b} />;
+    case "fluxo":
+      return <Fluxo titulo={b.titulo} subtitulo={b.subtitulo} nos={b.nos} ligacoes={b.ligacoes} origem={b} />;
+    case "matriz":
       return (
-        <div className="sl-tabela-caixa">
-          <table className="sl-tabela">
-            {b.titulo && <caption>{b.titulo}</caption>}
-            <thead>
-              <tr>
-                {b.colunas.map((c) => (
-                  <th scope="col" key={c}>
-                    {c}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {b.linhas.map((linha, i) => (
-                <tr key={i}>
-                  {linha.map((celula, j) =>
-                    j === 0 ? (
-                      <th scope="row" key={j}>
-                        {celula}
-                      </th>
-                    ) : (
-                      <td key={j}>{celula}</td>
-                    ),
-                  )}
+        <Matriz
+          titulo={b.titulo}
+          subtitulo={b.subtitulo}
+          modo={b.modo}
+          eixoLinhas={b.eixoLinhas}
+          eixoColunas={b.eixoColunas}
+          linhas={b.linhas}
+          colunas={b.colunas}
+          celulas={b.celulas}
+          formato={b.formato}
+          origem={b}
+        />
+      );
+    case "simulador":
+      return <Simulador bloco={b} />;
+    case "comparador":
+      return <Simulador bloco={deComparador(b)} />;
+    case "conceito":
+      return (
+        <aside className="sl-conceito" aria-label={`Conceito: ${b.termo}`}>
+          <p className="sl-conceito-rotulo">Teoria</p>
+          <h4 className="sl-conceito-termo">{b.termo}</h4>
+          <div className="sl-conceito-grade">
+            <div>
+              <p>{b.definicao}</p>
+              {b.formula && <p className="sl-conceito-formula">{b.formula}</p>}
+            </div>
+            <div className="sl-conceito-pratica">
+              <p className="sl-conceito-sub">Na prática</p>
+              <p>{b.naPratica}</p>
+            </div>
+          </div>
+          {b.referencia && (
+            <p className="sl-conceito-ref">
+              {b.referencia.autor}, <cite>{b.referencia.obra}</cite>
+              {b.referencia.ano ? ` (${b.referencia.ano})` : ""}
+              {b.referencia.capitulo ? `, ${b.referencia.capitulo}` : ""}.
+            </p>
+          )}
+        </aside>
+      );
+    case "tabela": {
+      // Coluna em que toda célula é número alinha à direita, cabeçalho junto.
+      const colunaNum = b.colunas.map((_, j) => j > 0 && b.linhas.length > 0 && b.linhas.every((l) => NUMERICO.test(l[j] ?? "")));
+      return (
+        <div className="sl-tabela-bloco">
+          <div className="sl-tabela-caixa">
+            <table className="sl-tabela">
+              {b.titulo && <caption>{b.titulo}</caption>}
+              <thead>
+                <tr>
+                  {b.colunas.map((c, j) => (
+                    <th scope="col" key={c} className={colunaNum[j] ? "is-num" : undefined}>
+                      {c}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          {b.nota && <p className="sl-fig-nota">{b.nota}</p>}
+              </thead>
+              <tbody>
+                {b.linhas.map((linha, i) => (
+                  <tr key={i}>
+                    {linha.map((celula, j) =>
+                      j === 0 ? (
+                        <th scope="row" key={j}>
+                          {celula}
+                        </th>
+                      ) : (
+                        <td key={j} className={colunaNum[j] ? "is-num" : undefined}>
+                          {celula}
+                        </td>
+                      ),
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {b.fonte ? <Origem origem={{ fonte: b.fonte, nota: b.nota }} /> : b.nota && <p className="sl-origem">{b.nota}</p>}
         </div>
       );
+    }
     case "referencias":
       return (
-        <section className="sl-refs" id="referencias" aria-labelledby="referencias-titulo">
-          <h4 id="referencias-titulo">Referências</h4>
+        <section className="sl-refs" aria-label="Referências">
+          <h4>Referências</h4>
           <ol>
             {b.itens.map((r) => (
               <li key={r.titulo}>

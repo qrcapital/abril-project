@@ -265,8 +265,13 @@ export default async function ComecePage() {
                   eixoX={graficoNb.eixoX}
                   series={graficoNb.series}
                   formato={graficoNb.formato}
-                  nota={graficoNb.nota}
-                  ilustrativo={graficoNb.ilustrativo}
+                  subtitulo={graficoNb.subtitulo}
+                  escala={graficoNb.escala}
+                  marcos={graficoNb.marcos}
+                  faixas={graficoNb.faixas}
+                  referencia={graficoNb.referencia}
+                  origem={graficoNb}
+                  nivel={3}
                 />
               ) : (
                 <p className="sl-teaser-legenda">Gráficos e simuladores de cada aula, num lugar só.</p>

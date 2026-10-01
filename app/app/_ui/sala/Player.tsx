@@ -11,10 +11,14 @@ import type { FonteDoVideo } from "@/lib/video";
  * (22/set/2026): o player do Panda mede a caixa uma vez, no boot, e não observa resize. Com o
  * `src` no HTML ele bootava antes de a largura final existir e desenhava o poster pela metade.
  * Aqui a caixa é 16:9 por CSS e o src chega quando ela já tem o tamanho definitivo.
+ *
+ * `inicio` (segundos) vem do `?t=` da URL, que o atalho "Na aula, 12:34" do notebook monta
+ * (`NaAula.tsx`). No Panda vira o `startTime` do embed, parâmetro documentado do player; no vídeo
+ * de exemplo, o `currentTime` assim que os metadados chegam. Já saneado na página.
  */
-export default function Player({ fonte, titulo }: { fonte: FonteDoVideo; titulo: string }) {
+export default function Player({ fonte, titulo, inicio }: { fonte: FonteDoVideo; titulo: string; inicio?: number | null }) {
   const ref = useRef<HTMLIFrameElement>(null);
-  const src = fonte.tipo === "panda" ? fonte.src : null;
+  const src = fonte.tipo === "panda" ? (inicio ? `${fonte.src}&startTime=${inicio}` : fonte.src) : null;
 
   useEffect(() => {
     if (!src) return;
@@ -46,6 +50,9 @@ export default function Player({ fonte, titulo }: { fonte: FonteDoVideo; titulo:
           playsInline
           preload="metadata"
           onContextMenu={(e) => e.preventDefault()}
+          onLoadedMetadata={(e) => {
+            if (inicio && inicio < e.currentTarget.duration) e.currentTarget.currentTime = inicio;
+          }}
           src={fonte.src}
           aria-label={`Vídeo da aula: ${titulo}`}
         />
