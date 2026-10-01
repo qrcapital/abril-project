@@ -492,7 +492,11 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 .sl-nb-indice a span { font-variant-numeric: tabular-nums; font-weight: 500; color: var(--sl-tinta-3) }
 .sl-nb-indice a[aria-current] span { color: var(--sl-acento) }
 
-.sl-nb-rolagem { min-width: 0 }
+/* `position: relative` é o que segura a página. Os textos só para leitor de tela (`.sl-so-leitor`,
+   absolutos) tomavam o <body> como referência, escapavam do recorte desta caixa e esticavam a
+   janela até onde estariam dentro do notebook: 40 mil pixels de rolagem em branco no desktop
+   (achado em 01/out/2026). Com a caixa como referência, eles ficam presos aqui dentro. */
+.sl-nb-rolagem { min-width: 0; position: relative }
 .sl-nb-rolagem:focus-visible { outline-offset: 6px }
 /* No desktop o miolo rola dentro da própria caixa, da altura da janela, e o índice fica parado ao
    lado: é o que deixa a playlist levar o notebook à seção da aula sem tirar o vídeo da tela (ver
