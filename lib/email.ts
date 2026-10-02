@@ -34,8 +34,12 @@ import { linkUtilizavel, renderizar, type Dados, type Template } from "./email-r
 import { assinarSigV4, corpoSesV2, endpointSes } from "./ses.ts";
 
 const ENDPOINT_RESEND = "https://api.resend.com/emails";
-/** O remetente de produção. Precisa estar verificado no SES (domínio inteiro, com DKIM). */
-const REMETENTE_PADRAO = "Estratégia Internacional <acesso@blocktrends.com.br>";
+/**
+ * O remetente de produção. Precisa estar verificado no SES (domínio inteiro, com DKIM).
+ * `contato@` desde 02/out/2026, a pedido do Marcelo: o mesmo nome "Estratégia Internacional" dos
+ * e-mails do RD, e um endereço que existe e é lido, para quem responder o e-mail ser atendido.
+ */
+const REMETENTE_PADRAO = "Estratégia Internacional <contato@blocktrends.com.br>";
 /**
  * O remetente do Resend quando `EMAIL_FROM` falta: o único que ele aceita sem domínio próprio, e o
  * que foi validado em homolog (AMBIENTES.md). Usar o de produção ali faria o Resend recusar tudo.
