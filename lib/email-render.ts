@@ -81,7 +81,7 @@ export const DESCRICOES: Record<string, { texto: string; exemplo: string }> = {
   proximo: {
     texto:
       "Frase pronta sobre o que vem depois: a data do próximo módulo, ou o aviso de que este é o último. Calculada pelo calendário do aluno.",
-    exemplo: "O Módulo II abre na quarta-feira, 21/10.",
+    exemplo: "O Módulo II abre na quarta-feira, 28/10.",
   },
 };
 
@@ -309,9 +309,14 @@ export function renderizar(template: Template, dados: Dados): Renderizado {
 
   const assunto = interpolar(template.assunto, dados, false).replace(/\s+/g, " ").trim();
 
+  // A assinatura vai DEPOIS do botão. Cada template termina com "Equipe Estratégia Internacional"
+  // numa linha própria, e o botão entrava depois dela, como se a assinatura fosse parte do corpo e
+  // o botão um apêndice. Só a última linha, e só se ela for a assinatura.
+  const assina = linhas.length > 1 && /^Equipe\b/.test(linhas[linhas.length - 1]) ? linhas.pop()! : null;
   const html = moldura(
     linhas.map((l) => `<p style="margin:0 0 14px">${l}</p>`).join("\n") +
-      (cta && link ? botao(cta, link) : ""),
+      (cta && link ? botao(cta, link) : "") +
+      (assina ? `<p style="margin:22px 0 0">${assina}</p>` : ""),
     // Preheader é a prévia que a caixa de entrada mostra ao lado do assunto. Sem ele, o cliente
     // pesca o primeiro texto do HTML, que aqui seria o wordmark repetido.
     paragrafos(interpolar(template.corpo, dados, false))[0] ?? "",
