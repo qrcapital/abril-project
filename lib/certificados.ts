@@ -28,16 +28,16 @@ const TENTATIVAS = 5;
  *
  * TRÊS COISAS ACONTECEM AQUI, e a ordem importa:
  *
- * 1. **Lê antes de escrever**, para o caminho comum (aluno já aprovado que volta) não gastar sorteio
+ * 1. **Lê antes de escrever**, para o caminho comum (aluno que já concluiu e volta) não gastar sorteio
  *    nem tentativa de gravação.
  * 2. **Deixa o banco decidir a corrida.** O `on conflict do nothing` sobre `certificates_user_unico`
- *    (migration `0012`) é o que faz duas rotas de aprovação simultâneas produzirem um certificado só.
+ *    (migration `0012`) é o que faz duas rotas de conclusão simultâneas (a action do aluno e a do admin) produzirem um certificado só.
  *    Conferir "já existe?" e depois inserir tem uma janela entre as duas coisas, e é justamente nela
  *    que a segunda rota entra.
  * 3. **Tenta de novo quando o CÓDIGO colide.** Com 656 bilhões de combinações isso praticamente não
  *    acontece, mas "praticamente" não é "nunca", e o custo de estar preparado é um laço de cinco
  *    voltas. Sem ele, uma colisão viraria "não deu para emitir seu certificado" para um aluno que
- *    passou na prova.
+ *    concluiu o curso.
  *
  * Devolve `null` só quando o banco recusou por outro motivo, e aí o chamador decide: nenhum deles
  * derruba o fluxo, porque perder a marcação da aula por causa do certificado seria pior.

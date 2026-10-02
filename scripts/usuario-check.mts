@@ -18,9 +18,8 @@ const ESPERADO: [string, string[]][] = [
   ["chrome-top.html", ['data-u="first"', 'data-u="initial"']],
   ["screens/home.html", ['data-u="first"']],
   ["screens/conta.html", ['data-u="full"', "data-email", "data-acesso"]],
-  // `data-cert` entrou em 31/jul/2026, com a emissão real: sem ele, a tela volta a servir o código
-  // do design (`EI-2026-4817`) como se fosse o do aluno, e ele era o MESMO para todos.
-  ["screens/certificado.html", ['data-u="full"', "data-cert"]],
+  // O certificado saiu desta lista em out/2026: virou JSX (`app/_certificado/Folha.tsx`), com o nome
+  // e o código entrando como texto escapado pelo React, sem marcador para um porte apagar.
 ];
 
 for (const [arquivo, marcadores] of ESPERADO) {
@@ -63,13 +62,13 @@ assert.ok(topo.includes(">M<"), "topbar sem a inicial");
 
 // Sem nome no cadastro, o marcador fica VAZIO, nunca com o texto do design: nome em branco é
 // problema de dado visível, nome de outra pessoa se disfarça de conteúdo real.
-const semNome = preencherUsuario(ler("screens/certificado.html"), {
+const semNome = preencherUsuario(ler("screens/conta.html"), {
   email: "x@y.com",
 } as never);
-assert.ok(!semNome.includes("Pedro"), "sem nome, o certificado voltou ao texto do design");
+assert.ok(!semNome.includes("Pedro"), "sem nome, a conta voltou ao texto do design");
 
 // Nome com caractere de HTML não pode escapar do texto para o markup.
-const perigoso = preencherUsuario(ler("screens/certificado.html"), {
+const perigoso = preencherUsuario(ler("screens/conta.html"), {
   user_metadata: { nome: '<script>alert(1)</script>' },
 } as never);
 assert.ok(!perigoso.includes("<script>"), "nome nao escapado entrou como markup");

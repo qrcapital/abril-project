@@ -22,6 +22,8 @@ const ITENS = [
   // diz O QUE existe, Liberação diz QUANDO cada módulo abre (migration 0016).
   { href: "/admin/liberacao", rotulo: "Liberação", pronto: true },
   { href: "/admin/emails", rotulo: "E-mails", pronto: true },
+  // Prévia da folha do certificado com dados de amostra (out/2026). Só leitura: não emite nada.
+  { href: "/admin/certificado", rotulo: "Certificado", pronto: true },
   // Equipe é escopo novo, pedido pelo Pedro em 30/jul/2026, e não estava no §3 do plano. Fica
   // separada por uma régua porque é a única que fala de quem OPERA, não do que é operado.
   { href: "/admin/equipe", rotulo: "Equipe", pronto: true, separar: true },

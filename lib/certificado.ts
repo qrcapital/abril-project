@@ -10,7 +10,107 @@
 // O sorteio usa a Web Crypto, que existe nos dois lados.
 
 export const CURSO = "Estratégia Internacional";
+/** Carga horária impressa no certificado. A LP vende "30 horas" / "30h"; mudar um sem o outro é
+ *  propaganda que não bate com o documento. */
 export const HORAS = 30;
+
+/**
+ * Domínio IMPRESSO no certificado e codificado no QR. Constante, e não `NEXT_PUBLIC_SITE_URL`: o
+ * PDF sobrevive ao ambiente que o gerou, e um certificado baixado em homologação com o QR apontando
+ * para um preview da Netlify seria um papel que não se verifica em lugar nenhum.
+ */
+export const DOMINIO_VERIFICACAO = "blocktrends.abril.com.br";
+
+/** O endereço público de verificação, sem protocolo quando é para ler, com protocolo para o QR. */
+export function urlVerificacao(codigo: string, { protocolo = true } = {}): string {
+  return `${protocolo ? "https://" : ""}${DOMINIO_VERIFICACAO}/verificar/${codigo}`;
+}
+
+/**
+ * O texto do certificado, num lugar só, porque três superfícies o repetem: a folha (tela, PDF e
+ * impressão), a página pública de verificação e o e-mail. Divergência entre o papel e a verificação
+ * é exatamente o que um RH desconfiado procura.
+ *
+ * Diz o critério real ("concluiu todas as aulas"), e não "foi aprovado": o curso não tem prova desde
+ * 30/set/2026. E diz "curso livre", que é o que os Termos (cláusulas 1.2 e 6.2) prometem.
+ */
+export const TEXTO = {
+  titulo: "Certificado de conclusão",
+  abertura: "Certificamos que",
+  conclusao: "concluiu todas as aulas da formação",
+  descricao: `curso livre de ${HORAS} horas sobre investimento no exterior, oferecido pela VEJA Negócios em parceria com o BlockTrends.`,
+  aviso:
+    "Curso livre, de caráter educacional. Não constitui certificação profissional, registro ou habilitação para o exercício de atividade regulamentada, nem recomendação de investimento.",
+} as const;
+
+/** Quem emite, como está nos Termos de Uso (preâmbulo, "CONTRATADAS"). */
+export const EMISSORES = [
+  { razao: "Abril Comunicações S.A.", cnpj: "44.597.052/0001-62" },
+  { razao: "BlockTrends Comunicações e Sistemas Ltda.", cnpj: "26.195.884/0001-70" },
+] as const;
+
+export type Assinatura = {
+  /** Nome de quem assina. Vazio, a folha mostra só cargo e organização, sem inventar ninguém. */
+  nome: string;
+  /** Cargo, sem a organização (ela vem do campo próprio). Vazio, some. */
+  cargo: string;
+  organizacao: string;
+};
+
+/**
+ * As assinaturas do certificado.
+ *
+ * TODO(dono): preencher `nome` e `cargo` de quem assina por cada casa, com o aval do jurídico da
+ * Abril (PRD §8: o BlockTrends assina a técnica, a VEJA Negócios a chancela institucional). Até lá a
+ * linha de assinatura sai em branco com o nome da organização embaixo, que é verdadeiro; nome ou
+ * rubrica inventados num documento verificável não são.
+ */
+export const ASSINATURAS: readonly Assinatura[] = [
+  { nome: "", cargo: "", organizacao: "VEJA Negócios" },
+  { nome: "", cargo: "", organizacao: "BlockTrends" },
+];
+
+/**
+ * Código da PRÉVIA do admin. Tem `0`, que o `ALFABETO` não emite, então nunca coincide com um
+ * certificado real e a verificação pública responde "não encontrado" se alguém digitá-lo.
+ */
+export const CODIGO_EXEMPLO = "EI-0000-0000";
+
+const DATA_SP = new Intl.DateTimeFormat("pt-BR", {
+  timeZone: "America/Sao_Paulo",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+/**
+ * "1º de outubro de 2026", no fuso de São Paulo.
+ *
+ * O fuso é explícito porque o servidor roda em UTC: quem conclui às 22h de 30 de setembro em
+ * Brasília já está em 1º de outubro para o servidor, e o certificado sairia com o dia seguinte. O
+ * ordinal no dia 1 é a convenção da língua para datas ("1º de maio"). Vazio para data inválida.
+ */
+export function dataPorExtenso(iso: string): string {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  const partes = DATA_SP.formatToParts(d);
+  const v = (t: Intl.DateTimeFormatPartTypes) => partes.find((p) => p.type === t)?.value ?? "";
+  const dia = v("day") === "1" ? "1º" : v("day");
+  return `${dia} de ${v("month")} de ${v("year")}`;
+}
+
+/**
+ * Corpo do nome na folha, em milímetros de A4. Nome curto em 14 mm; nome longo desce de degrau em
+ * degrau para caber numa linha, e só o muito longo quebra em duas (equilibradas pelo CSS). Degraus,
+ * e não uma conta contínua, para dois alunos com nomes parecidos receberem a mesma peça.
+ */
+export function corpoDoNome(nome: string): number {
+  const n = [...nome.trim()].length;
+  if (n <= 26) return 14;
+  if (n <= 32) return 12;
+  if (n <= 40) return 10;
+  return 8.5;
+}
 
 /**
  * O ALFABETO DO CÓDIGO, e cada exclusão tem motivo.
@@ -100,12 +200,20 @@ export function concluiuTodasAsAulas(queContam: readonly string[], concluidas: R
 
 /** URL de "adicionar certificação" ao perfil do LinkedIn. */
 export function linkedinAddUrl(origin: string, codigo: string, emissao: Date): string {
+  // Mês e ano no fuso de São Paulo, como a data impressa na folha. Com `getMonth()` o servidor (UTC)
+  // e o navegador discordariam nas últimas horas de cada mês, e o link mudaria na hidratação.
+  const partes = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Sao_Paulo",
+    year: "numeric",
+    month: "numeric",
+  }).formatToParts(emissao);
+  const v = (t: Intl.DateTimeFormatPartTypes) => partes.find((p) => p.type === t)?.value ?? "";
   const p = new URLSearchParams({
     startTask: "CERTIFICATION_NAME",
     name: CURSO,
     organizationName: "BlockTrends",
-    issueYear: String(emissao.getFullYear()),
-    issueMonth: String(emissao.getMonth() + 1),
+    issueYear: v("year"),
+    issueMonth: v("month"),
     certId: codigo,
     certUrl: `${origin}/verificar/${codigo}`,
   });

@@ -485,11 +485,13 @@ coluna da prateleira, e o `margin-bottom` inútil num item de grid). Os de baixo
 - [x] ~~🟡 **O card da Prova Final na home não conhece o estado do aluno.**~~ **RESOLVIDO em 31/jul**,
       no mesmo dia, a pedido do Pedro: seis estados, com a linha e o destino do clique mudando em cada
       um. O reprovado não leva mais à prova e abre o WhatsApp.
-- [ ] 🟡 **"Validar em estrategiainternacional.com/verificar"** é texto do design, no cartão do código.
-      O link funciona (aponta para o `/verificar/<codigo>` real), mas o domínio escrito ali precisa
-      casar com o domínio de produção quando ele existir.
-- [ ] 🟡 **Duas assinaturas do certificado seguem "nome a definir"**, e o ano está fixo em 2026 no
-      canto. Insumo, não código.
+- [x] ~~🟡 **"Validar em estrategiainternacional.com/verificar"** é texto do design~~ **RESOLVIDO em
+      out/2026** no redesenho do certificado: o domínio impresso e o do QR saem de
+      `DOMINIO_VERIFICACAO` (`blocktrends.abril.com.br`) em `lib/certificado.ts`.
+- [ ] 🟡 **Nome e cargo de quem assina o certificado.** A folha nova (out/2026) mostra a linha de
+      assinatura com a organização embaixo (VEJA Negócios, BlockTrends) e não inventa ninguém; falta
+      preencher `ASSINATURAS` em `lib/certificado.ts`, com aval do jurídico da Abril. O ano fixo no
+      canto saiu: a data impressa é a de conclusão. Insumo, não código.
 - [ ] 🟢 **O "certa" repetido nas quatro alternativas** da tela de Questões (`A certa`, `B certa`...)
       polui a leitura: o rótulo do grupo já diz "Alternativas, e qual delas é a correta". Tirar o
       "certa" de cada linha é uma linha de diff, e eu deixei para não misturar com o QA.

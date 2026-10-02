@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { CURSO, HORAS, normalizarCodigo } from "@/lib/certificado";
+import { CURSO, EMISSORES, HORAS, TEXTO, dataPorExtenso, normalizarCodigo } from "@/lib/certificado";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -11,12 +11,19 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const meses = [
-  "janeiro", "fevereiro", "março", "abril", "maio", "junho",
-  "julho", "agosto", "setembro", "outubro", "novembro", "dezembro",
-];
+type Cert = { nome: string; codigo: string; emitidoEm: string };
 
-type Cert = { nome: string; codigo: string; emissao: Date };
+const SANS = "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Helvetica Neue', system-ui, sans-serif";
+const SERIF = "'Playfair Display', Georgia, serif";
+const ROTULO = {
+  display: "block",
+  fontSize: 10.5,
+  letterSpacing: ".16em",
+  textTransform: "uppercase",
+  color: "#6b655c",
+  fontWeight: 600,
+  marginBottom: 4,
+} as const;
 
 /**
  * As @font-face da Playfair Display, lidas do CSS da área do aluno. Esta rota fica fora de
@@ -70,7 +77,7 @@ async function buscar(entrada: string): Promise<Cert | null> {
   return {
     nome: (linha.nome ?? "").trim(),
     codigo: linha.codigo,
-    emissao: new Date(linha.issued_at),
+    emitidoEm: linha.issued_at,
   };
 }
 
@@ -86,44 +93,26 @@ export default async function VerificarPage({
     <main
       style={{
         minHeight: "100vh",
-        // Creme, e não o painel escuro de antes: quem abre esta página é quase sempre um terceiro
+        // Papel, e não o painel escuro de antes: quem abre esta página é quase sempre um terceiro
         // (um recrutador, um cliente) conferindo um documento, e a leitura tem de ser a de papel.
         background: "#f7f4ee",
         color: "#1a1815",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: 24,
-        fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Helvetica Neue', system-ui, sans-serif",
+        padding: "40px 20px",
+        fontFamily: SANS,
+        fontVariantNumeric: "tabular-nums lining-nums",
       }}
     >
       <style dangerouslySetInnerHTML={{ __html: fontesPlayfair() }} />
-      <div style={{ textAlign: "center", maxWidth: 560, width: "100%" }}>
-        {/* selo do curso */}
-        <div style={{ position: "relative", width: 96, height: 96, margin: "0 auto 22px" }}>
-          <img
-            src="/app/dec6993b-f88c-4b38-a7bb-33d730441044.svg"
-            alt="Selo Estratégia Internacional"
-            style={{ width: 96, height: 96, display: "block", transform: "rotate(-38deg)" }}
-          />
-          <img
-            src="/lp/f2070b29-906c-48d8-92c7-0948fe19573b.webp"
-            alt=""
-            style={{
-              position: "absolute",
-              top: "49%",
-              left: "50%",
-              transform: "translate(-50%,-50%)",
-              width: 46,
-              height: "auto",
-            }}
-          />
-        </div>
-
-        {/* O lockup do site: marca da VEJA Negócios, filete em pé, nome do curso em duas linhas. */}
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 13, marginBottom: 34 }}>
+      <div style={{ textAlign: "center", maxWidth: 600, width: "100%" }}>
+        {/* O lockup do site e da folha do certificado: marca da VEJA Negócios, filete em pé, nome do
+            curso em duas linhas. O selo antigo saiu com a identidade verde. */}
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 13, marginBottom: 30 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- logo em SVG, sem ganho no otimizador */}
           <img src="/marca/veja-negocios-claro.svg" alt="VEJA Negócios" style={{ height: 30, width: "auto", display: "block" }} />
-          <i aria-hidden="true" style={{ display: "block", width: 1, height: 31, background: "rgba(26,24,21,.19)" }} />
+          <i aria-hidden="true" style={{ display: "block", width: 1, height: 31, background: "rgba(26,24,21,.22)" }} />
           <span style={{ display: "block", fontSize: 11.5, letterSpacing: ".17em", textTransform: "uppercase", lineHeight: 1.22, textAlign: "left", whiteSpace: "nowrap" }}>
             Estratégia
             <br />
@@ -134,61 +123,85 @@ export default async function VerificarPage({
         {cert ? (
           <div
             style={{
-              background: "#fff",
-              border: "1px solid #e2dacd",
-              borderRadius: 20,
-              boxShadow: "0 12px 30px rgba(72,60,42,.1)",
-              padding: "34px 34px 30px",
+              position: "relative",
+              background: "#fdfbf6",
+              border: "1px solid #a98e4e",
+              borderRadius: 6,
+              boxShadow: "0 22px 54px rgba(72,60,42,.12)",
+              padding: "38px 36px 28px",
             }}
           >
+            {/* O selo de válido é dourado, e não verde nem vermelho: verde era a identidade antiga, e
+                o vermelho da campanha aqui leria como erro. */}
             <div
               style={{
-                width: 46,
-                height: 46,
-                margin: "0 auto 16px",
-                borderRadius: "50%",
-                background: "rgba(27,122,80,.08)",
-                border: "1px solid rgba(27,122,80,.35)",
-                display: "flex",
+                display: "inline-flex",
                 alignItems: "center",
-                justifyContent: "center",
+                gap: 8,
+                padding: "6px 12px 6px 8px",
+                borderRadius: 999,
+                border: "1px solid rgba(169,142,78,.55)",
+                background: "rgba(169,142,78,.08)",
+                marginBottom: 22,
               }}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1B7A50" strokeWidth="2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7e6836" strokeWidth="2.2" aria-hidden="true">
                 <circle cx="12" cy="12" r="9" />
                 <path d="M8.3 12.3l2.4 2.4 5-5.4" />
               </svg>
+              <span style={{ fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", color: "#1a1815", fontWeight: 600 }}>
+                Certificado válido
+              </span>
             </div>
-            <p style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: "#1B7A50", fontWeight: 600, margin: "0 0 12px" }}>
-              Certificado válido
-            </p>
-            <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, fontWeight: 600, margin: "0 0 14px", color: "#1a1815" }}>
+            <p style={{ fontSize: 14, color: "#6b655c", margin: "0 0 6px" }}>{TEXTO.abertura}</p>
+            <h1 style={{ fontFamily: SERIF, fontSize: 30, fontWeight: 600, lineHeight: 1.15, margin: "0 0 14px", color: "#1a1815", textWrap: "balance" }}>
               {/* Conta sem nome cadastrado existe (o backfill de 28/jul achou 3 de 8), e aqui o nome
                   é o ponto da consulta: dizer que falta o cadastro é mais honesto que uma linha em
                   branco no lugar de quem se formou. */}
               {cert.nome || "Aluno sem nome no cadastro"}
             </h1>
-            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#6b655c", margin: "0 0 24px" }}>
-              concluiu todas as aulas da formação <b style={{ color: "#1a1815" }}>{CURSO}</b>, com carga
-              horária de{" "}
-              <b style={{ color: "#1a1815" }}>{HORAS} horas</b>, emitido em{" "}
-              {meses[cert.emissao.getMonth()]} de {cert.emissao.getFullYear()}.
+            <i aria-hidden="true" style={{ display: "block", width: 64, height: 1, background: "#a98e4e", margin: "0 auto 14px" }} />
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#6b655c", margin: "0 auto 26px", maxWidth: 470 }}>
+              {TEXTO.conclusao}{" "}
+              <span style={{ fontFamily: SERIF, fontSize: 17, fontWeight: 500, color: "#1a1815" }}>{CURSO}</span>,{" "}
+              {TEXTO.descricao}
             </p>
-            <div style={{ borderTop: "1px solid #e2dacd", paddingTop: 18 }}>
-              <span style={{ fontSize: 10.5, letterSpacing: ".1em", textTransform: "uppercase", color: "#6f6860", fontWeight: 600 }}>
-                Código de verificação
-              </span>
-              <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, color: "#C1121F", marginTop: 4, letterSpacing: ".04em" }}>{cert.codigo}</div>
-            </div>
+            <dl
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+                gap: 14,
+                margin: 0,
+                padding: "18px 0 0",
+                borderTop: "1px solid #e2dacd",
+                textAlign: "left",
+              }}
+            >
+              <div>
+                <dt style={ROTULO}>Data de conclusão</dt>
+                <dd style={{ margin: 0, fontSize: 14.5, fontWeight: 600 }}>{dataPorExtenso(cert.emitidoEm)}</dd>
+              </div>
+              <div>
+                <dt style={ROTULO}>Carga horária</dt>
+                <dd style={{ margin: 0, fontSize: 14.5, fontWeight: 600 }}>{HORAS} horas</dd>
+              </div>
+              <div>
+                <dt style={ROTULO}>Código</dt>
+                <dd style={{ margin: 0, fontSize: 14.5, fontWeight: 600, letterSpacing: ".05em" }}>{cert.codigo}</dd>
+              </div>
+            </dl>
+            <p style={{ fontSize: 11.5, lineHeight: 1.55, color: "#6b655c", margin: "22px 0 0" }}>
+              {TEXTO.aviso} Emitido por {EMISSORES.map((e) => `${e.razao} (CNPJ ${e.cnpj})`).join(" e ")}.
+            </p>
           </div>
         ) : (
           <div
             style={{
-              background: "#fff",
-              border: "1px solid rgba(176,65,62,.32)",
-              borderRadius: 20,
-              boxShadow: "0 12px 30px rgba(72,60,42,.1)",
-              padding: "34px 34px 30px",
+              background: "#fdfbf6",
+              border: "1px solid rgba(193,18,31,.3)",
+              borderRadius: 6,
+              boxShadow: "0 22px 54px rgba(72,60,42,.1)",
+              padding: "36px 34px 30px",
             }}
           >
             <div
@@ -197,30 +210,35 @@ export default async function VerificarPage({
                 height: 46,
                 margin: "0 auto 16px",
                 borderRadius: "50%",
-                background: "rgba(176,65,62,.08)",
-                border: "1px solid rgba(176,65,62,.35)",
+                background: "rgba(193,18,31,.06)",
+                border: "1px solid rgba(193,18,31,.35)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8E3330" strokeWidth="2">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C1121F" strokeWidth="2" aria-hidden="true">
                 <path d="M18 6 6 18M6 6l12 12" />
               </svg>
             </div>
-            <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 26, fontWeight: 600, margin: "0 0 12px", color: "#1a1815" }}>
+            <h1 style={{ fontFamily: SERIF, fontSize: 26, fontWeight: 600, margin: "0 0 12px", color: "#1a1815" }}>
               Certificado não encontrado
             </h1>
             <p style={{ fontSize: 14.5, lineHeight: 1.6, color: "#6b655c", margin: 0 }}>
-              Não localizamos um certificado com o código{" "}
-              <b style={{ color: "#1a1815" }}>{codigo}</b>. Confira o código informado no certificado e tente novamente.
+              Não localizamos um certificado com o código <b style={{ color: "#1a1815" }}>{codigo}</b>. Confira o código
+              impresso no canto inferior direito do certificado, no formato EI-XXXX-XXXX, e tente de novo.
             </p>
           </div>
         )}
 
-        <p style={{ fontSize: 12, color: "#6f6860", marginTop: 24 }}>
-          Verificação oficial · Estratégia Internacional
-        </p>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginTop: 28 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- logo em SVG, sem ganho no otimizador */}
+          <img src="/marca/blocktrends-preto.svg" alt="BlockTrends" style={{ height: 12, width: "auto", display: "block", opacity: 0.8 }} />
+          <i aria-hidden="true" style={{ display: "block", width: 1, height: 18, background: "rgba(26,24,21,.22)" }} />
+          {/* eslint-disable-next-line @next/next/no-img-element -- logo em SVG, sem ganho no otimizador */}
+          <img src="/marca/grupo-abril-preto.svg" alt="Grupo Abril" style={{ height: 22, width: "auto", display: "block", opacity: 0.8 }} />
+        </div>
+        <p style={{ fontSize: 12, color: "#6b655c", marginTop: 12 }}>Verificação oficial de certificados da formação {CURSO}</p>
       </div>
     </main>
   );

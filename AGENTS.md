@@ -193,7 +193,7 @@ HTTP, sem dependência nova, e o registro em `email_log`) e a tabela `email_temp
 Emissão real desde 31/jul/2026. Antes disso o código era uma constante igual para todos, e a página
 pública mostrava o nome escrito nela para qualquer consulta.
 
-- **`lib/certificado.ts` é puro E client-safe.** O `CertificadoClient` importa dele, então nada de
+- **`lib/certificado.ts` é puro E client-safe.** O `AcoesCertificado` (cliente) importa dele, então nada de
   `node:*` ali: o sorteio usa Web Crypto, que existe nos dois lados. O IO vive em
   `lib/certificados.ts`, com o cliente do Supabase por parâmetro.
 - **O alfabeto do código não tem `I`, `O`, `L`, `U`, `0` nem `1`.** O código é ditado por telefone e
@@ -206,8 +206,11 @@ pública mostrava o nome escrito nela para qualquer consulta.
   Desmarcar aula não revoga certificado.
 - **A verificação pública usa o cliente anon** e a função `verify_certificate`. Página pública não
   pode depender de sessão, e a service role ali estaria errada por definição.
-- **O código entra no markup por marcador `data-cert`**, emitido pelo `port-area.mjs`. Editar o HTML
-  gerado não sobrevive ao próximo porte, e o `check:usuario` guarda o marcador.
+- **A folha é JSX desde out/2026** (`app/_certificado/Folha.tsx`, CSS em `certificado.css`), não mais
+  o `screens/certificado.html` portado: A4 deitado desenhado em milímetros, uma peça só para tela, PDF
+  (html2canvas + jsPDF) e impressão (`@media print`). Texto, carga horária, emissores e as
+  `ASSINATURAS` (nomes ainda TODO do dono) moram em `lib/certificado.ts`; o QR em `lib/qr.ts`. Notas de
+  pesquisa e decisões em `docs/CERTIFICADO.md`. Prévia sem aluno em `/admin/certificado`.
 
 ## Feedback ao usuário
 
