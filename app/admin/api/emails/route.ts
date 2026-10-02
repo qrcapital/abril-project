@@ -101,13 +101,18 @@ function dadosExemplo(chave: string) {
       ? `${site}/auth/confirm?token_hash=EXEMPLO&type=recovery`
       : chave === "certificado"
         ? `${site}/app/certificado`
-        : contato.whatsapp;
+        : chave === "modulo-liberado"
+          ? `${site}/app/modulo/1`
+          : contato.whatsapp;
   // Os exemplos saem da legenda (`DESCRICOES`), para a prévia mostrar exatamente o valor que a tela
   // promete ao redator. Um exemplo divergente aqui faria a legenda mentir.
   const exemplo = (campo: string) => DESCRICOES[campo]?.exemplo ?? "";
   return {
     nome: exemplo("nome"),
     codigo: exemplo("codigo"),
+    modulo: exemplo("modulo"),
+    titulo: exemplo("titulo"),
+    proximo: exemplo("proximo"),
     link,
   };
 }

@@ -54,6 +54,8 @@ export const VARIAVEIS: Record<string, string[]> = {
   "boas-vindas": ["nome"],
   "certificado": ["nome", "codigo"],
   "redefinicao-senha": ["nome"],
+  // Desde 02/out/2026. Quem preenche é `lib/avisos-modulo.ts`, a rotina de hora em hora.
+  "modulo-liberado": ["nome", "modulo", "titulo", "proximo"],
 };
 
 /**
@@ -74,6 +76,13 @@ export const DESCRICOES: Record<string, { texto: string; exemplo: string }> = {
     texto: "Código de verificação do certificado, único por aluno.",
     exemplo: "EI-K6MC-4RMC",
   },
+  modulo: { texto: "Número do módulo que abriu, em algarismo romano.", exemplo: "I" },
+  titulo: { texto: "Título do módulo que abriu, como está no admin.", exemplo: "Macro e Estratégia Global" },
+  proximo: {
+    texto:
+      "Frase pronta sobre o que vem depois: a data do próximo módulo, ou o aviso de que este é o último. Calculada pelo calendário do aluno.",
+    exemplo: "O Módulo II abre na quarta-feira, 21/10.",
+  },
 };
 
 /** Rótulo humano de cada template, para a tela do admin. */
@@ -81,6 +90,7 @@ export const ROTULOS: Record<string, string> = {
   "boas-vindas": "Boas-vindas e criação de senha",
   "certificado": "Certificado de conclusão disponível",
   "redefinicao-senha": "Redefinição de senha",
+  "modulo-liberado": "Módulo liberado",
 };
 
 /** Quando cada um dispara, em uma linha, para ninguém editar às cegas. */
@@ -88,6 +98,8 @@ export const GATILHOS: Record<string, string> = {
   "boas-vindas": "Compra aprovada no webhook do Guru, com o link de criação de senha.",
   "certificado": "Conclusão da última aula que conta para o certificado, na primeira emissão. Uma vez por aluno.",
   "redefinicao-senha": "Pedido em \"Esqueci minha senha\", com o link de uso único para criar uma senha nova.",
+  "modulo-liberado":
+    "Rotina de hora em hora: quando um módulo abre no calendário do aluno (o Módulo I em 7 dias, o II em 14, sempre no dia da semana da compra). Uma vez por aluno e módulo; o Módulo 0 não avisa, porque abre junto com as boas-vindas.",
 };
 
 const MARCADOR = /\{\{\s*([a-z_]+)\s*\}\}/g;
@@ -161,7 +173,12 @@ const FAIXA = "#8E1522";
 const CREME = "#f7f4ee";
 
 const SANS = "-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif";
-const SERIFA = "Georgia,'Times New Roman',serif";
+/**
+ * O título sai na Jost, a fonte do wordmark do curso, e não mais em serifa (02/out/2026, a pedido
+ * do Marcelo: a serifa de alto contraste "lia como IA"). Cliente que não baixa fonte cai na Futura
+ * (Apple) e na Century Gothic (Windows), que têm o mesmo desenho geométrico.
+ */
+const TITULO = "'Jost','Futura','Century Gothic','Trebuchet MS',Arial,sans-serif";
 
 /**
  * URL absoluta, ou `null` quando não dá para montar uma.
@@ -223,7 +240,7 @@ function bannerHtml(endereco: string, alt: string): string {
  * contra isso, a paleta não usa branco puro nem preto puro, e o texto do botão e da faixa tem o
  * contraste garantido nos dois sentidos.
  *
- * O título é o próprio assunto, em serifa: é a frase que a pessoa acabou de ler na caixa de
+ * O título é o próprio assunto, na Jost: é a frase que a pessoa acabou de ler na caixa de
  * entrada, e repeti-la no topo confirma que ela abriu o e-mail certo.
  */
 function moldura(
@@ -242,7 +259,8 @@ function moldura(
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only">
 <meta name="supported-color-schemes" content="light only">
-<title>${esc(titulo || "Estratégia Internacional")}</title></head>
+<title>${esc(titulo || "Estratégia Internacional")}</title>
+<style>@import url(https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap);</style></head>
 <body style="margin:0;padding:0;background:${PAPEL};color-scheme:light only">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all">${esc(preheader)}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="${PAPEL}" style="background:${PAPEL};padding:32px 12px">
@@ -252,7 +270,7 @@ function moldura(
 VEJA NEGÓCIOS&nbsp;&nbsp;|&nbsp;&nbsp;ESTRATÉGIA INTERNACIONAL
 </td></tr>
 ${banner}<tr><td style="padding:30px 32px 0">
-<h1 style="margin:0;font-family:${SERIFA};font-size:24px;line-height:1.3;font-weight:400;color:${TINTA}">${esc(titulo)}</h1>
+<h1 style="margin:0;font-family:${TITULO};font-size:24px;line-height:1.3;font-weight:500;color:${TINTA}">${esc(titulo)}</h1>
 </td></tr>
 <tr><td style="padding:18px 32px 8px;font-family:${SANS};font-size:15px;line-height:1.65;color:${TINTA}">
 ${corpoHtml}

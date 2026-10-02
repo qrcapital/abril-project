@@ -8,7 +8,8 @@
 // módulo como está; a linha de texto "ver como página web" que o RD põe no topo foi tirada
 // porque roubava a prévia da caixa de entrada, e o link foi para o pé do bloco.
 //
-// LINK DA LIVE: os botões apontam para `#` até a Abril passar o endereço da transmissão.
+// LINK DA LIVE: provisoriamente a página da pré-lista, até a Abril passar o endereço da transmissão.
+// Não use `#`: o RD marca o conteúdo como inválido com link vazio e recusa o envio de teste.
 
 import { writeFileSync } from "node:fs";
 
@@ -16,7 +17,7 @@ const SITE = "https://blocktrends.abril.com.br/email";
 const S3 = "https://email-editor-production.s3.amazonaws.com/images/76199";
 const SANS = "-apple-system,'Segoe UI',Helvetica,Arial,sans-serif";
 const JOST = "'Jost','Futura','Century Gothic','Trebuchet MS',Arial,sans-serif";
-const LINK_LIVE = "#";
+const LINK_LIVE = "https://blocktrends.abril.com.br/";
 
 const forte = (t) => `<strong style="color:#0a0a0a;">${t}</strong>`;
 
