@@ -59,4 +59,7 @@ banner('ei-banner-01-confirmacao.jpg', 'Cadastro confirmado', ['Você está na l
 banner('ei-banner-02-amanha-v2.jpg', 'Amanhã, 19h', ['A live de lançamento', 'do curso é amanhã.'], 'Estratégia Internacional  ·  13 de outubro, 19h')
 banner('ei-banner-03-hoje-v2.jpg', 'Hoje, 19h', ['É hoje: a live de', 'lançamento do curso.'], 'Estratégia Internacional  ·  ao vivo no YouTube')
 banner('ei-banner-04-agora-v2.jpg', 'Ao vivo agora', ['A live de lançamento', 'do curso começou.'], 'Estratégia Internacional  ·  YouTube da VEJA Negócios')
+# Disparos para a base da BlockTrends (out/2026): chamada da live e abertura das inscricoes
+banner('ei-banner-base-01-live.jpg', '13 de outubro, 19h', ['Como investir fora', 'do Brasil, ao vivo.'], 'Live gratuita  ·  Tony Volpon e Rodolfo Bastos')
+banner('ei-banner-base-02-curso.jpg', 'Inscrições abertas', ['Estratégia', 'Internacional.'], 'O curso da VEJA Negócios e da BlockTrends')
 print('ok')
