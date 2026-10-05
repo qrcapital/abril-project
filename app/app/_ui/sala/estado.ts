@@ -28,8 +28,8 @@ export function estadoDoModulo(m: ModuloCalendario): EstadoModulo {
 }
 
 /**
- * Para onde leva o módulo: a página dele, com o teatro, a playlist e o notebook. Vale para o Módulo 0
- * também desde 30/set/2026; até ali ele levava ao "Comece por aqui", que continua sendo a porta de
- * boas-vindas mas deixou de ser a página do módulo.
+ * Para onde leva o módulo: a página dele, com o teatro, a playlist e o notebook. Vale para todos os
+ * módulos, inclusive o Módulo I (ord 0); o antigo "Comece por aqui" (`/app/comece`) virou redirect
+ * para `/app/modulo/0` em 05/out/2026, quando o Módulo 0 de boas-vindas deixou de existir.
  */
 export const hrefDoModulo = (ord: number) => `/app/modulo/${ord}`;

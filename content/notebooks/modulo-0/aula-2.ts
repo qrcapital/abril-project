@@ -1,6 +1,7 @@
 import type { SecaoDaAula } from "@/lib/notebook";
 
-// Módulo 0, aula 2, "AULA EXTRA" (1h32). Seção do notebook escrita a partir da transcrição em
+// Módulo I, aula 2 ("O real e o risco de uma moeda só", 1h32; até 05/out/2026, a "AULA EXTRA" do
+// Módulo 0 de boas-vindas). Seção do notebook escrita a partir da transcrição em
 // `transcricoes/modulo-0/aula-2.txt`. Segue a ordem da aula: as oito moedas e a hiperinflação, as
 // raízes do Plano Real, a crise de janeiro de 1999, o tripé, a eleição de 2002, o boom de
 // commodities, 2008, a recessão de 2015 e 2016, o Joesley Day e a pandemia.
@@ -86,7 +87,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       capitular: true,
       paragrafos: [
-        "A aula extra parte de uma constatação que o brasileiro conhece de cor e costuma esquecer na hora de investir: o real, com mais de três décadas de circulação, é a moeda mais bem-sucedida que o país teve em cem anos, e mesmo assim atravessou crises que mudaram, em semanas, o patrimônio de quem o guardava. Entre 1942 e 1994 o Brasil trocou de padrão monetário oito vezes, quase sempre junto com um plano econômico que trazia congelamento de preços, arrocho salarial ou bloqueio de aplicações.",
+        "A aula parte de uma constatação que o brasileiro conhece de cor e costuma esquecer na hora de investir: o real, com mais de três décadas de circulação, é a moeda mais bem-sucedida que o país teve em cem anos, e mesmo assim atravessou crises que mudaram, em semanas, o patrimônio de quem o guardava. Entre 1942 e 1994 o Brasil trocou de padrão monetário oito vezes, quase sempre junto com um plano econômico que trazia congelamento de preços, arrocho salarial ou bloqueio de aplicações.",
         "O argumento que atravessa a hora e meia de aula é mais modesto do que parece e, por isso, mais útil. Ninguém precisa acreditar que o Brasil vai dar errado para concluir que manter todo o patrimônio sob uma moeda, um banco central e um sistema político é uma aposta concentrada, porque a própria história do real tem pelo menos seis momentos em que uma decisão fora do alcance do investidor mexeu, de uma vez, no câmbio, nos juros e na bolsa. Este notebook segue a aula na ordem em que ela foi dada e confere os números citados contra as séries oficiais.",
       ],
       tempo: "0:19",

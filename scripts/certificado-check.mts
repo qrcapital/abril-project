@@ -129,7 +129,7 @@ import { qrMatriz, qrSvg } from "../lib/qr.ts";
 {
   const contam = ["a1", "a2", "a3"];
   assert.equal(concluiuTodasAsAulas(contam, new Set(["a1", "a2", "a3"])), true);
-  assert.equal(concluiuTodasAsAulas(contam, new Set(["a1", "a2", "a3", "boas-vindas"])), true);
+  assert.equal(concluiuTodasAsAulas(contam, new Set(["a1", "a2", "a3", "fora-do-gate"])), true, "aula que nao conta nao atrapalha");
   assert.equal(concluiuTodasAsAulas(contam, new Set(["a1", "a3"])), false, "faltando uma, nao emite");
   assert.equal(concluiuTodasAsAulas([], new Set(["a1"])), false, "nenhuma aula contando nao pode emitir");
 }

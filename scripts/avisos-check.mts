@@ -2,7 +2,8 @@
 //   npm run check:avisos
 //
 // O que ele guarda: a régua acompanha o dia da semana da COMPRA de cada aluno, o aviso sai uma
-// vez só, dentro da janela, e o Módulo 0 e a liberação total não geram e-mail.
+// vez só, dentro da janela, e o Módulo I (ord 0, aberto na compra) e a liberação total não geram
+// e-mail. Desde 05/out/2026 o curso tem quatro módulos, I a IV nos ords 0 a 3 (migration 0028).
 
 import assert from "node:assert/strict";
 
@@ -11,24 +12,24 @@ import { calendarioDoAluno, regraEsteira, type Regra } from "../lib/liberacao.ts
 
 const DIA = 86_400_000;
 const HORA = 3_600_000;
-const regras: Regra[] = [0, 1, 2, 3, 4].map(regraEsteira);
+const regras: Regra[] = [0, 1, 2, 3].map(regraEsteira);
 
 // Compra numa quarta, 14/out/2026, 15h30 de Brasília.
 const compra = new Date("2026-10-14T18:30:00Z");
 const cal = (agora: Date, total = false) =>
   calendarioDoAluno({ inicioEm: compra, liberacaoTotal: total, regras, agora });
 
-// 1. No dia da compra nada é avisado: o Módulo 0 abre, mas quem fala dele é o boas-vindas.
+// 1. No dia da compra nada é avisado: o Módulo I abre, mas quem fala dele é o boas-vindas.
 assert.deepEqual(avisosDevidos(cal(new Date(compra.getTime() + HORA)), new Set(), new Date(compra.getTime() + HORA)), []);
 
-// 2. Uma hora depois de completar 7 dias, o Módulo I é devido, e cai numa quarta.
+// 2. Uma hora depois de completar 7 dias, o Módulo II (ord 1) é devido, e cai numa quarta.
 {
   const agora = new Date(compra.getTime() + 7 * DIA + HORA);
   const devidos = avisosDevidos(cal(agora), new Set(), agora);
   assert.deepEqual(devidos.map((d) => d.ord), [1]);
   assert.match(diaEData(devidos[0].abreEm!), /^quarta-feira, 21\/10$/);
   // ...e a frase do próximo aponta a quarta seguinte.
-  assert.equal(fraseDoProximo(cal(agora), 1), "O Módulo II abre na quarta-feira, 28/10.");
+  assert.equal(fraseDoProximo(cal(agora), 1), "O Módulo III abre na quarta-feira, 28/10.");
 }
 
 // 3. Já avisado não volta.
@@ -49,15 +50,16 @@ assert.deepEqual(avisosDevidos(cal(new Date(compra.getTime() + HORA)), new Set()
   assert.deepEqual(avisosDevidos(cal(agora, true), new Set(), agora), []);
 }
 
-// 6. Último módulo fala do certificado.
+// 6. Último módulo (IV, ord 3, em 21 dias) fala do certificado.
 {
-  const agora = new Date(compra.getTime() + 28 * DIA + HORA);
-  assert.deepEqual(avisosDevidos(cal(agora), new Set([1, 2, 3]), agora).map((d) => d.ord), [4]);
-  assert.match(fraseDoProximo(cal(agora), 4), /último módulo/);
+  const agora = new Date(compra.getTime() + 21 * DIA + HORA);
+  assert.deepEqual(avisosDevidos(cal(agora), new Set([1, 2]), agora).map((d) => d.ord), [3]);
+  assert.match(fraseDoProximo(cal(agora), 3), /último módulo/);
+  assert.equal(fraseDoProximo(cal(agora), 2), "O Módulo IV também já está liberado na sua área.");
 }
 
 // 7. Sem travessão em frase que vai para o aluno (regra da casa).
-for (const f of [fraseDoProximo(cal(new Date(compra.getTime() + 8 * DIA)), 1), fraseDoProximo(cal(new Date(compra.getTime() + 29 * DIA)), 4)])
+for (const f of [fraseDoProximo(cal(new Date(compra.getTime() + 8 * DIA)), 1), fraseDoProximo(cal(new Date(compra.getTime() + 22 * DIA)), 3)])
   assert.ok(!f.includes("—"), f);
 
 console.log("check:avisos ok");

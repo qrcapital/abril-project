@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
     const ord = m.ord as number;
     const tipo = texto(`tipo_${m.id}`);
     if (!(TIPOS_DE_REGRA as readonly string[]).includes(tipo))
-      return erro(`O módulo ${ord} está sem tipo de liberação.`);
+      return erro(`O ${rotuloModulo(ord)} está sem tipo de liberação.`);
 
     let dias: number | null = null;
     let abre_em: string | null = null;
@@ -122,14 +122,14 @@ export async function POST(req: NextRequest) {
       // `Number("") === 0`: campo apagado viraria "no ato" em silêncio.
       dias = bruto === "" ? Number.NaN : Number(bruto);
       if (!Number.isInteger(dias) || dias < 0 || dias > 3650)
-        return erro(`Dias do módulo ${ord}: use um inteiro entre 0 e 3650.`);
+        return erro(`Dias do ${rotuloModulo(ord)}: use um inteiro entre 0 e 3650.`);
     }
     if (tipo === "data") {
       const bruto = texto(`data_${m.id}`);
       // O admin escolhe um dia pensando no Brasil; meia-noite de Brasília é o instante gravado.
       const data = /^\d{4}-\d{2}-\d{2}$/.test(bruto) ? new Date(`${bruto}T00:00:00-03:00`) : null;
       if (!data || Number.isNaN(data.getTime()))
-        return erro(`Data do módulo ${ord}: escolha um dia no calendário.`);
+        return erro(`Data do ${rotuloModulo(ord)}: escolha um dia no calendário.`);
       abre_em = data.toISOString();
     }
     if (tipo === "apos_modulo") {
@@ -138,7 +138,7 @@ export async function POST(req: NextRequest) {
       const brutoDias = texto(`dias_${m.id}`);
       dias = brutoDias === "" ? 0 : Number(brutoDias);
       if (!Number.isInteger(dias) || dias < 0 || dias > 3650)
-        return erro(`Dias do módulo ${ord}: use um inteiro entre 0 e 3650.`);
+        return erro(`Dias do ${rotuloModulo(ord)}: use um inteiro entre 0 e 3650.`);
       const brutoDep = texto(`depende_${m.id}`);
       depende_de_ord = brutoDep === "" ? Number.NaN : Number(brutoDep);
       // Só módulo ANTERIOR e existente. Depender de si ou de um posterior pode fechar ciclo

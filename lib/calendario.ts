@@ -16,8 +16,7 @@ import { getConclusoesDasAulas } from "./progresso";
 // O calendário do aluno logado, pronto para tela: matrícula + política + módulos + progresso,
 // numa chamada só. Nasceu em 29/set/2026 com a regra `apos_modulo`, quando a liberação passou
 // a depender do progresso e cada guarda teria de juntar as quatro fontes por conta própria. As
-// guardas (página do módulo, marcar aula) e a home leem daqui, e a tela de boas-vindas e a trilha do
-// curso vão ler também: um cálculo só, para a trilha nunca dizer "aberto" de um módulo que a
+// guardas (página do módulo, marcar aula), a home e a trilha do curso leem daqui: um cálculo só, para a trilha nunca dizer "aberto" de um módulo que a
 // guarda da aula recusa.
 //
 // A regra é do `lib/liberacao.ts` (puro, com self-check); este arquivo só faz IO e formata.
@@ -29,7 +28,7 @@ import { getConclusoesDasAulas } from "./progresso";
  * instante escrito "13/10" no fuso de Brasília (nunca o do servidor, que na Netlify é UTC).
  */
 export type ModuloCalendario = {
-  /** Ord do módulo (0 = "Comece por aqui"). É o índice usado na URL e nas regras. */
+  /** Ord do módulo (0 = Módulo I, desde 05/out/2026). É o índice usado na URL e nas regras. */
   ord: number;
   /** `modules.id`. */
   id: string;

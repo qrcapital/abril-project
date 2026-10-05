@@ -32,7 +32,7 @@ const authCss = readFileSync(
   "utf8"
 );
 
-// As telas da sala escritas em JSX (comece, módulo, notebook, aula) têm folha própria, escopada em
+// As telas da sala escritas em JSX (módulo, notebook, aula, trilha) têm folha própria, escopada em
 // `.sl`. Vem por último pela mesma razão do `auth.css`: ganha do CSS portado onde os dois se tocam.
 const salaCss = readFileSync(
   join(process.cwd(), "app", "app", "_ui", "sala.css"),

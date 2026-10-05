@@ -16,6 +16,7 @@ import {
   dataHora as data,
 } from "@/app/admin/_ui/tabela";
 import { ROTULO_ESTADO, estadoDaMatricula } from "@/lib/matricula-estado";
+import { rotuloModulo } from "@/lib/curso";
 import { exigirAdmin } from "@/lib/admin-guarda";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -216,7 +217,7 @@ export default async function Aluno({
                 {mods.map((m) => (
                   <Linha key={m.ord}>
                     <td className="px-4 py-3 text-[13px] text-grafite">
-                      {m.ord}. {m.titulo}
+                      {rotuloModulo(m.ord)} · {m.titulo}
                     </td>
                     <td className="px-4 py-3 text-[13px] text-grafite">
                       {m.concluidas}/{m.total}
@@ -249,7 +250,7 @@ export default async function Aluno({
                         <LimparModulo
                           userId={user.id}
                           ord={m.ord}
-                          titulo={`${m.ord}. ${m.titulo}`}
+                          titulo={`${rotuloModulo(m.ord)} · ${m.titulo}`}
                           concluidas={m.concluidas}
                           contaNoGate={m.conta_no_gate}
                         />

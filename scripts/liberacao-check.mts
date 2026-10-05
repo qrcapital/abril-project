@@ -28,38 +28,40 @@ import {
   violaGarantia,
   type Regra,
 } from "../lib/liberacao.ts";
+import { rotuloModulo } from "../lib/curso.ts";
 
 // O currículo vive no banco e este check é puro (roda sem rede). A contagem de módulos entra
-// como constante; quem guarda que o banco tem esses cinco é o `check:curriculo`.
-const TOTAL_MODULOS = 5;
+// como constante. Desde 05/out/2026 (migration 0028) são quatro, I a IV nos ords 0 a 3, sem o
+// antigo Módulo 0 de boas-vindas.
+const TOTAL_MODULOS = 4;
 
 const INICIO = new Date("2026-03-02T12:00:00Z"); // uma segunda-feira
 const maisDias = (d: number) => new Date(INICIO.getTime() + d * 86_400_000);
 const ESTEIRA: Regra[] = Array.from({ length: TOTAL_MODULOS }, (_, i) => regraEsteira(i));
 
-// --- a esteira semanal (29/set): Módulo 0 no ato, depois um por semana DESDE a matrícula ---
-// Até 29/set o I abria junto com o 0 ([0, 0, 7, 14, 21]). O Pedro pediu o I na semana 1, e a
-// migration 0024 reescreveu a política ativa com esta mesma conta.
+// --- a esteira semanal: o Módulo I (ord 0) no ato, depois um por semana DESDE a matrícula ---
+// A conta `indice * 7` é a da migration 0024 (29/set). Desde 05/out/2026 (0028) o ord 0 é o
+// Módulo I, e não mais o Módulo 0 de boas-vindas: o curso inteiro abre em 21 dias.
 assert.equal(DIAS_POR_MODULO, 7);
 assert.deepEqual(
   ESTEIRA.map((r) => (r.tipo === "dias" ? r.dias : -1)),
-  [0, 7, 14, 21, 28],
-  "Modulo 0 no ato; I em 7 dias, II em 14, III em 21, IV em 28",
+  [0, 7, 14, 21],
+  "Modulo I no ato; II em 7 dias, III em 14, IV em 21",
 );
 
 const abertosEm = (d: number, regras: Regra[] = ESTEIRA) =>
   [...liberacao(INICIO, false, regras, maisDias(d)).abertos].sort();
-assert.deepEqual(abertosEm(0), [0], "no dia da compra, so o Modulo 0");
+assert.deepEqual(abertosEm(0), [0], "no dia da compra, so o Modulo I");
 assert.deepEqual(abertosEm(6), [0], "vespera da semana 1 nao adianta nada");
-assert.deepEqual(abertosEm(7), [0, 1], "Modulo I na semana 1");
+assert.deepEqual(abertosEm(7), [0, 1], "Modulo II na semana 1");
 assert.deepEqual(abertosEm(14), [0, 1, 2]);
-assert.deepEqual(abertosEm(21), [0, 1, 2, 3]);
-assert.deepEqual(abertosEm(28), [0, 1, 2, 3, 4], "curso inteiro em 28 dias");
-assert.deepEqual(abertosEm(90), [0, 1, 2, 3, 4], "depois do fim, segue tudo aberto");
+assert.deepEqual(abertosEm(20), [0, 1, 2], "vespera do ultimo");
+assert.deepEqual(abertosEm(21), [0, 1, 2, 3], "curso inteiro em 21 dias");
+assert.deepEqual(abertosEm(90), [0, 1, 2, 3], "depois do fim, segue tudo aberto");
 
-// --- completo é o que a prova exige ---
-assert.equal(liberacao(INICIO, false, ESTEIRA, maisDias(27)).completo, false);
-assert.equal(liberacao(INICIO, false, ESTEIRA, maisDias(28)).completo, true);
+// --- completo é o que o certificado exige ---
+assert.equal(liberacao(INICIO, false, ESTEIRA, maisDias(20)).completo, false);
+assert.equal(liberacao(INICIO, false, ESTEIRA, maisDias(21)).completo, true);
 
 // --- os tipos de regra que só dependem do relógio ---
 const MISTA: Regra[] = [
@@ -129,7 +131,7 @@ assert.equal(aberturaDoModulo(INICIO, { tipo: "em_breve" }), null);
 // --- apos_modulo (29/set): abre quando o aluno CONCLUI o pré-requisito, mais dias opcionais ---
 assert.ok((TIPOS_DE_REGRA as readonly string[]).includes("apos_modulo"));
 
-// Currículo de brinquedo: Módulo 0 com 1 aula, I e II com 2 cada.
+// Currículo de brinquedo: ord 0 (Módulo I) com 1 aula, ords 1 e 2 (II e III) com 2 cada.
 const AULAS = [
   { id: "a0", modulo: 0 },
   { id: "a1", modulo: 1 },
@@ -158,9 +160,9 @@ const abertosCom = (d: number, feitas: Record<string, number>, total = false) =>
   [...liberacao(INICIO, total, CADEIA, maisDias(d), conclusoesCom(feitas)).abertos].sort();
 
 assert.deepEqual(abertosCom(0, {}), [0], "sem progresso, so o livre");
-assert.deepEqual(abertosCom(1, { a0: 1 }), [0, 1], "concluiu o 0, abre o I na hora");
-assert.deepEqual(abertosCom(4, { a0: 1, a1: 3 }), [0, 1], "I pela metade segura o II");
-assert.deepEqual(abertosCom(4, { a0: 1, a1: 3, a2: 4 }), [0, 1], "II espera os 2 dias extras");
+assert.deepEqual(abertosCom(1, { a0: 1 }), [0, 1], "concluiu o I, abre o II na hora");
+assert.deepEqual(abertosCom(4, { a0: 1, a1: 3 }), [0, 1], "II pela metade segura o III");
+assert.deepEqual(abertosCom(4, { a0: 1, a1: 3, a2: 4 }), [0, 1], "III espera os 2 dias extras");
 assert.deepEqual(abertosCom(6, { a0: 1, a1: 3, a2: 4 }), [0, 1, 2], "4 + 2 dias = dia 6");
 assert.deepEqual(abertosCom(0, {}, true), [0, 1, 2], "liberacao total pula a cadeia");
 // Sem conclusões passadas, quem depende de progresso fica fechado: é o erro seguro.
@@ -187,7 +189,7 @@ assert.equal(
       [2, false, "apos_modulo"],
     ],
   );
-  assert.equal(cal[2].abreEm!.getTime(), maisDias(6).getTime(), "abre 2 dias apos concluir o I");
+  assert.equal(cal[2].abreEm!.getTime(), maisDias(6).getTime(), "abre 2 dias apos concluir o II");
   const semNada = calendarioDoAluno({ inicioEm: INICIO, regras: CADEIA, agora: maisDias(5) });
   assert.equal(semNada[1].abreEm, null, "sem conclusao nao ha data");
   const total = calendarioDoAluno({
@@ -232,8 +234,11 @@ assert.equal(dataCurta(NOITE), "12/10", "dataCurta usa America/Sao_Paulo");
 assert.equal(dataLonga(NOITE), "12/10/2026");
 assert.equal(dataCurta(new Date("2026-10-13T03:00:00Z")), "13/10", "meia-noite de Brasilia");
 
+// --- os rótulos: desde 05/out/2026 o ord 0 é o Módulo I ---
+assert.deepEqual([0, 1, 2, 3].map(rotuloModulo), ["Módulo I", "Módulo II", "Módulo III", "Módulo IV"]);
+
 // --- a prévia da tela de políticas ---
-const rot = (ord: number) => `Módulo ${["0", "I", "II", "III", "IV"][ord]}`;
+const rot = rotuloModulo;
 assert.equal(descreverRegra(regraEsteira(1), rot), "abre 7 dias após a matrícula");
 assert.equal(descreverRegra(regraEsteira(0), rot), "abre no ato da matrícula");
 assert.equal(
@@ -242,11 +247,11 @@ assert.equal(
 );
 assert.equal(
   descreverRegra({ tipo: "apos_modulo", modulo: 1 }, rot),
-  "abre após concluir o Módulo I",
+  "abre após concluir o Módulo II",
 );
 assert.equal(
   descreverRegra({ tipo: "apos_modulo", modulo: 1, dias: 3 }, rot),
-  "abre após concluir o Módulo I, mais 3 dias",
+  "abre após concluir o Módulo II, mais 3 dias",
 );
 
 console.log("liberacao-check: ok");

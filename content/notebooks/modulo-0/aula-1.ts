@@ -1,6 +1,8 @@
 import type { SecaoDaAula } from "@/lib/notebook";
 
-// Módulo 0, aula 1 ("AULA 0"): abertura do curso, com Marcelo Campos e Felippe Hermes.
+// Módulo I, aula 1 ("Cinco razões para olhar para fora"), com Marcelo Campos e Felippe Hermes. Até
+// 05/out/2026 era a "AULA 0" do Módulo 0 de boas-vindas; o arquivo mora em `modulo-0/` porque o
+// diretório segue o `ord` do módulo, que continua 0.
 // Segue a ordem da aula (transcrição em `transcricoes/modulo-0/aula-1.txt`): a abertura, os mitos
 // sobre dolarização e as cinco razões de Felippe, e o fechamento sobre estudo e tributação.
 //
@@ -27,7 +29,7 @@ const secao: SecaoDaAula = {
         "O celular, o sistema operacional, a plataforma de streaming, o tênis: quase tudo o que o brasileiro consome no dia a dia tem dono, marca ou preço formado fora do Brasil. O patrimônio, porém, costuma ficar inteiro aqui, em reais, aplicado em empresas e títulos de um único país. A aula abre com essa assimetria, e ela é o ponto de partida do curso: manter 100% em uma moeda e em uma economia não é ausência de escolha, é uma aposta concentrada que raramente se faz de forma consciente.",
         "O que mudou foi o acesso. Até poucos anos atrás, investir lá fora pedia private banking, contrato de câmbio na agência e aplicação mínima alta. A Lei 14.286, de 2021, o novo marco cambial que entrou em vigor no último dia de 2022, simplificou as operações de câmbio e abriu caminho para contas em moeda estrangeira e para as contas globais oferecidas por bancos e fintechs. Hoje a abertura de conta cabe num aplicativo. A barreira deixou de ser operacional e passou a ser de método.",
         "Marcelo Campos faz uma ressalva antes de qualquer argumento a favor: dolarizar também tem risco. Quem vive e gasta em reais e compra um ativo em dólar passa a carregar dois riscos ao mesmo tempo, o do ativo e o da moeda. Uma ação americana que sobe 8% em dólar entrega perto de 19% em reais se o dólar subir 10% no período, e cerca de −3% se o dólar cair 10%. É o que o mercado chama de risco duplo, e ele vale nos dois sentidos: o câmbio que protege numa crise local é o mesmo que corrói o resultado quando o real se fortalece.",
-        "O curso segue essa lógica, em quatro módulos que vão do porquê à prática: estratégia e diagnóstico com Rodolfo Bastos, renda fixa e ações americanas com Tony Volpon, acesso ao mercado dos Estados Unidos com Luiz Roxo e ativos digitais com Alexandre Ywata. Nesta abertura, Felippe Hermes, fundador da BlockTrends e do Spotniks, organiza o argumento em cinco razões. Este notebook acompanha a mesma ordem, com os números conferidos nas fontes originais.",
+        "O curso segue essa lógica, em quatro módulos que vão do porquê à prática: macro e estratégia global com Felippe Hermes e Rodolfo Bastos, renda fixa e ações americanas com Tony Volpon, acesso ao mercado dos Estados Unidos com Luiz Roxo e ativos digitais com Alexandre Ywata. Nesta primeira aula, Felippe Hermes, fundador da BlockTrends e do Spotniks, organiza o argumento em cinco razões. Este notebook acompanha a mesma ordem, com os números conferidos nas fontes originais.",
       ],
     },
     {

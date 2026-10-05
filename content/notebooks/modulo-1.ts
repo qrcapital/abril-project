@@ -1,60 +1,36 @@
-import type { Notebook } from "@/lib/notebook";
+import { composto, type Notebook } from "@/lib/notebook";
 
-// Módulo I, Macro e Estratégia Global. CONTEÚDO DE DEMONSTRAÇÃO: o gráfico é aritmética sobre
-// taxas hipotéticas (quantos anos até a moeda perder metade do poder de compra), não série
-// histórica. Trocar pelo definitivo e virar `demo` para `false`.
+// Módulo II, Renda Fixa e Ações nos EUA. CONTEÚDO DE DEMONSTRAÇÃO: as curvas são juros compostos
+// sobre taxas hipotéticas, não retorno de nenhum ativo. Trocar pelo definitivo e virar `demo`
+// para `false`.
 //
-// Uma seção por aula, pela posição da aula no módulo (1 a 4). Os blocos são os mesmos da versão
-// corrida de 29/set, redistribuídos pela aula de onde cada um vinha.
+// Uma seção por aula, pela posição da aula no módulo. A aula 2 (crédito privado) ainda não tem
+// conteúdo e aparece no notebook como em produção.
 
-const inflacoes = [2, 4, 6, 8, 10];
-const metade = inflacoes.map((i) => Math.round((Math.log(2) / Math.log(1 + i / 100)) * 10) / 10);
+const anos = [0, 5, 10, 15, 20, 25, 30];
 
 const notebook: Notebook = {
   modulo: 1,
-  titulo: "O mundo em ciclos",
+  titulo: "Renda e crescimento em dólar",
   subtitulo:
-    "Moeda de reserva, inflação e câmbio: a macro que decide quanto vale o seu patrimônio quando você mede em dólar.",
+    "Do Tesouro americano às ações: o que muda quando o seu dinheiro trabalha em moeda forte por muito tempo.",
   demo: true,
   aulas: [
     {
       aula: 1,
       blocos: [
         {
-          tipo: "grafico",
-          titulo: "Anos até uma moeda perder metade do poder de compra, por inflação anual",
-          forma: "barra",
-          eixoX: inflacoes.map((i) => `${i}% ao ano`),
-          series: [{ nome: "Anos até a metade", valores: metade }],
-          formato: { sufixo: " anos", casas: 1 },
-          ilustrativo: true,
-          nota:
-            "Conta ilustrativa: ln(2) dividido por ln(1 + inflação), com inflação constante. Não descreve nenhum país nem período.",
-        },
-        {
-          tipo: "numero",
-          valor: "72",
-          legenda:
-            "A regra de bolso: divida 72 pela inflação anual e você tem, com boa aproximação, os anos até o poder de compra cair pela metade.",
-          nota: "Aproximação. A conta exata está no gráfico acima.",
-        },
-      ],
-    },
-    {
-      aula: 2,
-      blocos: [
-        {
           tipo: "capitulo",
-          id: "reserva",
-          titulo: "O dólar no centro do sistema",
-          resumo: "Por que uma moeda serve de régua para o comércio, a dívida e as reservas do mundo.",
+          id: "tempo",
+          titulo: "O tempo como sócio",
+          resumo: "A diferença entre duas taxas parece pequena num ano e enorme em trinta.",
         },
         {
           tipo: "texto",
           capitular: true,
           paragrafos: [
-            "Desde o fim da Segunda Guerra, o dólar ocupa um lugar que nenhuma outra moeda ocupa: é nele que se precifica boa parte do comércio internacional, que governos guardam reservas e que empresas do mundo inteiro tomam dívida. Essa posição não é eterna, e a história das moedas de reserva mostra trocas de guarda, mas elas costumam levar décadas.",
-            "Para quem investe a partir do Brasil, a consequência prática é simples de dizer e difícil de ignorar: o dólar é a unidade em que o resto do mundo mede valor. Medir o próprio patrimônio só em reais é olhar para ele com uma régua que encolhe quando a inflação daqui corre mais rápido que a de lá.",
+            "O título do Tesouro americano é a referência de risco baixo do mercado global: é contra ele que quase todo outro investimento em dólar se compara. Para o investidor brasileiro, ele cumpre um papel que o CDI cumpre aqui, com a diferença de que o rendimento vem na moeda em que o mundo mede valor.",
+            "Acima dessa base estão o crédito privado e as ações, e cada degrau pede mais tolerância a oscilação em troca de mais retorno esperado. O gráfico abaixo não fala de nenhum desses ativos. Ele mostra só a matemática que faz a escolha pesar tanto: juros compostos, ao longo de três décadas.",
           ],
         },
       ],
@@ -63,19 +39,24 @@ const notebook: Notebook = {
       aula: 3,
       blocos: [
         {
-          tipo: "texto",
-          paragrafos: [
-            "O simulador abaixo isola um só efeito, o do câmbio. Ele ignora de propósito rendimento, imposto e custo, para mostrar só quanto a fatia em dólar protege o poder de compra quando o real perde valor a um ritmo constante.",
+          tipo: "grafico",
+          titulo: "US$ 10 mil a 4% e a 7% ao ano, ao longo de 30 anos",
+          forma: "area",
+          eixoX: anos.map((t) => (t === 0 ? "Hoje" : `${t} anos`)),
+          series: [
+            { nome: "7% ao ano", valores: composto(10_000, 7, anos) },
+            { nome: "4% ao ano", valores: composto(10_000, 4, anos) },
           ],
+          formato: { prefixo: "US$ " },
+          ilustrativo: true,
+          nota:
+            "Dados ilustrativos. Taxas hipotéticas e constantes, sem impostos, custos ou inflação. Não representam o retorno de nenhum título ou ação.",
         },
         {
-          tipo: "comparador",
-          id: "simulador",
-          modelo: "cambio",
-          titulo: "Câmbio e poder de compra",
-          descricao:
-            "Poder de compra em dólar de uma carteira, com início em 100, quando o real perde valor a uma taxa fixa. Hipóteses ajustáveis e só ilustrativas.",
-          hipoteses: { depreciacao: 4, anos: 10, fatia: 0.3 },
+          tipo: "numero",
+          valor: "2,3x",
+          legenda: "é quanto maior termina o mesmo capital a 7% em vez de 4% ao ano, depois de 30 anos.",
+          nota: "Conta sobre as taxas hipotéticas do gráfico acima.",
         },
       ],
     },
@@ -85,29 +66,23 @@ const notebook: Notebook = {
         {
           tipo: "texto",
           paragrafos: [
-            "Juros e câmbio andam em ciclos, e quase ninguém acerta o momento de virada. A estratégia do módulo parte daí: em vez de tentar adivinhar a próxima alta do dólar, construir uma fatia permanente em moeda forte, do tamanho que o seu perfil aguenta, e rebalancear com regra.",
+            "Dividendos e crescimento são duas maneiras de receber o mesmo retorno: uma paga parte dele em dinheiro ao longo do caminho, a outra reinveste dentro da empresa. Nenhuma é superior em tese. A escolha depende de quando você precisa do dinheiro e de como cada forma é tributada para quem mora no Brasil, assunto que volta no Módulo III.",
           ],
         },
         {
           tipo: "referencias",
           itens: [
             {
-              autor: "Ray Dalio",
-              titulo: "Principles for Dealing with the Changing World Order",
-              ano: 2021,
-              nota: "Ciclos de dívida e a ascensão e queda de moedas de reserva ao longo de cinco séculos.",
+              autor: "Jeremy J. Siegel",
+              titulo: "Stocks for the Long Run",
+              ano: 1994,
+              nota: "Séries longas de retorno de ações, títulos e ouro nos Estados Unidos.",
             },
             {
-              autor: "Barry Eichengreen",
-              titulo: "Exorbitant Privilege",
-              ano: 2011,
-              nota: "Como o dólar virou a moeda de reserva do mundo e o que poderia desafiá-lo.",
-            },
-            {
-              autor: "Carmen M. Reinhart e Kenneth S. Rogoff",
-              titulo: "This Time Is Different",
-              ano: 2009,
-              nota: "Oito séculos de crises de dívida, bancárias e cambiais, com dados.",
+              autor: "Benjamin Graham",
+              titulo: "The Intelligent Investor",
+              ano: 1949,
+              nota: "A diferença entre investir e especular, e a ideia de margem de segurança.",
             },
           ],
         },

@@ -53,8 +53,9 @@ export const getCurriculo = cache(async (): Promise<Curriculo> => {
       id: l.id,
       n: i,
       modulo: l.modulo,
-      // O Módulo 0 é boas-vindas e não recebe numeral; as demais numeram 01 em diante.
-      numero: i === 0 ? "" : String(i).padStart(2, "0"),
+      // Toda aula numera 01 em diante, na ordem do curso. Até 05/out/2026 a primeira ficava sem
+      // numeral por ser a de boas-vindas do Módulo 0, que deixou de existir.
+      numero: String(i + 1).padStart(2, "0"),
       // Contada na lista já ordenada, e não lida do `ord` do banco: o admin pode deixar buraco na
       // ordem (apagar a aula 2 de 4), e a URL `?aula=` precisa continuar 1, 2, 3 sem pular.
       pos: todas.slice(0, i + 1).filter((x) => x.modulo === l.modulo).length,

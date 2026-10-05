@@ -1,7 +1,7 @@
 // O AVISO DE MÓDULO LIBERADO: o e-mail que acompanha a régua de cada aluno.
 //
-// Nasceu em 02/out/2026. A liberação é por aluno, não por turma: o Módulo I abre 7 dias depois
-// do `inicio_em` da matrícula, o II em 14, e assim por diante (`regraEsteira`). Quem compra numa
+// Nasceu em 02/out/2026. A liberação é por aluno, não por turma: o Módulo I abre na compra, o II
+// 7 dias depois do `inicio_em` da matrícula, o III em 14 e o IV em 21 (`regraEsteira`). Quem compra numa
 // quarta recebe módulo novo toda quarta; quem compra num sábado, todo sábado. Não existe "o dia
 // do módulo", então este aviso não pode ser uma campanha com data: ele é uma ROTINA que olha o
 // calendário de cada matrícula e avisa quem teve um módulo aberto desde a última passada.
@@ -20,9 +20,10 @@
 // 3. **Janela de 48 horas.** Só avisa módulo que abriu nas últimas 48 h. No primeiro deploy, ou
 //    depois de um dia fora do ar, a rotina não despeja de uma vez os avisos atrasados de semanas.
 //    Dois dias cobrem uma pane de fim de semana; mais que isso, o aluno já viu o módulo na área.
-// 4. **O Módulo 0 não avisa**, porque abre junto com a compra e quem fala dele é o boas-vindas.
-//    Módulo aberto pela chave de liberação total do admin também não: ali abrem todos de uma vez,
-//    e cinco e-mails no mesmo minuto seriam ruído.
+// 4. **O Módulo I (ord 0) não avisa**, porque abre junto com a compra e quem fala dele é o
+//    e-mail de boas-vindas. Até 05/out/2026 o ord 0 era o Módulo 0 de boas-vindas; a regra é a
+//    mesma, só o nome mudou. Módulo aberto pela chave de liberação total do admin também não: ali
+//    abrem todos de uma vez, e quatro e-mails no mesmo minuto seriam ruído.
 // 5. **Teto por passada.** Função agendada da Netlify tem 30 s. O que passar do teto fica para a
 //    próxima hora, dentro da janela.
 //
@@ -31,7 +32,7 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { ROMANO } from "./curso.ts";
+import { ROMANO, rotuloModulo } from "./curso.ts";
 import { enviarEmail } from "./email.ts";
 import {
   calendarioDoAluno,
@@ -59,7 +60,8 @@ export const diaEData = (d: Date) => `${DIA_DA_SEMANA.format(d)}, ${DD_MM.format
 
 /**
  * Os módulos que este aluno deve ser avisado agora: abertos pelo relógio ou pela conclusão de
- * outro módulo, nas últimas `JANELA_HORAS`, a partir do Módulo I, e ainda sem aviso.
+ * outro módulo, nas últimas `JANELA_HORAS`, a partir do Módulo II (ord 1), e ainda sem aviso. O
+ * Módulo I (ord 0) fica de fora: abre na compra, e quem fala dele é o e-mail de boas-vindas.
  */
 export function avisosDevidos(
   cal: readonly EntradaCalendario[],
@@ -89,7 +91,7 @@ export function fraseDoProximo(cal: readonly EntradaCalendario[], ord: number): 
   if (!proximo) {
     return "Este é o último módulo do curso: quando você concluir as aulas, o seu certificado é emitido na hora.";
   }
-  const rotulo = `Módulo ${ROMANO[proximo.ord] ?? proximo.ord}`;
+  const rotulo = rotuloModulo(proximo.ord);
   if (proximo.aberto) return `O ${rotulo} também já está liberado na sua área.`;
   if (proximo.abreEm) return `O ${rotulo} abre na ${diaEData(proximo.abreEm)}.`;
   return `O ${rotulo} abre assim que você concluir as aulas deste.`;

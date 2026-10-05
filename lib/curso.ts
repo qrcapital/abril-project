@@ -5,30 +5,34 @@
 // título, descrição, link de vídeo e materiais pelo painel, e painel não edita código. O banco
 // virou fonte única, e o que ficou aqui é a lógica pura que opera sobre ele.
 //
-// `n` é o número da aula na URL (0 = boas-vindas; 1..16 = módulos I a IV). `modulo` é o índice
-// (0..4), que é o `ord` do módulo no banco.
+// `n` é a posição global da aula no curso, a partir de 0. `modulo` é o índice (0..3), que é o
+// `ord` do módulo no banco. Desde 05/out/2026 o curso tem 4 módulos e não tem mais o Módulo 0 de
+// boas-vindas: o ord 0 é o Módulo I, o 1 é o II, e assim por diante (`rotuloModulo`).
 
 export type Modulo = {
   /** `modules.id`. Entrou em 29/set para o calendário do aluno (`lib/calendario.ts`). */
   id: string;
   idx: number;
-  label: string; // "Módulo 0", "Módulo I", ...
+  label: string; // "Módulo I", "Módulo II", ...
   titulo: string;
   docente?: string;
 };
 
 /** O numeral de cada módulo pelo `ord`. Mora aqui porque a área do aluno e o admin rotulam o
  *  mesmo módulo, e com uma cópia em cada lado o "Módulo III" de uma tela viraria "Módulo 3" na
- *  outra sem ninguém notar. */
-export const ROMANO = ["0", "I", "II", "III", "IV"];
+ *  outra sem ninguém notar.
+ *
+ *  Desde 05/out/2026 o ord 0 é o Módulo I. O `ord` continua começando em 0 porque a política de
+ *  liberação e o calendário indexam as regras pela posição (`regras[ord]`); só o rótulo mudou. */
+export const ROMANO = ["I", "II", "III", "IV"];
 export const rotuloModulo = (ord: number) => `Módulo ${ROMANO[ord] ?? ord}`;
 
 export type Aula = {
   /** `lessons.id`. É por ele que o progresso é gravado. */
   id: string;
-  n: number; // número na URL (0..16)
-  modulo: number; // índice do módulo (0..4)
-  numero: string; // rótulo exibido ("" para boas-vindas, "01".."16")
+  n: number; // posição global no curso, a partir de 0
+  modulo: number; // índice do módulo (0..3), o `ord` do banco
+  numero: string; // rótulo exibido, "01" em diante na ordem do curso
   /**
    * Posição da aula DENTRO do módulo, a partir de 1. Entrou em 30/set/2026 com a página do módulo:
    * é o "Aula 3" da playlist, o `?aula=3` da URL e o `#aula-3` da seção do notebook. O `n` global
@@ -83,10 +87,9 @@ export function href(a: Aula): string {
  * argumento por dezenas de linhas sem ganhar nada.
  */
 export function montarCurriculo(modulos: Modulo[], aulas: Aula[]): Curriculo {
-  // Até 17/ago/2026 isto era `a.n >= 1` ("tudo menos a boas-vindas"), e o `conta_no_gate` que o
-  // admin edita era letra morta: o checkbox gravava no banco e ninguém lia. O Pedro marcou a
-  // boas-vindas pelo painel esperando efeito, e o efeito não veio — desde então o gate lê a
-  // coluna, que é o que a tela promete.
+  // Até 17/ago/2026 isto era `a.n >= 1` ("tudo menos a aula de boas-vindas"), e o `conta_no_gate`
+  // que o admin edita era letra morta: o checkbox gravava no banco e ninguém lia. Desde então o
+  // gate lê a coluna, que é o que a tela promete.
   const avaliadas = aulas.filter((a) => a.avaliada);
 
   return {
@@ -117,8 +120,8 @@ export function montarCurriculo(modulos: Modulo[], aulas: Aula[]): Curriculo {
     },
 
     // % sobre a mesma base da contagem exibida (no design: "7 de 16"). Numerador e
-    // denominador contam SÓ as avaliadas: `concluidas.size` inclui a boas-vindas, e com ela
-    // no numerador o contador dizia "17 de 16" e a barra passava de 100%.
+    // denominador contam SÓ as avaliadas: `concluidas.size` pode incluir aula que não conta, e
+    // com ela no numerador o contador passaria do total e a barra de 100%.
     progressoPct: (concluidas) => {
       if (avaliadas.length === 0) return 0;
       const feitas = avaliadas.filter((a) => concluidas.has(a.n)).length;

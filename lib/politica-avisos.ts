@@ -10,11 +10,12 @@ import { rotuloModulo } from "./curso";
 import { DIAS_GARANTIA, violaGarantia, type Regra } from "./liberacao";
 
 /**
- * Os módulos cujas aulas contam para o certificado (I a IV; o Módulo 0 é boas-vindas). Morava em
+ * Os módulos cujas aulas contam para o certificado, por ord: todos os quatro (I a IV). Até
+ * 05/out/2026 eram os ords 1 a 4, porque o ord 0 era o Módulo 0 de boas-vindas. Morava em
  * `lib/questoes.ts` como "os módulos que entram na prova", e ficou aqui quando a prova saiu do curso
  * (30/set/2026): o aviso abaixo continua valendo, porque o gate agora é o do certificado.
  */
-export const ORDS_AVALIADOS = [1, 2, 3, 4];
+export const ORDS_AVALIADOS = [0, 1, 2, 3];
 
 export function avisosDaPolitica(
   regras: readonly Regra[],

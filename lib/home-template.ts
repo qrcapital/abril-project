@@ -37,7 +37,7 @@ function card(
   const aulas = c.aulas.filter((a) => a.modulo === idx);
   const total = aulas.length;
   // Módulo sem aula nenhuma (recém-criado no admin) se comporta como travado: não há para
-  // onde ir, e o fallback do destino mandaria o clique para a boas-vindas. O `data-travado`
+  // onde ir, e o fallback do destino mandaria o clique para a primeira aula do curso. O `data-travado`
   // é o que o HomeClient já usa para não navegar.
   const travado = espera !== null || total === 0;
   const done = aulas.filter((a) => concluidas.has(a.n)).length;
@@ -53,11 +53,9 @@ function card(
       : espera.tipo === "data"
         ? `LIBERA EM ${espera.texto}`
         : esc(`APÓS O ${espera.rotulo.toUpperCase()}`)
-    : idx === 0
-      ? "BOAS-VINDAS"
-      : emAndamento
-        ? "EM ANDAMENTO"
-        : "AULAS";
+    : emAndamento
+      ? "EM ANDAMENTO"
+      : "AULAS";
   const badge = travado ? BADGE_TRAVADO : emAndamento ? BADGE_ATIVO : BADGE_NEUTRO;
   // Título e docente vêm do banco e o admin edita os dois: sem `esc()` é XSS armazenado.
   const label = esc((m.docente ? `${m.label} · ${m.docente}` : m.label).toUpperCase());
@@ -109,14 +107,15 @@ export function fillHome(
   const mod = c.modulos[atual.modulo];
   // `esc` no título (o admin edita) e replacement por função (um `$&` no título viraria
   // referência de grupo numa string de replacement). O número da aula é a posição dentro do
-  // módulo desde 30/set/2026, o mesmo "Aula 3" da playlist da página do módulo.
-  const linha = atual.numero
-    ? `${mod.label} · Aula ${atual.pos} · ${esc(atual.titulo)}`
-    : `${mod.label} · ${esc(atual.titulo)}`;
+  // módulo desde 30/set/2026, o mesmo "Aula 3" da playlist da página do módulo. Sem nada
+  // concluído o botão diz "Começar formação"; até 05/out/2026 isso dependia de a aula atual ser a
+  // de boas-vindas (a única sem numeral), que deixou de existir com o Módulo 0.
+  const linha = `${mod.label} · Aula ${atual.pos} · ${esc(atual.titulo)}`;
+  const comecando = !c.aulas.some((a) => concluidas.has(a.n));
 
   let out = html
     .replace("Módulo II · Aula 7 · Comprando ações nos EUA", () => linha)
-    .replace("Continuar Aula 7", atual.numero ? `Continuar Aula ${atual.pos}` : "Começar formação");
+    .replace("Continuar Aula 7", comecando ? "Começar formação" : `Continuar Aula ${atual.pos}`);
 
   // A linha de baixo do card do certificado e o `data-certificado` que diz ao cliente para onde o
   // clique vai. O atributo existe para o clique NÃO depender de ler o texto do card.

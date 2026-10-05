@@ -1,19 +1,19 @@
 import { composto, type Notebook } from "@/lib/notebook";
 
-// Módulo II, Renda Fixa e Ações nos EUA. CONTEÚDO DE DEMONSTRAÇÃO: as curvas são juros compostos
-// sobre taxas hipotéticas, não retorno de nenhum ativo. Trocar pelo definitivo e virar `demo`
-// para `false`.
+// Módulo III, Como Acessar o Mercado Americano. CONTEÚDO DE DEMONSTRAÇÃO: o gráfico aproxima o
+// efeito do custo anual descontando a taxa do retorno hipotético de 6%. Não é o custo de nenhum
+// produto real. Trocar pelo definitivo e virar `demo` para `false`.
 //
-// Uma seção por aula, pela posição da aula no módulo. A aula 2 (crédito privado) ainda não tem
-// conteúdo e aparece no notebook como em produção.
+// Uma seção por aula, pela posição da aula no módulo. A aula 2 (REITs) ainda não tem conteúdo e
+// aparece no notebook como em produção.
 
 const anos = [0, 5, 10, 15, 20, 25, 30];
 
 const notebook: Notebook = {
   modulo: 2,
-  titulo: "Renda e crescimento em dólar",
+  titulo: "Os veículos de acesso",
   subtitulo:
-    "Do Tesouro americano às ações: o que muda quando o seu dinheiro trabalha em moeda forte por muito tempo.",
+    "ETF, REIT e BDR resolvem o mesmo problema de jeitos diferentes. O custo de cada um aparece devagar e pesa muito.",
   demo: true,
   aulas: [
     {
@@ -21,17 +21,37 @@ const notebook: Notebook = {
       blocos: [
         {
           tipo: "capitulo",
-          id: "tempo",
-          titulo: "O tempo como sócio",
-          resumo: "A diferença entre duas taxas parece pequena num ano e enorme em trinta.",
+          id: "veiculos",
+          titulo: "Três portas para o mesmo mercado",
+          resumo: "Onde cada veículo negocia, em que moeda, e o que você está comprando de fato.",
         },
         {
           tipo: "texto",
           capitular: true,
           paragrafos: [
-            "O título do Tesouro americano é a referência de risco baixo do mercado global: é contra ele que quase todo outro investimento em dólar se compara. Para o investidor brasileiro, ele cumpre um papel que o CDI cumpre aqui, com a diferença de que o rendimento vem na moeda em que o mundo mede valor.",
-            "Acima dessa base estão o crédito privado e as ações, e cada degrau pede mais tolerância a oscilação em troca de mais retorno esperado. O gráfico abaixo não fala de nenhum desses ativos. Ele mostra só a matemática que faz a escolha pesar tanto: juros compostos, ao longo de três décadas.",
+            "Um ETF é uma cesta de ativos negociada como se fosse uma ação só. Com uma ordem você compra centenas de empresas, ou títulos, ou um setor inteiro, e paga uma taxa anual pela gestão da cesta. É o caminho mais direto para diversificar sem montar a carteira papel por papel.",
+            "O REIT faz o mesmo pelo mercado imobiliário: é uma empresa dona de imóveis que distribui a maior parte da renda de aluguel. Já o BDR é outra coisa, um certificado negociado na B3 que representa um ativo de fora. Ele dá exposição ao ativo e ao câmbio sem abrir conta no exterior, mas a negociação, a custódia e as regras são as da bolsa brasileira.",
           ],
+        },
+        {
+          tipo: "grafico",
+          titulo: "US$ 100 mil por 30 anos, com custo anual de 0,1% e de 1%",
+          forma: "linha",
+          eixoX: anos.map((t) => (t === 0 ? "Hoje" : `${t} anos`)),
+          series: [
+            { nome: "Custo de 0,1% ao ano", valores: composto(100_000, 5.9, anos) },
+            { nome: "Custo de 1% ao ano", valores: composto(100_000, 5, anos) },
+          ],
+          formato: { prefixo: "US$ " },
+          ilustrativo: true,
+          nota:
+            "Dados ilustrativos. Retorno hipotético de 6% ao ano, descontado o custo. Sem impostos nem câmbio. Não representa nenhum fundo.",
+        },
+        {
+          tipo: "numero",
+          valor: "US$ 126 mil",
+          legenda: "é a diferença no fim de 30 anos entre as duas curvas acima, só por causa do custo anual.",
+          nota: "Conta sobre as hipóteses do gráfico.",
         },
       ],
     },
@@ -39,24 +59,15 @@ const notebook: Notebook = {
       aula: 3,
       blocos: [
         {
-          tipo: "grafico",
-          titulo: "US$ 10 mil a 4% e a 7% ao ano, ao longo de 30 anos",
-          forma: "area",
-          eixoX: anos.map((t) => (t === 0 ? "Hoje" : `${t} anos`)),
-          series: [
-            { nome: "7% ao ano", valores: composto(10_000, 7, anos) },
-            { nome: "4% ao ano", valores: composto(10_000, 4, anos) },
+          tipo: "tabela",
+          titulo: "Os três veículos lado a lado",
+          colunas: ["Veículo", "O que você compra", "Onde negocia", "Moeda da negociação"],
+          linhas: [
+            ["ETF", "Uma cesta de ativos num único papel", "Bolsa americana", "Dólar"],
+            ["REIT", "Empresa dona de imóveis que distribui renda", "Bolsa americana", "Dólar"],
+            ["BDR", "Certificado que representa um ativo de fora", "B3", "Real"],
           ],
-          formato: { prefixo: "US$ " },
-          ilustrativo: true,
-          nota:
-            "Dados ilustrativos. Taxas hipotéticas e constantes, sem impostos, custos ou inflação. Não representam o retorno de nenhum título ou ação.",
-        },
-        {
-          tipo: "numero",
-          valor: "2,3x",
-          legenda: "é quanto maior termina o mesmo capital a 7% em vez de 4% ao ano, depois de 30 anos.",
-          nota: "Conta sobre as taxas hipotéticas do gráfico acima.",
+          nota: "Resumo simplificado. Os detalhes de cada veículo, inclusive a tributação, estão nas aulas.",
         },
       ],
     },
@@ -66,23 +77,29 @@ const notebook: Notebook = {
         {
           tipo: "texto",
           paragrafos: [
-            "Dividendos e crescimento são duas maneiras de receber o mesmo retorno: uma paga parte dele em dinheiro ao longo do caminho, a outra reinveste dentro da empresa. Nenhuma é superior em tese. A escolha depende de quando você precisa do dinheiro e de como cada forma é tributada para quem mora no Brasil, assunto que volta no Módulo III.",
+            "O último capítulo do módulo é o menos glamouroso e o que mais custa quando é ignorado: imposto e sucessão. Ativo no exterior entra na declaração, tem regra própria de apuração e, sem planejamento, pode passar por um inventário em outro país. As regras mudam com alguma frequência, e por isso a aula trata do raciocínio antes das alíquotas.",
           ],
         },
         {
           tipo: "referencias",
           itens: [
             {
-              autor: "Jeremy J. Siegel",
-              titulo: "Stocks for the Long Run",
-              ano: 1994,
-              nota: "Séries longas de retorno de ações, títulos e ouro nos Estados Unidos.",
+              autor: "John C. Bogle",
+              titulo: "The Little Book of Common Sense Investing",
+              ano: 2007,
+              nota: "O argumento do fundador da Vanguard a favor de fundos de índice de baixo custo.",
             },
             {
-              autor: "Benjamin Graham",
-              titulo: "The Intelligent Investor",
-              ano: 1949,
-              nota: "A diferença entre investir e especular, e a ideia de margem de segurança.",
+              autor: "William J. Bernstein",
+              titulo: "The Four Pillars of Investing",
+              ano: 2002,
+              nota: "Teoria, história, psicologia e o negócio dos investimentos, em quatro partes.",
+            },
+            {
+              autor: "Burton G. Malkiel",
+              titulo: "A Random Walk Down Wall Street",
+              ano: 1973,
+              nota: "Mercados eficientes e o caso do investimento indexado.",
             },
           ],
         },

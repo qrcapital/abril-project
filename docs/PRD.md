@@ -23,7 +23,7 @@ Os pilares são sequenciais na jornada (LP → compra → consumo → prova → 
 | Preço | R$ 397 à vista, ou até 10x sem juros de R$ 39,70 |
 | Acesso | 1 ano a partir da compra |
 | Prova | 20 questões, nota mínima 70%, 120 minutos, tentativa única, 2ª chamada liberada por admin. **Mudar a nota mínima exige tocar em três lugares:** `NOTA_MINIMA` (`lib/prova-correcao.ts`), o texto do e-mail `resultado-reprovado` em `/admin/emails` (o 70 ali é literal desde 31/jul/2026, por decisão de não ter variável para uma constante) e este PRD |
-| Conteúdo | Módulo 0 (boas-vindas, 1 aula) + 4 módulos de 4 aulas, 16 aulas avaliadas, 30h+ |
+| Conteúdo | 4 módulos, I a IV, sem módulo de boas-vindas desde 05/out/2026 (migration 0028). Módulo I, Macro e Estratégia Global (Felippe Hermes e Rodolfo Bastos), abre na compra; II (Tony Volpon) em 7 dias, III (Luiz Fernando Roxo) em 14, IV (Alexandre Ywata) em 21. Todas as aulas contam para o certificado de 30h |
 | Suporte | 100% WhatsApp (wa.me, sem API na v1) |
 | Materiais | Apostila por módulo + e-book bônus. Sem minidocumentário, sem comunidade, sem gamificação, sem busca. Plataforma só dark no v1 (modo claro no backlog pós-launch, ver `BACKLOG.md`) |
 | Lançamento | Setembro/2026. QA até fim de agosto |
@@ -204,7 +204,7 @@ A home é uma **vitrine** (padrão validado na auditoria do CCA/Cademi), não um
 ### Estrutura
 
 - **Banner hero**: vídeo de boas-vindas; com progresso existente, overlay "Continue de onde parou → Módulo X · Aula Y" e CTA de retomada.
-- **Prateleira 1 — A Formação**: cards de Módulo 0 (Bem-vindo) a IV, cada um com arte, contador de progresso (ex.: 2/4) e estado (concluído ✓, em andamento, não iniciado).
+- **Prateleira 1, A Formação**: cards do Módulo I ao IV (até 05/out/2026 havia também o Módulo 0, de boas-vindas), cada um com arte, contador de progresso (ex.: 2/4) e estado (concluído ✓, em andamento, não iniciado).
 - **Prateleira 2 — Materiais e Certificação**: Apostilas (1 por módulo), E-book bônus, Prova Final e card de 2ª chamada (oculto até liberado pelo admin).
 
   **O card da Prova Final tem seis estados desde 31/jul/2026**, e a linha de baixo mais o destino do clique mudam com eles: bloqueada até 16/16 (cadeado, modal explicando quantas aulas faltam), liberada, em andamento, **reprovado** (não leva mais à prova; diz "Você reprovou. Clique aqui e entre em contato com o Suporte." e o clique abre o WhatsApp, porque a prova é de tentativa única e não há para onde ir no produto), aprovado (leva ao certificado) e 2ª chamada liberada. Quem tem 2ª chamada esperando não aparece como reprovado, porque já ganhou a saída.
@@ -217,11 +217,11 @@ A home é uma **vitrine** (padrão validado na auditoria do CCA/Cademi), não um
 | Contador do módulo | X/N aulas concluídas; ✓ quando N/N |
 | Prova Final | Card sempre visível como meta, bloqueado até 16/16 aulas avaliadas concluídas |
 | Card de 2ª chamada | **Construído em 31/jul/2026.** Oculto por padrão; renderiza quando existe tentativa `available` com `attempt > 1` para aquele aluno, e sai da home quando ele inicia. Leva direto às instruções, onde o cronômetro começa |
-| Módulo 0 | Conta como concluído com sua única aula (primeiro ✓ fácil), não entra no gate de 16/16 |
+| Módulo 0 | Saiu em 05/out/2026: o curso começa direto pelo Módulo I, que abre na compra |
 
 ### Edge cases
 
-- **Aluno recém-ativado sem progresso**: banner mostra convite ao Módulo 0 / Aula 1, sem overlay de retomada.
+- **Aluno recém-ativado sem progresso**: banner mostra convite ao Módulo I / Aula 1 ("Começar formação"), sem overlay de retomada.
 - **Todas as 16 concluídas**: Prova Final desbloqueia e ganha destaque; banner passa a apontar para a prova.
 - **E-book ainda sem título definido**: card renderiza com placeholder até o título ser definido.
 

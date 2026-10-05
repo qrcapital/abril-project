@@ -42,13 +42,13 @@ import { descrever, rotularAcao } from "../lib/auditoria-texto.ts";
 // --- progresso: plural da contagem, que é onde some sem ninguém ver ---
 {
   const marcou = descrever("aluno.progresso-marcar", {
-    ord: 3,
+    ord: 2,
     modulo: "Como Acessar o Mercado Americano",
     aulas: 4,
   });
-  assert.deepEqual(marcou, ["Módulo 3 · Como Acessar o Mercado Americano", "4 aulas"]);
+  assert.deepEqual(marcou, ["Módulo III · Como Acessar o Mercado Americano", "4 aulas"]);
 
-  const uma = descrever("aluno.progresso-limpar", { ord: 0, modulo: "Bem-vindo", aulas: 1 });
+  const uma = descrever("aluno.progresso-limpar", { ord: 0, modulo: "Macro e Estratégia Global", aulas: 1 });
   assert.equal(uma[1], "1 aula", "singular sem 's'");
 }
 

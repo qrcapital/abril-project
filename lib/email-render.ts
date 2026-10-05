@@ -76,12 +76,12 @@ export const DESCRICOES: Record<string, { texto: string; exemplo: string }> = {
     texto: "Código de verificação do certificado, único por aluno.",
     exemplo: "EI-K6MC-4RMC",
   },
-  modulo: { texto: "Número do módulo que abriu, em algarismo romano.", exemplo: "I" },
-  titulo: { texto: "Título do módulo que abriu, como está no admin.", exemplo: "Macro e Estratégia Global" },
+  modulo: { texto: "Número do módulo que abriu, em algarismo romano (II, III ou IV).", exemplo: "II" },
+  titulo: { texto: "Título do módulo que abriu, como está no admin.", exemplo: "Renda Fixa e Ações nos EUA" },
   proximo: {
     texto:
       "Frase pronta sobre o que vem depois: a data do próximo módulo, ou o aviso de que este é o último. Calculada pelo calendário do aluno.",
-    exemplo: "O Módulo II abre na quarta-feira, 28/10.",
+    exemplo: "O Módulo III abre na quarta-feira, 28/10.",
   },
 };
 
@@ -99,7 +99,7 @@ export const GATILHOS: Record<string, string> = {
   "certificado": "Conclusão da última aula que conta para o certificado, na primeira emissão. Uma vez por aluno.",
   "redefinicao-senha": "Pedido em \"Esqueci minha senha\", com o link de uso único para criar uma senha nova.",
   "modulo-liberado":
-    "Rotina de hora em hora: quando um módulo abre no calendário do aluno (o Módulo I em 7 dias, o II em 14, sempre no dia da semana da compra). Uma vez por aluno e módulo; o Módulo 0 não avisa, porque abre junto com as boas-vindas.",
+    "Rotina de hora em hora: quando um módulo abre no calendário do aluno (o Módulo II em 7 dias, o III em 14 e o IV em 21, sempre no dia da semana da compra). Uma vez por aluno e módulo; o Módulo I não avisa, porque abre na compra, junto com as boas-vindas.",
 };
 
 const MARCADOR = /\{\{\s*([a-z_]+)\s*\}\}/g;

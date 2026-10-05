@@ -136,8 +136,8 @@ export async function POST(req: NextRequest) {
         module_id: id,
         ord: (ultima?.ord ?? -1) + 1,
         titulo,
-        // Nasce contando para o gate, que é o default da coluna e o caso comum: aula nova de
-        // módulo de conteúdo conta, e as boas-vindas já existem.
+        // Nasce contando para o gate, que é o default da coluna e o caso comum: desde 05/out/2026
+        // todas as aulas do curso contam para o certificado.
         conta_no_gate: true,
       });
       if (error) return erro("A gravação falhou.");

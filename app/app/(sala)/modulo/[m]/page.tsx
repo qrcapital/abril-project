@@ -26,9 +26,9 @@ export async function generateMetadata({ params }: { params: Promise<{ m: string
   return { title: Number.isInteger(ord) && ord >= 0 ? rotuloModulo(ord) : "Módulo" };
 }
 
-/** O nome do módulo na migalha e nos cartões: o Módulo 0 é o "Comece por aqui" para o aluno. */
-const nomeDoModulo = (ord: number, titulo: string) =>
-  ord === 0 ? "Comece por aqui" : `${rotuloModulo(ord)} · ${titulo}`;
+/** O nome do módulo na migalha e nos cartões. Até 05/out/2026 o ord 0 era o "Comece por aqui"; hoje
+ *  é o Módulo I e segue o mesmo formato dos outros. */
+const nomeDoModulo = (ord: number, titulo: string) => `${rotuloModulo(ord)} · ${titulo}`;
 
 /**
  * A página do módulo, que desde 30/set/2026 é também a sala de aula. De cima para baixo:
@@ -48,8 +48,8 @@ const nomeDoModulo = (ord: number, titulo: string) =>
  * outras portas (`getCalendario`, que aplica `lib/liberacao.ts`), e é ela, e não a ausência de link,
  * que impede o vídeo: o id do Panda só entra no HTML depois dela.
  *
- * O Módulo 0 passou a ter esta página também. O "Comece por aqui" (`/app/comece`) continua sendo a
- * porta de boas-vindas, e as aulas de abertura dele apontam para cá.
+ * Desde 05/out/2026 o curso não tem Módulo 0: o ord 0 é o Módulo I, que abre na compra. O antigo
+ * "Comece por aqui" (`/app/comece`) virou redirect para `/app/modulo/0`.
  */
 export default async function ModuloPage({
   params,
@@ -254,9 +254,7 @@ function FimDoModulo({
         <p className="sl-palco-fim-titulo">
           {pendentes > 0
             ? `Você chegou à última aula. ${pendentes === 1 ? "Falta 1 aula" : `Faltam ${pendentes} aulas`} deste módulo na playlist.`
-            : ord === 0
-              ? "Aulas de abertura concluídas."
-              : `${rotuloModulo(ord)} concluído.`}
+            : `${rotuloModulo(ord)} concluído.`}
         </p>
         {seguinte ? (
           <p>
@@ -309,7 +307,7 @@ function CabecaFechada({
       </div>
       <div className="sl-wrap">
         <nav className="sl-migalha" aria-label="Você está em" style={{ paddingTop: 22, position: "relative", zIndex: 2 }}>
-          <Link href="/app">Início</Link> <span aria-hidden="true">›</span> {ord === 0 ? "Comece por aqui" : rotuloModulo(ord)}
+          <Link href="/app">Início</Link> <span aria-hidden="true">›</span> {rotuloModulo(ord)}
         </nav>
         <div className="sl-cabeca-miolo">
           <span className="sl-numeral" aria-hidden="true">
@@ -317,7 +315,7 @@ function CabecaFechada({
           </span>
           <div>
             <span className="sl-eyebrow">{rotuloModulo(ord)}</span>
-            <h1>{ord === 0 ? "Comece por aqui" : titulo}</h1>
+            <h1>{titulo}</h1>
             <div style={{ marginTop: 20 }}>
               <CartaoDocente nome={docente} />
             </div>

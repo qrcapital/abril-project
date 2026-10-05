@@ -42,7 +42,7 @@ removido; `git show` no commit anterior recupera.
 acesso (login, senha, termos, acesso bloqueado) já tinham saído do porte e moram em
 `lib/auth-casca.ts` + `app/app/_ui/auth.css`.
 
-**Telas da sala em JSX (29/set/2026).** "Comece por aqui" (`/app/comece`) e a página do módulo são
+**Telas da sala em JSX (29/set/2026).** A página do módulo e a trilha da home são
 componentes do React, não HTML portado: classes escopadas em `.sl` em `app/app/_ui/sala.css`
 (injetada pelo layout de /app, como o `auth.css`) e peças em `app/app/_ui/sala/`. O vídeo da aula
 sai de `lib/video.ts` (id ou URL do Panda, com self-check em `check:video`). A `screens/aula.html`
@@ -54,7 +54,14 @@ docente, materiais), a playlist horizontal das aulas do módulo e o notebook do 
 só com uma seção por aula (`id="aula-<n>"`). O `<n>` é a **posição da aula no módulo** (`Aula.pos`,
 1, 2, 3...), não o número global; `href(aula)` de `lib/curso.ts` monta o endereço. A seleção é da
 URL e renderizada no servidor. `/app/modulo/[m]/aula/[n]` (n global) e `/app/modulo/[m]/notebook`
-viraram redirects. Vale para o Módulo 0 também; `/app/comece` segue como porta de boas-vindas.
+viraram redirects.
+
+**Quatro módulos, sem Módulo 0 (05/out/2026, migration 0028).** O `ord` do banco continua 0..3,
+porque a política de liberação e o calendário indexam as regras pela posição (`regras[ord]`); só o
+rótulo mudou: `rotuloModulo(0)` é "Módulo I" (`ROMANO` em `lib/curso.ts`). O Módulo I abre na
+compra e não dispara o e-mail `modulo-liberado` (quem fala dele é o boas-vindas); II, III e IV
+abrem em 7, 14 e 21 dias. Toda aula numera 01 em diante. `/app/comece` virou redirect para
+`/app/modulo/0`. O notebook `content/notebooks/modulo-<ord>.ts` segue o ord, não o numeral.
 
 **O notebook** mora em `content/notebooks/modulo-<n>.ts`, tipado por `lib/notebook.ts`, na forma
 `{ modulo, titulo, subtitulo, demo, aulas: [{ aula: 1, blocos: [...] }, ...] }`, com `aula` sendo a

@@ -46,8 +46,7 @@ export default function HomeClient({
 }: {
   html: string;
   /**
-   * O que entra entre o banner e a prateleira: o cartão "Comece por aqui" e a trilha, que são
-   * componentes de servidor. O HTML é partido no marcador `<!-- sala:meio -->` de `home.html`.
+   * O que entra entre o banner e a prateleira: a trilha, que é componente de servidor. O HTML é partido no marcador `<!-- sala:meio -->` de `home.html`.
    * Nada ali pode usar a classe `mcard`: o clique dos cartões é resolvido pela POSIÇÃO entre os
    * `.mcard`, e um a mais deslocaria o destino de todos.
    */

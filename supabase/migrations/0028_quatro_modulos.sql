@@ -1,0 +1,88 @@
+-- ============================================================
+-- 0028: O curso passa a ter 4 módulos, sem Módulo 0 (05/out/2026)
+-- ============================================================
+--
+-- Decisão do Marcelo em 05/out/2026: não existe mais o Módulo 0 de boas-vindas. O curso começa pelas
+-- duas aulas do Felippe Hermes, que passam a abrir o Módulo I, seguidas de duas aulas do Rodolfo
+-- Bastos. O Módulo I abre na hora da compra; os outros três seguem a esteira semanal.
+--
+--   ord 0  Módulo I    Macro e Estratégia Global      Felippe Hermes e Rodolfo Bastos   abre no ato
+--   ord 1  Módulo II   Renda Fixa e Ações nos EUA     Tony Volpon                       +7 dias
+--   ord 2  Módulo III  Como Acessar o Mercado Americano  Luiz Fernando Roxo             +14 dias
+--   ord 3  Módulo IV   Ativos Digitais em Dólar       Alexandre Ywata                   +21 dias
+--
+-- O `ord` continua começando em 0 de propósito: a política de liberação e o calendário indexam as
+-- regras pela posição do módulo (`regras[ord]`). O que mudou é o RÓTULO: `lib/curso.ts` passou a
+-- chamar o ord 0 de "Módulo I".
+--
+-- As duas aulas do Rodolfo ainda não têm conteúdo definido e entram com nomes genéricos. As outras
+-- duas vagas do antigo Módulo I (que nunca tiveram vídeo) saem, com os resumos em PDF delas.
+--
+-- Rodar inteira no SQL editor. Não é idempotente: escrita para rodar uma vez sobre o banco de 05/out.
+
+begin;
+
+-- 1. O antigo Módulo 0 vira o Módulo I
+update modules
+   set titulo = 'Macro e Estratégia Global',
+       docente = 'Felippe Hermes e Rodolfo Bastos'
+ where id = 'b8224a06-be0f-4ed3-a0cd-1fe6727fb4b1';
+
+-- As duas aulas do Felippe passam a contar para o certificado (a segunda não contava, por ser
+-- "aula extra" do módulo de boas-vindas).
+update lessons set conta_no_gate = true
+ where module_id = 'b8224a06-be0f-4ed3-a0cd-1fe6727fb4b1';
+
+-- 2. Duas aulas do Rodolfo, com nome genérico, depois das do Felippe
+delete from materials
+ where lesson_id in ('62942a48-99b4-4835-9633-c819a89c32a3', '1deae6fb-dbe4-41ab-8e2f-a9cdd457cad4');
+
+update lessons
+   set module_id = 'b8224a06-be0f-4ed3-a0cd-1fe6727fb4b1', ord = 3,
+       titulo = 'Estratégia global com Rodolfo Bastos, parte 1',
+       descricao = 'Rodolfo Bastos, que liderou a operação internacional da XP em Miami, leva o argumento do módulo para a estratégia global.',
+       conta_no_gate = true
+ where id = '62942a48-99b4-4835-9633-c819a89c32a3';
+
+update lessons
+   set module_id = 'b8224a06-be0f-4ed3-a0cd-1fe6727fb4b1', ord = 4,
+       titulo = 'Estratégia global com Rodolfo Bastos, parte 2',
+       descricao = 'Rodolfo Bastos continua a discussão sobre estratégia global e diversificação fora do Brasil.',
+       conta_no_gate = true
+ where id = '1deae6fb-dbe4-41ab-8e2f-a9cdd457cad4';
+
+-- A apostila do antigo Módulo I acompanha o título, que foi para o novo Módulo I.
+update materials set module_id = 'b8224a06-be0f-4ed3-a0cd-1fe6727fb4b1'
+ where id = 'b11b78a6-80ae-489b-bba2-c00eacc5f2be';
+
+-- 3. Sai o antigo Módulo I (as duas aulas restantes, os resumos e a regra vão em cascata)
+delete from modules where id = '10c459d0-2f4b-484e-964f-db54d75133d8';
+
+-- 4. Os seguintes sobem uma posição, um por vez (o `ord` é único e tem check de 0 a 4)
+update modules set ord = 1 where id = 'ba37e1c0-c8fb-4bd7-b6f9-50dd20af5ef7';
+update modules set ord = 2 where id = 'bc5372ee-816c-4095-87c5-1743aa8afc43';
+update modules set ord = 3 where id = '1b602533-a72c-4321-b113-5cd567db40aa';
+
+-- 5. Esteira: I no ato, II em 7 dias, III em 14, IV em 21
+update release_rules r set tipo = 'dias', dias = m.ord * 7, abre_em = null, depende_de_ord = null
+  from modules m
+ where m.id = r.module_id;
+
+-- 6. Textos de e-mail que citavam o Módulo 0
+update email_templates
+   set corpo = replace(corpo, 'do Módulo 0 ao IV', 'do Módulo I ao IV'), updated_at = now()
+ where chave = 'certificado';
+
+update email_templates
+   set corpo = replace(corpo,
+         'Depois comece pelo módulo zero, "Comece por aqui", que mostra como o curso funciona e por onde seguir.',
+         'Depois é só começar pelo Módulo I, que já está liberado na sua área.'),
+       updated_at = now()
+ where chave = 'boas-vindas';
+
+commit;
+
+-- Conferência
+select m.ord, m.titulo, m.docente, (select count(*) from lessons l where l.module_id = m.id) aulas,
+       (select r.dias from release_rules r where r.module_id = m.id) dias
+  from modules m order by m.ord;

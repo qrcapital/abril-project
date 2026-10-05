@@ -11,8 +11,9 @@
 // escolha legítima do admin. Decisão do Pedro em 17/ago, com o risco explicitado.
 //
 // Em 29/set entrou o quinto tipo, `apos_modulo` (abre quando o aluno conclui outro módulo),
-// no molde do Cademi, e a esteira passou a abrir o Módulo I só na primeira semana. Com ele, a
-// liberação deixou de depender só do relógio: depende também do progresso, e por isso as
+// no molde do Cademi, e a esteira passou a abrir o módulo seguinte ao de boas-vindas só na
+// primeira semana (desde 05/out/2026 não há mais Módulo 0, e o ord 0 é o Módulo I, aberto no
+// ato). Com ele, a liberação deixou de depender só do relógio: depende também do progresso, e por isso as
 // funções abaixo recebem as `Conclusoes` do aluno. O banco repete esta regra em SQL
 // (`modulo_aberto()`, migration 0024) para a RLS de `lessons` e `materials`.
 
@@ -46,13 +47,13 @@ export const REGRA_PADRAO: Regra = { tipo: "em_breve" };
 export const DIAS_POR_MODULO = 7;
 
 /**
- * Esteira clássica: Módulo 0 ("Comece por aqui") no ato, e um módulo por semana contado da
- * matrícula (I em 7 dias, II em 14, III em 21, IV em 28).
+ * Esteira clássica: o Módulo I (ord 0) no ato, e um módulo por semana contado da matrícula
+ * (II em 7 dias, III em 14, IV em 21).
  *
- * Até 29/set/2026 era `max(0, i - 1) * 7`, que abria o Módulo 0 e o I juntos no dia da compra.
- * O Pedro pediu o I só na semana seguinte: o Módulo 0 é a porta de entrada, e com os dois
- * abertos no primeiro dia o aluno pulava a boas-vindas direto para a primeira aula avaliada.
- * A migration 0024 reescreve a política ativa com esta mesma conta.
+ * Até 29/set/2026 era `max(0, i - 1) * 7`, que abria o antigo Módulo 0 de boas-vindas e o
+ * módulo seguinte juntos no dia da compra; a migration 0024 passou a `indice * 7`. Desde
+ * 05/out/2026 o curso não tem mais o Módulo 0 (migration 0028): a conta é a mesma, mas o ord 0
+ * agora é o Módulo I, que abre na compra.
  */
 export function regraEsteira(indice: number): Regra {
   return { tipo: "dias", dias: indice * DIAS_POR_MODULO };
@@ -74,8 +75,8 @@ const NENHUMA: Conclusoes = new Map();
 /**
  * O instante em que cada módulo ficou concluído: todas as aulas dele concluídas, e a data é a
  * da ÚLTIMA delas. Conta TODAS as aulas do módulo, e não só as que valem para o certificado,
- * porque o Módulo 0 não tem aula avaliada nenhuma e "concluir o Módulo 0" viraria verdade vazia,
- * abrindo o módulo seguinte no ato. Pela mesma razão, módulo sem aula não conta como concluído.
+ * porque um módulo sem aula avaliada (o antigo Módulo 0 de boas-vindas era assim) faria de
+ * "concluir o módulo" uma verdade vazia, abrindo o módulo seguinte no ato. Pela mesma razão, módulo sem aula não conta como concluído.
  *
  * O `modulo_aberto()` da migration 0024 faz a mesma conta em SQL para a RLS. Mudou aqui, muda lá.
  */

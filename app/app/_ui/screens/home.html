@@ -22,8 +22,8 @@
 </div>
 <!-- sala:meio -->
 <!-- A home é dividida aqui em duas metades balanceadas desde 29/set/2026: entre elas o React põe o
-     cartão "Comece por aqui" e a trilha (app/app/(sala)/page.tsx), que são componentes e não markup
-     portado. O marcador acima é o contrato com o HomeClient; cada metade fecha as próprias divs. -->
+     a trilha (app/app/(sala)/page.tsx), que é componente e não markup portado (até 05/out/2026
+     vinha antes dela o cartão "Comece por aqui" do Módulo 0, que deixou de existir). O marcador acima é o contrato com o HomeClient; cada metade fecha as próprias divs. -->
 <div style="background:#f7f4ee;color:#1a1815;min-height:calc(100vh - 58px)">
 <div style="max-width:1180px;margin:0 auto;padding:0 28px 64px">
   <!-- shelf: A Formação -->
@@ -33,24 +33,13 @@
       <h2 style="font-family:'Playfair Display',serif;font-weight:600;font-size:22px;margin:0;color:#1a1815">A Formação</h2>
     </div>
     
-    <div class="rail" style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px">
-
-      <div class="mcard" style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(72,60,42,.05)">
-        <span style="position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:800;letter-spacing:.14em;background:#EDE6DD;border:1px solid #E0D3BE;color:#7E6836;border-radius:4px;padding:3px 7px">BOAS-VINDAS</span>
-        <div style="position:relative;aspect-ratio:3/3.5;flex:0 0 auto;background:linear-gradient(160deg,#F0EADF,#E7DECF)"><div class="art-slot">Arte do módulo</div></div>
-        <div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1">
-          <span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">MÓDULO 0</span>
-          <h3 style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;margin:3px 0 9px;line-height:1.2;color:#1a1815">Bem-vindo</h3>
-          <div style="height:4px;border-radius:2px;background:#EDE6DD;overflow:hidden"><i style="display:block;height:100%;width:100%;background:#C1121F;border-radius:2px"></i></div>
-          <div style="display:flex;justify-content:space-between;font-size:9.5px;color:#6f6860;margin-top:7px"><span>1 aula</span><span style="color:#7E6836;font-weight:600">1/1 ✓</span></div>
-        </div>
-      </div>
+    <div class="rail" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
 
       <div class="mcard" style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(72,60,42,.05)">
         <span style="position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:800;letter-spacing:.14em;background:#EDE6DD;border:1px solid #E0D3BE;color:#7E6836;border-radius:4px;padding:3px 7px">AULAS</span>
         <div style="position:relative;aspect-ratio:3/3.5;flex:0 0 auto;background:linear-gradient(160deg,#F0EADF,#E7DECF)"><div class="art-slot">Arte do módulo</div></div>
         <div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1">
-          <span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">MÓDULO I · RODOLFO BASTOS</span>
+          <span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">MÓDULO I · FELIPPE HERMES E RODOLFO BASTOS</span>
           <h3 style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;margin:3px 0 9px;line-height:1.2;color:#1a1815">Macro e Estratégia Global</h3>
           <div style="height:4px;border-radius:2px;background:#EDE6DD;overflow:hidden"><i style="display:block;height:100%;width:100%;background:#C1121F;border-radius:2px"></i></div>
           <div style="display:flex;justify-content:space-between;font-size:9.5px;color:#6f6860;margin-top:7px"><span>4 aulas</span><span style="color:#7E6836;font-weight:600">4/4 ✓</span></div>

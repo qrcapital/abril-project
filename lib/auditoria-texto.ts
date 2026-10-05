@@ -8,6 +8,8 @@
  * Testinho","João Testinho Neto"]}` cru obriga quem lê a decifrar qual é o antes e qual é o depois.
  */
 
+import { rotuloModulo } from "./curso.ts";
+
 /**
  * Nome de cada ação, em verbo e no passado: a tela é uma lista do que já aconteceu.
  *
@@ -83,7 +85,10 @@ export function descrever(acao: string, detalhe: Record<string, unknown> | null)
   if (acao.startsWith("aluno.progresso")) {
     const n = Number(d.aulas ?? 0);
     return [
-      `Módulo ${d.ord} · ${String(d.modulo ?? "")}`,
+      // O numeral do curso, e não o `ord` cru: desde 05/out/2026 o ord 0 é o Módulo I, e "Módulo 0"
+      // aqui seria um módulo que não existe. Registro anterior à migration 0028 guarda o ord antigo
+      // (um a mais); o título ao lado é o que desambigua.
+      `${rotuloModulo(Number(d.ord))} · ${String(d.modulo ?? "")}`,
       n === 1 ? "1 aula" : `${n} aulas`,
     ];
   }

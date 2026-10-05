@@ -1,7 +1,8 @@
 /* ============================================================================
-   Telas da sala escritas em JSX: "Comece por aqui" (/app/comece) e a página do
-   módulo (/app/modulo/[m]), que desde 30/set/2026 junta o teatro da aula, a
-   playlist e o notebook do módulo numa tela só. Nasceram em 29/set/2026.
+   Telas da sala escritas em JSX: a página do módulo (/app/modulo/[m]), que desde
+   30/set/2026 junta o teatro da aula, a playlist e o notebook do módulo numa
+   tela só, e a trilha da home. Nasceram em 29/set/2026 com o "Comece por aqui"
+   (/app/comece), que virou redirect para o Módulo I em 05/out/2026.
 
    POR QUE UMA FOLHA NOVA, E NÃO O styles.css. O styles.css é o CSS do porte:
    quase tudo nele é regra de apoio a style inline (`[style-hover=...]`). Estas
@@ -122,7 +123,8 @@
 .sl-chip-ok { background: rgba(31, 138, 91, .08); border-color: rgba(31, 138, 91, .35); color: #1B6E47 }
 .sl-chip-trava { background: var(--sl-papel-baixo); color: var(--sl-tinta-2) }
 
-/* ---- hero do "Comece por aqui" (painel vermelho, globo e olho) ------------ */
+/* ---- hero (painel vermelho, globo e olho). Nasceu no "Comece por aqui"; o globo
+   segue em uso na cabeça do módulo fechado ------------------------------------ */
 
 .sl-hero {
   position: relative; overflow: hidden; isolation: isolate;

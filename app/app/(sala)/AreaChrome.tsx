@@ -100,8 +100,8 @@ export default function AreaChrome({
           window.open(WHATSAPP, "_blank", "noopener");
           return;
         }
-        // Link interno com endereço real ("Comece por aqui", desde 29/set/2026): navegação do
-        // cliente, sem recarregar a página. Clique com modificador (nova aba) segue nativo.
+        // Link interno com endereço real (`href` começando por /app/): navegação do cliente,
+        // sem recarregar a página. Clique com modificador (nova aba) segue nativo.
         const destino = a.getAttribute("href");
         const me = e as MouseEvent;
         if (destino?.startsWith("/app/") && !me.metaKey && !me.ctrlKey && !me.shiftKey && !me.altKey) {

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import type { ModuloCalendario } from "@/lib/calendario";
 import { ROMANO, rotuloModulo } from "@/lib/curso";
-import { docente } from "@/lib/docentes";
+import { docentes } from "@/lib/docentes";
 
 import { estadoDoModulo, hrefDoModulo } from "./estado";
 
@@ -38,7 +38,7 @@ export default function Trilha({ modulos, rotulo = "Trilha da formação" }: { m
       <ol className="sl-trilha-lista" aria-label={rotulo}>
       {modulos.map((m) => {
         const e = estadoDoModulo(m);
-        const prof = docente(m.docente);
+        const profs = docentes(m.docente);
         const conteudo = (
           <>
             {m.atual && <span className="sl-aqui">Você está aqui</span>}
@@ -58,9 +58,10 @@ export default function Trilha({ modulos, rotulo = "Trilha da formação" }: { m
             </span>
             <span className="sl-no-texto">
               <span className="sl-no-rotulo">{rotuloModulo(m.ord)}</span>
-              <span className="sl-no-titulo">{m.ord === 0 ? "Comece por aqui" : m.titulo}</span>
-              {prof && (
-                <span className="sl-no-docente">
+              <span className="sl-no-titulo">{m.titulo}</span>
+              {/* Um por linha: o Módulo I tem dois docentes desde 05/out/2026. */}
+              {profs.map((prof) => (
+                <span key={prof.nome} className="sl-no-docente">
                   {prof.foto && (
                     // Retrato de 22px num círculo: o next/image acrescentaria wrapper sem ganho.
                     // eslint-disable-next-line @next/next/no-img-element
@@ -68,7 +69,7 @@ export default function Trilha({ modulos, rotulo = "Trilha da formação" }: { m
                   )}
                   {prof.nome}
                 </span>
-              )}
+              ))}
               <span className="sl-no-estado">
                 <span
                   className={`sl-chip ${e.classe === "is-feito" ? "sl-chip-ok" : e.classe === "is-travado" ? "sl-chip-trava" : ""}`}

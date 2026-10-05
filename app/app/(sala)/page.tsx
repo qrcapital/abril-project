@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { tela } from "@/lib/telas";
 import HomeClient from "./HomeClient";
 import { fillHome, type Travamento } from "@/lib/home-template";
@@ -73,32 +72,12 @@ export default async function HomePage({
       }
     : undefined;
 
-  // O miolo novo da home (29/set/2026): o cartão "Comece por aqui" enquanto o Módulo 0 não foi
-  // concluído, e a trilha sempre. Entra entre o banner e a prateleira, no marcador do home.html.
-  // Não é redesenho da home: o resto continua o markup portado.
-  const m0 = calendario?.modulos.find((m) => m.ord === 0);
+  // O miolo da home (29/set/2026): a trilha, entre o banner e a prateleira, no marcador do
+  // home.html. Até 05/out/2026 vinha antes dela o cartão "Comece por aqui" do Módulo 0, que deixou
+  // de existir: o Módulo I aparece na trilha como qualquer outro módulo.
   const meio = calendario ? (
     <div className="sl sl-embutido">
       <div className="sl-wrap">
-        {m0 && !m0.concluido && (
-          <section className="sl-chamada sl-escuro" aria-labelledby="chamada-titulo">
-            <div className="sl-hero-globo" aria-hidden="true">
-              {/* eslint-disable-next-line @next/next/no-img-element -- arte decorativa em SVG */}
-              <img src="/marca/globo-dourado.svg" alt="" />
-            </div>
-            <div className="sl-chamada-texto">
-              <span className="sl-eyebrow">Módulo 0</span>
-              <h2 id="chamada-titulo">Comece por aqui</h2>
-              <p>
-                As aulas de abertura, o jeito de estudar e a data em que cada módulo abre, numa página
-                só. {m0.concluidas > 0 ? `Você já fez ${m0.concluidas} de ${m0.aulas}.` : ""}
-              </p>
-            </div>
-            <Link className="sl-btn sl-btn-claro" href="/app/comece">
-              Ir para o Comece por aqui
-            </Link>
-          </section>
-        )}
         <section className="sl-home-trilha" aria-labelledby="home-trilha-titulo">
           <div className="sl-home-trilha-cabeca">
             <i aria-hidden="true" />

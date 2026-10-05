@@ -129,7 +129,7 @@ function Formulario({
                 <span className="text-[13px] text-grafite">
                   <b className="font-semibold">{rotuloModulo(m.ord)}</b> · {m.titulo}
                 </span>
-                <select name={`tipo_${m.id}`} defaultValue={tipo} className={CAMPO} aria-label={`Tipo de liberação do módulo ${m.ord}`}>
+                <select name={`tipo_${m.id}`} defaultValue={tipo} className={CAMPO} aria-label={`Tipo de liberação do ${rotuloModulo(m.ord)}`}>
                   {TIPOS.filter((t) => t.valor !== "apos_modulo" || anteriores.length > 0).map((t) => (
                     <option key={t.valor} value={t.valor}>
                       {t.rotulo}
@@ -143,21 +143,21 @@ function Formulario({
                   min={0}
                   max={3650}
                   className={CAMPO}
-                  aria-label={`Dias do módulo ${m.ord} (após a matrícula, ou após concluir o pré-requisito)`}
+                  aria-label={`Dias do ${rotuloModulo(m.ord)} (após a matrícula, ou após concluir o pré-requisito)`}
                 />
                 <input
                   type="date"
                   name={`data_${m.id}`}
                   defaultValue={data}
                   className={CAMPO}
-                  aria-label={`Data programada do módulo ${m.ord}`}
+                  aria-label={`Data programada do ${rotuloModulo(m.ord)}`}
                 />
                 {anteriores.length > 0 ? (
                   <select
                     name={`depende_${m.id}`}
                     defaultValue={String(depende)}
                     className={CAMPO}
-                    aria-label={`Módulo que precisa ser concluído antes do módulo ${m.ord}`}
+                    aria-label={`Módulo que precisa ser concluído antes do ${rotuloModulo(m.ord)}`}
                   >
                     {anteriores.map((o) => (
                       <option key={o.id} value={o.ord}>
@@ -313,7 +313,7 @@ export default async function Liberacao({
               <a href="?preset=esteira" className="font-semibold text-gold-dark hover:text-acento">
                 Preencher com a esteira semanal
               </a>{" "}
-              (Módulo 0 no ato, um módulo por semana).
+              (Módulo I no ato, depois um módulo por semana).
             </p>
           )}
           <Formulario mods={modulos} preset={comEsteira} />

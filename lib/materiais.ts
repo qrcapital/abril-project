@@ -9,8 +9,8 @@ export type Material = { titulo: string; arquivo: string };
 /**
  * Os materiais de uma aula: o resumo dela mais a apostila do módulo a que pertence.
  *
- * O Módulo 0 (boas-vindas) não tem apostila nem resumo, e é justamente ele que exercita o
- * estado vazio hoje.
+ * Aula sem resumo, em módulo sem apostila, devolve lista vazia, e a página do módulo mostra
+ * "Os materiais desta aula chegam em breve".
  */
 export const getMateriais = cache(async (numeroDaAula: number): Promise<Material[]> => {
   const { aulas } = await getCurriculo();

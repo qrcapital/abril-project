@@ -1,19 +1,21 @@
-import { composto, type Notebook } from "@/lib/notebook";
+import { volatilidadeCarteira, type Notebook } from "@/lib/notebook";
 
-// Módulo III, Como Acessar o Mercado Americano. CONTEÚDO DE DEMONSTRAÇÃO: o gráfico aproxima o
-// efeito do custo anual descontando a taxa do retorno hipotético de 6%. Não é o custo de nenhum
-// produto real. Trocar pelo definitivo e virar `demo` para `false`.
+// Módulo IV, Ativos Digitais em Dólar. CONTEÚDO DE DEMONSTRAÇÃO: as volatilidades e a correlação
+// do gráfico são hipóteses redondas para mostrar a conta, não medições de nenhum ativo. Trocar
+// pelo definitivo e virar `demo` para `false`.
 //
-// Uma seção por aula, pela posição da aula no módulo. A aula 2 (REITs) ainda não tem conteúdo e
-// aparece no notebook como em produção.
+// Uma seção por aula, pela posição da aula no módulo. As aulas 2 e 4 ainda não têm conteúdo e
+// aparecem no notebook como em produção.
 
-const anos = [0, 5, 10, 15, 20, 25, 30];
+const pesos = [0, 2.5, 5, 10, 15, 20];
+// Ativo digital hipotético com 60% de volatilidade anual, resto da carteira com 12%, correlação 0,2.
+const vol = pesos.map((p) => Math.round(volatilidadeCarteira(p / 100, 12, 60, 0.2) * 10) / 10);
 
 const notebook: Notebook = {
   modulo: 3,
-  titulo: "Os veículos de acesso",
+  titulo: "Ativos digitais com método",
   subtitulo:
-    "ETF, REIT e BDR resolvem o mesmo problema de jeitos diferentes. O custo de cada um aparece devagar e pesa muito.",
+    "Bitcoin, Ethereum, tokens e ETFs: quanto cabe na carteira, como guardar e o que olhar além do preço.",
   demo: true,
   aulas: [
     {
@@ -21,37 +23,33 @@ const notebook: Notebook = {
       blocos: [
         {
           tipo: "capitulo",
-          id: "veiculos",
-          titulo: "Três portas para o mesmo mercado",
-          resumo: "Onde cada veículo negocia, em que moeda, e o que você está comprando de fato.",
+          id: "peso",
+          titulo: "Quanto cabe na carteira",
+          resumo: "Um ativo muito volátil pesa na carteira bem mais do que o tamanho da posição sugere.",
         },
         {
           tipo: "texto",
           capitular: true,
           paragrafos: [
-            "Um ETF é uma cesta de ativos negociada como se fosse uma ação só. Com uma ordem você compra centenas de empresas, ou títulos, ou um setor inteiro, e paga uma taxa anual pela gestão da cesta. É o caminho mais direto para diversificar sem montar a carteira papel por papel.",
-            "O REIT faz o mesmo pelo mercado imobiliário: é uma empresa dona de imóveis que distribui a maior parte da renda de aluguel. Já o BDR é outra coisa, um certificado negociado na B3 que representa um ativo de fora. Ele dá exposição ao ativo e ao câmbio sem abrir conta no exterior, mas a negociação, a custódia e as regras são as da bolsa brasileira.",
+            "Criptoativos oscilam muito mais do que ações e títulos, e isso muda a pergunta certa. Em vez de discutir se o Bitcoin vai subir, o módulo parte de quanto dessa oscilação a sua carteira consegue absorver sem que você mude de plano no pior momento.",
+            "O gráfico abaixo mostra a conta com números redondos e hipotéticos. Com posições pequenas, a oscilação total quase não se mexe; a partir de certo peso, cada ponto a mais no ativo volátil passa a dominar o comportamento da carteira inteira.",
           ],
         },
         {
           tipo: "grafico",
-          titulo: "US$ 100 mil por 30 anos, com custo anual de 0,1% e de 1%",
-          forma: "linha",
-          eixoX: anos.map((t) => (t === 0 ? "Hoje" : `${t} anos`)),
-          series: [
-            { nome: "Custo de 0,1% ao ano", valores: composto(100_000, 5.9, anos) },
-            { nome: "Custo de 1% ao ano", valores: composto(100_000, 5, anos) },
-          ],
-          formato: { prefixo: "US$ " },
+          titulo: "Volatilidade da carteira conforme o peso de um ativo muito volátil",
+          forma: "barra",
+          eixoX: pesos.map((p) => `${p.toLocaleString("pt-BR")}%`),
+          series: [{ nome: "Volatilidade anual da carteira", valores: vol }],
+          formato: { sufixo: "%", casas: 1 },
           ilustrativo: true,
           nota:
-            "Dados ilustrativos. Retorno hipotético de 6% ao ano, descontado o custo. Sem impostos nem câmbio. Não representa nenhum fundo.",
+            "Dados ilustrativos. Ativo hipotético com 60% de volatilidade anual, resto da carteira com 12% e correlação de 0,2. Não é medição de nenhum criptoativo.",
         },
         {
-          tipo: "numero",
-          valor: "US$ 126 mil",
-          legenda: "é a diferença no fim de 30 anos entre as duas curvas acima, só por causa do custo anual.",
-          nota: "Conta sobre as hipóteses do gráfico.",
+          tipo: "destaque",
+          texto: "Posição pequena, regra de rebalanceamento escrita antes da compra e custódia resolvida antes do primeiro aporte.",
+          fonte: "Síntese do módulo",
         },
       ],
     },
@@ -59,47 +57,31 @@ const notebook: Notebook = {
       aula: 3,
       blocos: [
         {
-          tipo: "tabela",
-          titulo: "Os três veículos lado a lado",
-          colunas: ["Veículo", "O que você compra", "Onde negocia", "Moeda da negociação"],
-          linhas: [
-            ["ETF", "Uma cesta de ativos num único papel", "Bolsa americana", "Dólar"],
-            ["REIT", "Empresa dona de imóveis que distribui renda", "Bolsa americana", "Dólar"],
-            ["BDR", "Certificado que representa um ativo de fora", "B3", "Real"],
-          ],
-          nota: "Resumo simplificado. Os detalhes de cada veículo, inclusive a tributação, estão nas aulas.",
-        },
-      ],
-    },
-    {
-      aula: 4,
-      blocos: [
-        {
           tipo: "texto",
           paragrafos: [
-            "O último capítulo do módulo é o menos glamouroso e o que mais custa quando é ignorado: imposto e sucessão. Ativo no exterior entra na declaração, tem regra própria de apuração e, sem planejamento, pode passar por um inventário em outro país. As regras mudam com alguma frequência, e por isso a aula trata do raciocínio antes das alíquotas.",
+            "Para quem não quer cuidar de chave privada, os ETFs regulados de ativos digitais oferecem exposição pela corretora, com custo anual e sem a custódia direta. Para quem acompanha de perto, as métricas on-chain, como fluxo entre carteiras e atividade da rede, mostram um lado do mercado que o gráfico de preço não mostra.",
           ],
         },
         {
           tipo: "referencias",
           itens: [
             {
-              autor: "John C. Bogle",
-              titulo: "The Little Book of Common Sense Investing",
-              ano: 2007,
-              nota: "O argumento do fundador da Vanguard a favor de fundos de índice de baixo custo.",
+              autor: "Satoshi Nakamoto",
+              titulo: "Bitcoin: A Peer-to-Peer Electronic Cash System",
+              ano: 2008,
+              nota: "O artigo original que descreve o Bitcoin. Nove páginas.",
             },
             {
-              autor: "William J. Bernstein",
-              titulo: "The Four Pillars of Investing",
-              ano: 2002,
-              nota: "Teoria, história, psicologia e o negócio dos investimentos, em quatro partes.",
+              autor: "Saifedean Ammous",
+              titulo: "The Bitcoin Standard",
+              ano: 2018,
+              nota: "A tese do Bitcoin como dinheiro sólido, com a história monetária por trás dela.",
             },
             {
-              autor: "Burton G. Malkiel",
-              titulo: "A Random Walk Down Wall Street",
-              ano: 1973,
-              nota: "Mercados eficientes e o caso do investimento indexado.",
+              autor: "Paul Vigna e Michael J. Casey",
+              titulo: "The Age of Cryptocurrency",
+              ano: 2015,
+              nota: "A origem do Bitcoin e do blockchain contada por dois jornalistas do Wall Street Journal.",
             },
           ],
         },

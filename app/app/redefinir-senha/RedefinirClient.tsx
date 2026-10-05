@@ -81,9 +81,10 @@ export default function RedefinirClient({
       // Sem restaurar: a navegação já vai acontecer, e devolver o botão ao normal antes
       // dela pisca "clique de novo" numa tela que está saindo.
       //
-      // Destino "Comece por aqui" desde 29/set/2026, pedido do dono: primeiro acesso e senha
-      // redefinida caem na porta do Módulo 0, que diz onde o aluno está e quando abre o resto.
-      router.push("/app/comece");
+      // Primeiro acesso e senha redefinida caem direto no Módulo I (ord 0), que abre na compra.
+      // De 29/set a 05/out/2026 o destino era o "Comece por aqui" do Módulo 0, que deixou de
+      // existir (a rota `/app/comece` virou redirect para cá).
+      router.push("/app/modulo/0");
     } else {
       restaurar();
       setErro(r.erro);
