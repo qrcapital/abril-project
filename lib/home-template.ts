@@ -7,6 +7,14 @@ import { esc, innerOfDiv } from "./html-slice.ts";
 
 const BADGE_BASE =
   "position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:800;letter-spacing:.14em;border-radius:4px;padding:3px 7px";
+// Capa tipografica do modulo (numeral, titulo e docentes), gerada em 06/out/2026 e servida de
+// public/modulos/. Arquivo por posicao (ord 0 = Modulo I). Sem capa, volta o placeholder antigo.
+const CAPAS_MODULO = 4;
+function capaModulo(idx: number): string {
+  if (idx < 0 || idx >= CAPAS_MODULO) return '<div class="art-slot">Arte do módulo</div>';
+  return `<img src="/modulos/capa-modulo-${idx + 1}.webp" alt="" width="1024" height="1536" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">`;
+}
+
 const BADGE_ATIVO = `${BADGE_BASE};background:#C1121F;color:#fdfbf6`;
 const BADGE_NEUTRO = `${BADGE_BASE};background:#EDE6DD;border:1px solid #E0D3BE;color:#7E6836`;
 // Módulo ainda fechado pela esteira. Pill âmbar (DESIGN.md §2): cor como informação, não como
@@ -65,7 +73,7 @@ function card(
   const aulasTxt = total === 1 ? "1 aula" : `${total} aulas`;
 
   const trava = travado ? "opacity:.72;cursor:default" : "cursor:pointer";
-  return `<div class="mcard"${travado ? ' data-travado="1"' : ""} style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;${trava};position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(72,60,42,.05)"><span style="${badge}">${badgeText}</span><div style="position:relative;aspect-ratio:3/3.5;flex:0 0 auto;background:linear-gradient(160deg,#F0EADF,#E7DECF)"><div class="art-slot">Arte do módulo</div></div><div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1"><span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">${label}</span><h3 style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;margin:3px 0 9px;line-height:1.2;color:#1a1815">${esc(m.titulo)}</h3><div style="height:4px;border-radius:2px;background:#EDE6DD;overflow:hidden"><i style="display:block;height:100%;width:${pct}%;background:#C1121F;border-radius:2px"></i></div><div style="display:flex;justify-content:space-between;font-size:9.5px;color:#6f6860;margin-top:7px"><span>${aulasTxt}</span><span style="color:${countColor};font-weight:600">${count}</span></div></div></div>`;
+  return `<div class="mcard"${travado ? ' data-travado="1"' : ""} style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;${trava};position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(72,60,42,.05)"><span style="${badge}">${badgeText}</span><div style="position:relative;aspect-ratio:2/3;flex:0 0 auto;background:#F7F3EC">${capaModulo(m.idx)}</div><div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1"><span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">${label}</span><h3 style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;margin:3px 0 9px;line-height:1.2;color:#1a1815">${esc(m.titulo)}</h3><div style="height:4px;border-radius:2px;background:#EDE6DD;overflow:hidden"><i style="display:block;height:100%;width:${pct}%;background:#C1121F;border-radius:2px"></i></div><div style="display:flex;justify-content:space-between;font-size:9.5px;color:#6f6860;margin-top:7px"><span>${aulasTxt}</span><span style="color:${countColor};font-weight:600">${count}</span></div></div></div>`;
 }
 
 /**
