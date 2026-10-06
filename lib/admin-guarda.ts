@@ -23,7 +23,25 @@ export async function exigirAdmin() {
   // As mesmas duas respostas do layout, pelos mesmos motivos (ver `app/admin/layout.tsx`):
   // sem sessão vai para o login; logado sem papel recebe 404, que não confirma que /admin existe.
   if (eu.papel === "anonimo") redirect("/app/login");
+  // O observador (0029) passa pelo layout, então ESTA linha é a cerca dele em toda tela de admin.
+  // Vai para a única tela que é dele, em vez de um 404: ele já sabe que o /admin existe, e é por
+  // aqui que o login o manda para `/admin`.
+  if (eu.papel === "observador") redirect("/admin/indicadores");
   if (eu.papel !== "admin") notFound();
+  return eu;
+}
+
+/**
+ * A guarda da tela de indicadores, a única que o observador abre. Admin passa também.
+ *
+ * A tela não lê nada com a service role: os números vêm de `painel_indicadores()`, chamada com a
+ * sessão de quem olha, e a função confere o papel de novo dentro do banco. Esta guarda decide quem
+ * vê a TELA; a do banco decide quem recebe o DADO.
+ */
+export async function exigirPainel() {
+  const eu = await papelAtual();
+  if (eu.papel === "anonimo") redirect("/app/login");
+  if (eu.papel !== "admin" && eu.papel !== "observador") notFound();
   return eu;
 }
 

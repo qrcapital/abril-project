@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { vaiAoPainel } from "@/lib/acesso-painel";
 import { origemValida } from "@/lib/admin-guarda";
 import { esc } from "@/lib/auth-casca";
 import { destinoSeguro } from "@/lib/seguranca";
@@ -94,9 +95,10 @@ export async function POST(req: NextRequest) {
   }
 
   if (ENTRADA.has(tipo)) {
-    // Link de entrada: admin cai no painel, aluno na sala. Mesma regra do login com senha.
-    const { data: admin } = await supabase.rpc("is_admin");
-    return NextResponse.redirect(new URL(admin === true ? "/admin" : "/app", req.nextUrl.origin), 303);
+    // Link de entrada: admin e observador caem no painel, aluno na sala. Mesma regra do login com
+    // senha (`lib/acesso-painel.ts`).
+    const painel = await vaiAoPainel(supabase);
+    return NextResponse.redirect(new URL(painel ? "/admin" : "/app", req.nextUrl.origin), 303);
   }
 
   const destino = destinoSeguro(String(form?.get("next") ?? ""), DESTINO_PADRAO);

@@ -25,6 +25,11 @@ export const metadata: Metadata = { title: "Administração" };
  * - **Logado e não admin → 404.** Redirecionar para `/app` confirmaria que `/admin` existe
  *   para qualquer aluno que digitasse o endereço. O 404 não confirma nem nega.
  *
+ * - **Observador (0029) → entra.** O layout deixa passar, e a cerca dele é a guarda de cada página:
+ *   `exigirAdmin()` o manda para `/admin/indicadores`, a única tela com `exigirPainel()`. O layout
+ *   não tem o pathname, então não teria como fazer essa triagem aqui. As rotas de `admin/api`
+ *   seguem recusando por conta própria (`papel !== "admin"`), e o observador não passa nelas.
+ *
  * Sobre a armadilha do HANDOFF §6 ("`redirect()` em Server Component sai como 200"): ela vale
  * quando o streaming já começou e o começo da resposta foi enviado. Aqui a decisão acontece na
  * primeira linha do layout, antes de renderizar qualquer coisa, então a resposta é um 307 de
@@ -36,7 +41,7 @@ export default async function AdminLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const { papel, email } = await papelAtual();
   if (papel === "anonimo") redirect("/app/login");
-  if (papel !== "admin") notFound();
+  if (papel !== "admin" && papel !== "observador") notFound();
 
   // O atalho para a área do aluno só é link se a conta DESTE admin puder entrar lá. A regra é a
   // mesma da guarda do `(sala)`, de propósito: admin é aluno como qualquer outro, e quem opera o
@@ -48,7 +53,7 @@ export default async function AdminLayout({
   return (
     <div className="admin-root grid min-h-dvh grid-cols-[232px_1fr]">
       <aside className="sticky top-0 h-dvh">
-        <Nav email={email} temAcesso={estado === "ativa"} />
+        <Nav email={email} temAcesso={estado === "ativa"} observador={papel === "observador"} />
       </aside>
       <main className="min-w-0 px-8 py-8">{children}</main>
     </div>

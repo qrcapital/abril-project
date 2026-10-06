@@ -20,6 +20,8 @@ import { rotuloModulo } from "./curso.ts";
 export const ROTULO_ACAO: Record<string, string> = {
   "papel.promover": "Promoveu a admin",
   "papel.revogar": "Revogou admin",
+  "papel.observador-conceder": "Deu observador",
+  "papel.observador-revogar": "Revogou observador",
   // Ações da prova final, que saiu do curso em 30/set/2026. Nenhuma tela gera mais estes registros;
   // os rótulos ficam para as linhas antigas de `admin_audit` continuarem legíveis.
   "prova.segunda-chamada": "Liberou 2ª chamada",
@@ -115,6 +117,10 @@ export function descrever(acao: string, detalhe: Record<string, unknown> | null)
   if (acao.startsWith("papel.")) {
     const linhas = [String(d.email ?? "")].filter(Boolean);
     if (d.era_mestre === true) linhas.push("era admin mestre");
+    // Observador (0029): conta nova criada pelo próprio ato, e se o link de senha saiu.
+    if (d.conta_criada === true) {
+      linhas.push(d.email_enviado === true ? "conta criada, link de senha enviado" : "conta criada, link de senha não saiu");
+    }
     return linhas;
   }
 

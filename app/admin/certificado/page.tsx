@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import AcoesCertificado from "@/app/_certificado/AcoesCertificado";
 import Folha from "@/app/_certificado/Folha";
+import { exigirAdmin } from "@/lib/admin-guarda";
 import { CODIGO_EXEMPLO } from "@/lib/certificado";
 
 export const metadata: Metadata = { title: "Certificado (prévia)" };
@@ -25,6 +26,9 @@ export default async function PreviaCertificado({
 }: {
   searchParams: Promise<{ nome?: string | string[] }>;
 }) {
+  // Não lê dado nenhum, mas desde a 0029 o layout deixa o observador entrar, e a cerca dele é esta
+  // linha em cada página (ver `lib/admin-guarda.ts`).
+  await exigirAdmin();
   const { nome } = await searchParams;
   const escolhido = (Array.isArray(nome) ? nome[0] : nome)?.trim().slice(0, 80) || NOME_EXEMPLO;
 

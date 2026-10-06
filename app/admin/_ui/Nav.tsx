@@ -16,6 +16,9 @@ import { createClient } from "@/lib/supabase/client";
  */
 const ITENS = [
   { href: "/admin", rotulo: "Painel", pronto: true },
+  // Indicadores (0029): os agregados do projeto, sem linha de aluno. É a única tela do observador,
+  // e por isso a única marcada com `observador: true`.
+  { href: "/admin/indicadores", rotulo: "Indicadores", pronto: true, observador: true },
   { href: "/admin/alunos", rotulo: "Alunos", pronto: true },
   { href: "/admin/conteudo", rotulo: "Conteúdo", pronto: true },
   // Liberação mora ao lado de Conteúdo porque é a outra pergunta sobre a mesma coisa: Conteúdo
@@ -35,8 +38,19 @@ const ITENS = [
   { href: "/admin/consentimentos", rotulo: "Consentimentos", pronto: true },
 ];
 
-export default function Nav({ email, temAcesso }: { email?: string; temAcesso?: boolean }) {
+export default function Nav({
+  email,
+  temAcesso,
+  observador = false,
+}: {
+  email?: string;
+  temAcesso?: boolean;
+  /** Papel de observador (0029): a navegação mostra só Indicadores. Esconder é conforto, não
+   *  guarda; quem barra o resto é o `exigirAdmin()` de cada página e a checagem de cada rota. */
+  observador?: boolean;
+}) {
   const pathname = usePathname();
+  const itens = observador ? ITENS.filter((i) => i.observador) : ITENS;
   const router = useRouter();
 
   // `/admin` casa exato; o resto por prefixo, para `/admin/alunos/<id>` manter "Alunos" aceso.
@@ -78,12 +92,12 @@ export default function Nav({ email, temAcesso }: { email?: string; temAcesso?: 
           </span>
         </div>
         <span className="mt-4 block text-[10.5px] font-semibold tracking-[0.1em] text-muted uppercase">
-          Administração
+          {observador ? "Acompanhamento" : "Administração"}
         </span>
       </div>
 
       <ul className="flex flex-col gap-0.5">
-        {ITENS.map((item) => (
+        {itens.map((item) => (
           <li key={item.href} className={item.separar ? "mt-3 border-t border-white/10 pt-3" : ""}>
             {item.pronto ? (
               <Link

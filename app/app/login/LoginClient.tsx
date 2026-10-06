@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { vaiAoPainel } from "@/lib/acesso-painel";
 import { createClient } from "@/lib/supabase/client";
 import { criarConta } from "./actions";
 import { validarSenha } from "@/lib/senha";
@@ -56,8 +57,7 @@ export default function LoginClient({
         .setSession({ access_token: accessToken, refresh_token: refreshToken })
         .then(async ({ error }) => {
           if (error) return;
-          const { data: admin } = await supabase.rpc("is_admin");
-          router.push(admin === true ? "/admin" : "/app");
+          router.push((await vaiAoPainel(supabase)) ? "/admin" : "/app");
           router.refresh();
         });
     }
@@ -154,8 +154,7 @@ export default function LoginClient({
           // acesso" a conta acaba de nascer e nunca é admin, então lá não se pergunta. Se a
           // chamada falhar, cai em /app, que é o destino de todo mundo menos de um punhado
           // de pessoas.
-          const { data: admin } = await supabase.rpc("is_admin");
-          router.push(admin === true ? "/admin" : "/app");
+          router.push((await vaiAoPainel(supabase)) ? "/admin" : "/app");
           router.refresh();
         }
       } finally {

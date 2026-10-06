@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import BotaoPapel from "./BotaoPapel";
+import { ConcederObservador, RevogarObservador } from "./Observador";
 import { exigirAdmin } from "@/lib/admin-guarda";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -28,8 +29,11 @@ type Achado = {
   nome: string | null;
   is_admin: boolean;
   is_master: boolean;
+  /** Não vem da `buscar_usuarios`: a tela marca a partir da `listar_observadores` (0029). */
+  is_observer?: boolean;
   criado_em: string;
 };
+type Observador = { id: string; email: string; nome: string | null; criado_em: string };
 type Admin = {
   id: string;
   email: string;
@@ -41,6 +45,20 @@ type Admin = {
 const MENSAGENS: Record<string, { tom: "sucesso" | "erro"; texto: string }> = {
   promovido: { tom: "sucesso", texto: "Acesso de admin concedido." },
   revogado: { tom: "sucesso", texto: "Acesso de admin removido." },
+  "observador-concedido": {
+    tom: "sucesso",
+    texto: "Acesso de observador concedido. A conta já existia, então a pessoa entra com a senha que tem.",
+  },
+  "observador-criado": {
+    tom: "sucesso",
+    texto: "Conta criada com acesso de observador. A pessoa recebeu o e-mail para criar a senha.",
+  },
+  "observador-criado-sem-email": {
+    tom: "erro",
+    texto:
+      "Conta criada com acesso de observador, mas o e-mail de senha não saiu. Peça para a pessoa usar Esqueci minha senha na tela de login.",
+  },
+  "observador-revogado": { tom: "sucesso", texto: "Acesso de observador removido." },
 };
 
 export default async function Equipe({
@@ -56,12 +74,17 @@ export default async function Equipe({
 
   const db = createAdminClient();
 
-  const [busca, listaAdmins] = await Promise.all([
+  const [busca, listaAdmins, listaObs] = await Promise.all([
     termo ? db.rpc("buscar_usuarios", { termo, limite: 20 }) : Promise.resolve({ data: [] }),
     db.rpc("listar_admins"),
+    // Antes da 0029 a função não existe: a seção de observadores mostra o aviso em vez de quebrar a
+    // tela de Equipe inteira.
+    db.rpc("listar_observadores"),
   ]);
 
-  const achados = (busca.data ?? []) as Achado[];
+  const observadores = (listaObs.data ?? []) as Observador[];
+  const idsObs = new Set(observadores.map((o) => o.id));
+  const achados = ((busca.data ?? []) as Achado[]).map((a) => ({ ...a, is_observer: idsObs.has(a.id) }));
   const admins = (listaAdmins.data ?? []) as Admin[];
 
   const aviso = erro
@@ -76,7 +99,7 @@ export default async function Equipe({
         <h1 className="text-[26px] text-tinta">Equipe</h1>
         <p className="mt-1 max-w-2xl text-[13px] text-medio">
           Quem tem acesso a este painel. Admin vê e edita tudo, incluindo os dados dos alunos, o
-          conteúdo do curso e os e-mails.
+          conteúdo do curso e os e-mails. Observador vê só os indicadores, em números agregados.
         </p>
       </header>
 
@@ -155,6 +178,58 @@ export default async function Equipe({
           <code className="text-[11px] text-gold-dark">scripts/admin-conta.mjs --mestre</code>.
         </p>
       </section>
+
+      <section className="mt-9">
+        <h2 className="mb-1 text-[15px] text-tinta">
+          Observadores{" "}
+          <span className="font-sans text-[12px] font-normal text-pedra">({observadores.length})</span>
+        </h2>
+        <p className="mb-3 max-w-2xl text-[12px] text-medio">
+          Para quem acompanha o projeto de fora, como o time da Abril. Entra pelo mesmo login e vê só a
+          tela de Indicadores: vendas, receita e conclusão do curso, sempre agregados. Não vê aluno,
+          e-mail, auditoria, consentimento, conteúdo nem exportação. Se o e-mail ainda não tiver conta,
+          ela é criada sem matrícula e a pessoa recebe o link para criar a senha.
+        </p>
+        <ConcederObservador q={q} />
+
+        <div className="mt-4">
+          {listaObs.error ? (
+            <p className="text-[13px] text-medio">
+              A lista de observadores depende da migration 0029, que ainda não foi aplicada neste banco.
+            </p>
+          ) : observadores.length === 0 ? (
+            <p className="text-[13px] text-medio">Nenhum observador por enquanto.</p>
+          ) : (
+            <div className="overflow-x-auto rounded-lg border border-areia bg-white">
+              <table className="w-full min-w-[560px] border-collapse text-left">
+                <thead>
+                  <tr className="border-b border-bege">
+                    {["E-mail", "Nome", ""].map((h) => (
+                      <th
+                        key={h}
+                        className="px-4 py-2.5 text-[11px] font-semibold tracking-[0.1em] text-pedra uppercase"
+                      >
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {observadores.map((o) => (
+                    <tr key={o.id} className="border-b border-bege last:border-0">
+                      <td className="px-4 py-3 text-[13px] text-grafite">{o.email}</td>
+                      <td className="px-4 py-3 text-[13px] text-medio">{o.nome || "sem nome"}</td>
+                      <td className="px-4 py-3 text-right">
+                        <RevogarObservador userId={o.id} email={o.email} q={q} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </section>
     </>
   );
 }
@@ -212,6 +287,10 @@ function Tabela({
                   ) : l.is_admin ? (
                     <span className="rounded-full bg-gold-soft px-2.5 py-1 text-[11px] font-semibold text-gold-dark">
                       admin
+                    </span>
+                  ) : l.is_observer ? (
+                    <span className="rounded-full bg-bege px-2.5 py-1 text-[11px] font-semibold text-medio">
+                      observador
                     </span>
                   ) : (
                     <span className="text-[12px] text-pedra">aluno</span>

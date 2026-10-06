@@ -3,7 +3,12 @@ import { cache } from "react";
 
 import { createClient } from "@/lib/supabase/server";
 
-export type Papel = "admin" | "aluno" | "anonimo";
+/**
+ * `observador` (migration 0029) entra no `/admin` e vê só o painel de indicadores. Ele fica FORA de
+ * toda checagem `papel !== "admin"` que já existe, e é isso que o mantém longe de alunos, e-mails,
+ * auditoria e das rotas que escrevem: nenhuma delas precisou mudar para recusá-lo.
+ */
+export type Papel = "admin" | "observador" | "aluno" | "anonimo";
 
 /**
  * Quem é o dono desta sessão, do ponto de vista do admin.
@@ -33,7 +38,13 @@ export const papelAtual = cache(
     const base = { id: user.id, email: user.email };
     const { data, error } = await supabase.rpc("is_admin");
     // Erro aqui é falha de rede ou de grant, e o lado seguro de "não sei" é "não entra".
-    if (error || data !== true) return { papel: "aluno", mestre: false, ...base };
+    if (error || data !== true) {
+      // Só quem não é admin pergunta se é observador: a 0029 proíbe os dois juntos. Erro (inclusive
+      // a função ainda não existir, antes da 0029 rodar) cai em aluno, pelo mesmo motivo de cima.
+      const { data: obs, error: erroObs } = await supabase.rpc("is_observer");
+      if (!erroObs && obs === true) return { papel: "observador", mestre: false, ...base };
+      return { papel: "aluno", mestre: false, ...base };
+    }
 
     // `mestre` é um campo À PARTE e `papel` continua "admin" para os dois níveis, de propósito:
     // se mestre virasse um valor de `papel`, toda checagem existente na forma
