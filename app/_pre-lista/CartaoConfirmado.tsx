@@ -18,7 +18,29 @@
  * "o convite da live" no dia seguinte à transmissão seria a mentira mais cara da
  * página, porque é dita a quem acabou de entregar nome, e-mail e telefone.
  */
-import { copyDaLive } from "./live";
+import contato from "@/lib/contato.json";
+
+import { LIVE_EM, copyDaLive, livePassou } from "./live";
+
+/**
+ * Plano B do e-mail (06/out/2026). O José Henrique se cadastrou e o RD descartou o e-mail de
+ * confirmação na hora ("descartado permanentemente", endereço desativado no RD), sem nada na tela
+ * que avisasse. Quem depende só do e-mail fica sem a data. Agora o cartão entrega a data direto na
+ * agenda e diz para onde ir se a confirmação não chegar.
+ */
+const FIM_LIVE = new Date(LIVE_EM.getTime() + 2 * 3_600_000);
+const utc = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+const TITULO = "Live Estratégia Internacional (VEJA Negócios e BlockTrends)";
+const DETALHE = "Live gratuita de lançamento, ao vivo no YouTube da VEJA Negócios. O link chega por e-mail perto da live.";
+const GOOGLE = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(TITULO)}&dates=${utc(LIVE_EM)}/${utc(FIM_LIVE)}&details=${encodeURIComponent(DETALHE)}`;
+const ICS = `data:text/calendar;charset=utf-8,${encodeURIComponent(
+  [
+    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//BlockTrends//Estrategia Internacional//PT", "BEGIN:VEVENT",
+    "UID:live-estrategia-internacional-20261013@blocktrends.abril.com.br", `DTSTAMP:${utc(LIVE_EM)}`,
+    `DTSTART:${utc(LIVE_EM)}`, `DTEND:${utc(FIM_LIVE)}`, `SUMMARY:${TITULO}`, `DESCRIPTION:${DETALHE}`,
+    "END:VEVENT", "END:VCALENDAR",
+  ].join("\r\n"),
+)}`;
 
 export default function CartaoConfirmado() {
   return (
@@ -32,6 +54,18 @@ export default function CartaoConfirmado() {
         {copyDaLive().confirmacao}{" "}
         Só quem está nesta lista recebe. Fique de olho na caixa de entrada e, se não chegar,
         procure por Estratégia Internacional no spam.
+      </p>
+      {!livePassou() && (
+        <p className="le-p-ok le-p-agenda">
+          <a href={GOOGLE} target="_blank" rel="noopener noreferrer">Salvar na agenda do Google</a>
+          {" · "}
+          <a href={ICS} download="live-estrategia-internacional.ics">Outra agenda (.ics)</a>
+        </p>
+      )}
+      <p className="le-p-ok le-p-ajuda">
+        O e-mail não chegou em alguns minutos?{" "}
+        <a href={contato.whatsapp} target="_blank" rel="noopener noreferrer">Fale com a gente no WhatsApp</a>
+        {" "}e a gente confirma por lá.
       </p>
     </div>
   );
