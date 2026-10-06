@@ -67,7 +67,8 @@
    vídeo em 1280px e a playlist em 1284px, e o lockup do topo parecia recuado em relação ao
    vídeo. A largura útil é a do vídeo; `--sl-margem` é o respiro lateral e cai para 18px no
    celular. O topo e o rodapé (chrome-top/foot.html) e a home (screens/home.html) usam as
-   mesmas variáveis no style inline. */
+   mesmas variáveis no style inline, com box-sizing:border-box (lá o padrão é content-box e o
+   respiro somava por fora da largura). */
 :root { --sl-coluna: 1280px; --sl-margem: 28px }
 @media (max-width: 600px) { :root { --sl-margem: 18px } }
 .sl-wrap, .sl-wrap-largo { max-width: calc(var(--sl-coluna) + 2 * var(--sl-margem)); margin: 0 auto; padding: 0 var(--sl-margem) }
