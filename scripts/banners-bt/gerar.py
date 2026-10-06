@@ -225,6 +225,12 @@ def l_320x50(F, T, s):
     d.text((x, 22 * s), ls[0], font=ft, fill=T['titulo'])
     return im
 
+# Nome de arquivo SEM a medida: bloqueador de anuncio (listas tipo EasyList) derruba imagem
+# cujo nome traz tamanho classico de midia (-300x600., -160x600., -970x250.) e pasta "banners".
+# A lateral da materia sumiu assim para quem usa bloqueador (06/out). Nome neutro por posicao.
+NOMES = {'970x250': 'topo', '728x90': 'faixa', '320x100': 'topo-m', '300x600': 'coluna',
+         '160x600': 'coluna-e', '336x280': 'quadro', '300x250': 'quadro-m', '320x50': 'rodape-m'}
+
 LAYOUTS = {
     '970x250': l_970x250, '728x90': l_728x90, '320x100': l_320x100,
     '300x600': l_300x600, '160x600': l_160x600,
@@ -244,7 +250,7 @@ if __name__ == '__main__':
         for tam, fn in LAYOUTS.items():
             for s in (1, 2):
                 quadros = [fn(F, TELAS['vinho'], s), fn(F, TELAS['branco'], s)]
-                nome = f'ei2-{fase}-{tam}' + ('@2x' if s == 2 else '')
+                nome = f'ei-{fase}-{NOMES[tam]}' + ('@2x' if s == 2 else '')
                 quadros[0].save(f'{OUT}/{nome}.webp', 'WEBP', save_all=True, append_images=quadros[1:],
                                 duration=TEMPO_MS, loop=0, quality=88, method=6)
                 if s == 1:
