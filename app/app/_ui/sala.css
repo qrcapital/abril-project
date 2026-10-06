@@ -62,8 +62,15 @@
 .sl :focus-visible { outline: 2px solid var(--sl-acento); outline-offset: 3px; border-radius: 4px }
 .sl .sl-escuro :focus-visible { outline-color: var(--sl-palha) }
 
-.sl-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px }
-.sl-wrap-largo { max-width: 1340px; margin: 0 auto; padding: 0 28px }
+/* Uma coluna só para a área logada inteira (06/out/2026). O topo, o rodapé, as seções e o vídeo
+   em modo teatro alinham pela mesma borda: antes o topo e o miolo ficavam em 1124px úteis, o
+   vídeo em 1280px e a playlist em 1284px, e o lockup do topo parecia recuado em relação ao
+   vídeo. A largura útil é a do vídeo; `--sl-margem` é o respiro lateral e cai para 18px no
+   celular. O topo e o rodapé (chrome-top/foot.html) e a home (screens/home.html) usam as
+   mesmas variáveis no style inline. */
+:root { --sl-coluna: 1280px; --sl-margem: 28px }
+@media (max-width: 600px) { :root { --sl-margem: 18px } }
+.sl-wrap, .sl-wrap-largo { max-width: calc(var(--sl-coluna) + 2 * var(--sl-margem)); margin: 0 auto; padding: 0 var(--sl-margem) }
 
 .sl-so-leitor {
   position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -359,7 +366,7 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 .sl-palco { background: var(--sl-palco); color: var(--sl-creme); padding: 20px 0 36px }
 /* A linha de cima do palco: onde o aluno está e quanto do módulo já fez. */
 .sl-palco-topo {
-  max-width: min(1280px, calc(100% - 56px)); margin: 0 auto 16px;
+  max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 0 auto 16px;
   display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap;
 }
 .sl-palco-progresso { font-size: 12px; color: rgba(253, 250, 245, .7) }
@@ -368,7 +375,7 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 
 /* O cartão de fim de módulo, no palco, depois da última aula concluída. */
 .sl-palco-fim {
-  max-width: min(1280px, calc(100% - 56px)); margin: 26px auto 0;
+  max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 26px auto 0;
   display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
   padding: 20px 24px; border-radius: 16px;
   background: rgba(253, 250, 245, .06); border: 1px solid rgba(232, 217, 181, .35);
@@ -379,7 +386,7 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 
 /* Materiais da aula, em linha no palco: link de download, sem cartão. */
 .sl-palco-materiais {
-  max-width: min(1280px, calc(100% - 56px)); margin: 26px auto 0; padding-top: 18px;
+  max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 26px auto 0; padding-top: 18px;
   border-top: 1px solid rgba(253, 250, 245, .12);
   display: flex; align-items: baseline; gap: 10px 20px; flex-wrap: wrap;
 }
@@ -388,8 +395,8 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 .sl-palco-materiais a { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--sl-creme) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(253, 250, 245, .3) }
 .sl-palco-materiais a:hover { text-decoration-color: var(--sl-creme) }
 .sl-palco-materiais p { font-size: 13px; font-style: italic; color: rgba(253, 250, 245, .7) }
-.sl-palco-player { max-width: min(1280px, calc(100% - 56px)); margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 40px 90px rgba(0, 0, 0, .55); border: 1px solid rgba(253, 250, 245, .08) }
-.sl-palco-meta { max-width: min(1280px, calc(100% - 56px)); margin: 24px auto 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px; align-items: end }
+.sl-palco-player { max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 40px 90px rgba(0, 0, 0, .55); border: 1px solid rgba(253, 250, 245, .08) }
+.sl-palco-meta { max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 24px auto 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px; align-items: end }
 .sl-palco-meta h1 { margin-top: 10px; font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(28px, 3.2vw, 42px); line-height: 1.1; letter-spacing: -.015em; color: var(--sl-creme) }
 .sl-palco-desc { margin-top: 12px; max-width: 70ch; font-size: 15px; line-height: 1.65; color: rgba(253, 250, 245, .78) }
 .sl-palco-migalha { font-size: 12px; color: rgba(253, 250, 245, .7) }
@@ -892,11 +899,9 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
   .sl-aqui::after { display: none }
 }
 @media (max-width: 600px) {
-  .sl-wrap, .sl-wrap-largo { padding: 0 18px }
   .sl-como { grid-template-columns: minmax(0, 1fr) }
   .sl-como li, .sl-como li + li { padding: 20px 0 6px; border-right: 0 }
   .sl-hero-olho { display: none }
   .sl-teaser-texto, .sl-teaser-visual { padding: 24px 22px }
-  .sl-palco-player, .sl-palco-meta, .sl-palco-topo, .sl-palco-fim, .sl-palco-materiais { max-width: calc(100% - 36px) }
   .sl-pl-fila > li { flex-basis: 78vw }
 }
