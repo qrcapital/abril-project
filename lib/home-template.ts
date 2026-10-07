@@ -10,12 +10,32 @@ import { esc, innerOfDiv } from "./html-slice.ts";
 
 const BADGE_BASE =
   "position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:600;letter-spacing:.07em;font-family:'Jost',sans-serif;border-radius:4px;padding:3px 7px";
-// Capa tipografica do modulo (numeral, titulo e docentes), gerada em 06/out/2026 e servida de
-// public/modulos/. Arquivo por posicao (ord 0 = Modulo I). Sem capa, volta o placeholder antigo.
-const CAPAS_MODULO = 4;
-function capaModulo(idx: number): string {
-  if (idx < 0 || idx >= CAPAS_MODULO) return '<div class="art-slot">Arte do módulo</div>';
-  return `<img src="/modulos/capa-modulo-${idx + 1}.webp" alt="" width="1024" height="1536" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">`;
+// Capa do módulo, desenhada em HTML e CSS (07/out/2026). Substitui as imagens geradas no gpt-image
+// em 06/out, que o Marcelo achou fracas e despadronizadas: cada numeral romano tinha um tamanho
+// (I estreito, III largo) e cada título outro corpo. Aqui as quatro capas são o mesmo molde:
+// numeral arábico de dois dígitos (01 a 04, todos com a mesma largura em Jost tabular), título no
+// mesmo corpo e na mesma altura, docente no pé. Tudo em `cqw` (unidade do contêiner), então a capa
+// escala com o card sem quebrar a proporção, nítida em qualquer tela, sem imagem para baixar.
+// Fundo grafite com um halo do vermelho da casa no canto, filete vermelho curto sobre a régua.
+// Título e docente vêm do banco (o admin edita): passam por `esc()`.
+function capaModulo(idx: number, titulo: string, docente: string | null): string {
+  const n = String(idx + 1).padStart(2, "0");
+  const fundo =
+    "radial-gradient(110% 70% at 105% -5%,rgba(193,18,31,.50) 0%,rgba(193,18,31,0) 65%)," +
+    "radial-gradient(80% 45% at -10% 105%,rgba(142,21,34,.30) 0%,rgba(142,21,34,0) 70%)," +
+    "linear-gradient(170deg,#24201c 0%,#131210 60%,#0f0e0d 100%)";
+  return (
+    `<div aria-hidden="true" style="position:absolute;inset:0;container-type:inline-size;overflow:hidden;font-family:'Jost',system-ui,sans-serif;color:#f5f1ea;background:${fundo}">` +
+    `<div style="position:absolute;inset:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.07)"></div>` +
+    `<div style="position:absolute;left:9cqw;top:22cqw;font-size:4.2cqw;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(245,241,234,.5)">Módulo</div>` +
+    `<div style="position:absolute;left:7cqw;top:26cqw;font-size:56cqw;font-weight:400;line-height:1;letter-spacing:-.055em;font-variant-numeric:lining-nums tabular-nums;background:linear-gradient(180deg,#fffdf8 10%,#bdb3a4 95%);-webkit-background-clip:text;background-clip:text;color:transparent">${n}</div>` +
+    `<div style="position:absolute;left:9cqw;right:9cqw;top:94cqw;height:1px;background:linear-gradient(90deg,#d0222f 0 14cqw,rgba(245,241,234,.16) 14cqw)"></div>` +
+    `<div style="position:absolute;left:9cqw;right:9cqw;top:100cqw;font-size:8.8cqw;font-weight:500;line-height:1.12;letter-spacing:-.012em;color:#fbf8f2;text-wrap:balance">${esc(titulo)}</div>` +
+    (docente
+      ? `<div style="position:absolute;left:9cqw;right:9cqw;bottom:8.5cqw;font-size:3.9cqw;line-height:1.35;color:rgba(245,241,234,.55)">${esc(docente)}</div>`
+      : "") +
+    `</div>`
+  );
 }
 
 const BADGE_ATIVO = `${BADGE_BASE};background:#C1121F;color:#fdfbf6`;
@@ -76,7 +96,7 @@ function card(
   const aulasTxt = total === 1 ? "1 aula" : `${total} aulas`;
 
   const trava = travado ? "opacity:.72;cursor:default" : "cursor:pointer";
-  return `<div class="mcard"${travado ? ' data-travado="1"' : ""} style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;${trava};position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(72,60,42,.05)"><span style="${badge}">${badgeText}</span><div style="position:relative;aspect-ratio:2/3;flex:0 0 auto;background:#F7F3EC">${capaModulo(m.idx)}</div><div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1"><span style="font-size:8.5px;letter-spacing:.07em;color:#7E6836;font-weight:600;font-family:'Jost',sans-serif">${label}</span><h3 style="font-family:'Jost',sans-serif;font-size:16px;font-weight:500;margin:3px 0 9px;line-height:1.2;color:#1a1815">${esc(m.titulo)}</h3><div style="height:4px;border-radius:2px;background:#EDE6DD;overflow:hidden"><i style="display:block;height:100%;width:${pct}%;background:#C1121F;border-radius:2px"></i></div><div style="display:flex;justify-content:space-between;font-size:9.5px;color:#6f6860;margin-top:7px"><span>${aulasTxt}</span><span style="color:${countColor};font-weight:600">${count}</span></div></div></div>`;
+  return `<div class="mcard"${travado ? ' data-travado="1"' : ""} style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;${trava};position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(72,60,42,.05)"><span style="${badge}">${badgeText}</span><div style="position:relative;aspect-ratio:2/3;flex:0 0 auto;background:#F7F3EC">${capaModulo(m.idx, m.titulo, m.docente ?? null)}</div><div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1"><span style="font-size:8.5px;letter-spacing:.07em;color:#7E6836;font-weight:600;font-family:'Jost',sans-serif">${label}</span><h3 style="font-family:'Jost',sans-serif;font-size:16px;font-weight:500;margin:3px 0 9px;line-height:1.2;color:#1a1815">${esc(m.titulo)}</h3><div style="height:4px;border-radius:2px;background:#EDE6DD;overflow:hidden"><i style="display:block;height:100%;width:${pct}%;background:#C1121F;border-radius:2px"></i></div><div style="display:flex;justify-content:space-between;font-size:9.5px;color:#6f6860;margin-top:7px"><span>${aulasTxt}</span><span style="color:${countColor};font-weight:600">${count}</span></div></div></div>`;
 }
 
 /**
