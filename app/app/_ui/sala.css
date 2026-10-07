@@ -1137,6 +1137,9 @@ a.sl-pl-item:hover {
 
 .sl-vb-grade { display: grid; grid-template-columns: minmax(0, 760px) minmax(0, 320px); justify-content: space-between; gap: 72px; margin-top: 44px; align-items: start }
 .sl-vb-texto { min-width: 0 }
+/* Seções do verbete-artigo (07/out/2026): intertítulo em Jost 500, respiro antes, mesmo corpo da prosa. */
+.sl-vb-secao { margin-top: 40px }
+.sl-vb-secao h2 { margin-bottom: 14px; font-weight: 500; font-size: 22px; line-height: 1.25; letter-spacing: -.01em; color: var(--sl-tinta) }
 .sl-vb-exemplo { margin-top: 36px; padding: 22px 26px 24px; border-radius: 16px; background: var(--sl-creme); border: 1px solid var(--sl-borda) }
 .sl-vb-exemplo p + p, .sl-vb-pratica p + p { margin-top: 8px; font-size: 16.5px; line-height: 1.65; color: #2a2723 }
 .sl-vb-pratica { margin-top: 28px; padding: 2px 0 2px 24px; border-left: 2px solid var(--sl-acento) }

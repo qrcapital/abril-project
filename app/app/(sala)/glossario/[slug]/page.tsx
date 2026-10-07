@@ -85,6 +85,16 @@ export default async function VerbetePage({ params }: Params) {
                 <p key={k}>{ligar(p)}</p>
               ))}
             </div>
+            {v.secoes?.map((sec, i) => (
+              <section key={i} className="sl-vb-secao">
+                <h2>{sec.titulo}</h2>
+                <div className="sl-prosa">
+                  {sec.paragrafos.map((p, k) => (
+                    <p key={k}>{ligar(p)}</p>
+                  ))}
+                </div>
+              </section>
+            ))}
             {v.exemplo && (
               <aside className="sl-vb-exemplo" aria-label="Exemplo">
                 <p className="sl-eyebrow">Exemplo</p>

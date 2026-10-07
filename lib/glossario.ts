@@ -43,6 +43,12 @@ export type Verbete = {
   resumo: string;
   /** O verbete completo, em parágrafos curtos, no tom do curso. */
   texto: string[];
+  /**
+   * O verbete como artigo (07/out/2026, pedido do Marcelo: "as explicações estão curtas"): seções
+   * com intertítulo depois da abertura em `texto`, no estilo dos artigos da linha do tempo da QR
+   * Asset ("De onde vem", "Como funciona", "Por que importa para quem investe", "Erros comuns").
+   */
+  secoes?: { titulo: string; paragrafos: string[] }[];
   /** Um exemplo concreto, com números redondos quando couber. */
   exemplo?: string;
   /** O que isso muda para quem pensa em dolarizar parte do patrimônio. */
