@@ -570,7 +570,11 @@ a.sl-pl-item:hover {
 .sl-nbm-cabeca .sl-h2 { margin-top: 10px }
 .sl-nb-meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px }
 
-.sl-nb { display: grid; grid-template-columns: 208px minmax(0, 1fr); gap: 64px; margin-top: 44px; align-items: start }
+/* Uma coluna de leitura só, de 760px (07/out/2026). Antes o texto parava em 66ch (~650px) e os
+   gráficos esticavam até 1000px: duas larguras no mesmo fluxo, que o Marcelo achou estranho. Agora
+   texto, conceitos, tabelas, gráficos e simuladores ocupam a mesma medida; 760px em Jost 18px dá
+   perto de 80 caracteres por linha, no limite confortável de leitura. A sobra à direita é respiro. */
+.sl-nb { display: grid; grid-template-columns: 220px minmax(0, 760px); gap: 72px; margin-top: 44px; align-items: start }
 /* Fixo ao lado do texto no desktop, logo abaixo do topo da área (58px). Como o notebook corre na
    rolagem da página desde 07/out/2026, o `sticky` é em relação à janela; nenhum ancestral pode ter
    `overflow` diferente de `visible` ou `clip`, ou ele deixa de grudar. */
@@ -627,13 +631,13 @@ a.sl-pl-item:hover {
 /* ---- texto, destaque, número, capítulo ------------------------------------ */
 
 .sl-cap { padding-top: 12px }
-.sl-cap h4 { font-weight: 500; font-size: 24px; line-height: 1.25; letter-spacing: -.01em; max-width: 34ch; color: var(--sl-tinta) }
-.sl-cap p { margin-top: 8px; font-size: 16.5px; line-height: 1.55; color: var(--sl-tinta-2); max-width: 62ch }
+.sl-cap h4 { font-weight: 500; font-size: 24px; line-height: 1.25; letter-spacing: -.01em; color: var(--sl-tinta) }
+.sl-cap p { margin-top: 8px; font-size: 16.5px; line-height: 1.55; color: var(--sl-tinta-2) }
 
-.sl-prosa { max-width: 66ch }
+.sl-prosa { max-width: none }
 .sl-prosa p { font-size: 18px; line-height: 1.7; color: #2a2723 }
 .sl-prosa p + p { margin-top: 1em }
-.sl-prosa.is-abertura p:first-child { font-size: 21px; line-height: 1.58; color: var(--sl-tinta) }
+/* O primeiro parágrafo maior (lide) saiu em 07/out/2026: parecia erro de corpo de texto. */
 
 /* A citação em destaque saiu da serifa itálica em 07/out/2026: Jost 400 grande, reta, com o filete
    vermelho. A frase faz o trabalho; o itálico de serifa era o ornamento a mais. */
@@ -765,12 +769,12 @@ a.sl-pl-item:hover {
 
 .sl-tempo-rolagem { overflow-x: auto; margin: 14px -24px 0; padding: 0 24px 8px; scrollbar-width: thin; overscroll-behavior-x: contain }
 .sl-tempo-rolagem:focus-visible { outline-offset: -2px }
-/* A largura mínima por evento caiu de 188px para 116px no desktop (07/out/2026): com a coluna do
+/* A largura mínima por evento caiu de 188px para 86px no desktop (07/out/2026): com a coluna do
    notebook, oito eventos (as oito moedas do Brasil) pediam 1504px e a linha do tempo rolava de lado
-   mesmo numa tela grande. 116px cabem oito eventos na coluna; no celular a rolagem própria fica,
+   mesmo numa tela grande. 86px cabem oito eventos na coluna de 760px; no celular a rolagem própria fica,
    porque ali ela é inevitável. */
 .sl-tempo-trilho { position: relative; width: max(100%, calc(var(--n) * var(--sl-tempo-min, 188px))) }
-@media (min-width: 961px) { .sl-tempo { --sl-tempo-min: 116px } }
+@media (min-width: 961px) { .sl-tempo { --sl-tempo-min: 86px } }
 .sl-tempo-svg { display: block; overflow: visible }
 .sl .sl-tempo-serie { fill: var(--sl-tinta-2); font-size: 12px }
 .sl-tempo-area { fill: rgba(26, 24, 21, .045) }
@@ -858,7 +862,7 @@ a.sl-pl-item:hover {
 
 /* ---- conceito ------------------------------------------------------------- */
 
-.sl-conceito { max-width: 84ch; padding: 2px 0 2px 24px; border-left: 2px solid var(--sl-tinta) }
+.sl-conceito { padding: 2px 0 2px 24px; border-left: 2px solid var(--sl-tinta) }
 .sl-conceito-termo { margin-top: 6px; font-weight: 500; font-size: 21px; line-height: 1.25; letter-spacing: -.01em; color: var(--sl-tinta) }
 .sl-conceito-grade { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; margin-top: 10px }
 .sl-conceito-grade p { font-size: 16px; line-height: 1.6; color: #2a2723 }
