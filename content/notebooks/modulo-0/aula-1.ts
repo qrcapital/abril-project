@@ -37,6 +37,35 @@ const secao: SecaoDaAula = {
       texto: "E isso não é uma escolha. É uma aposta. Uma aposta numa única moeda, numa única economia.",
       fonte: "Abertura da aula, 0:49",
     },
+    {
+      tipo: "conceito",
+      tempo: "2:00",
+      termo: "Retorno em moeda de origem",
+      definicao:
+        "Para quem mede a vida em reais, um ativo no exterior é sempre uma carteira de duas posições: o ativo, que rende na moeda dele, e a própria moeda estrangeira. O retorno em reais é o produto dos dois fatores, e não a soma: um mais o retorno do ativo em dólar, vezes um mais a variação do dólar em reais, menos um. Somar as duas taxas é só uma aproximação, que piora quando os movimentos são grandes. Bodie, Kane e Marcus montam a conta para o americano que compra um título britânico: o papel é livre de risco para quem vive em libras, mas não para quem vive em dólares.",
+      formula: "1 + r(R$) = [1 + r(US$)] × E1/E0, com E em reais por dólar",
+      naPratica:
+        "É a conta exata do risco duplo de que fala Marcelo Campos: o mesmo ativo pode ganhar em dólar e perder em reais, ou o contrário. O livro tira daí duas consequências. Ações de empresas do próprio país com receita em dólar não fazem esse papel, porque o preço delas segue o mercado de origem, onde estão os acionistas e boa parte dos custos. E a proteção cambial integral (hedge) reduz o benefício da diversificação: segundo os profissionais ouvidos no livro, esse benefício vem em partes aproximadamente iguais das ações estrangeiras e da moeda estrangeira, e é a parte da moeda que mais interessa a quem tem renda e patrimônio numa moeda só.",
+      referencia: {
+        autor: "Zvi Bodie, Alex Kane e Alan J. Marcus",
+        obra: "Investments",
+        capitulo: "cap. 25, seção 25.2 (exemplo 25.1) e box sobre investimento internacional",
+        ano: 2014,
+      },
+    },
+    {
+      tipo: "tabela",
+      tempo: "2:00",
+      titulo: "Ativo e moeda se multiplicam: retorno em reais de um ativo cotado em dólar",
+      colunas: ["Retorno do ativo em dólar", "Dólar cai 10%", "Dólar estável", "Dólar sobe 10%"],
+      linhas: [
+        ["−10%", "−19%", "−10%", "−1%"],
+        ["0%", "−10%", "0%", "+10%"],
+        ["+10%", "−1%", "+10%", "+21%"],
+      ],
+      nota:
+        "Ilustrativo: retorno em reais = (1 + retorno em dólar) × (1 + variação do dólar) − 1, sem impostos, IOF e custos. A soma simples erra nos cantos: 10% de alta do ativo com 10% de alta do dólar dão 21%, e não 20%; 10% de alta do ativo com 10% de queda do dólar dão −1%, e não zero.",
+    },
 
     // ---- razão 1: escala --------------------------------------------------------------------------
     {
@@ -74,12 +103,42 @@ const secao: SecaoDaAula = {
         "Pesos de China, Índia e Brasil no ACWI calculados a partir do peso de cada país no MSCI Emerging Markets e do valor dos dois índices. O índice pondera pelo valor em livre circulação, o que reduz o peso de mercados com acesso restrito a estrangeiros.",
     },
     {
+      tipo: "conceito",
+      tempo: "9:00",
+      termo: "Capital humano",
+      definicao:
+        "Capital humano é o valor presente da renda do trabalho que uma pessoa ainda vai receber. Não aparece no extrato da corretora, mas, para quem está em idade ativa, costuma ser o maior ativo do balanço. Bodie, Kane e Marcus lembram que, somado em toda a economia, ele supera o valor de todos os ativos negociados, e que é pouco portátil e difícil de proteger com títulos. Como salários e lucros das empresas locais oscilam com a mesma economia, o capital humano funciona como uma posição comprada no próprio país. Com renda anual constante Y por T anos de carreira, descontada à taxa d, ele vale a expressão abaixo.",
+      formula: "CH = Y × [1 − (1 + d)^(−T)] / d",
+      naPratica:
+        "O livro cita casos extremos do mesmo erro. Em 2008, os funcionários do Lehman Brothers tinham cerca de 30% das ações do banco e perderam perto de US$ 10 bilhões quando ele quebrou: emprego e poupança estavam no mesmo lugar. O executivo com bônus atrelado ao lucro da empresa já está superinvestido nela e não deveria comprar mais ações do setor. Em escala de país, é a situação de quem recebe salário, contribui para o INSS, tem imóvel e investe tudo em reais. A diversificação começa pelo patrimônio inteiro, não só pela carteira.",
+      referencia: {
+        autor: "Zvi Bodie, Alex Kane e Alan J. Marcus",
+        obra: "Investments",
+        capitulo: "cap. 9 (renda do trabalho e ativos não negociados), cap. 11 e cap. 28, seção 28.5",
+        ano: 2014,
+      },
+    },
+    {
+      tipo: "tabela",
+      tempo: "9:00",
+      titulo: "Mesmo com todos os investimentos fora, a maior parte do patrimônio segue atrelada ao Brasil",
+      colunas: ["Parcela dos investimentos no exterior", "Investimentos atrelados ao Brasil", "Patrimônio total atrelado ao Brasil"],
+      linhas: [
+        ["Nenhuma", "100%", "100%"],
+        ["Um quarto", "75%", "96%"],
+        ["Metade", "50%", "92%"],
+        ["Tudo", "0%", "85%"],
+      ],
+      nota:
+        "Ilustrativo, e não sugestão de alocação: renda do trabalho de R$ 120 mil por ano por 25 anos, descontada a 5% ao ano, dá capital humano de cerca de R$ 1,69 milhão, somado a R$ 300 mil em investimentos. Patrimônio atrelado ao Brasil = (capital humano + investimentos no Brasil) / patrimônio total. Um imóvel no país elevaria todas as linhas.",
+    },
+    {
       tipo: "texto",
       tempo: "9:48",
       paragrafos: [
         "A outra metade da primeira razão é histórica. Quem viveu os anos 1980 lembra que a moeda brasileira não guardava valor de um mês para o outro. Pelo IPCA, índice que o IBGE calcula desde dezembro de 1979, os preços subiram cerca de 11 trilhões por cento entre o fim de 1979 e junho de 1994, o mês anterior ao real. A aula cita 13 trilhões, cifra que circula com outras janelas e outros índices; a ordem de grandeza é a mesma, e nenhuma das duas cabe na imaginação.",
         "Nesse ambiente, o brasileiro já usava o dólar como reserva de valor, ainda que não como meio de pagamento. A indexação se espalhou pelos contratos, e índices como o IGP-M, criado pela FGV em 1989, com peso grande de preços no atacado e de commodities cotadas em dólar, passaram a reajustar aluguéis e tarifas. Entre 1942 e 1994 o país trocou de moeda oito vezes, cinco delas em apenas oito anos, de 1986 a 1994.",
-        "O real é o grande sucesso dessa história e, ainda assim, não escapou da inflação. De julho de 1994 a agosto de 2026, o IPCA acumulou alta de 733%: são precisos cerca de R$ 8,30 hoje para comprar o que R$ 1 comprava no lançamento da moeda, uma perda de 88% do poder de compra. No mesmo período, a média mensal do dólar comercial passou de R$ 0,93 para R$ 5,15, uma desvalorização de 82% do real contra a moeda americana. São esses os dois números por trás dos 762% e dos 83% citados em aula, que variam conforme o mês de referência.",
+        "O real é o grande sucesso dessa história e, ainda assim, não escapou da inflação. De julho de 1994 a agosto de 2026, o IPCA acumulou alta de 733%: são precisos cerca de R$ 8,30 hoje para comprar o que R$ 1 comprava no lançamento da moeda, uma perda de 88% do poder de compra. No mesmo período, a média mensal do dólar comercial passou de R$ 0,93 para R$ 5,15, uma desvalorização de 82% do real contra a moeda americana. São esses os dois números por trás dos 762% e dos 83% citados em aula, que variam conforme o mês de referência. Alta de um lado e perda do outro descrevem o mesmo movimento visto de lados opostos: o dólar subiu 454% em reais (5,15 ÷ 0,93), e o real perdeu 1 − 0,93 ÷ 5,15, ou 82%, em dólar. Por isso uma alta de 100% do dólar equivale a uma perda de 50% do real, nunca de 100%, e os 733% de alta dos preços correspondem a 88% de perda do poder de compra.",
         "O detalhe que muda a decisão vem em seguida: o dólar também perde valor. O índice de preços ao consumidor americano subiu 126% no mesmo intervalo (a aula fala em 200%), e uma nota de dólar guardada desde 1994 compra hoje menos da metade do que comprava. Daí a conclusão de Felippe: dolarizar exige ativos que gerem renda e acompanhem a inflação, e não moeda parada.",
       ],
     },
@@ -227,6 +286,22 @@ const secao: SecaoDaAula = {
         "Volatilidade: desvio-padrão anualizado de retornos mensais em dólar. Maior queda: perda máxima do pico ao fundo, pela tabela do factsheet do MSCI Brazil (série desde dez/1987).",
     },
     {
+      tipo: "conceito",
+      tempo: "20:29",
+      termo: "Comparar preço/lucro entre países",
+      definicao:
+        "O preço/lucro de um mercado resume três coisas ao mesmo tempo: quanto as empresas distribuem, quanto se espera que cresçam e quanto o investidor exige de retorno. Pelo modelo de Gordon, o P/L que os fundamentos justificam sobe com o payout (a parcela do lucro distribuída) e com o crescimento esperado g, e cai com o retorno exigido k, que embute os juros do país e o prêmio de risco. Stowe, Robinson, Pinto e McLeavey acrescentam que P/L de países diferentes carregam também diferenças de contabilidade, de composição setorial e de risco, e que múltiplos baseados em caixa são os menos afetados por elas.",
+      formula: "P/L = payout × (1 + g) / (k − g)",
+      naPratica:
+        "O desconto brasileiro é a combinação que a aula descreve, crescimento esperado menor e risco maior, e a fórmula mostra como ela pesa: com payout de 50%, crescimento de 5% e retorno exigido de 9%, o P/L justificado é de 13 vezes; com crescimento de 4% e retorno exigido de 11%, cai para 7,4 vezes (números ilustrativos). Parte da distância, porém, é de composição: bancos e commodities, que dominam a B3, costumam negociar a múltiplos menores em qualquer país, e tecnologia, quase um terço do índice global, a múltiplos maiores. P/L baixo não é sinônimo de barato: a pergunta é que crescimento e que risco o preço embute.",
+      referencia: {
+        autor: "John D. Stowe, Thomas R. Robinson, Jerald E. Pinto e Dennis W. McLeavey",
+        obra: "Analysis of Equity Investments: Valuation",
+        capitulo: "cap. 2, seção 4.5, e cap. 4, seção 9",
+        ano: 2002,
+      },
+    },
+    {
       tipo: "simulador",
       id: "patrimonio-medido-em-dolar",
       tempo: "19:49",
@@ -257,6 +332,23 @@ const secao: SecaoDaAula = {
         obra: "Political Economy Lecture Notes",
         capitulo: "caps. 1 e 11, problema de compromisso e holdup",
       },
+    },
+    {
+      tipo: "tabela",
+      tempo: "22:12",
+      titulo: "O que cada escolha dilui, e o que não dilui",
+      colunas: ["Risco", "Mais ações brasileiras", "Exportadoras e multinacionais brasileiras", "Ativos no exterior"],
+      linhas: [
+        ["Da empresa", "Dilui", "Dilui", "Dilui"],
+        ["Do setor", "Pouco: a B3 se concentra em bancos e commodities", "Pouco: são poucos setores", "Dilui"],
+        ["Da moeda", "Não", "Em parte: a receita é em dólar, mas a ação é cotada em reais e segue o mercado local", "Dilui, e acrescenta o risco do dólar"],
+        ["Prêmio de risco-país no preço", "Não", "Não", "Dilui"],
+        ["De regra: impostos, preços, intervenções", "Não", "Não: a empresa segue sob a mesma jurisdição", "Em parte: o investidor continua residente fiscal no Brasil"],
+      ],
+      fonte:
+        "Síntese do notebook a partir de Bodie, Kane e Marcus, Investments, cap. 25, e Laffont, Regulation and Development, caps. 4 e 7",
+      nota:
+        "Laffont mostra que compromisso fraco e expropriação regulatória são traços de uma jurisdição inteira; a ponte com carteiras é do notebook, não do livro. Nenhuma coluna elimina risco: diversificar troca um risco concentrado por vários riscos menores e diferentes.",
     },
 
     // ---- razão 4: o fiscal --------------------------------------------------------------------------
@@ -311,6 +403,21 @@ const secao: SecaoDaAula = {
     {
       tipo: "conceito",
       tempo: "26:22",
+      termo: "Paridade descoberta de juros",
+      definicao:
+        "Aplicações em moedas diferentes só se comparam numa mesma moeda. Uma aplicação em dólar, medida em reais, rende o juro americano composto com a variação do dólar no período. Há paridade quando os dois caminhos rendem o mesmo em reais, e a variação do dólar que iguala os dois é o ponto de indiferença. Assaf Neto observa que essa conta não incorpora o risco-país: a diferença entre o juro brasileiro e o retorno esperado da aplicação em dólar reflete a desvalorização esperada do real e o prêmio de risco.",
+      formula: "(1 + i em reais) = (1 + i em dólar) × E1/E0",
+      naPratica:
+        "É a resposta técnica à pergunta da aula, por que não ficar só no CDB. Com a Selic a 13,75% e o juro americano no teto de 4%, o dólar teria de subir cerca de 9,4% ao ano para que uma aplicação em dólar empatasse, antes de impostos e custos, com uma em reais (1,1375 ÷ 1,04 − 1). O diferencial não é ganho garantido nem perda certa: é o preço do risco. Quem fica 100% em reais aposta, sem dizer, que o real perderá menos do que o diferencial embute. E Bodie, Kane e Marcus mostram que o diferencial de juros é um mau previsor do câmbio de cada ano: o câmbio efetivo se afasta da paridade em magnitudes do tamanho da volatilidade da moeda.",
+      referencia: {
+        autor: "Alexandre Assaf Neto",
+        obra: "Mercado Financeiro",
+        capitulo: "cap. 5, seção 5.5.2",
+      },
+    },
+    {
+      tipo: "conceito",
+      tempo: "26:22",
       termo: "Superávit primário que estabiliza a dívida",
       definicao:
         "A dívida pública como proporção do PIB cresce sozinha quando o juro real que o governo paga (r) supera o crescimento real da economia (g). Para mantê-la estável, é preciso um superávit primário, receitas menos despesas sem contar juros, proporcional ao tamanho da dívida (b) e à distância entre r e g. Se o mercado duvida de que esses superávits virão, cobra um prêmio maior, e r sobe.",
@@ -321,6 +428,23 @@ const secao: SecaoDaAula = {
         autor: "F. Rocha, em Arvate e Biderman (orgs.)",
         obra: "Economia do Setor Público no Brasil",
         capitulo: "cap. 24, déficit público e sustentabilidade fiscal",
+        ano: 2004,
+      },
+    },
+
+    {
+      tipo: "conceito",
+      tempo: "30:33",
+      termo: "Convergência condicional",
+      definicao:
+        "A teoria do crescimento não diz que países mais pobres crescem mais. Diz que cada economia caminha para o próprio patamar de longo prazo, o estado estacionário y*, definido por instituições, capital humano, política fiscal e estabilidade, e cresce mais quanto mais longe está dele. Barro e Sala-i-Martin estimam que essa distância se fecha a cerca de 2% ao ano (β na fórmula): metade do caminho leva perto de 35 anos. E como cada país sofre choques próprios, a dispersão entre eles não desaparece.",
+      formula: "ln y(t) = e^(−βt) × ln y(0) + [1 − e^(−βt)] × ln y*",
+      naPratica:
+        "Ser emergente não garante crescer mais: o Brasil converge para o patamar que as próprias instituições permitem, e os choques brasileiros, fiscais, políticos ou de termos de troca, atingem ao mesmo tempo todo o patrimônio aplicado aqui. É um argumento de concentração, não de decadência, e não depende de prever que país crescerá mais. Com um cuidado que o livro impõe: ele trata de PIB, não de retorno de ativos. Crescimento alto não garante bolsa com retorno alto, porque o preço pode já embutir esse crescimento.",
+      referencia: {
+        autor: "Robert J. Barro e Xavier Sala-i-Martin",
+        obra: "Economic Growth",
+        capitulo: "cap. 1, seções 1.2.10 a 1.2.13, e cap. 12",
         ano: 2004,
       },
     },
@@ -401,6 +525,7 @@ const secao: SecaoDaAula = {
       paragrafos: [
         "A aula termina com um alerta que soa contraintuitivo num curso sobre investir lá fora. Quando abrir conta no exterior exigia papelada e valores altos, a própria barreira funcionava como filtro: só passava por ela quem tinha estudado o tema. Agora que basta um aplicativo, o filtro sumiu, e é fácil comprar um ativo sem saber se ele é uma ação, um ETF, um BDR ou um fundo, quanto custa mantê-lo e como ele é tributado.",
         "Felippe resume o que observar: taxas de administração e de câmbio, o veículo usado, o apelo emocional de uma cotação na tela e, sobretudo, a tributação. Desde a Lei 14.754, de 2023, os rendimentos de aplicações financeiras no exterior de pessoas físicas residentes no Brasil são tributados a 15%, em apuração anual, e o ganho é calculado em reais. A consequência é pouco intuitiva: o imposto alcança também a variação do câmbio. Um ativo vendido pelo mesmo preço em dólar pode gerar imposto se o dólar subiu contra o real no período, e o investidor paga sobre um ganho que, medido em dólar, não existiu. As regras detalhadas, com exceções e compensação de perdas, são tema dos próximos módulos e devem ser conferidas na legislação vigente.",
+        "O outro imposto no caminho é o IOF, que tem natureza regulatória: o governo muda as alíquotas por decreto, com efeito imediato, e as usa para frear entradas ou saídas de capital. Em 2022, um decreto fixou um cronograma para zerar o IOF sobre câmbio até 2029; em 2025, decretos de maio e junho revogaram esse cronograma e elevaram alíquotas. Pelo Decreto 12.499, de junho de 2025, que o Congresso chegou a derrubar e o STF restabeleceu quase inteiro em julho, a remessa para investimento do próprio residente no exterior paga 1,1%, e a compra de moeda em espécie, os gastos com cartão internacional e as saídas não especificadas, 3,5%. Não é a primeira vez que a regra muda no meio do caminho. Arvate e Biderman registram que, quando o imposto sobre aplicações financeiras subiu no fim dos anos 1990, os formuladores contavam com um investidor sem saída, que ficaria no sistema brasileiro por falta de opção. Quem tem acesso ao exterior deixa de ser base cativa, mas passa a comparar retornos líquidos, depois de todos esses custos.",
         "Não há fórmula para ganhar 2% ou 10% ao mês, insiste a aula, e não há atalho; há formas corretas de fazer. O curso foi montado com professores escolhidos pela experiência no mercado, e não pela presença em redes sociais, para percorrer cada uma delas: o diagnóstico, a renda fixa e as ações americanas, os veículos de acesso e os ativos digitais.",
       ],
     },
@@ -430,7 +555,7 @@ const secao: SecaoDaAula = {
           autor: "Paulo Roberto Arvate e Ciro Biderman (orgs.)",
           titulo: "Economia do Setor Público no Brasil",
           ano: 2004,
-          nota: "Cap. 20, seguridade social, e cap. 24, sustentabilidade da dívida pública.",
+          nota: "Cap. 12, tributação de aplicações financeiras e IOF; cap. 20, seguridade social; cap. 24, sustentabilidade da dívida pública.",
         },
         {
           autor: "Marianne Baxter e Urban J. Jermann",
@@ -448,7 +573,31 @@ const secao: SecaoDaAula = {
           autor: "Robert J. Barro e Xavier Sala-i-Martin",
           titulo: "Economic Growth",
           ano: 2004,
-          nota: "Introdução e cap. 12: por que o crescimento difere tanto entre países.",
+          nota: "Introdução, cap. 1 (convergência condicional e velocidade de convergência) e cap. 12: por que o crescimento difere tanto entre países.",
+        },
+        {
+          autor: "Zvi Bodie, Alex Kane e Alan J. Marcus",
+          titulo: "Investments",
+          ano: 2014,
+          nota: "10ª ed. Cap. 25, retorno em moeda de origem, câmbio e diversificação internacional; caps. 9, 11 e 28, capital humano.",
+        },
+        {
+          autor: "John D. Stowe, Thomas R. Robinson, Jerald E. Pinto e Dennis W. McLeavey",
+          titulo: "Analysis of Equity Investments: Valuation",
+          ano: 2002,
+          nota: "Cap. 2, P/L justificado pelo modelo de Gordon; cap. 4, seção 9, comparação de múltiplos entre países.",
+        },
+        {
+          autor: "Alexandre Assaf Neto",
+          titulo: "Mercado Financeiro",
+          ano: 2014,
+          nota: "12ª ed. Cap. 5, seção 5.5.2, paridade de juros e risco cambial.",
+        },
+        {
+          autor: "Jean-Jacques Laffont",
+          titulo: "Regulation and Development",
+          ano: 2005,
+          nota: "Caps. 4 e 7, compromisso fraco, enforcement imperfeito e expropriação regulatória.",
         },
       ],
     },

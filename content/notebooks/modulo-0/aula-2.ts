@@ -72,6 +72,15 @@ const dolarMedia = [
   1.675, 1.955, 2.158, 2.354, 3.332, 3.49, 3.192, 3.654, 3.945, 5.156, 5.395, 5.165, 4.995, 5.39, 5.588,
 ];
 
+// Dólar pela PPC relativa (conferido em 07/out/2026): o dólar médio de 1995 corrigido, ano a ano,
+// pela razão entre o IPCA (SGS 433, índice composto das variações mensais, média do ano) e o CPI-U
+// americano (BLS, CPIAUCNS via FRED, média do ano). Em 2025 o CPI não tem outubro (o BLS não
+// publicou o mês), e a média usa os 11 meses disponíveis.
+const dolarPpc = [
+  0.918, 1.032, 1.079, 1.096, 1.125, 1.165, 1.21, 1.292, 1.449, 1.504, 1.555, 1.569, 1.582, 1.61, 1.694, 1.751,
+  1.81, 1.869, 1.956, 2.047, 2.229, 2.394, 2.425, 2.454, 2.5, 2.549, 2.636, 2.668, 2.68, 2.717, 2.78,
+];
+
 const secao: SecaoDaAula = {
   aula: 2,
   blocos: [
@@ -134,6 +143,14 @@ const secao: SecaoDaAula = {
       tempo: "1:57",
     },
     {
+      tipo: "numero",
+      valor: "18 meses",
+      legenda:
+        "foi o tempo que o dinheiro acima de NCz$ 50 mil, na conta corrente ou na poupança, ficou retido no Banco Central antes de começar a ser devolvido, em 12 parcelas, no Plano Collor de março de 1990.",
+      nota: "Lei 8.024/1990, conversão da MP 168, de 15/mar/1990, arts. 5º a 9º. Nos depósitos a prazo, títulos e fundos de renda fixa, só 20% do valor de resgate virava cruzeiro no vencimento. A devolução começou em 16/set/1991, corrigida pelo BTN Fiscal mais 6% ao ano. Não houve perda de valor de face, e sim indisponibilidade imposta pelo Estado, o que Assaf Neto chama de sequestro da liquidez.",
+      tempo: "1:10",
+    },
+    {
       tipo: "kpis",
       titulo: "A hiperinflação em quatro números",
       itens: [
@@ -144,6 +161,17 @@ const secao: SecaoDaAula = {
       ],
       fonte: "IBGE, IPCA (BCB SGS 433); FGV, IGP-DI (BCB SGS 190)",
       nota: "Acumulados compostos a partir das variações mensais. Pelo IGP-DI, o acumulado do mesmo período é de 14,1 trilhões por cento.",
+      tempo: "1:57",
+    },
+    {
+      tipo: "conceito",
+      termo: "Taxa de desvalorização da moeda",
+      definicao:
+        "A inflação mede quanto os preços subiram; a taxa de desvalorização da moeda mede quanto o dinheiro perdeu de capacidade de compra. Não são o mesmo número. Se os preços dobram, a inflação é de 100%, mas a moeda perde 50% do poder de compra, porque o mesmo dinheiro passa a comprar metade. A perda nunca chega a 100%, por maior que seja a inflação, mas se aproxima dela depressa.",
+      naPratica:
+        "No pior mês do IPCA, março de 1990, a inflação de 82,4% tirou 45% do poder de compra de quem guardava dinheiro parado. Em 1993, com 2.477% no ano, a perda foi de 96%: quem segurou a moeda de janeiro a dezembro terminou o ano comprando menos de um vigésimo do que comprava. A mesma conta, aplicada ao real contra o dólar, traduz desvalorização cambial em quanto do patrimônio sobrou.",
+      formula: "TDM = I/(1 + I)  (I = inflação do período)",
+      referencia: { autor: "Alexandre Assaf Neto", obra: "Matemática Financeira e suas Aplicações", capitulo: "cap. 4, seção 4.3", ano: 2012 },
       tempo: "1:57",
     },
     {
@@ -285,6 +313,50 @@ const secao: SecaoDaAula = {
       referencia: { autor: "Paulo Roberto Arvate e Ciro Biderman (orgs.)", obra: "Economia do Setor Público no Brasil", capitulo: "cap. 24, sobre Sargent e Wallace (1981)", ano: 2004 },
       tempo: "16:53",
     },
+    {
+      tipo: "matriz",
+      modo: "quadrante",
+      titulo: "Quatro portas para fechar uma conta fiscal, e quem paga em cada uma",
+      subtitulo: "Toda política fiscal insustentável termina numa delas, ou numa mistura",
+      eixoLinhas: "Por onde passa o ajuste",
+      eixoColunas: "O que o governo faz",
+      linhas: ["Pelo orçamento", "Fora do orçamento"],
+      colunas: ["Arrecada mais", "Paga menos"],
+      celulas: [
+        [
+          {
+            texto: "Mais impostos. Paga o contribuinte.",
+            explicacao: "O ajuste votado. Depois de 1999, boa parte do superávit primário veio de receita, com contribuições como a CPMF, elevada de 0,20% para 0,38% naquele ano.",
+          },
+          {
+            texto: "Menos gastos. Paga quem depende do gasto.",
+            explicacao: "Também passa pelo orçamento. Em 2015 o corte caiu sobre investimento e regras de benefícios, e em 2016 o teto de gastos limitou a despesa federal à inflação.",
+          },
+        ],
+        [
+          {
+            texto: "Monetização. Paga quem guarda moeda.",
+            marca: "A porta brasileira até 1994",
+            explicacao: "O banco central emite para cobrir o déficit, e a inflação cobra o imposto inflacionário de quem tem dinheiro parado. Não precisa de votação, e por isso foi tão usada.",
+          },
+          {
+            texto: "Repúdio. Paga o credor.",
+            explicacao: "Calote ou renegociação forçada: a moratória da dívida externa em 1987, o bloqueio do Plano Collor, que alongou à força a dívida interna em 1990, e a moratória de Minas Gerais com a União em 1999.",
+          },
+        ],
+      ],
+      fonte: "Síntese da aula sobre F. Rocha, em Arvate e Biderman (orgs.), Economia do Setor Público no Brasil, 2004, cap. 24",
+      nota: "As duas portas de cima são o ajuste pelo orçamento; as duas de baixo transferem a conta para quem tem moeda e títulos do país. Em três das quatro, quem concentra patrimônio em ativos domésticos perde alguma coisa.",
+      tempo: "16:53",
+    },
+    {
+      tipo: "texto",
+      paragrafos: [
+        "A evidência brasileira diz qual porta foi usada. Com dados mensais de 1980 a meados de 1993, Rocha (1997) mostra que receitas e gastos do governo só andam juntos no longo prazo quando a senhoriagem, a receita da emissão de moeda, entra na conta; Issler e Lima (2000), com dados anuais de 1947 a 1992, chegam ao mesmo resultado. Por quase meio século, portanto, o orçamento fechou com a ajuda de quem guardava moeda. Os testes de Luporini (2000 e 2002) acrescentam que, a partir de 1981, a dívida deixou de se comportar como sustentável e que o superávit primário não reagia ao tamanho dela.",
+        "É esse histórico que a aula tem em mente quando pergunta como garantir ao mercado que o governo não vai voltar a imprimir dinheiro para pagar as contas. O tripé de 1999 foi a primeira tentativa duradoura de trocar a porta da monetização pelas duas de cima, e a credibilidade da troca se mede pela reação observada do primário à dívida, não pela promessa. Quando o primário fraqueja, como o gráfico do capítulo sobre o boom de commodities mostra a partir de 2014, o mercado volta a cobrar prêmio de quem um dia pode reabrir a porta da inflação.",
+      ],
+      tempo: "16:53",
+    },
 
     // ---- 3. Janeiro de 1999 -------------------------------------------------------------------
     {
@@ -386,7 +458,7 @@ const secao: SecaoDaAula = {
         ],
       ],
       ilustrativo: true,
-      nota: "Matriz didática da lógica de Barro e Gordon (Gibbons, cap. 2.3.E). Numa rodada única, ceder é a melhor resposta do Banco Central; com o jogo repetido e um mercado que pune desvios, cumprir a meta se sustenta.",
+      nota: "Matriz didática da lógica de Barro e Gordon (Gibbons, cap. 2.3.E). Numa rodada única, ceder é a melhor resposta do Banco Central; com o jogo repetido e um mercado que pune desvios, cumprir a meta se sustenta. No modelo, isso exige que o Banco Central pese o futuro com um fator de desconto δ ≥ c/(2c + d²). O resultado contraintuitivo é que um banco central mais avesso à inflação (c maior) sustenta a reputação com mais dificuldade, porque a punição, voltar à inflação d(1 − b)y*/c, fica mais branda.",
       tempo: "33:28",
     },
 
@@ -487,6 +559,14 @@ const secao: SecaoDaAula = {
       tempo: "49:14",
     },
     {
+      tipo: "numero",
+      valor: "−70%",
+      legenda:
+        "foi a perda de poder de compra, em reais, de quem comprou dólar no fim de 2002 e o guardou parado até o fim de 2010: a moeda americana caiu 53% e o IPCA subiu 57%.",
+      nota: "PTAX de venda de 31/dez/2002 (R$ 3,5333) e de 31/dez/2010 (R$ 1,6662), BCB SGS 1; IPCA de 2003 a 2010, BCB SGS 433. Conta de Fisher: (1,6662/3,5333)/1,5668 − 1. Sem nenhum rendimento sobre o dólar; outra janela daria outro número, e esse é o ponto: dólar parado protege contra a moeda, não contra a inflação.",
+      tempo: "50:07",
+    },
+    {
       tipo: "grafico",
       titulo: "O superávit ficou acima de 3% do PIB por sete anos e virou déficit em 2014",
       subtitulo: "Resultado primário do setor público consolidado, % do PIB, acumulado no ano",
@@ -513,7 +593,7 @@ const secao: SecaoDaAula = {
       id: "aritmetica-da-divida",
       titulo: "A aritmética da dívida",
       descricao:
-        "Ponto de partida: dívida bruta do governo geral perto de 79% do PIB, como em dezembro de 2025 (BCB, SGS 13762). Mexa no juro real, no crescimento e no resultado primário e veja em que combinação a dívida para de crescer.",
+        "Ponto de partida: dívida bruta do governo geral perto de 79% do PIB, como em dezembro de 2025 (BCB, SGS 13762). Mexa no juro real, no crescimento e no resultado primário e veja em que combinação a dívida para de crescer. O painel mostra também o primário que estabiliza a dívida, s* = d(r − g)/(1 + g): com os valores iniciais, juro real de 6% e crescimento de 2%, ele fica perto de 3,1% do PIB, contra um déficit primário de 0,4% do PIB em 2025.",
       modelo: "dividaPib",
       parametros: { divida: { valor: 79 }, anos: { valor: 15 } },
       tempo: "53:51",
@@ -535,6 +615,17 @@ const secao: SecaoDaAula = {
         "Para o Brasil, a década teve dois tempos. O dinheiro global procurou retorno em emergentes por alguns anos, mas a desaceleração chinesa e o fim da alta das commodities, a partir de 2011, deixaram o país com despesas que continuavam subindo e receitas que já não acompanhavam. Com os números citados na aula, Selic de 14,25% e inflação de 4,5%, o juro real brasileiro, de quase 10% ao ano, estava entre os mais altos do mundo, no extremo oposto do juro zero.",
       ],
       tempo: "57:12",
+    },
+    {
+      tipo: "conceito",
+      termo: "Juro real e a equação de Fisher",
+      definicao:
+        "A taxa nominal embute duas coisas, a reposição da inflação e o ganho real, e as duas se compõem em vez de se somar. Por isso o juro real se obtém dividindo os fatores, não subtraindo as taxas. A relação leva o nome de Irving Fisher, que a formalizou em The Theory of Interest, de 1930. A diferença para a conta de cabeça é pequena com inflação baixa e cresce com ela, e o juro real fica negativo quando a inflação supera a taxa nominal.",
+      naPratica:
+        "Com os números citados na aula, Selic de 14,25% e inflação de 4,5%, o juro real é de 9,33% ao ano, e não os 9,75% da subtração. Na pandemia, a Selic de 2% contra inflação de 4,5% significava juro real de −2,4%, a perda de atrativo que a aula associa à alta do dólar em 2020. A mesma conta vale para o dólar parado: se ele sobe menos que a inflação brasileira, quem o guardou perde poder de compra em reais, como no caso de 2002 a 2010.",
+      formula: "1 + r = (1 + i)/(1 + π)",
+      referencia: { autor: "Alexandre Assaf Neto", obra: "Matemática Financeira e suas Aplicações", capitulo: "cap. 4, seções 4.2 e 4.4", ano: 2012 },
+      tempo: "1:03:56",
     },
 
     // ---- 8. Recessão e Joesley Day ------------------------------------------------------------
@@ -671,6 +762,36 @@ const secao: SecaoDaAula = {
       nota: "Médias anuais da série SGS 3698 do Banco Central: R$ 0,92 em 1995 e R$ 5,59 em 2025. Variação nominal, sem descontar a diferença de inflação entre os dois países.",
     },
     {
+      tipo: "conceito",
+      termo: "Paridade do poder de compra",
+      definicao:
+        "Se um mesmo bem pode ser comprado num país e revendido no outro, a arbitragem tende a igualar seu preço convertido pelo câmbio: é a lei do preço único. Aplicada ao nível geral de preços, vira a paridade do poder de compra. Na versão relativa, a que interessa ao investidor, a moeda do país de inflação mais alta tende a se desvalorizar na proporção da diferença de inflação. A relação funciona mal no curto prazo, em que o câmbio se afasta dela por anos, e melhor em prazos longos e entre inflações muito diferentes.",
+      naPratica:
+        "Entre 1995 e 2025, o IPCA médio subiu 6,4 vezes e o índice de preços ao consumidor americano, 2,1 vezes. Só essa diferença levaria o dólar médio de R$ 0,92 a cerca de R$ 2,78; o resto da alta até R$ 5,59 foi perda real do real, concentrada nas crises que a aula percorre. Manter tudo em reais não elimina o risco cambial: amarra o poder de compra internacional do patrimônio à inflação brasileira e às oscilações do câmbio real.",
+      formula: "E₁ = E₀ × (1 + π Brasil)/(1 + π EUA)",
+      referencia: { autor: "Richard Brealey, Stewart Myers e Franklin Allen", obra: "Princípios de Finanças Corporativas", capitulo: "cap. 27, seção 27.2", ano: 2013 },
+      tempo: "1:21:02",
+    },
+    {
+      tipo: "grafico",
+      titulo: "Pela diferença de inflação, o dólar iria de R$ 0,92 a R$ 2,78; foi a R$ 5,59",
+      subtitulo: "R$ por US$, média anual, observado e pela PPC relativa a partir de 1995",
+      forma: "linha",
+      eixoX: anosDolar,
+      series: [
+        { nome: "Dólar observado", valores: dolarMedia, destaque: true },
+        { nome: "Dólar pela PPC", valores: dolarPpc },
+      ],
+      formato: "brl",
+      marcos: [
+        { em: "2002", rotulo: "Eleição" },
+        { em: "2011", rotulo: "Abaixo da PPC" },
+      ],
+      fonte: "Banco Central do Brasil, SGS 3698 (dólar) e SGS 433 (IPCA); U.S. Bureau of Labor Statistics, CPI-U (CPIAUCNS), via FRED",
+      nota: "PPC: dólar médio de 1995 corrigido pela razão entre o IPCA e o CPI americano, em médias anuais. A base pesa: em 1995 o real estava sustentado pela âncora cambial, e com outro ano de partida a distância muda. A linha não é preço justo nem previsão. A média de 2025 do CPI usa 11 meses, sem outubro, mês que o BLS não publicou.",
+      tempo: "1:21:02",
+    },
+    {
       tipo: "texto",
       paragrafos: [
         "A sequência que a aula percorre tem um padrão. Em 1999, foi a disputa entre um governador e a União; em 2002, a incerteza eleitoral; em 2015, uma recessão que somou erros de política ao fim da bonança; em 2017, uma gravação; em 2020, um vírus seguido de um corte de juros que o próprio Banco Central depois reverteu. Nenhum desses episódios dependia da carteira de quem os sofreu, e em todos o câmbio, os juros e a bolsa reagiram juntos, porque respondiam ao mesmo fator.",
@@ -698,9 +819,13 @@ const secao: SecaoDaAula = {
           nota: "Revista de Economia Política, v. 24, n. 4. Fonte do gráfico do imposto inflacionário.",
         },
         { autor: "Mario Henrique Simonsen e Rubens Penha Cysne", titulo: "Macroeconomia", ano: 1995, nota: "Cap. 3, a metodologia das transferências inflacionárias citada na aula." },
-        { autor: "Paulo Roberto Arvate e Ciro Biderman (orgs.)", titulo: "Economia do Setor Público no Brasil", ano: 2004, nota: "Caps. 22 (federalismo fiscal) e 24 (déficit público e sustentabilidade)." },
-        { autor: "Robert Gibbons", titulo: "Game Theory for Applied Economists", ano: 1992, nota: "Cap. 2.3.E, política monetária e inconsistência temporal." },
+        { autor: "Paulo Roberto Arvate e Ciro Biderman (orgs.)", titulo: "Economia do Setor Público no Brasil", ano: 2004, nota: "Caps. 22 (federalismo fiscal) e 24 (déficit público e sustentabilidade). O cap. 24, de Fabiana Rocha, traz as quatro saídas de uma política fiscal insustentável e a evidência de Rocha (1997), Issler e Lima (2000) e Luporini (2000 e 2002) sobre a senhoriagem." },
+        { autor: "Robert Gibbons", titulo: "Game Theory for Applied Economists", ano: 1992, nota: "Cap. 2.3.E, política monetária, inconsistência temporal e a condição de reputação no jogo repetido." },
         { autor: "Jean-Jacques Laffont", titulo: "Regulation and Development", ano: 2005, nota: "Cap. 4, enforcement imperfeito e renegociação de contratos." },
+        { autor: "Alexandre Assaf Neto", titulo: "Matemática Financeira e suas Aplicações", ano: 2012, nota: "12ª ed., cap. 4: taxa de desvalorização da moeda, o erro de subtrair a inflação e a taxa real pela fórmula de Fisher." },
+        { autor: "Alexandre Assaf Neto", titulo: "Mercado Financeiro", ano: 2014, nota: "12ª ed., cap. 2, seção 2.4.1: os planos econômicos de 1986 a 1994 e o sequestro da liquidez do Plano Collor." },
+        { autor: "Richard Brealey, Stewart Myers e Franklin Allen", titulo: "Princípios de Finanças Corporativas", ano: 2013, nota: "10ª ed., cap. 27, seção 27.2: lei do preço único, paridade do poder de compra e efeito Fisher internacional." },
+        { autor: "Brasil", titulo: "Lei 8.024, de 12 de abril de 1990", ano: 1990, nota: "Conversão da MP 168: o cruzeiro e as regras de retenção dos ativos financeiros no Plano Collor." },
         { autor: "Banco Central do Brasil, Museu de Valores", titulo: "Síntese dos padrões monetários brasileiros", ano: 2007, nota: "Datas e conversões das oito moedas." },
       ],
     },

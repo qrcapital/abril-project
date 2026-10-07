@@ -15,7 +15,8 @@
 -- regras pela posição do módulo (`regras[ord]`). O que mudou é o RÓTULO: `lib/curso.ts` passou a
 -- chamar o ord 0 de "Módulo I".
 --
--- As duas aulas do Rodolfo ainda não têm conteúdo definido e entram com nomes genéricos. As outras
+-- As duas aulas do Rodolfo entram com título, descrição e vídeo do Panda definidos em 07/out/2026,
+-- depois da leitura das transcrições (`transcricoes/modulo-0/aula-3.txt` e `aula-4.txt`). As outras
 -- duas vagas do antigo Módulo I (que nunca tiveram vídeo) saem, com os resumos em PDF delas.
 --
 -- Rodar inteira no SQL editor. Não é idempotente: escrita para rodar uma vez sobre o banco de 05/out.
@@ -33,21 +34,23 @@ update modules
 update lessons set conta_no_gate = true
  where module_id = 'b8224a06-be0f-4ed3-a0cd-1fe6727fb4b1';
 
--- 2. Duas aulas do Rodolfo, com nome genérico, depois das do Felippe
+-- 2. Duas aulas do Rodolfo, depois das do Felippe
 delete from materials
  where lesson_id in ('62942a48-99b4-4835-9633-c819a89c32a3', '1deae6fb-dbe4-41ab-8e2f-a9cdd457cad4');
 
 update lessons
    set module_id = 'b8224a06-be0f-4ed3-a0cd-1fe6727fb4b1', ord = 3,
-       titulo = 'Estratégia global com Rodolfo Bastos, parte 1',
-       descricao = 'Rodolfo Bastos, que liderou a operação internacional da XP em Miami, leva o argumento do módulo para a estratégia global.',
+       titulo = 'Menos de 1% do mundo, quase 100% do patrimônio',
+       descricao = 'Rodolfo Bastos, ex-CEO da XP nos Estados Unidos, mostra que o brasileiro concentra quase tudo num mercado que é menos de 1% das opções globais, e que o motivo não são os juros, mas vieses como o home bias e a ancoragem.',
+       panda_video_id = '35dc0295-bb76-4601-a722-d144abb27b8b',
        conta_no_gate = true
  where id = '62942a48-99b4-4835-9633-c819a89c32a3';
 
 update lessons
    set module_id = 'b8224a06-be0f-4ed3-a0cd-1fe6727fb4b1', ord = 4,
-       titulo = 'Estratégia global com Rodolfo Bastos, parte 2',
-       descricao = 'Rodolfo Bastos continua a discussão sobre estratégia global e diversificação fora do Brasil.',
+       titulo = 'O comportamento decide antes da planilha',
+       descricao = 'Por que tentar acertar o momento do dólar costuma custar caro, o que o tamanho, a composição e a demografia dos mercados americano e brasileiro dizem sobre diversificar, e o que sustenta a decisão no longo prazo.',
+       panda_video_id = '62f42804-8826-449e-bab2-9b04f4a75225',
        conta_no_gate = true
  where id = '1deae6fb-dbe4-41ab-8e2f-a9cdd457cad4';
 
