@@ -42,7 +42,7 @@ update lessons
    set module_id = 'b8224a06-be0f-4ed3-a0cd-1fe6727fb4b1', ord = 3,
        titulo = 'Menos de 1% do mundo, quase 100% do patrimônio',
        descricao = 'Rodolfo Bastos, ex-CEO da XP nos Estados Unidos, mostra que o brasileiro concentra quase tudo num mercado que é menos de 1% das opções globais, e que o motivo não são os juros, mas vieses como o home bias e a ancoragem.',
-       panda_video_id = '35dc0295-bb76-4601-a722-d144abb27b8b',
+       panda_video_id = '830546aa-c3db-48bd-9d98-ac91e2f65159',
        conta_no_gate = true
  where id = '62942a48-99b4-4835-9633-c819a89c32a3';
 
@@ -50,7 +50,7 @@ update lessons
    set module_id = 'b8224a06-be0f-4ed3-a0cd-1fe6727fb4b1', ord = 4,
        titulo = 'O comportamento decide antes da planilha',
        descricao = 'Por que tentar acertar o momento do dólar costuma custar caro, o que o tamanho, a composição e a demografia dos mercados americano e brasileiro dizem sobre diversificar, e o que sustenta a decisão no longo prazo.',
-       panda_video_id = '62f42804-8826-449e-bab2-9b04f4a75225',
+       panda_video_id = '281ea869-7e1e-44ea-a1fd-6fae086bb057',
        conta_no_gate = true
  where id = '1deae6fb-dbe4-41ab-8e2f-a9cdd457cad4';
 
