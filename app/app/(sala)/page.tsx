@@ -80,7 +80,6 @@ export default async function HomePage({
       <div className="sl-wrap">
         <section className="sl-home-trilha" aria-labelledby="home-trilha-titulo">
           <div className="sl-home-trilha-cabeca">
-            <i aria-hidden="true" />
             <h2 id="home-trilha-titulo">Sua trilha</h2>
           </div>
           <Trilha modulos={calendario.modulos} />

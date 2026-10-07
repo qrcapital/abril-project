@@ -12,8 +12,11 @@ import { useEffect, useLayoutEffect, useRef, type ElementType, type ReactNode } 
  *    some. A figura que já está na tela quando a página hidrata fica como está: animar o que o
  *    aluno já está vendo seria fazê-la piscar.
  * 2. O OBSERVER NÃO É O CAMINHO CRÍTICO. Em aba de segundo plano ele não entrega nada, e na LP isso
- *    deixou gráfico fechado para sempre. Aqui a rolagem (de qualquer caixa, por captura: no desktop
- *    o notebook rola dentro da própria caixa) e a volta da aba conferem na mão, com a mesma função.
+ *    deixou gráfico fechado para sempre. Aqui a rolagem (por captura, de qualquer caixa: a linha
+ *    do tempo e as tabelas largas rolam de lado) e a volta da aba conferem na mão, com a mesma função.
+ *
+ * Até 07/out/2026 o notebook rolava dentro de uma caixa própria no desktop, e `naTela` cortava a
+ * janela por ela. A caixa saiu (o dono pediu uma barra de rolagem só, a da página), e com ela o corte.
  *
  * O CSS faz o resto, sob `[data-entrada="entra"]` (`sala.css`, "entrada"). Com movimento reduzido
  * nada disto roda e a figura nasce pronta.
@@ -26,21 +29,13 @@ let observer: IntersectionObserver | null = null;
 let ouvindo = false;
 let agendado = false;
 
-/** A parte visível da tela para um elemento: a janela, cortada pela caixa que rola o notebook. */
+/** Se o elemento já está na parte visível da janela. */
 function naTela(el: HTMLElement): boolean {
   const r = el.getBoundingClientRect();
   if (!r.width && !r.height) return false;
-  let topo = 0;
-  let base = window.innerHeight;
-  const caixa = el.closest<HTMLElement>("[data-nb-rolagem]");
-  if (caixa && caixa.scrollHeight > caixa.clientHeight + 1) {
-    const c = caixa.getBoundingClientRect();
-    topo = Math.max(topo, c.top);
-    base = Math.min(base, c.bottom);
-  }
   // Um pouco dentro, não só tocando a borda: o desenho começa quando já dá para vê-lo.
   const folga = Math.min(r.height * 0.15, 80);
-  return r.top < base - folga && r.bottom > topo + folga;
+  return r.top < window.innerHeight - folga && r.bottom > folga;
 }
 
 function conferir() {
@@ -69,7 +64,7 @@ function abrir(p: Pendente) {
 function ligar() {
   if (ouvindo) return;
   ouvindo = true;
-  // Captura no document: `scroll` não borbulha, e a caixa do notebook rola sem mexer na janela.
+  // Captura no document: `scroll` não borbulha, e uma caixa que rola de lado não mexe na janela.
   document.addEventListener("scroll", agendar, { capture: true, passive: true });
   window.addEventListener("resize", agendar, { passive: true });
   document.addEventListener("visibilitychange", aoVoltar);

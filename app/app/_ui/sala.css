@@ -11,12 +11,32 @@
 
    TUDO ESCOPADO EM `.sl`, pelo mesmo motivo do `.au` das telas de acesso: o
    layout de /app injeta as três folhas em toda rota da área, e nenhuma regra
-   daqui pode vazar para a home portada, a conta ou o certificado.
+   daqui pode vazar para a home portada, a conta ou o certificado. As únicas
+   exceções são os @font-face do Jost logo abaixo, que por natureza são globais.
 
    Os tokens são os de `app/_design/sistema.css` e do `.au`, copiados pelo mesmo
    motivo que o `auth.css` explica: injetar o sistema inteiro mudaria o reset de
    telas que não foram refeitas.
+
+   JOST EM TUDO (07/out/2026). Até aqui os títulos eram Playfair Display e o corpo
+   a sans do sistema, e o dono achou o conjunto "muito serifa moderna, pouco
+   Jost", que tinha sido alinhado como fonte importante da marca. O Jost passou a
+   ser a fonte da sala inteira: títulos, cartões, notebook, botões e rótulos. A
+   hierarquia vem de peso e tamanho, em três pesos só (400 texto, 500 títulos e
+   botões, 600 rótulos e números de destaque), mais o itálico 400 das citações
+   bibliográficas. A serifa sobrou num lugar: o numeral romano gigante, vazado,
+   da cabeça do módulo fechado (`.sl-numeral`), que é ornamento e não texto.
    ========================================================================== */
+
+/* Os arquivos são os latinos do @fontsource/jost (OFL), auto-hospedados como os
+   da LP (`app/_lp/styles.css`, que declara 400 e 500 com o mesmo nome e os
+   mesmos arquivos: as declarações coincidem, e o navegador baixa cada arquivo
+   uma vez). O subconjunto latino não tem as setas (← →): os botões usam ícone
+   em SVG, e não o caractere. */
+@font-face { font-family: "Jost"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/jost-latin-400-normal.woff2") format("woff2") }
+@font-face { font-family: "Jost"; font-style: normal; font-weight: 500; font-display: swap; src: url("/fonts/jost-latin-500-normal.woff2") format("woff2") }
+@font-face { font-family: "Jost"; font-style: normal; font-weight: 600; font-display: swap; src: url("/fonts/jost-latin-600-normal.woff2") format("woff2") }
+@font-face { font-family: "Jost"; font-style: italic; font-weight: 400; font-display: swap; src: url("/fonts/jost-latin-400-italic.woff2") format("woff2") }
 
 .sl {
   --sl-papel: #f7f4ee;
@@ -30,6 +50,7 @@
   --sl-linha-forte: rgba(26, 24, 21, .19);
   --sl-borda: #e2dacd;
   --sl-acento: #C1121F;
+  --sl-acento-hover: #A80F1B;
   --sl-fundo: #8E1522;
   --sl-fundo-2: #6B111C;
   --sl-regua: #a98e4e;
@@ -38,29 +59,47 @@
   /* O palco da aula: a tinta da casa, um passo mais fundo. Preto puro seria o
      único preto do produto e brigaria com o creme ao redor. */
   --sl-palco: #14120f;
-  --sl-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue",
-             system-ui, sans-serif;
+  --sl-sans: "Jost", -apple-system, BlinkMacSystemFont, "Helvetica Neue", system-ui, sans-serif;
+  /* Só o `.sl-numeral` usa. Ver o cabeçalho. */
   --sl-serifa: "Playfair Display", Georgia, "Times New Roman", serif;
+  /* O fundo atrás da assinatura do docente: os retratos sobrepostos se recortam
+     com um anel desta cor. */
+  --sl-assina-fundo: var(--sl-papel);
 
   background: var(--sl-papel);
   color: var(--sl-tinta);
   font-family: var(--sl-sans);
   font-variant-numeric: lining-nums;
   min-height: calc(100vh - 58px);
-  padding-bottom: 72px;
+  padding-bottom: 96px;
   -webkit-font-smoothing: antialiased;
+  /* Nenhuma peça da sala pode criar rolagem lateral na página (07/out/2026). O
+     `clip`, e não o `hidden`, porque não cria caixa de rolagem: o índice do
+     notebook continua `sticky` em relação à janela. Rótulos de gráfico que
+     passam um pouco da figura seguem visíveis na margem; só o que passaria da
+     borda da janela é cortado. */
+  overflow-x: clip;
 }
 .sl *, .sl *::before, .sl *::after { box-sizing: border-box }
-.sl h1, .sl h2, .sl h3, .sl h4, .sl p, .sl ol, .sl ul, .sl figure, .sl blockquote, .sl dl, .sl dd { margin: 0 }
-.sl ol, .sl ul { padding: 0; list-style: none }
+/* O reset vai em `:where()`, que não soma especificidade (07/out/2026). Escrito como `.sl p` ou
+   `.sl ol`, ele pesava mais que qualquer classe sozinha e apagava em silêncio a margem e o
+   respiro que elas pediam: o `margin-top` do `.sl-sub` e do `.sl-palco-desc` nunca valeu, e o
+   `padding` da fila da playlist (`.sl-pl-fila`, uma <ol>) era zerado. Era isso que cortava o
+   cartão no hover rente à borda de cima da fila. */
+.sl :where(h1, h2, h3, h4, p, ol, ul, figure, blockquote, dl, dd) { margin: 0 }
+.sl :where(h1, h2, h3, h4) { font-weight: 500 }
+.sl :where(ol, ul) { padding: 0; list-style: none }
 .sl img { display: block; max-width: 100% }
 .sl a { color: var(--sl-acento); text-decoration: none }
 .sl a:hover { color: var(--sl-fundo) }
 
 /* Foco de teclado visível em tudo, em dois pares: vermelho no papel, palha no
-   vermelho e no palco escuro (o vermelho sobre o vinho não se vê). */
+   vermelho e no palco escuro (o vermelho sobre o vinho não se vê). Pílulas e
+   cartões mantêm o próprio raio no foco; o 4px é para link de texto. */
 .sl :focus-visible { outline: 2px solid var(--sl-acento); outline-offset: 3px; border-radius: 4px }
 .sl .sl-escuro :focus-visible { outline-color: var(--sl-palha) }
+.sl :is(.sl-btn, .sl-concluir, .sl-chip, .sl-naaula):focus-visible { border-radius: 999px }
+.sl .sl-pl-item:focus-visible { border-radius: 14px; outline-offset: 2px }
 
 /* Uma coluna só para a área logada inteira (06/out/2026). O topo, o rodapé, as seções e o vídeo
    em modo teatro alinham pela mesma borda: antes o topo e o miolo ficavam em 1124px úteis, o
@@ -80,55 +119,77 @@
 
 /* ---- tipografia comum ----------------------------------------------------- */
 
-.sl-eyebrow {
-  display: inline-flex; align-items: center; gap: 12px;
-  font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+/* O RÓTULO ÚNICO DA SALA (07/out/2026). Antes cada rótulo tinha o seu desenho:
+   o eyebrow com um traço de 28px e tracking de .2em, o "Notebook do módulo" em
+   caixa normal cinza, o "Aula 03" em negrito, o "AULA 1" dos cartões com .16em,
+   o "Materiais desta aula" com .18em. O dono leu o traço gigante e o tracking
+   largo como assinatura de layout feito por IA, e a mistura como falta de
+   sistema. Agora é um só: Jost 600, caixa alta, 11.5px, tracking de .07em, sem
+   traço, no dourado da casa (no palco escuro, a palha). Toda etiqueta acima de
+   título ou de bloco usa a classe `.sl-eyebrow`; as classes antigas da lista
+   ficam aqui para quem ainda as usa herdar o mesmo desenho, e só cuidam da
+   posição nas regras delas. */
+.sl-eyebrow, .sl-cartao-rotulo, .sl-aulacard-rotulo, .sl-no-rotulo, .sl-pl-rotulo, .sl-nbm-rotulo {
+  display: block;
+  font: 600 11.5px/1.3 var(--sl-sans); letter-spacing: .07em; text-transform: uppercase;
   color: var(--sl-ouro);
 }
-.sl-eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--sl-regua) }
-.sl-escuro .sl-eyebrow { color: var(--sl-palha) }
-.sl-escuro .sl-eyebrow::before { background: var(--sl-palha) }
+.sl-escuro :is(.sl-eyebrow, .sl-cartao-rotulo) { color: var(--sl-palha) }
 
 .sl-h2 {
-  font-family: var(--sl-serifa); font-weight: 600;
-  font-size: clamp(26px, 2.6vw, 34px); line-height: 1.12; letter-spacing: -.015em;
+  font-weight: 500;
+  font-size: clamp(28px, 2.8vw, 36px); line-height: 1.12; letter-spacing: -.012em;
   color: var(--sl-tinta);
 }
-.sl-sub { margin-top: 10px; font-size: 15px; line-height: 1.6; color: var(--sl-tinta-2); max-width: 62ch }
-.sl-secao { margin-top: 72px }
+.sl-sub { margin-top: 12px; font-size: 16.5px; line-height: 1.6; color: var(--sl-tinta-2); max-width: 62ch }
+.sl-secao { margin-top: 80px }
 .sl-secao-cabeca { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 28px }
 
 /* ---- botões e selos ------------------------------------------------------- */
 
-.sl-btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  min-height: 46px; padding: 12px 22px;
-  border: 1px solid var(--sl-acento); border-radius: 14px;
+/* O SISTEMA DE BOTÕES (07/out/2026). Pílula de 44px, Jost 500 em 15px, caixa
+   normal, ícone de traço fino a 8px do texto. Três papéis e nada além:
+   - primário (`.sl-btn`): vermelho sólido, um por região;
+   - secundário no palco (`.sl-btn-vidro`, e o "Marcar como concluída", que é
+     `.sl-concluir`): vidro translúcido, quase sem borda;
+   - secundário no papel (`.sl-btn-linha`) e o claro sobre fundo escuro
+     (`.sl-btn-claro`).
+   Sem o pulo de 1px no hover, que lia como efeito: o hover muda só o fundo, e o
+   clique afunda 2% (como os controles da Apple). */
+.sl-btn, .sl-concluir {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 0 20px;
+  border: 1px solid transparent; border-radius: 999px;
   background: var(--sl-acento); color: var(--sl-creme) !important;
-  font: 700 13px/1.2 var(--sl-sans); letter-spacing: .04em;
-  cursor: pointer; text-decoration: none;
-  transition: transform .15s ease, background-color .15s ease, border-color .15s ease;
+  font: 500 15px/1 var(--sl-sans); letter-spacing: .005em; white-space: nowrap;
+  cursor: pointer; text-decoration: none; -webkit-tap-highlight-color: transparent;
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .12s ease;
 }
-.sl-btn:hover { background: var(--sl-fundo); border-color: var(--sl-fundo); transform: translateY(-1px) }
-.sl-btn-claro { background: var(--sl-creme); border-color: var(--sl-creme); color: var(--sl-acento) !important }
-.sl-btn-claro:hover { background: #fff; border-color: #fff; color: var(--sl-fundo) !important }
+.sl-btn svg, .sl-concluir svg { flex: none; display: block }
+.sl-btn:hover { background: var(--sl-acento-hover) }
+.sl-btn:active, .sl-concluir:active { transform: scale(.98) }
+.sl-btn-claro { background: var(--sl-creme); color: var(--sl-tinta) !important }
+.sl-btn-claro:hover { background: #fff }
 .sl-btn-linha { background: transparent; border-color: var(--sl-linha-forte); color: var(--sl-tinta) !important }
-.sl-btn-linha:hover { background: transparent; border-color: var(--sl-acento); color: var(--sl-acento) !important }
-.sl-btn-vidro { background: rgba(253, 250, 245, .08); border-color: rgba(253, 250, 245, .34); color: var(--sl-creme) !important }
-.sl-btn-vidro:hover { background: rgba(253, 250, 245, .16); border-color: rgba(253, 250, 245, .6) }
+.sl-btn-linha:hover { background: rgba(26, 24, 21, .04); border-color: rgba(26, 24, 21, .32) }
+.sl-btn-vidro, .sl-concluir {
+  background: rgba(253, 250, 245, .08); border-color: rgba(253, 250, 245, .12); color: var(--sl-creme) !important;
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+}
+.sl-btn-vidro:hover, .sl-concluir:hover { background: rgba(253, 250, 245, .14); border-color: rgba(253, 250, 245, .2) }
 .sl-btn[aria-disabled="true"], .sl-btn:disabled { opacity: .45; cursor: not-allowed; transform: none }
 
 .sl-chip {
   display: inline-flex; align-items: center; gap: 7px;
-  padding: 5px 11px; border-radius: 12px;
-  font-size: 11px; font-weight: 700; letter-spacing: .06em;
-  border: 1px solid var(--sl-borda); background: var(--sl-creme); color: var(--sl-ouro);
+  padding: 4px 11px; border-radius: 999px;
+  font: 500 12.5px/1.35 var(--sl-sans); letter-spacing: .005em;
+  border: 1px solid var(--sl-borda); background: var(--sl-creme); color: var(--sl-tinta-2);
 }
 /* O selo de demonstração é âmbar, o mesmo par do "libera em" da home: é aviso,
    não decoração. #7A4E06 sobre #F7E3BE dá 6,4:1. */
 .sl-chip-demo { background: #F7E3BE; border-color: #E8CE97; color: #7A4E06 }
 .sl-chip-demo::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #B7791F }
-.sl-chip-ok { background: rgba(31, 138, 91, .08); border-color: rgba(31, 138, 91, .35); color: #1B6E47 }
+.sl-chip-ok { background: rgba(31, 138, 91, .08); border-color: rgba(31, 138, 91, .3); color: #1B6E47 }
 .sl-chip-trava { background: var(--sl-papel-baixo); color: var(--sl-tinta-2) }
 
 /* ---- hero (painel vermelho, globo e olho). Nasceu no "Comece por aqui"; o globo
@@ -157,21 +218,20 @@
 .sl-hero-miolo { position: relative; z-index: 2; padding-top: clamp(56px, 7vw, 96px); padding-bottom: clamp(120px, 12vw, 160px) }
 .sl-hero-texto { max-width: 720px }
 .sl-display {
-  margin-top: 22px;
-  font-family: var(--sl-serifa); font-weight: 600;
+  margin-top: 22px; font-weight: 500;
   font-size: clamp(42px, 5.6vw, 80px); line-height: 1.02; letter-spacing: -.025em;
   color: var(--sl-creme);
 }
-.sl-display em { font-style: italic; font-weight: 500; color: var(--sl-palha) }
-.sl-hero-lead { margin-top: 24px; max-width: 54ch; font-size: clamp(15px, 1.2vw, 17px); line-height: 1.6; color: rgba(253, 250, 245, .86) }
+.sl-display em { font-style: normal; color: var(--sl-palha) }
+.sl-hero-lead { margin-top: 24px; max-width: 54ch; font-size: clamp(16px, 1.2vw, 18px); line-height: 1.6; color: rgba(253, 250, 245, .86) }
 .sl-hero-acoes { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px }
 .sl-hero-fatos {
   display: flex; flex-wrap: wrap; gap: 10px 34px; margin-top: 44px; padding-top: 22px;
   border-top: 1px solid rgba(253, 250, 245, .2); max-width: 640px;
 }
 .sl-hero-fatos dd { display: flex; flex-direction: column; gap: 4px }
-.sl-hero-fatos b { font-family: var(--sl-serifa); font-size: 30px; font-weight: 600; line-height: 1; color: var(--sl-creme) }
-.sl-hero-fatos span { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(253, 250, 245, .78) }
+.sl-hero-fatos b { font-size: 30px; font-weight: 500; line-height: 1; color: var(--sl-creme) }
+.sl-hero-fatos span { font-size: 11.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: rgba(253, 250, 245, .78) }
 
 /* ---- as aulas de abertura, montadas sobre a borda do hero ----------------- */
 
@@ -184,9 +244,8 @@
 }
 .sl-aulacard-corpo { padding: 22px 26px 26px; display: flex; flex-direction: column; gap: 10px; flex: 1 }
 .sl-aulacard-topo { display: flex; align-items: center; justify-content: space-between; gap: 12px }
-.sl-aulacard-rotulo { font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--sl-ouro) }
-.sl-aulacard h3 { font-family: var(--sl-serifa); font-weight: 600; font-size: 24px; line-height: 1.15 }
-.sl-aulacard p { font-size: 14px; line-height: 1.6; color: var(--sl-tinta-2) }
+.sl-aulacard h3 { font-weight: 500; font-size: 24px; line-height: 1.15 }
+.sl-aulacard p { font-size: 15px; line-height: 1.6; color: var(--sl-tinta-2) }
 .sl-aulacard-acoes { margin-top: auto; padding-top: 10px; display: flex; gap: 10px; flex-wrap: wrap }
 .sl-aulacard-vazia { box-shadow: none; border-style: dashed; background: rgba(253, 251, 246, .7) }
 
@@ -210,7 +269,7 @@ a.sl-capa:hover { color: var(--sl-creme) }
   transition: transform .2s ease, background-color .2s ease;
 }
 a.sl-capa:hover .sl-capa-play { transform: scale(1.06); background: var(--sl-acento) }
-.sl-capa span { font-size: 11px; letter-spacing: .2em; text-transform: uppercase }
+.sl-capa span { font-size: 11.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase }
 
 /* ---- "como funciona" ------------------------------------------------------ */
 
@@ -218,9 +277,9 @@ a.sl-capa:hover .sl-capa-play { transform: scale(1.06); background: var(--sl-ace
 .sl-como li { padding: 26px 26px 6px 0; border-right: 1px solid var(--sl-linha) }
 .sl-como li + li { padding-left: 26px }
 .sl-como li:last-child { border-right: 0 }
-.sl-como-num { font-family: var(--sl-serifa); font-size: 15px; font-style: italic; color: var(--sl-acento) }
-.sl-como h3 { margin-top: 8px; font-family: var(--sl-serifa); font-weight: 600; font-size: 20px; line-height: 1.2 }
-.sl-como p { margin-top: 8px; font-size: 14px; line-height: 1.6; color: var(--sl-tinta-2) }
+.sl-como-num { font-size: 14px; font-weight: 600; color: var(--sl-acento); font-variant-numeric: tabular-nums }
+.sl-como h3 { margin-top: 8px; font-weight: 500; font-size: 20px; line-height: 1.2 }
+.sl-como p { margin-top: 8px; font-size: 15px; line-height: 1.6; color: var(--sl-tinta-2) }
 
 /* ---- a trilha ------------------------------------------------------------- */
 
@@ -240,33 +299,33 @@ a.sl-capa:hover .sl-capa-play { transform: scale(1.06); background: var(--sl-ace
   position: relative; z-index: 1;
   width: 52px; height: 52px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--sl-serifa); font-weight: 600; font-size: 18px;
-  background: var(--sl-papel); border: 2px solid var(--sl-linha-forte); color: var(--sl-tinta-2);
-  transition: transform .2s ease, box-shadow .2s ease;
+  font-weight: 500; font-size: 17px; letter-spacing: .02em;
+  background: var(--sl-papel); border: 1.5px solid var(--sl-linha-forte); color: var(--sl-tinta-2);
+  transition: box-shadow .25s ease, border-color .25s ease;
 }
-.sl-no-link:hover .sl-no-bola { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(72, 60, 42, .16) }
+/* Sem pulo no hover (07/out/2026): um anel suave em volta da bolinha. */
+.sl-no-link:hover .sl-no-bola { box-shadow: 0 0 0 5px rgba(26, 24, 21, .06) }
 .sl-no.is-aberto .sl-no-bola { border-color: var(--sl-acento); color: var(--sl-acento) }
 .sl-no.is-feito .sl-no-bola { background: var(--sl-acento); border-color: var(--sl-acento); color: var(--sl-creme) }
 .sl-no.is-atual .sl-no-bola {
-  width: 60px; height: 60px; margin-top: -4px; font-size: 21px;
+  width: 60px; height: 60px; margin-top: -4px; font-size: 19px;
   background: var(--sl-tinta); border-color: var(--sl-tinta); color: var(--sl-creme);
-  box-shadow: 0 0 0 6px rgba(193, 18, 31, .14);
+  box-shadow: 0 0 0 6px rgba(193, 18, 31, .12);
 }
 .sl-no.is-travado .sl-no-bola { border-style: dashed; color: var(--sl-tinta-3) }
 .sl-no-texto { display: flex; flex-direction: column; align-items: center }
-.sl-no-rotulo { margin-top: 14px; font-size: 10.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--sl-ouro) }
-.sl-no-titulo { margin-top: 4px; font-family: var(--sl-serifa); font-weight: 600; font-size: 16px; line-height: 1.2; color: var(--sl-tinta); max-width: 18ch }
-.sl-no-docente { margin-top: 8px; display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--sl-tinta-2) }
-.sl-no-docente img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; object-position: top }
-.sl-no-estado { margin-top: 10px }
+.sl-no-rotulo { margin-top: 16px }
+.sl-no-titulo { margin-top: 6px; font-weight: 500; font-size: 17px; line-height: 1.25; letter-spacing: -.005em; color: var(--sl-tinta); max-width: 18ch }
+.sl-no-docente { margin-top: 10px; display: flex; justify-content: center }
+.sl-no-estado { margin-top: 12px }
 .sl-no.is-travado .sl-no-titulo { color: var(--sl-tinta-2) }
 
 /* O marcador "Você está aqui", preso acima da bolinha do módulo atual. */
 .sl-aqui {
   position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
-  white-space: nowrap; padding: 6px 12px; border-radius: 12px;
+  white-space: nowrap; padding: 5px 11px; border-radius: 999px;
   background: var(--sl-acento); color: var(--sl-creme);
-  font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+  font: 600 11px/1.3 var(--sl-sans); letter-spacing: .07em; text-transform: uppercase;
 }
 .sl-aqui::after {
   content: ""; position: absolute; left: 50%; bottom: -5px; margin-left: -5px;
@@ -280,10 +339,10 @@ a.sl-capa:hover .sl-capa-play { transform: scale(1.06); background: var(--sl-ace
   background: var(--sl-creme); border: 1px solid var(--sl-borda); border-radius: 20px; overflow: hidden;
 }
 .sl-teaser-texto { padding: 40px 42px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start }
-.sl-teaser-texto h2 { font-family: var(--sl-serifa); font-weight: 600; font-size: 32px; line-height: 1.1; letter-spacing: -.01em }
-.sl-teaser-texto p { font-size: 15px; line-height: 1.65; color: var(--sl-tinta-2) }
+.sl-teaser-texto h2 { font-weight: 500; font-size: 32px; line-height: 1.1; letter-spacing: -.01em }
+.sl-teaser-texto p { font-size: 16px; line-height: 1.65; color: var(--sl-tinta-2) }
 .sl-teaser-visual { background: var(--sl-papel-baixo); border-left: 1px solid var(--sl-borda); padding: 34px 36px; display: flex; flex-direction: column; justify-content: center; gap: 12px }
-.sl-teaser-legenda { font-size: 12px; color: var(--sl-tinta-2) }
+.sl-teaser-legenda { font-size: 13px; color: var(--sl-tinta-2) }
 
 /* ---- cabeça do módulo ----------------------------------------------------- */
 
@@ -291,41 +350,64 @@ a.sl-capa:hover .sl-capa-play { transform: scale(1.06); background: var(--sl-ace
   position: relative; overflow: hidden; isolation: isolate;
   background: linear-gradient(150deg, var(--sl-fundo) 0%, var(--sl-fundo-2) 100%);
   color: var(--sl-creme); border-bottom: 1px solid rgba(169, 142, 78, .5);
+  --sl-assina-fundo: var(--sl-fundo);
 }
 .sl-cabeca .sl-hero-globo img { width: min(900px, 80vw); right: -10%; }
-.sl-cabeca-miolo { position: relative; z-index: 2; padding: 34px 0 44px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 36px; align-items: end }
+.sl-cabeca-miolo { position: relative; z-index: 2; padding: 40px 0 52px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 40px; align-items: end }
+/* O único uso da serifa na sala: ornamento, não texto (ver o cabeçalho). */
 .sl-numeral {
   font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(96px, 11vw, 168px); line-height: .8;
   color: transparent; -webkit-text-stroke: 1.5px rgba(232, 217, 181, .75);
 }
-.sl-cabeca h1 { margin-top: 12px; font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(34px, 4vw, 54px); line-height: 1.05; letter-spacing: -.02em }
+.sl-cabeca h1 { margin-top: 14px; font-weight: 500; font-size: clamp(36px, 4vw, 54px); line-height: 1.05; letter-spacing: -.02em }
 .sl-cabeca-lateral { display: flex; flex-direction: column; gap: 16px; min-width: 260px }
-.sl-migalha { font-size: 12px; color: rgba(253, 250, 245, .78) }
+.sl-migalha { font-size: 13px; color: rgba(253, 250, 245, .78) }
 .sl-migalha a { color: var(--sl-creme) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(253, 250, 245, .4) }
 .sl-migalha-claro { color: var(--sl-tinta-2) }
 .sl-migalha-claro a { color: var(--sl-tinta-2) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--sl-linha-forte) }
 
 /* Progresso: a barra e o número. Duas variantes de fundo. */
 .sl-progresso { display: flex; flex-direction: column; gap: 8px }
-.sl-progresso-linha { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 12px }
-.sl-progresso-linha b { font-family: var(--sl-serifa); font-size: 22px; font-weight: 600 }
-.sl-barra { height: 5px; border-radius: 3px; background: var(--sl-papel-baixo); overflow: hidden }
-.sl-barra i { display: block; height: 100%; background: var(--sl-acento); border-radius: 3px }
+.sl-progresso-linha { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 13px }
+.sl-progresso-linha b { font-size: 22px; font-weight: 500 }
+.sl-barra { height: 4px; border-radius: 2px; background: var(--sl-papel-baixo); overflow: hidden }
+.sl-barra i { display: block; height: 100%; background: var(--sl-acento); border-radius: 2px }
 .sl-escuro .sl-barra { background: rgba(253, 250, 245, .18) }
 .sl-escuro .sl-barra i { background: var(--sl-creme) }
 
-/* ---- docente -------------------------------------------------------------- */
+/* ---- assinatura do docente (CartaoDocente.tsx) -----------------------------
+   07/out/2026: uma linha de assinatura no lugar dos cartões empilhados. Retrato
+   de 36px recortado em círculo, "Com" em peso leve, o nome em 500 e a
+   credencial logo abaixo, menor e mais apagada. Sem foto, as iniciais num
+   círculo de filete, sem fundo. Com dois docentes, os retratos se sobrepõem,
+   cada um recortado do vizinho por um anel da cor do fundo. */
 
-.sl-docente { display: flex; align-items: center; gap: 12px }
-.sl-docente img, .sl-docente-inicial {
-  width: 48px; height: 48px; border-radius: 50%; object-fit: cover; object-position: top; flex: none;
-  border: 1px solid var(--sl-borda);
+.sl-assina { display: inline-flex; align-items: center; gap: 12px; min-width: 0 }
+.sl-assina-rostos { display: flex; flex: none }
+.sl-assina-rostos > * {
+  width: 36px; height: 36px; border-radius: 50%; flex: none;
+  box-shadow: 0 0 0 2px var(--sl-assina-fundo);
 }
-.sl-docente-inicial { display: flex; align-items: center; justify-content: center; background: var(--sl-papel-baixo); font-family: var(--sl-serifa); font-size: 20px; color: var(--sl-ouro) }
-.sl-docente-nome { display: block; font-weight: 700; font-size: 14px }
-.sl-docente-cred { display: block; font-size: 12.5px; color: var(--sl-tinta-2) }
-.sl-escuro .sl-docente img { border-color: rgba(253, 250, 245, .35) }
-.sl-escuro .sl-docente-cred { color: rgba(253, 250, 245, .78) }
+.sl-assina-rostos > * + * { margin-left: -8px }
+.sl-assina-rostos img { object-fit: cover; object-position: 50% 18%; background: var(--sl-papel-baixo) }
+.sl-assina-mono {
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--sl-linha-forte); background: var(--sl-assina-fundo);
+  font: 500 12px/1 var(--sl-sans); letter-spacing: .04em; color: var(--sl-tinta-2);
+}
+.sl-assina-texto { display: flex; flex-direction: column; gap: 2px; min-width: 0; text-align: left }
+.sl-assina-nome { font-size: 15px; font-weight: 500; line-height: 1.3; color: var(--sl-tinta) }
+.sl-assina-pre { font-weight: 400; color: var(--sl-tinta-2) }
+.sl-assina-cred { font-size: 13.5px; line-height: 1.35; color: var(--sl-tinta-2) }
+.sl-escuro .sl-assina-nome { color: var(--sl-creme) }
+.sl-escuro :is(.sl-assina-pre, .sl-assina-cred) { color: rgba(253, 250, 245, .66) }
+.sl-escuro .sl-assina-mono { border-color: rgba(232, 217, 181, .45); color: var(--sl-palha) }
+/* A versão da trilha: retrato de 22px, só os nomes. */
+.sl-assina.is-p { gap: 8px }
+.sl-assina.is-p .sl-assina-rostos > * { width: 22px; height: 22px; box-shadow: 0 0 0 1.5px var(--sl-assina-fundo) }
+.sl-assina.is-p .sl-assina-rostos > * + * { margin-left: -6px }
+.sl-assina.is-p .sl-assina-mono { font-size: 8.5px; letter-spacing: .02em }
+.sl-assina.is-p .sl-assina-nome { font-size: 13px; font-weight: 400; color: var(--sl-tinta-2) }
 
 /* ---- corpo da página do módulo -------------------------------------------- */
 
@@ -338,102 +420,80 @@ a.sl-capa:hover .sl-capa-play { transform: scale(1.06); background: var(--sl-ace
   transition: background-color .15s ease;
 }
 a.sl-lista-item:hover { background: var(--sl-creme) }
-.sl-lista-num { font-family: var(--sl-serifa); font-size: 28px; font-weight: 600; color: var(--sl-regua); line-height: 1 }
-.sl-lista-item h3 { font-family: var(--sl-serifa); font-weight: 600; font-size: 19px; line-height: 1.25 }
-.sl-lista-item p { margin-top: 4px; font-size: 13.5px; line-height: 1.55; color: var(--sl-tinta-2) }
+.sl-lista-num { font-size: 26px; font-weight: 500; color: var(--sl-regua); line-height: 1; font-variant-numeric: tabular-nums }
+.sl-lista-item h3 { font-weight: 500; font-size: 19px; line-height: 1.25 }
+.sl-lista-item p { margin-top: 4px; font-size: 14.5px; line-height: 1.55; color: var(--sl-tinta-2) }
 .sl-lista-item.is-travado h3 { color: var(--sl-tinta-2) }
 
 .sl-cartao { background: var(--sl-creme); border: 1px solid var(--sl-borda); border-radius: 16px; padding: 24px 26px }
 .sl-cartao + .sl-cartao { margin-top: 16px }
-.sl-cartao h2, .sl-cartao h3 { font-family: var(--sl-serifa); font-weight: 600; font-size: 21px; line-height: 1.2 }
-.sl-cartao p { margin-top: 8px; font-size: 14px; line-height: 1.6; color: var(--sl-tinta-2) }
+.sl-cartao h2, .sl-cartao h3 { font-weight: 500; font-size: 21px; line-height: 1.2 }
+.sl-cartao p { margin-top: 8px; font-size: 15px; line-height: 1.6; color: var(--sl-tinta-2) }
 .sl-cartao .sl-btn { margin-top: 16px }
-.sl-cartao-rotulo { display: block; margin-bottom: 8px; font-size: 10.5px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--sl-ouro) }
+.sl-cartao-rotulo { margin-bottom: 8px }
 .sl-cartao-nb { border-color: var(--sl-tinta); background: var(--sl-tinta); color: var(--sl-creme) }
 .sl-cartao-nb p { color: rgba(253, 250, 245, .8) }
 .sl-cartao-nb .sl-cartao-rotulo { color: var(--sl-palha) }
 
 .sl-aviso {
   display: flex; gap: 16px; align-items: flex-start;
-  padding: 22px 24px; border-radius: 16px;
-  background: rgba(169, 142, 78, .08); border: 1px solid rgba(169, 142, 78, .4);
+  padding: 24px 26px; border-radius: 16px;
+  background: rgba(169, 142, 78, .08); border: 1px solid rgba(169, 142, 78, .35);
 }
 .sl-aviso svg { flex: none; margin-top: 2px }
-.sl-aviso h2 { font-family: var(--sl-serifa); font-weight: 600; font-size: 22px; line-height: 1.2 }
-.sl-aviso p { margin-top: 6px; font-size: 14.5px; line-height: 1.6; color: var(--sl-tinta-2) }
+.sl-aviso h2 { font-weight: 500; font-size: 22px; line-height: 1.25 }
+.sl-aviso p { margin-top: 6px; font-size: 15.5px; line-height: 1.6; color: var(--sl-tinta-2) }
 
 /* ---- aula em modo teatro -------------------------------------------------- */
 
-.sl-palco { background: var(--sl-palco); color: var(--sl-creme); padding: 20px 0 36px }
+.sl-palco { background: var(--sl-palco); color: var(--sl-creme); padding: 22px 0 48px; --sl-assina-fundo: var(--sl-palco) }
 /* A linha de cima do palco: onde o aluno está e quanto do módulo já fez. */
 .sl-palco-topo {
-  max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 0 auto 16px;
+  max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 0 auto 18px;
   display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap;
 }
-.sl-palco-progresso { font-size: 12px; color: rgba(253, 250, 245, .7) }
-.sl-palco-docente { margin-top: 18px }
-.sl-palco-docente .sl-docente img, .sl-palco-docente .sl-docente-inicial { width: 40px; height: 40px }
+.sl-palco-progresso { font-size: 13px; color: rgba(253, 250, 245, .62); font-variant-numeric: tabular-nums }
+.sl-palco-docente { margin-top: 24px }
 
 /* O cartão de fim de módulo, no palco, depois da última aula concluída. */
 .sl-palco-fim {
-  max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 26px auto 0;
+  max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 36px auto 0;
   display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
-  padding: 20px 24px; border-radius: 16px;
-  background: rgba(253, 250, 245, .06); border: 1px solid rgba(232, 217, 181, .35);
+  padding: 22px 26px; border-radius: 16px;
+  background: rgba(253, 250, 245, .05); border: 1px solid rgba(253, 250, 245, .12);
 }
-.sl-palco-fim .sl-cartao-rotulo { color: var(--sl-palha) }
-.sl-palco-fim-titulo { font-family: var(--sl-serifa); font-weight: 600; font-size: 21px; line-height: 1.25; color: var(--sl-creme) }
-.sl-palco-fim p + p { margin-top: 6px; font-size: 14px; line-height: 1.55; color: rgba(253, 250, 245, .8) }
+.sl-palco-fim-titulo { margin-top: 6px; font-weight: 500; font-size: 21px; line-height: 1.3; color: var(--sl-creme) }
+.sl-palco-fim p + p { margin-top: 6px; font-size: 15px; line-height: 1.55; color: rgba(253, 250, 245, .72) }
 
-/* Materiais da aula, em linha no palco: link de download, sem cartão. */
-.sl-palco-materiais {
-  max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 26px auto 0; padding-top: 18px;
-  border-top: 1px solid rgba(253, 250, 245, .12);
-  display: flex; align-items: baseline; gap: 10px 20px; flex-wrap: wrap;
-}
-.sl-palco-materiais .sl-cartao-rotulo { margin: 0; color: var(--sl-palha) }
-.sl-palco-materiais ul { display: flex; flex-wrap: wrap; gap: 8px 18px }
-.sl-palco-materiais a { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--sl-creme) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(253, 250, 245, .3) }
-.sl-palco-materiais a:hover { text-decoration-color: var(--sl-creme) }
-.sl-palco-materiais p { font-size: 13px; font-style: italic; color: rgba(253, 250, 245, .7) }
-.sl-palco-player { max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 40px 90px rgba(0, 0, 0, .55); border: 1px solid rgba(253, 250, 245, .08) }
-.sl-palco-meta { max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 24px auto 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px; align-items: end }
-.sl-palco-meta h1 { margin-top: 10px; font-family: var(--sl-serifa); font-weight: 600; font-size: clamp(28px, 3.2vw, 42px); line-height: 1.1; letter-spacing: -.015em; color: var(--sl-creme) }
-.sl-palco-desc { margin-top: 12px; max-width: 70ch; font-size: 15px; line-height: 1.65; color: rgba(253, 250, 245, .78) }
-.sl-palco-migalha { font-size: 12px; color: rgba(253, 250, 245, .7) }
-.sl-palco-migalha a { color: rgba(253, 250, 245, .88) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(253, 250, 245, .3) }
+.sl-palco-player { max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 0 auto; border-radius: 14px; overflow: hidden; box-shadow: 0 40px 90px rgba(0, 0, 0, .55); border: 1px solid rgba(253, 250, 245, .08) }
+.sl-palco-meta { max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 32px auto 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 40px; align-items: end }
+.sl-palco-meta h1 { margin-top: 12px; font-weight: 500; font-size: clamp(30px, 3.3vw, 44px); line-height: 1.1; letter-spacing: -.018em; color: var(--sl-creme); max-width: 26ch }
+.sl-palco-desc { margin-top: 14px; max-width: 68ch; font-size: 16.5px; line-height: 1.65; color: rgba(253, 250, 245, .72) }
+.sl-palco-migalha { font-size: 13px; color: rgba(253, 250, 245, .62) }
+.sl-palco-migalha a { color: rgba(253, 250, 245, .82) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(253, 250, 245, .25) }
 .sl-palco-migalha a:hover { color: var(--sl-creme) !important }
 .sl-palco-acoes { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; align-items: center }
-.sl-palco-trava { font-size: 12.5px; color: rgba(253, 250, 245, .75); max-width: 26ch; text-align: right }
+.sl-palco-trava { font-size: 13px; color: rgba(253, 250, 245, .7); max-width: 26ch; text-align: right }
 
-.sl-concluir {
-  display: inline-flex; align-items: center; gap: 9px; min-height: 46px; padding: 12px 20px;
-  border-radius: 14px; border: 1px solid rgba(253, 250, 245, .34);
-  background: transparent; color: var(--sl-creme);
-  font: 700 13px/1.2 var(--sl-sans); letter-spacing: .03em; cursor: pointer;
-  transition: background-color .15s ease, border-color .15s ease;
-}
-.sl-concluir:hover { border-color: var(--sl-creme); background: rgba(253, 250, 245, .06) }
-.sl-concluir.is-feita { border-color: rgba(111, 207, 151, .6); color: #9FE0B9 }
-.sl-concluir:disabled { opacity: .6; cursor: progress }
-.sl-concluir-erro { flex-basis: 100%; text-align: right; font-size: 12.5px; color: #F4B4B0 }
+/* O botão de concluir herda a pílula de vidro de `.sl-btn-vidro` (ver "botões").
+   Concluída, o verde da casa no ícone e no texto, com um vidro esverdeado. */
+.sl-concluir.is-feita { background: rgba(111, 207, 151, .1); border-color: rgba(111, 207, 151, .28); color: #A9E5C2 !important }
+.sl-concluir.is-feita:hover { background: rgba(111, 207, 151, .16); border-color: rgba(111, 207, 151, .4) }
+.sl-concluir:disabled { opacity: .6; cursor: progress; transform: none }
+.sl-concluir-erro { flex-basis: 100%; text-align: right; font-size: 13px; color: #F4B4B0 }
 
 .sl-aula-grade { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 40px; margin-top: 40px; align-items: start }
 .sl-aula-principal { display: flex; flex-direction: column; gap: 16px }
-.sl-materiais li + li { border-top: 1px solid var(--sl-linha) }
-.sl-materiais a { display: flex; align-items: center; gap: 12px; padding: 12px 0; font-size: 14px; color: var(--sl-tinta) !important }
-.sl-materiais a:hover { color: var(--sl-acento) !important }
-.sl-materiais-icone { width: 32px; height: 32px; border-radius: 12px; background: var(--sl-papel-baixo); display: flex; align-items: center; justify-content: center; flex: none }
-.sl-vazio { margin-top: 8px; font-size: 14px; font-style: italic; color: var(--sl-tinta-3) }
+.sl-vazio { margin-top: 8px; font-size: 15px; font-style: italic; color: var(--sl-tinta-3) }
 
 .sl-modaulas li + li { border-top: 1px solid var(--sl-linha) }
 .sl-modaulas a, .sl-modaulas span.sl-modaulas-item {
   display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; align-items: start;
   padding: 12px 10px; margin: 0 -10px; border-radius: 12px;
-  font-size: 14px; line-height: 1.4; color: var(--sl-tinta-2) !important;
+  font-size: 15px; line-height: 1.4; color: var(--sl-tinta-2) !important;
 }
 .sl-modaulas a:hover { background: var(--sl-papel) }
-.sl-modaulas [aria-current="page"] { background: #F6EFE0; color: var(--sl-tinta) !important; font-weight: 700 }
+.sl-modaulas [aria-current="page"] { background: #F6EFE0; color: var(--sl-tinta) !important; font-weight: 500 }
 .sl-ponto { width: 10px; height: 10px; margin-top: 5px; border-radius: 50%; border: 1.5px solid #C9BCA8; display: block }
 .sl-ponto.is-feita { background: var(--sl-acento); border-color: var(--sl-acento) }
 .sl-ponto.is-atual { border-color: var(--sl-acento); background: linear-gradient(90deg, var(--sl-regua) 50%, transparent 50%) }
@@ -442,38 +502,61 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 
 /* Fila horizontal: rola de lado com o trackpad, a roda com shift ou o teclado (o Tab percorre os
    links e o navegador traz o cartão focado para dentro). O `scroll-snap` é leve, `proximity`, para
-   não brigar com quem arrasta devagar. */
-.sl-pl-secao { margin-top: 30px }
+   não brigar com quem arrasta devagar.
+
+   O HOVER "CARCOMIDO" (corrigido em 07/out/2026). Uma caixa com `overflow-x: auto` também corta na
+   vertical, e a folga que a fila pedia (4px em cima) nem chegava a valer: o reset `.sl ol` pesava
+   mais que a classe e zerava o padding (ver o reset no topo). O pulo de 1px do hover e a sombra do
+   cartão ativo batiam na borda da caixa e saíam cortados em linha reta, como se o cartão estivesse
+   atrás de uma faixa. Agora a fila tem folga interna de sobra (16px em cima, 28px embaixo, 16px dos
+   lados) e devolve a mesma medida em margem negativa, então o layout ao redor não muda; e nada no
+   cartão passa dessa folga: o hover não desloca, e a sombra cabe nela. */
+.sl-pl-secao { margin-top: 28px }
 .sl-pl-fila {
-  display: flex; gap: 14px; overflow-x: auto; overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity; padding: 4px 2px 14px; scrollbar-width: thin;
+  display: flex; gap: 16px; overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity; scroll-padding-inline: 16px; scrollbar-width: thin;
+  padding: 16px 16px 28px; margin: -16px -16px -28px;
 }
-.sl-pl-fila > li { flex: 0 0 clamp(220px, 21vw, 280px); scroll-snap-align: start; display: flex }
+.sl-pl-fila > li { flex: 0 0 clamp(232px, 22vw, 296px); scroll-snap-align: start; display: flex }
 .sl-pl-item {
-  flex: 1; display: flex; flex-direction: column; gap: 8px; min-height: 132px;
-  padding: 16px 18px; border: 1px solid var(--sl-borda); border-radius: 14px;
+  position: relative; flex: 1; display: flex; flex-direction: column; gap: 10px; min-height: 148px;
+  padding: 18px 20px; border: 1px solid var(--sl-borda); border-radius: 14px;
   background: var(--sl-creme); color: var(--sl-tinta) !important; text-decoration: none;
-  transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+  box-shadow: 0 1px 2px rgba(26, 24, 21, .03);
+  transition: border-color .25s ease, box-shadow .25s ease, background-color .25s ease;
 }
-a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px) }
-.sl-pl-item.is-atual { border-color: var(--sl-acento); background: #fff; box-shadow: 0 0 0 1px var(--sl-acento), 0 12px 26px rgba(72, 60, 42, .12) }
-.sl-pl-item.is-travado { background: var(--sl-papel-baixo); color: var(--sl-tinta-2) !important }
-.sl-pl-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px }
-.sl-pl-rotulo { font-size: 10.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--sl-ouro) }
-.sl-pl-ok { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #1B6E47 }
-.sl-pl-titulo { font-family: var(--sl-serifa); font-weight: 600; font-size: 16.5px; line-height: 1.25 }
-.sl-pl-pe { margin-top: auto; display: flex; gap: 12px; font-size: 12px; color: var(--sl-tinta-2) }
-.sl-pl-agora { font-weight: 700; color: var(--sl-acento) }
+a.sl-pl-item:hover {
+  border-color: rgba(193, 18, 31, .45); background: #fff;
+  box-shadow: 0 1px 2px rgba(26, 24, 21, .04), 0 10px 22px -12px rgba(72, 60, 42, .28);
+}
+/* O cartão da aula no teatro: papel branco, o filete inteiro em vermelho e a mesma sombra curta do
+   hover, que cabe na folga da fila. O anel de 2px de antes (`0 0 0 1px` por fora) era um dos que
+   saíam cortados. */
+.sl-pl-item.is-atual, a.sl-pl-item.is-atual:hover {
+  border-color: var(--sl-acento); background: #fff;
+  box-shadow: 0 1px 2px rgba(26, 24, 21, .04), 0 10px 22px -12px rgba(72, 60, 42, .28);
+}
+.sl-pl-item.is-travado { background: var(--sl-papel-baixo); color: var(--sl-tinta-2) !important; box-shadow: none }
+.sl-pl-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 18px }
+.sl-pl-ok { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 500; color: #1B6E47 }
+.sl-pl-titulo { font-weight: 500; font-size: 17px; line-height: 1.3; letter-spacing: -.005em; color: var(--sl-tinta); transition: color .25s ease }
+.sl-pl-item.is-travado .sl-pl-titulo { color: var(--sl-tinta-2) }
+/* O pé reserva a linha mesmo vazio: aula sem duração no banco não encolhe o cartão. */
+.sl-pl-pe { margin-top: auto; min-height: 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; line-height: 20px; color: var(--sl-tinta-2); font-variant-numeric: tabular-nums }
+.sl-pl-agora { display: inline-flex; align-items: center; gap: 7px; font-weight: 500; color: var(--sl-acento) }
+.sl-pl-agora::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor }
 
 /* ---- notebook --------------------------------------------------------------
    Linguagem visual de 01/out/2026 (guia em docs/NOTEBOOK.md). O tom pedido pelo
    dono: terminal financeiro com acabamento de aplicativo de finanças, denso e
    calmo. Na prática:
-   - uma família só para interface e números, a sans nativa que a LP também usa
-     (o Jost da LP é o wordmark do curso e só ele), com algarismos tabulares
-     em todo número;
-   - a serifa (Playfair) só no título de cada aula e na citação em destaque;
-   - rótulos em caixa normal e tracking normal, sem sobrancelha em versalete;
+   - uma família só, o Jost (desde 07/out/2026; antes era a sans do sistema com
+     a Playfair no título da aula e na citação), com algarismos tabulares em
+     todo número;
+   - o texto corrido em Jost 400 a 18px com entrelinha de 1.7: o Jost tem olho
+     pequeno (x-height de .46 em), e nos 17px de antes ele lia como 15px;
+   - os rótulos de bloco ("Teoria", "Na prática", "Simulador") e de seção
+     ("Aula 03", "Neste notebook") no rótulo único da sala, `.sl-eyebrow`;
    - papel e tinta, filetes finos, UM vermelho para a série ou o número que o
      texto discute, cinzas quentes para o resto, dourado raro, verde e
      vermelho semânticos só onde o sinal do dado importa;
@@ -482,55 +565,50 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 
 .sl-num, .sl-nbm .sl-tabela, .sl-g-valor { font-variant-numeric: tabular-nums lining-nums }
 
-.sl-nbm { margin-top: 56px }
-.sl-nbm-cabeca { padding-bottom: 24px; border-bottom: 1px solid var(--sl-linha-forte) }
-.sl-nbm-rotulo { font-size: 13px; font-weight: 500; color: var(--sl-tinta-2) }
-.sl-nbm-cabeca .sl-h2 { margin-top: 6px }
+.sl-nbm { margin-top: 88px }
+.sl-nbm-cabeca { padding-bottom: 32px; border-bottom: 1px solid var(--sl-linha-forte) }
+.sl-nbm-cabeca .sl-h2 { margin-top: 10px }
 .sl-nb-meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px }
 
-.sl-nb { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 52px; margin-top: 36px; align-items: start }
-.sl-nb-indice { position: sticky; top: 86px }
-.sl-nb-indice h3 { font-size: 13px; font-weight: 600; color: var(--sl-tinta-2); margin-bottom: 10px }
+.sl-nb { display: grid; grid-template-columns: 208px minmax(0, 1fr); gap: 64px; margin-top: 44px; align-items: start }
+/* Fixo ao lado do texto no desktop, logo abaixo do topo da área (58px). Como o notebook corre na
+   rolagem da página desde 07/out/2026, o `sticky` é em relação à janela; nenhum ancestral pode ter
+   `overflow` diferente de `visible` ou `clip`, ou ele deixa de grudar. */
+.sl-nb-indice { position: sticky; top: 90px }
+.sl-nb-indice h3 { margin-bottom: 14px }
 .sl-nb-indice ol { border-left: 1px solid var(--sl-linha-forte) }
 .sl-nb-indice a {
-  display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 6px; padding: 8px 0 8px 14px; margin-left: -1px;
+  display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 4px; padding: 9px 0 9px 16px; margin-left: -1px;
   border-left: 2px solid transparent;
-  font-size: 13.5px; line-height: 1.4; color: var(--sl-tinta-2) !important;
+  font-size: 14.5px; line-height: 1.4; color: var(--sl-tinta-2) !important;
+  transition: color .2s ease, border-color .2s ease;
 }
 .sl-nb-indice a:hover { color: var(--sl-tinta) !important; border-left-color: var(--sl-linha-forte) }
-.sl-nb-indice a[aria-current] { color: var(--sl-tinta) !important; border-left-color: var(--sl-acento); font-weight: 600 }
+.sl-nb-indice a[aria-current] { color: var(--sl-tinta) !important; border-left-color: var(--sl-acento); font-weight: 500 }
 .sl-nb-indice a span { font-variant-numeric: tabular-nums; font-weight: 500; color: var(--sl-tinta-3) }
 .sl-nb-indice a[aria-current] span { color: var(--sl-acento) }
 
 /* `position: relative` é o que segura a página. Os textos só para leitor de tela (`.sl-so-leitor`,
-   absolutos) tomavam o <body> como referência, escapavam do recorte desta caixa e esticavam a
-   janela até onde estariam dentro do notebook: 40 mil pixels de rolagem em branco no desktop
-   (achado em 01/out/2026). Com a caixa como referência, eles ficam presos aqui dentro. */
-.sl-nb-rolagem { min-width: 0; position: relative }
-.sl-nb-rolagem:focus-visible { outline-offset: 6px }
-/* No desktop o miolo rola dentro da própria caixa, da altura da janela, e o índice fica parado ao
-   lado: é o que deixa a playlist levar o notebook à seção da aula sem tirar o vídeo da tela (ver
-   `AncoraDaAula`). A rolagem encadeia na janela nas pontas, sem prender o aluno. */
-@media (min-width: 961px) {
-  .sl-nb-rolagem { max-height: calc(100vh - 110px); overflow-y: auto; padding: 0 14px 40px 0; scrollbar-width: thin }
-  .sl-nb-rolagem [id] { scroll-margin-top: 12px }
-}
+   absolutos) tomavam o <body> como referência e esticavam a janela até onde estariam dentro do
+   notebook: 40 mil pixels de rolagem em branco no desktop (achado em 01/out/2026, quando esta
+   caixa ainda rolava sozinha). A rolagem interna saiu em 07/out/2026; a referência fica. */
+.sl-nb-corpo { min-width: 0; position: relative }
 
-.sl-nb-canvas { min-width: 0; display: flex; flex-direction: column; gap: 64px }
+.sl-nb-canvas { min-width: 0; display: flex; flex-direction: column; gap: 96px }
 /* Âncora do índice não pode cair embaixo da topbar fixa. */
 .sl-nb-canvas [id] { scroll-margin-top: 90px }
 
-/* Seção de uma aula: filete de tinta, a linha de meta (número, duração, assistir) e o título na
-   serifa, o único lugar do notebook, fora a citação, onde ela aparece. */
-.sl-nb-secao { display: flex; flex-direction: column; gap: 30px; padding-top: 12px; border-top: 2px solid var(--sl-tinta) }
-.sl-nb-secao-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; font-size: 13px; color: var(--sl-tinta-2); font-variant-numeric: tabular-nums }
-.sl-nb-secao-num { color: var(--sl-tinta); font-weight: 600 }
-.sl-nb-secao-meta a, .sl-nb-secao-agora { margin-left: auto; font-weight: 600 }
+/* Seção de uma aula: filete de tinta, a linha de meta (rótulo "Aula 03", duração, assistir) e o
+   título da aula, o maior texto do notebook. */
+.sl-nb-secao { display: flex; flex-direction: column; gap: 36px; padding-top: 16px; border-top: 1px solid var(--sl-tinta) }
+.sl-nb-secao-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; font-size: 14px; color: var(--sl-tinta-2); font-variant-numeric: tabular-nums }
+.sl-nb-secao-meta .sl-eyebrow { display: inline }
+.sl-nb-secao-meta a, .sl-nb-secao-agora { margin-left: auto; font-weight: 500 }
 .sl-nb-secao-agora { display: inline-flex; align-items: center; gap: 7px; color: var(--sl-acento) }
-.sl-nb-secao-agora::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--sl-acento) }
+.sl-nb-secao-agora::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--sl-acento) }
 .sl-nb-secao-cabeca h3 {
-  margin-top: 8px; font-family: var(--sl-serifa); font-weight: 600;
-  font-size: clamp(28px, 3vw, 38px); line-height: 1.1; letter-spacing: -.015em; max-width: 28ch;
+  margin-top: 12px; font-weight: 500;
+  font-size: clamp(30px, 3.2vw, 42px); line-height: 1.1; letter-spacing: -.018em; max-width: 26ch;
 }
 .sl-nb-secao .sl-vazio { margin-top: -10px }
 
@@ -538,33 +616,35 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 
 /* "Na aula, 12:34": atalho para o momento da aula. */
 .sl-naaula {
-  align-self: flex-start; display: inline-flex; align-items: center; gap: 6px;
-  padding: 4px 10px 4px 8px; border: 1px solid var(--sl-linha-forte); border-radius: 8px;
-  font-size: 12.5px; font-weight: 500; color: var(--sl-tinta-2) !important; background: transparent;
-  transition: color .15s ease, border-color .15s ease;
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 7px;
+  min-height: 28px; padding: 0 12px 0 10px; border: 1px solid var(--sl-linha-forte); border-radius: 999px;
+  font-size: 13px; font-weight: 500; color: var(--sl-tinta-2) !important; background: transparent;
+  transition: color .2s ease, border-color .2s ease, background-color .2s ease;
 }
-.sl-naaula:hover { color: var(--sl-acento) !important; border-color: var(--sl-acento) }
+.sl-naaula:hover { color: var(--sl-acento) !important; border-color: rgba(193, 18, 31, .45); background: #fff }
 .sl-naaula svg { color: var(--sl-acento) }
 
 /* ---- texto, destaque, número, capítulo ------------------------------------ */
 
-.sl-cap { padding-top: 4px }
-.sl-cap h4 { font-weight: 600; font-size: 22px; line-height: 1.25; letter-spacing: -.01em; max-width: 34ch; color: var(--sl-tinta) }
-.sl-cap p { margin-top: 6px; font-size: 15.5px; line-height: 1.55; color: var(--sl-tinta-2); max-width: 62ch }
+.sl-cap { padding-top: 12px }
+.sl-cap h4 { font-weight: 500; font-size: 24px; line-height: 1.25; letter-spacing: -.01em; max-width: 34ch; color: var(--sl-tinta) }
+.sl-cap p { margin-top: 8px; font-size: 16.5px; line-height: 1.55; color: var(--sl-tinta-2); max-width: 62ch }
 
-.sl-prosa { max-width: 68ch }
-.sl-prosa p { font-size: 17px; line-height: 1.7; color: #2a2723 }
+.sl-prosa { max-width: 66ch }
+.sl-prosa p { font-size: 18px; line-height: 1.7; color: #2a2723 }
 .sl-prosa p + p { margin-top: 1em }
-.sl-prosa.is-abertura p:first-child { font-size: 19.5px; line-height: 1.6; color: var(--sl-tinta) }
+.sl-prosa.is-abertura p:first-child { font-size: 21px; line-height: 1.58; color: var(--sl-tinta) }
 
-.sl-destaque { max-width: 32ch; padding: 4px 0 4px 24px; border-left: 2px solid var(--sl-acento) }
-.sl-destaque p { font-family: var(--sl-serifa); font-style: italic; font-weight: 500; font-size: clamp(24px, 2.6vw, 32px); line-height: 1.28; color: var(--sl-tinta) }
-.sl-destaque footer { margin-top: 12px; font-size: 13px; color: var(--sl-tinta-2) }
+/* A citação em destaque saiu da serifa itálica em 07/out/2026: Jost 400 grande, reta, com o filete
+   vermelho. A frase faz o trabalho; o itálico de serifa era o ornamento a mais. */
+.sl-destaque { max-width: 34ch; padding: 4px 0 4px 26px; border-left: 2px solid var(--sl-acento) }
+.sl-destaque p { font-weight: 400; font-size: clamp(24px, 2.5vw, 30px); line-height: 1.32; letter-spacing: -.012em; color: var(--sl-tinta) }
+.sl-destaque footer { margin-top: 14px; font-size: 14px; color: var(--sl-tinta-2) }
 
 .sl-numero { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 28px; align-items: center; padding: 22px 0; border-top: 1px solid var(--sl-tinta); border-bottom: 1px solid var(--sl-linha-forte) }
-.sl-numero-valor { font-weight: 600; font-size: clamp(52px, 6.4vw, 84px); line-height: .95; letter-spacing: -.035em; color: var(--sl-acento); white-space: nowrap; font-variant-numeric: tabular-nums lining-nums }
-.sl-numero-legenda { font-size: 17px; line-height: 1.5; color: var(--sl-tinta); max-width: 46ch }
-.sl-numero-nota { margin-top: 6px; font-size: 12.5px; color: var(--sl-tinta-3) }
+.sl-numero-valor { font-weight: 500; font-size: clamp(52px, 6.4vw, 84px); line-height: .95; letter-spacing: -.035em; color: var(--sl-acento); white-space: nowrap; font-variant-numeric: tabular-nums lining-nums }
+.sl-numero-legenda { font-size: 18px; line-height: 1.5; color: var(--sl-tinta); max-width: 46ch }
+.sl-numero-nota { margin-top: 6px; font-size: 13px; color: var(--sl-tinta-3) }
 
 /* ---- figura: a caixa comum de gráfico, comparativo, linha do tempo, fluxo,
    matriz e simulador -------------------------------------------------------- */
@@ -572,18 +652,18 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 .sl-fig, .sl-cmp, .sl-tempo, .sl-fluxo, .sl-matriz, .sl-sim {
   background: var(--sl-creme); border: 1px solid var(--sl-borda); border-radius: 12px; padding: 22px 24px 16px; min-width: 0;
 }
-.sl-fig-titulo { font-weight: 600; font-size: 17px; line-height: 1.3; letter-spacing: -.005em; color: var(--sl-tinta); max-width: 56ch }
-.sl-fig-sub { margin-top: 4px; font-size: 13.5px; line-height: 1.5; color: var(--sl-tinta-2); max-width: 70ch }
+.sl-fig-titulo { font-weight: 500; font-size: 18.5px; line-height: 1.3; letter-spacing: -.008em; color: var(--sl-tinta); max-width: 56ch }
+.sl-fig-sub { margin-top: 4px; font-size: 14.5px; line-height: 1.5; color: var(--sl-tinta-2); max-width: 70ch }
 
 /* Linha de origem: "Fonte: ..." ou "Ilustrativo: ...", sempre visível. */
-.sl-origem { margin-top: 12px; font-size: 12px; line-height: 1.5; color: var(--sl-tinta-3); max-width: 90ch }
-.sl-origem > span { font-weight: 600; color: var(--sl-tinta-2) }
+.sl-origem { margin-top: 12px; font-size: 12.5px; line-height: 1.5; color: var(--sl-tinta-3); max-width: 90ch }
+.sl-origem > span { font-weight: 500; color: var(--sl-tinta-2) }
 
 /* Legenda: cada série é um botão que liga e desliga. */
 .sl-legenda { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 12px }
 .sl-legenda button {
   display: inline-flex; align-items: center; gap: 8px; padding: 3px 0; border: 0; background: none; cursor: pointer;
-  font: 500 12.5px/1.3 var(--sl-sans); color: var(--sl-tinta-2);
+  font: 500 13px/1.3 var(--sl-sans); color: var(--sl-tinta-2);
 }
 .sl-legenda button:hover { color: var(--sl-tinta) }
 .sl-legenda button[aria-pressed="false"] { color: var(--sl-tinta-3); text-decoration: line-through; text-decoration-color: rgba(26, 24, 21, .35) }
@@ -594,7 +674,7 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 .sl-grafico { position: relative; margin-top: 10px }
 .sl-grafico svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y }
 .sl-grafico svg:focus-visible { outline: 2px solid var(--sl-acento); outline-offset: 4px }
-.sl-grafico text, .sl-tempo-svg text { font-family: var(--sl-sans); font-size: 11.5px; fill: var(--sl-tinta-3); font-variant-numeric: tabular-nums lining-nums }
+.sl-grafico text, .sl-tempo-svg text { font-family: var(--sl-sans); font-size: 12px; fill: var(--sl-tinta-3); font-variant-numeric: tabular-nums lining-nums }
 .sl-g-grade line { stroke: rgba(26, 24, 21, .08); stroke-width: 1 }
 .sl-g-grade line[data-zero] { stroke: rgba(26, 24, 21, .5) }
 .sl-g-faixa rect { fill: rgba(26, 24, 21, .045) }
@@ -614,20 +694,20 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 /* Dica do ponto: tinta, números tabulares alinhados à direita. */
 .sl-dica {
   position: absolute; pointer-events: none; z-index: 2;
-  min-width: 168px; max-width: 280px; padding: 9px 11px; border-radius: 8px;
-  background: var(--sl-tinta); color: var(--sl-creme); font-size: 12px; line-height: 1.45;
+  min-width: 168px; max-width: 280px; padding: 10px 12px; border-radius: 10px;
+  background: var(--sl-tinta); color: var(--sl-creme); font-size: 12.5px; line-height: 1.45;
   box-shadow: 0 10px 24px rgba(26, 24, 21, .22);
 }
 .sl-dica[data-lado="dir"] { transform: translateX(14px) }
 .sl-dica[data-lado="esq"] { transform: translateX(calc(-100% - 14px)) }
 .sl-dica[data-lado="centro"] { transform: translateX(-50%) }
-.sl-dica b { display: block; margin-bottom: 4px; font-weight: 600; color: rgba(253, 250, 245, .72) }
+.sl-dica b { display: block; margin-bottom: 4px; font-weight: 500; color: rgba(253, 250, 245, .72) }
 .sl-dica span { display: grid; grid-template-columns: 8px minmax(0, 1fr) auto; gap: 8px; align-items: center }
 .sl-dica i { width: 8px; height: 8px; border-radius: 2px; display: inline-block }
 .sl-dica em { font-style: normal; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums lining-nums }
 .sl-dica .sl-dica-total { grid-template-columns: minmax(0, 1fr) auto; margin-top: 4px; padding-top: 4px; border-top: 1px solid rgba(253, 250, 245, .18); color: rgba(253, 250, 245, .8) }
 
-.sl-dados { margin-top: 8px; font-size: 12.5px }
+.sl-dados { margin-top: 8px; font-size: 13px }
 .sl-dados summary { cursor: pointer; color: var(--sl-tinta-2); font-weight: 500; width: fit-content; border-radius: 4px; list-style: none }
 .sl-dados summary:hover { color: var(--sl-tinta) }
 .sl-dados summary::-webkit-details-marker { display: none }
@@ -637,11 +717,11 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 /* ---- tabela --------------------------------------------------------------- */
 
 .sl-tabela-caixa { overflow-x: auto }
-.sl-tabela { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13.5px }
-.sl-tabela caption { text-align: left; font-weight: 600; font-size: 17px; margin-bottom: 10px; color: var(--sl-tinta) }
-.sl-tabela th { text-align: left; font-size: 12px; font-weight: 600; color: var(--sl-tinta-2); padding: 8px 14px 8px 0; border-bottom: 1px solid var(--sl-tinta); vertical-align: bottom }
+.sl-tabela { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14.5px }
+.sl-tabela caption { text-align: left; font-weight: 500; font-size: 18.5px; margin-bottom: 10px; color: var(--sl-tinta) }
+.sl-tabela th { text-align: left; font-size: 13px; font-weight: 500; color: var(--sl-tinta-2); padding: 8px 14px 8px 0; border-bottom: 1px solid var(--sl-tinta); vertical-align: bottom }
 .sl-tabela td { padding: 10px 14px 10px 0; border-bottom: 1px solid var(--sl-linha); color: var(--sl-tinta); line-height: 1.5; vertical-align: top }
-.sl-tabela tbody th { font-size: 13.5px; color: var(--sl-tinta); border-bottom: 1px solid var(--sl-linha); font-weight: 600; vertical-align: top }
+.sl-tabela tbody th { font-size: 14.5px; color: var(--sl-tinta); border-bottom: 1px solid var(--sl-linha); font-weight: 500; vertical-align: top }
 .sl-tabela .is-num, .sl-tabela-num td, .sl-tabela-num thead th + th { text-align: right; font-variant-numeric: tabular-nums lining-nums; white-space: nowrap }
 .sl-tabela-num td:last-child, .sl-tabela-num th:last-child { padding-right: 0 }
 
@@ -653,29 +733,29 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 .sl-kpis[data-n="3"] .sl-kpis-grade { grid-template-columns: repeat(3, minmax(0, 1fr)) }
 .sl-kpi { padding: 14px 18px 16px 0; min-width: 0 }
 .sl-kpi + .sl-kpi { padding-left: 18px; border-left: 1px solid var(--sl-linha) }
-.sl-kpi dt { font-size: 13px; line-height: 1.35; font-weight: 500; color: var(--sl-tinta-2) }
-.sl-kpi-valor { margin-top: 8px; font-weight: 600; font-size: clamp(28px, 3.2vw, 40px); line-height: 1; letter-spacing: -.025em; color: var(--sl-tinta); font-variant-numeric: tabular-nums lining-nums; white-space: nowrap }
+.sl-kpi dt { font-size: 14px; line-height: 1.35; font-weight: 500; color: var(--sl-tinta-2) }
+.sl-kpi-valor { margin-top: 8px; font-weight: 500; font-size: clamp(28px, 3.2vw, 40px); line-height: 1; letter-spacing: -.025em; color: var(--sl-tinta); font-variant-numeric: tabular-nums lining-nums; white-space: nowrap }
 .sl-kpi.is-destaque .sl-kpi-valor { color: var(--sl-acento) }
-.sl-kpi-var { margin-top: 8px; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums lining-nums; color: var(--sl-tinta-2) }
+.sl-kpi-var { margin-top: 8px; font-size: 13.5px; font-weight: 500; font-variant-numeric: tabular-nums lining-nums; color: var(--sl-tinta-2) }
 .sl-kpi-var[data-tom="bom"] { color: #2f6b4f }
 .sl-kpi-var[data-tom="ruim"] { color: var(--sl-acento) }
 .sl-kpi-var > span[aria-hidden] { font-size: 9px; vertical-align: 1px }
 .sl-kpi-var-rot { font-weight: 400; color: var(--sl-tinta-3) }
-.sl-kpi-nota { margin-top: 4px; font-size: 12px; color: var(--sl-tinta-3) }
+.sl-kpi-nota { margin-top: 4px; font-size: 12.5px; color: var(--sl-tinta-3) }
 
 /* ---- comparativo ---------------------------------------------------------- */
 
 .sl-cmp-tabela { width: 100%; margin-top: 14px; border-collapse: collapse; table-layout: fixed; font-variant-numeric: tabular-nums lining-nums }
 .sl-cmp-tabela thead th { text-align: left; vertical-align: bottom; padding: 10px 16px 12px; border-bottom: 1px solid var(--sl-tinta); font-weight: 400 }
 .sl-cmp-tabela thead td { width: 30%; border-bottom: 1px solid var(--sl-tinta) }
-.sl-cmp-nome { display: block; font-weight: 600; font-size: 15px; line-height: 1.3; color: var(--sl-tinta) }
-.sl-cmp-resumo { display: block; margin-top: 3px; font-size: 12.5px; line-height: 1.4; color: var(--sl-tinta-2) }
+.sl-cmp-nome { display: block; font-weight: 500; font-size: 16px; line-height: 1.3; color: var(--sl-tinta) }
+.sl-cmp-resumo { display: block; margin-top: 3px; font-size: 13px; line-height: 1.4; color: var(--sl-tinta-2) }
 .sl-cmp-tabela th.is-destaque { box-shadow: inset 0 2px 0 var(--sl-acento) }
 .sl-cmp-tabela th.is-destaque .sl-cmp-nome { color: var(--sl-acento) }
 .sl-cmp-tabela .is-destaque { background: rgba(193, 18, 31, .035) }
-.sl-cmp-tabela tbody th { text-align: left; padding: 12px 12px 12px 0; font-size: 13px; line-height: 1.4; font-weight: 500; color: var(--sl-tinta-2); border-bottom: 1px solid var(--sl-linha); vertical-align: top }
+.sl-cmp-tabela tbody th { text-align: left; padding: 12px 12px 12px 0; font-size: 14px; line-height: 1.4; font-weight: 500; color: var(--sl-tinta-2); border-bottom: 1px solid var(--sl-linha); vertical-align: top }
 .sl-cmp-tabela td { padding: 12px 16px; border-bottom: 1px solid var(--sl-linha); vertical-align: top }
-.sl-cmp-valor { display: block; font-weight: 600; font-size: 16px; color: var(--sl-tinta); white-space: nowrap }
+.sl-cmp-valor { display: block; font-weight: 500; font-size: 17px; color: var(--sl-tinta); white-space: nowrap }
 .sl-cmp-tabela .is-recua .sl-cmp-valor { font-weight: 500; color: var(--sl-tinta-2) }
 .sl-cmp-barra { display: block; height: 4px; margin-top: 8px; border-radius: 2px; background: rgba(26, 24, 21, .06); overflow: hidden }
 .sl-cmp-barra i { display: block; height: 100%; border-radius: 2px; background: #a59d92; transform-origin: left center }
@@ -685,7 +765,12 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 
 .sl-tempo-rolagem { overflow-x: auto; margin: 14px -24px 0; padding: 0 24px 8px; scrollbar-width: thin; overscroll-behavior-x: contain }
 .sl-tempo-rolagem:focus-visible { outline-offset: -2px }
-.sl-tempo-trilho { position: relative; width: max(100%, calc(var(--n) * 188px)) }
+/* A largura mínima por evento caiu de 188px para 116px no desktop (07/out/2026): com a coluna do
+   notebook, oito eventos (as oito moedas do Brasil) pediam 1504px e a linha do tempo rolava de lado
+   mesmo numa tela grande. 116px cabem oito eventos na coluna; no celular a rolagem própria fica,
+   porque ali ela é inevitável. */
+.sl-tempo-trilho { position: relative; width: max(100%, calc(var(--n) * var(--sl-tempo-min, 188px))) }
+@media (min-width: 961px) { .sl-tempo { --sl-tempo-min: 116px } }
 .sl-tempo-svg { display: block; overflow: visible }
 .sl .sl-tempo-serie { fill: var(--sl-tinta-2); font-size: 12px }
 .sl-tempo-area { fill: rgba(26, 24, 21, .045) }
@@ -698,10 +783,10 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 .sl-tempo-eventos { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)) }
 .sl-tempo-eventos li { padding: 10px 12px 6px; border-top: 2px solid var(--sl-linha-forte); outline-offset: -2px; transition: border-color .15s ease }
 .sl-tempo-eventos li.is-aceso { border-top-color: var(--sl-acento) }
-.sl-tempo-data { display: block; font-size: 12.5px; font-weight: 600; color: var(--sl-tinta-2); font-variant-numeric: tabular-nums lining-nums }
+.sl-tempo-data { display: block; font-size: 13px; font-weight: 600; color: var(--sl-tinta-2); font-variant-numeric: tabular-nums lining-nums }
 .sl-tempo-eventos li.is-aceso .sl-tempo-data { color: var(--sl-acento) }
-.sl-tempo-titulo { margin-top: 3px; font-weight: 600; font-size: 14px; line-height: 1.3; color: var(--sl-tinta) }
-.sl-tempo-texto { margin-top: 4px; font-size: 12.5px; line-height: 1.45; color: var(--sl-tinta-2) }
+.sl-tempo-titulo { margin-top: 3px; font-weight: 500; font-size: 15px; line-height: 1.3; color: var(--sl-tinta) }
+.sl-tempo-texto { margin-top: 4px; font-size: 13px; line-height: 1.45; color: var(--sl-tinta-2) }
 .sl-tempo-valor { margin-top: 6px; font-size: 12px; color: var(--sl-tinta-3); font-variant-numeric: tabular-nums lining-nums }
 
 /* ---- fluxo ---------------------------------------------------------------- */
@@ -710,15 +795,15 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 .sl-fluxo-passo { position: relative; display: flex; min-width: 0 }
 .sl-fluxo-no { flex: 1; padding: 12px 14px 14px; border: 1px solid var(--sl-borda); border-radius: 10px; background: var(--sl-papel) }
 .sl-fluxo-no.is-fim { border-color: var(--sl-tinta); background: #fff }
-.sl-fluxo-num { font-size: 12px; font-weight: 500; color: var(--sl-tinta-3); font-variant-numeric: tabular-nums }
-.sl-fluxo-titulo { margin-top: 4px; font-weight: 600; font-size: 15px; line-height: 1.3; color: var(--sl-tinta) }
+.sl-fluxo-num { font-size: 12.5px; font-weight: 500; color: var(--sl-tinta-3); font-variant-numeric: tabular-nums }
+.sl-fluxo-titulo { margin-top: 4px; font-weight: 500; font-size: 16px; line-height: 1.3; color: var(--sl-tinta) }
 .sl-fluxo-sentido { margin-left: 5px; font-weight: 600; color: var(--sl-acento) }
-.sl-fluxo-texto { margin-top: 5px; font-size: 13px; line-height: 1.45; color: var(--sl-tinta-2) }
+.sl-fluxo-texto { margin-top: 5px; font-size: 14px; line-height: 1.45; color: var(--sl-tinta-2) }
 .sl-fluxo-seta {
   position: absolute; right: 100%; top: 50%; width: 60px; transform: translateY(-50%);
   display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--sl-tinta-2); pointer-events: none;
 }
-.sl-fluxo-seta span { font-size: 11.5px; line-height: 1.2; color: var(--sl-tinta-2); white-space: nowrap }
+.sl-fluxo-seta span { font-size: 12px; line-height: 1.2; color: var(--sl-tinta-2); white-space: nowrap }
 .sl-fluxo-seta svg { width: 40px; height: 12px; display: block }
 
 /* ---- matriz --------------------------------------------------------------- */
@@ -740,60 +825,59 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 .sl-matriz-tabela tbody td.is-marca { border: 1.5px solid var(--sl-acento) }
 .sl-matriz-marca { position: absolute; top: 8px; left: 10px; font-size: 11.5px; font-weight: 600; color: var(--sl-acento) }
 .sl-matriz[data-modo="quadrante"] .sl-matriz-marca { position: static; display: block; margin-bottom: 4px }
-.sl-matriz-par { font-weight: 600; font-size: 22px; letter-spacing: -.01em; font-variant-numeric: tabular-nums lining-nums }
+.sl-matriz-par { font-weight: 500; font-size: 22px; letter-spacing: -.01em; font-variant-numeric: tabular-nums lining-nums }
 .sl-matriz-par b { color: var(--sl-tinta); font-weight: 600 }
 .sl-matriz-par i { font-style: normal; font-weight: 500; color: var(--sl-tinta-2); margin-left: 4px }
-.sl-matriz-texto { display: block; font-size: 14px; line-height: 1.4; color: var(--sl-tinta) }
+.sl-matriz-texto { display: block; font-size: 15px; line-height: 1.4; color: var(--sl-tinta) }
 .sl-matriz-par + .sl-matriz-texto { margin-top: 4px; font-size: 12.5px; color: var(--sl-tinta-2) }
-.sl-matriz-painel { margin-top: 10px; min-height: 46px; padding: 12px 14px; border-radius: 8px; background: var(--sl-papel); font-size: 14px; line-height: 1.5; color: var(--sl-tinta) }
-.sl-matriz-painel b { font-weight: 600 }
+.sl-matriz-painel { margin-top: 10px; min-height: 46px; padding: 12px 14px; border-radius: 8px; background: var(--sl-papel); font-size: 15px; line-height: 1.5; color: var(--sl-tinta) }
+.sl-matriz-painel b { font-weight: 500 }
 .sl-matriz-dica { color: var(--sl-tinta-3) }
 .sl-matriz-legenda { margin-top: 8px; font-size: 12px; color: var(--sl-tinta-3) }
 
 /* ---- simulador ------------------------------------------------------------ */
 
 .sl-sim { padding: 22px 24px 18px }
-.sl-sim-rotulo { font-size: 12.5px; font-weight: 600; color: var(--sl-acento); margin-bottom: 4px }
+.sl-sim-rotulo { margin-bottom: 6px }
 .sl-sim-grade { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px; margin-top: 20px; align-items: start }
 .sl-sim-controles { display: flex; flex-direction: column; gap: 18px }
-.sl-controle label { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 13px; line-height: 1.35; font-weight: 500; color: var(--sl-tinta) }
-.sl-controle output { font-weight: 600; font-size: 14px; color: var(--sl-tinta); white-space: nowrap; font-variant-numeric: tabular-nums lining-nums }
+.sl-controle label { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; line-height: 1.35; font-weight: 500; color: var(--sl-tinta) }
+.sl-controle output { font-weight: 500; font-size: 15px; color: var(--sl-tinta); white-space: nowrap; font-variant-numeric: tabular-nums lining-nums }
 .sl-controle input[type="range"] { width: 100%; margin: 8px 0 0; accent-color: var(--sl-acento); height: 22px; cursor: pointer }
-.sl-controle small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.45; color: var(--sl-tinta-3) }
-.sl-sim-fixos { padding-top: 12px; border-top: 1px solid var(--sl-linha); font-size: 12.5px; line-height: 1.5; color: var(--sl-tinta-2) }
+.sl-controle small { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.45; color: var(--sl-tinta-3) }
+.sl-sim-fixos { padding-top: 12px; border-top: 1px solid var(--sl-linha); font-size: 13px; line-height: 1.5; color: var(--sl-tinta-2) }
 .sl-sim-resultado { padding-bottom: 14px; border-bottom: 1px solid var(--sl-linha) }
-.sl-sim-resultado b { display: block; font-weight: 600; font-size: clamp(32px, 3.4vw, 44px); line-height: 1; letter-spacing: -.025em; color: var(--sl-acento); font-variant-numeric: tabular-nums lining-nums }
-.sl-sim-resultado p { margin-top: 8px; font-size: 13.5px; line-height: 1.5; color: var(--sl-tinta-2) }
+.sl-sim-resultado b { display: block; font-weight: 500; font-size: clamp(32px, 3.4vw, 44px); line-height: 1; letter-spacing: -.025em; color: var(--sl-acento); font-variant-numeric: tabular-nums lining-nums }
+.sl-sim-resultado p { margin-top: 8px; font-size: 14.5px; line-height: 1.5; color: var(--sl-tinta-2) }
 .sl-sim-extras { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; border-bottom: 1px solid var(--sl-linha) }
 .sl-sim-extras div { padding: 10px 0 }
-.sl-sim-extras dt { font-size: 12px; line-height: 1.35; color: var(--sl-tinta-2) }
-.sl-sim-extras dd { margin-top: 3px; font-weight: 600; font-size: 15px; color: var(--sl-tinta); font-variant-numeric: tabular-nums lining-nums }
+.sl-sim-extras dt { font-size: 13px; line-height: 1.35; color: var(--sl-tinta-2) }
+.sl-sim-extras dd { margin-top: 3px; font-weight: 500; font-size: 16px; color: var(--sl-tinta); font-variant-numeric: tabular-nums lining-nums }
 /* O gráfico do simulador mora dentro da caixa do simulador: sem segunda moldura. */
 .sl-sim .sl-fig { border: 0; border-radius: 0; background: transparent; padding: 0; margin-top: 14px }
 
 /* ---- conceito ------------------------------------------------------------- */
 
-.sl-conceito { max-width: 84ch; padding: 2px 0 2px 22px; border-left: 2px solid var(--sl-tinta) }
-.sl-conceito-rotulo { font-size: 12.5px; font-weight: 500; color: var(--sl-tinta-2) }
-.sl-conceito-termo { margin-top: 2px; font-weight: 600; font-size: 20px; line-height: 1.25; letter-spacing: -.01em; color: var(--sl-tinta) }
+.sl-conceito { max-width: 84ch; padding: 2px 0 2px 24px; border-left: 2px solid var(--sl-tinta) }
+.sl-conceito-termo { margin-top: 6px; font-weight: 500; font-size: 21px; line-height: 1.25; letter-spacing: -.01em; color: var(--sl-tinta) }
 .sl-conceito-grade { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; margin-top: 10px }
-.sl-conceito-grade p { font-size: 15px; line-height: 1.6; color: #2a2723 }
+.sl-conceito-grade p { font-size: 16px; line-height: 1.6; color: #2a2723 }
 .sl-conceito-pratica { padding-left: 28px; border-left: 1px solid var(--sl-linha) }
-.sl .sl-conceito-sub { margin-bottom: 4px; font-size: 12.5px; font-weight: 600; color: var(--sl-acento) }
-.sl .sl-conceito-formula { display: inline-block; margin-top: 10px; padding: 6px 10px; border-radius: 6px; background: var(--sl-papel-baixo); font-size: 14.5px; font-weight: 500; color: var(--sl-tinta); font-variant-numeric: tabular-nums lining-nums }
-.sl-conceito-ref { margin-top: 12px; font-size: 12.5px; line-height: 1.5; color: var(--sl-tinta-3) }
+.sl .sl-conceito-sub { margin-bottom: 6px }
+.sl .sl-conceito-formula { display: inline-block; margin-top: 10px; padding: 6px 10px; border-radius: 6px; background: var(--sl-papel-baixo); font-size: 15px; font-weight: 500; color: var(--sl-tinta); font-variant-numeric: tabular-nums lining-nums }
+.sl-conceito-ref { margin-top: 12px; font-size: 13px; line-height: 1.5; color: var(--sl-tinta-3) }
 .sl-conceito-ref cite { font-style: italic }
 
 /* ---- referências ---------------------------------------------------------- */
 
 .sl-refs { border-top: 1px solid var(--sl-tinta); padding-top: 12px }
-.sl-refs h4 { font-weight: 600; font-size: 17px; color: var(--sl-tinta) }
+.sl-refs h4 { font-weight: 500; font-size: 18.5px; color: var(--sl-tinta) }
 .sl-refs ol { margin-top: 8px; counter-reset: ref }
-.sl-refs li { counter-increment: ref; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 6px; padding: 12px 0; border-bottom: 1px solid var(--sl-linha) }
-.sl-refs li::before { content: counter(ref, decimal-leading-zero); padding-top: 2px; font-size: 12.5px; font-weight: 500; color: var(--sl-tinta-3); font-variant-numeric: tabular-nums }
-.sl-refs cite { font-style: italic; font-weight: 500; font-size: 15.5px; color: var(--sl-tinta) }
-.sl-refs-autor { display: block; margin-top: 2px; font-size: 13px; color: var(--sl-tinta-2) }
-.sl-refs-nota { display: block; margin-top: 4px; font-size: 13.5px; line-height: 1.55; color: var(--sl-tinta-2) }
+.sl-refs li { overflow-wrap: anywhere; counter-increment: ref; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 6px; padding: 12px 0; border-bottom: 1px solid var(--sl-linha) }
+.sl-refs li::before { content: counter(ref, decimal-leading-zero); padding-top: 3px; font-size: 13px; font-weight: 500; color: var(--sl-tinta-3); font-variant-numeric: tabular-nums }
+.sl-refs cite { font-style: italic; font-weight: 400; font-size: 16.5px; color: var(--sl-tinta) }
+.sl-refs-autor { display: block; margin-top: 2px; font-size: 14px; color: var(--sl-tinta-2) }
+.sl-refs-nota { display: block; margin-top: 4px; font-size: 14.5px; line-height: 1.55; color: var(--sl-tinta-2) }
 
 /* ---- entrada (Entrada.tsx) ---------------------------------------------------
    `fora` só existe com JS e sem movimento reduzido, e só em figura que estava
@@ -856,19 +940,19 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
 }
 .sl-chamada .sl-hero-globo img { width: 520px; right: -120px; opacity: .12 }
 .sl-chamada-texto { position: relative; z-index: 1; max-width: 640px }
-.sl-chamada h2 { margin-top: 8px; font-family: var(--sl-serifa); font-weight: 600; font-size: 30px; line-height: 1.1 }
-.sl-chamada p { margin-top: 8px; font-size: 14.5px; line-height: 1.6; color: rgba(253, 250, 245, .8) }
+.sl-chamada h2 { margin-top: 10px; font-weight: 500; font-size: 30px; line-height: 1.1; letter-spacing: -.015em }
+.sl-chamada p { margin-top: 8px; font-size: 15.5px; line-height: 1.6; color: rgba(253, 250, 245, .8) }
 .sl-chamada .sl-btn { position: relative; z-index: 1 }
 .sl-home-trilha { margin-top: 40px }
-.sl-home-trilha-cabeca { display: flex; align-items: baseline; gap: 14px; padding-bottom: 4px }
-.sl-home-trilha-cabeca i { width: 30px; height: 1px; background: var(--sl-regua) }
-.sl-home-trilha-cabeca h2 { font-family: var(--sl-serifa); font-weight: 600; font-size: 22px }
+/* Sem o traço de 30px antes do título desde 07/out/2026 (o mesmo ornamento que saiu do eyebrow). */
+.sl-home-trilha-cabeca { padding-bottom: 4px }
+.sl-home-trilha-cabeca h2 { font-weight: 500; font-size: 24px; letter-spacing: -.01em }
 
 /* ---- movimento reduzido --------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   .sl *, .sl *::before, .sl *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important }
-  .sl-btn:hover, .sl-no-link:hover .sl-no-bola, a.sl-capa:hover .sl-capa-play, a.sl-pl-item:hover { transform: none }
+  .sl-btn:active, .sl-concluir:active, a.sl-capa:hover .sl-capa-play { transform: none }
 }
 
 /* ---- telas estreitas: o desenho é de desktop, aqui só empilha ------------- */
@@ -896,6 +980,7 @@ a.sl-pl-item:hover { border-color: var(--sl-acento); transform: translateY(-1px)
   .sl-no-texto { display: flex; flex-direction: column; align-items: flex-start }
   .sl-no-rotulo { margin-top: 0 }
   .sl-no-titulo { max-width: none }
+  .sl-no-docente { justify-content: flex-start }
   .sl-aqui { position: static; transform: none; display: inline-block; margin-bottom: 6px }
   .sl-aqui::after { display: none }
 }

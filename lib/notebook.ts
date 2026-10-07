@@ -384,6 +384,14 @@ export type Notebook = {
    * não aparece: o título da seção vem do banco, e não haveria o que escrever nele.
    */
   aulas: SecaoDaAula[];
+  /**
+   * Quem dá cada aula, pela posição dela no módulo (`{ 3: "Rodolfo Bastos" }`). Opcional. Nasceu em
+   * 07/out/2026 porque o Módulo I tem dois docentes num campo só do banco (`modules.docente`), e a
+   * cabeça da aula 3 mostrava os dois, embora só o Rodolfo apareça nela. Aula fora deste mapa, ou
+   * notebook sem ele, cai nos docentes do módulo, como antes. O nome passa por `lib/docentes.ts`,
+   * que acha foto e credencial.
+   */
+  docentePorAula?: Record<number, string>;
 };
 
 /** A âncora da seção de uma aula no notebook. Um lugar só, porque a playlist e o índice usam. */

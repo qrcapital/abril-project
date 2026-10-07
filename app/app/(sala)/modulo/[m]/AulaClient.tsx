@@ -65,8 +65,9 @@ export default function AulaClient({ n, pos, concluida }: { n: number; pos: numb
   return (
     <>
       <button type="button" data-concluir={n} className={e.classe} onClick={alternar} disabled={ocupado} aria-busy={ocupado}>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
-          {feita ? <path d="M5 12.5l4.5 4.5L19 7.5" /> : <circle cx="12" cy="12" r="8.5" />}
+        {/* Ícone de traço fino, na medida dos chevrons dos botões vizinhos (07/out/2026). */}
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          {feita ? <path d="M5.5 12.5l4 4L18.5 7.5" /> : <circle cx="12" cy="12" r="8.25" />}
         </svg>
         {e.rotulo}
       </button>

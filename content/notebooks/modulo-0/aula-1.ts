@@ -9,6 +9,9 @@ import type { SecaoDaAula } from "@/lib/notebook";
 // NÚMEROS CONFERIDOS EM 01/OUT/2026 nas fontes primárias citadas em cada bloco. Onde a aula cita um
 // número diferente do da fonte (inflação de 1979 a 1994, inflação americana, P/L, ano do ETF de ouro),
 // o texto registra as duas coisas, sem apagar o que foi dito em aula.
+//
+// TOM REESCRITO EM 07/OUT/2026 pelo guia `docs/TOM-DO-NOTEBOOK.md`: conversa em segunda pessoa,
+// exemplo antes do conceito, fórmulas traduzidas em palavras e citações acadêmicas só no fim.
 
 const secao: SecaoDaAula = {
   aula: 1,
@@ -17,19 +20,18 @@ const secao: SecaoDaAula = {
     {
       tipo: "capitulo",
       id: "a-vida-ja-e-global",
-      titulo: "A vida já é global; o patrimônio, não",
-      resumo: "Concentrar tudo em uma moeda é uma aposta, e o acesso ao exterior deixou de ser privilégio de poucos.",
+      titulo: "A sua vida já é global. O seu dinheiro, não",
+      resumo: "Deixar tudo numa moeda só é uma aposta, e investir lá fora deixou de ser coisa de poucos.",
       tempo: "0:19",
     },
     {
       tipo: "texto",
       capitular: true,
-      tempo: "0:19",
       paragrafos: [
-        "O celular, o sistema operacional, a plataforma de streaming, o tênis: quase tudo o que o brasileiro consome no dia a dia tem dono, marca ou preço formado fora do Brasil. O patrimônio, porém, costuma ficar inteiro aqui, em reais, aplicado em empresas e títulos de um único país. A aula abre com essa assimetria, e ela é o ponto de partida do curso: manter 100% em uma moeda e em uma economia não é ausência de escolha, é uma aposta concentrada que raramente se faz de forma consciente.",
-        "O que mudou foi o acesso. Até poucos anos atrás, investir lá fora pedia private banking, contrato de câmbio na agência e aplicação mínima alta. A Lei 14.286, de 2021, o novo marco cambial que entrou em vigor no último dia de 2022, simplificou as operações de câmbio e abriu caminho para contas em moeda estrangeira e para as contas globais oferecidas por bancos e fintechs. Hoje a abertura de conta cabe num aplicativo. A barreira deixou de ser operacional e passou a ser de método.",
-        "Marcelo Campos faz uma ressalva antes de qualquer argumento a favor: dolarizar também tem risco. Quem vive e gasta em reais e compra um ativo em dólar passa a carregar dois riscos ao mesmo tempo, o do ativo e o da moeda. Uma ação americana que sobe 8% em dólar entrega perto de 19% em reais se o dólar subir 10% no período, e cerca de −3% se o dólar cair 10%. É o que o mercado chama de risco duplo, e ele vale nos dois sentidos: o câmbio que protege numa crise local é o mesmo que corrói o resultado quando o real se fortalece.",
-        "O curso segue essa lógica, em quatro módulos que vão do porquê à prática: macro e estratégia global com Felippe Hermes e Rodolfo Bastos, renda fixa e ações americanas com Tony Volpon, acesso ao mercado dos Estados Unidos com Luiz Roxo e ativos digitais com Alexandre Ywata. Nesta primeira aula, Felippe Hermes, fundador da BlockTrends e do Spotniks, organiza o argumento em cinco razões. Este notebook acompanha a mesma ordem, com os números conferidos nas fontes originais.",
+        "Olhe em volta. O celular, o sistema operacional, a série de ontem, o tênis: quase tudo o que você usa tem dono ou preço formado fora do Brasil. O seu patrimônio, porém, provavelmente está inteiro aqui, em reais, em empresas e títulos de um país só. Parece neutro, mas não é. Deixar 100% numa moeda e numa economia é uma aposta, e quase ninguém faz essa aposta de propósito.",
+        "O que mudou foi a porta de entrada. Até pouco tempo atrás, investir lá fora pedia private banking, papelada na agência e um valor mínimo alto. O novo marco cambial, a Lei 14.286, que passou a valer no fim de 2022, simplificou o câmbio e abriu espaço para as contas globais de bancos e fintechs. Hoje você abre uma conta internacional pelo celular. A barreira deixou de ser burocrática e passou a ser de método.",
+        "Antes de qualquer argumento a favor, Marcelo Campos faz um alerta: dolarizar também tem risco. Se você vive e gasta em reais e compra um ativo em dólar, passa a carregar dois riscos de uma vez, o do ativo e o da moeda. Imagine uma ação americana que sobe 8% num ano. Se o dólar subir 10% no mesmo período, você ganha perto de 19% em reais. Se o dólar cair 10%, termina com cerca de 3% de prejuízo, mesmo com a ação no azul. É o chamado risco duplo, e ele corta para os dois lados.",
+        "O curso tem quatro módulos, do porquê à prática: macro e estratégia global com Felippe Hermes e Rodolfo Bastos, renda fixa e ações americanas com Tony Volpon, acesso ao mercado americano com Luiz Roxo e ativos digitais com Alexandre Ywata. Nesta primeira aula, Felippe, fundador da BlockTrends e do Spotniks, organiza o argumento em cinco razões. Este notebook segue a mesma ordem.",
       ],
     },
     {
@@ -40,23 +42,21 @@ const secao: SecaoDaAula = {
     {
       tipo: "conceito",
       tempo: "2:00",
-      termo: "Retorno em moeda de origem",
+      termo: "Retorno em reais de um ativo em dólar",
       definicao:
-        "Para quem mede a vida em reais, um ativo no exterior é sempre uma carteira de duas posições: o ativo, que rende na moeda dele, e a própria moeda estrangeira. O retorno em reais é o produto dos dois fatores, e não a soma: um mais o retorno do ativo em dólar, vezes um mais a variação do dólar em reais, menos um. Somar as duas taxas é só uma aproximação, que piora quando os movimentos são grandes. Bodie, Kane e Marcus montam a conta para o americano que compra um título britânico: o papel é livre de risco para quem vive em libras, mas não para quem vive em dólares.",
-      formula: "1 + r(R$) = [1 + r(US$)] × E1/E0, com E em reais por dólar",
+        "Quando você compra algo lá fora, na verdade compra duas coisas: o ativo e a moeda em que ele é cotado. O seu resultado em reais junta os dois movimentos, e não é uma simples soma, porque um ganho rende em cima do outro. Se o ativo sobe 10% e o dólar também sobe 10%, você não ganha 20%, ganha 21%: a alta do dólar incide sobre um valor que já tinha crescido. Em movimentos pequenos a soma quase acerta; nos grandes, a diferença aparece.",
       naPratica:
-        "É a conta exata do risco duplo de que fala Marcelo Campos: o mesmo ativo pode ganhar em dólar e perder em reais, ou o contrário. O livro tira daí duas consequências. Ações de empresas do próprio país com receita em dólar não fazem esse papel, porque o preço delas segue o mercado de origem, onde estão os acionistas e boa parte dos custos. E a proteção cambial integral (hedge) reduz o benefício da diversificação: segundo os profissionais ouvidos no livro, esse benefício vem em partes aproximadamente iguais das ações estrangeiras e da moeda estrangeira, e é a parte da moeda que mais interessa a quem tem renda e patrimônio numa moeda só.",
+        "É por isso que o mesmo investimento pode dar lucro em dólar e prejuízo em reais, ou o contrário. Daí saem duas consequências. Ação de exportadora brasileira não faz o mesmo papel, porque o preço dela segue a bolsa daqui, mesmo com receita em dólar. E quem neutraliza todo o câmbio com uma operação de proteção (o chamado hedge) joga fora boa parte do benefício: para quem ganha e gasta só em reais, perto de metade da proteção que o exterior oferece vem da própria moeda.",
       referencia: {
         autor: "Zvi Bodie, Alex Kane e Alan J. Marcus",
         obra: "Investments",
-        capitulo: "cap. 25, seção 25.2 (exemplo 25.1) e box sobre investimento internacional",
+        capitulo: "cap. 25",
         ano: 2014,
       },
     },
     {
       tipo: "tabela",
-      tempo: "2:00",
-      titulo: "Ativo e moeda se multiplicam: retorno em reais de um ativo cotado em dólar",
+      titulo: "Ativo e moeda se multiplicam: o que você ganha em reais",
       colunas: ["Retorno do ativo em dólar", "Dólar cai 10%", "Dólar estável", "Dólar sobe 10%"],
       linhas: [
         ["−10%", "−19%", "−10%", "−1%"],
@@ -64,7 +64,7 @@ const secao: SecaoDaAula = {
         ["+10%", "−1%", "+10%", "+21%"],
       ],
       nota:
-        "Ilustrativo: retorno em reais = (1 + retorno em dólar) × (1 + variação do dólar) − 1, sem impostos, IOF e custos. A soma simples erra nos cantos: 10% de alta do ativo com 10% de alta do dólar dão 21%, e não 20%; 10% de alta do ativo com 10% de queda do dólar dão −1%, e não zero.",
+        "Ilustrativo, sem impostos, IOF e custos. Repare nos cantos: ativo e dólar subindo 10% cada dão 21%, e não 20%; ativo subindo 10% com o dólar caindo 10% dão 1% de perda, e não zero.",
     },
 
     // ---- razão 1: escala --------------------------------------------------------------------------
@@ -72,24 +72,23 @@ const secao: SecaoDaAula = {
       tipo: "capitulo",
       id: "dois-por-cento-do-mundo",
       titulo: "Razão 1: o Brasil é cerca de 2% do mundo",
-      resumo: "Dolarizar não é guardar cédula; é participar de uma economia cinquenta vezes maior que a brasileira.",
+      resumo: "Dolarizar não é guardar nota de dólar. É participar de uma economia cinquenta vezes maior que a brasileira.",
       tempo: "3:49",
     },
     {
       tipo: "texto",
-      tempo: "3:49",
       paragrafos: [
-        "Antes das razões, Felippe desfaz um mito. Dolarizar não é comprar dólar e guardar no colchão, nem uma posição política sobre este ou aquele governo. É ter parte do patrimônio em ações, imóveis e outros ativos que produzem renda fora do país. E \"fora\" não quer dizer só Estados Unidos: o dólar se consolidou como moeda de referência global com os acordos de Bretton Woods, em 1944, e carne, soja, minério e boa parte dos serviços do mundo são cotados nele. Antes do dólar, esse papel coube à libra esterlina, e o hábito de medir valor numa moeda central não desaparece se a moeda central mudar.",
-        "A primeira razão é de escala. Pelas projeções do FMI de abril de 2026, o PIB brasileiro deve somar cerca de US$ 2,6 trilhões neste ano, perto de 2,1% de uma economia mundial de US$ 126 trilhões. Os números da aula, 1,9% e US$ 2,2 trilhões contra US$ 118 trilhões, correspondem a 2025: a fatia oscila conforme o ano e, sobretudo, conforme o câmbio. Em qualquer das contas, o resto do mundo produz cerca de 98% da riqueza, e é nesse resto que está a maior parte das marcas que o brasileiro conhece e usa.",
-        "No mercado de ações, a distância é ainda maior. O MSCI ACWI, índice que cobre cerca de 85% do valor das ações negociáveis em 47 países, somava US$ 104 trilhões no fim de agosto de 2026; a parte brasileira, perto de US$ 490 bilhões, equivale a menos de 0,5% do total, enquanto os Estados Unidos sozinhos respondem por 63,6%. O índice pondera as empresas pelo valor das ações em livre circulação, o que reduz o peso de mercados com controle estatal ou acesso restrito a estrangeiros, como a China. Ainda assim, a mensagem não muda: quem investe só na B3 investe em menos de um duzentos avos do mercado global.",
-        "Há um argumento que costuma passar despercebido, e a aula o expõe perto dos 9 minutos: o investidor brasileiro já está muito exposto ao Brasil antes de aplicar o primeiro real. Salário, carreira, aposentadoria do INSS e imóvel dependem da mesma economia, da mesma moeda e das mesmas decisões de política. Baxter e Jermann mostraram, num artigo de 1997 na American Economic Review, que a renda do trabalho tende a andar junto com o mercado de ações do próprio país, o que torna a concentração doméstica da carteira mais arriscada do que parece. A parte financeira do patrimônio é a única que se diversifica com alguns cliques.",
+        "Antes das razões, Felippe desfaz um mito. Dolarizar não é comprar dólar e guardar no colchão, e também não é torcer contra o governo da vez. É ter parte do patrimônio em ações, imóveis e outros ativos que geram renda fora do país. E fora não quer dizer só Estados Unidos. Carne, soja, minério e boa parte dos serviços do mundo são cotados em dólar desde que ele virou a moeda de referência global, nos acordos de Bretton Woods, em 1944. Antes dele, o posto era da libra esterlina. Se um dia o dólar for substituído, o hábito de medir tudo numa moeda central continua.",
+        "A primeira razão é de escala. O Brasil produz cerca de 2% da riqueza do mundo. Na aula, Felippe fala em 1,9%, um PIB de US$ 2,2 trilhões contra US$ 118 trilhões do planeta, números de 2025; pelas projeções do FMI para 2026, são US$ 2,6 trilhões contra US$ 126 trilhões, ou 2,1%. A fatia muda com o ano e, principalmente, com o câmbio. O recado não muda: 98% da riqueza é produzida lá fora, e é lá que está a maioria das marcas que você usa.",
+        "Na bolsa, a distância é ainda maior. O MSCI ACWI, índice que reúne as principais ações de 47 países, somava US$ 104 trilhões em agosto de 2026. O Brasil é menos de 0,5% disso; os Estados Unidos, sozinhos, quase dois terços. Ou seja: quem investe só na B3 está olhando para menos de um duzentos avos do mercado de ações do mundo.",
+        "Tem um ponto que costuma passar batido: você já está muito exposto ao Brasil antes de investir o primeiro real. Salário, carreira, aposentadoria do INSS e imóvel dependem da mesma economia, da mesma moeda e das mesmas decisões de Brasília. E quando a economia vai mal, costuma ir mal para o seu emprego e para a bolsa ao mesmo tempo. Dessa lista, a parte financeira é a única que você diversifica com alguns cliques.",
       ],
     },
     {
       tipo: "grafico",
       tempo: "6:50",
       titulo: "O Brasil é 2% do PIB mundial e menos de 0,5% do mercado global de ações",
-      subtitulo: "% do total mundial: PIB em US$ correntes (projeção 2026) e peso no índice MSCI ACWI (31/ago/2026)",
+      subtitulo: "% do total mundial: PIB (projeção 2026) e peso no índice global de ações MSCI ACWI (31/ago/2026)",
       forma: "barra",
       eixoX: ["EUA", "China", "Japão", "Reino Unido", "Índia", "Brasil"],
       series: [
@@ -100,28 +99,26 @@ const secao: SecaoDaAula = {
       fonte:
         "FMI, World Economic Outlook, abr/2026 (PIB em US$ correntes); MSCI, factsheets MSCI ACWI e MSCI Emerging Markets, 31/ago/2026",
       nota:
-        "Pesos de China, Índia e Brasil no ACWI calculados a partir do peso de cada país no MSCI Emerging Markets e do valor dos dois índices. O índice pondera pelo valor em livre circulação, o que reduz o peso de mercados com acesso restrito a estrangeiros.",
+        "Pesos de China, Índia e Brasil no ACWI estimados a partir do índice de emergentes da MSCI. O índice conta só as ações em livre circulação, o que reduz o peso de mercados fechados a estrangeiros, como a China.",
     },
     {
       tipo: "conceito",
       tempo: "9:00",
       termo: "Capital humano",
       definicao:
-        "Capital humano é o valor presente da renda do trabalho que uma pessoa ainda vai receber. Não aparece no extrato da corretora, mas, para quem está em idade ativa, costuma ser o maior ativo do balanço. Bodie, Kane e Marcus lembram que, somado em toda a economia, ele supera o valor de todos os ativos negociados, e que é pouco portátil e difícil de proteger com títulos. Como salários e lucros das empresas locais oscilam com a mesma economia, o capital humano funciona como uma posição comprada no próprio país. Com renda anual constante Y por T anos de carreira, descontada à taxa d, ele vale a expressão abaixo.",
-      formula: "CH = Y × [1 − (1 + d)^(−T)] / d",
+        "Pense em quanto você ainda vai ganhar trabalhando até se aposentar, trazido para valores de hoje. Isso tem nome: capital humano. Não aparece no extrato da corretora, mas, para quem está na ativa, costuma ser o maior bem que a pessoa tem. Um exemplo: R$ 120 mil por ano durante 25 anos, trazidos a valor de hoje com juro de 5% ao ano, valem cerca de R$ 1,7 milhão. E esse bem anda junto com a economia do país: quando o Brasil vai mal, salários e empregos sofrem junto com as empresas daqui. Na prática, é uma posição em Brasil que você nem escolheu.",
       naPratica:
-        "O livro cita casos extremos do mesmo erro. Em 2008, os funcionários do Lehman Brothers tinham cerca de 30% das ações do banco e perderam perto de US$ 10 bilhões quando ele quebrou: emprego e poupança estavam no mesmo lugar. O executivo com bônus atrelado ao lucro da empresa já está superinvestido nela e não deveria comprar mais ações do setor. Em escala de país, é a situação de quem recebe salário, contribui para o INSS, tem imóvel e investe tudo em reais. A diversificação começa pelo patrimônio inteiro, não só pela carteira.",
+        "O caso extremo é o do Lehman Brothers. Quando o banco quebrou, em 2008, os funcionários tinham cerca de 30% das ações e perderam perto de US$ 10 bilhões: emprego e poupança estavam no mesmo lugar. Em escala de país, é a situação de quem recebe salário em reais, contribui para o INSS, tem imóvel aqui e investe tudo aqui. Diversificar começa pelo patrimônio inteiro, não só pela carteira.",
       referencia: {
         autor: "Zvi Bodie, Alex Kane e Alan J. Marcus",
         obra: "Investments",
-        capitulo: "cap. 9 (renda do trabalho e ativos não negociados), cap. 11 e cap. 28, seção 28.5",
+        capitulo: "caps. 9, 11 e 28",
         ano: 2014,
       },
     },
     {
       tipo: "tabela",
-      tempo: "9:00",
-      titulo: "Mesmo com todos os investimentos fora, a maior parte do patrimônio segue atrelada ao Brasil",
+      titulo: "Mesmo com todos os investimentos fora, a maior parte do seu patrimônio segue atrelada ao Brasil",
       colunas: ["Parcela dos investimentos no exterior", "Investimentos atrelados ao Brasil", "Patrimônio total atrelado ao Brasil"],
       linhas: [
         ["Nenhuma", "100%", "100%"],
@@ -130,30 +127,31 @@ const secao: SecaoDaAula = {
         ["Tudo", "0%", "85%"],
       ],
       nota:
-        "Ilustrativo, e não sugestão de alocação: renda do trabalho de R$ 120 mil por ano por 25 anos, descontada a 5% ao ano, dá capital humano de cerca de R$ 1,69 milhão, somado a R$ 300 mil em investimentos. Patrimônio atrelado ao Brasil = (capital humano + investimentos no Brasil) / patrimônio total. Um imóvel no país elevaria todas as linhas.",
+        "Ilustrativo, e não sugestão de alocação: renda de R$ 120 mil por ano por 25 anos, trazida a valor de hoje a 5% ao ano, dá cerca de R$ 1,69 milhão de capital humano, somado a R$ 300 mil investidos. A última coluna é a parte desse total que depende do Brasil. Um imóvel no país elevaria todas as linhas.",
     },
     {
       tipo: "texto",
       tempo: "9:48",
       paragrafos: [
-        "A outra metade da primeira razão é histórica. Quem viveu os anos 1980 lembra que a moeda brasileira não guardava valor de um mês para o outro. Pelo IPCA, índice que o IBGE calcula desde dezembro de 1979, os preços subiram cerca de 11 trilhões por cento entre o fim de 1979 e junho de 1994, o mês anterior ao real. A aula cita 13 trilhões, cifra que circula com outras janelas e outros índices; a ordem de grandeza é a mesma, e nenhuma das duas cabe na imaginação.",
-        "Nesse ambiente, o brasileiro já usava o dólar como reserva de valor, ainda que não como meio de pagamento. A indexação se espalhou pelos contratos, e índices como o IGP-M, criado pela FGV em 1989, com peso grande de preços no atacado e de commodities cotadas em dólar, passaram a reajustar aluguéis e tarifas. Entre 1942 e 1994 o país trocou de moeda oito vezes, cinco delas em apenas oito anos, de 1986 a 1994.",
-        "O real é o grande sucesso dessa história e, ainda assim, não escapou da inflação. De julho de 1994 a agosto de 2026, o IPCA acumulou alta de 733%: são precisos cerca de R$ 8,30 hoje para comprar o que R$ 1 comprava no lançamento da moeda, uma perda de 88% do poder de compra. No mesmo período, a média mensal do dólar comercial passou de R$ 0,93 para R$ 5,15, uma desvalorização de 82% do real contra a moeda americana. São esses os dois números por trás dos 762% e dos 83% citados em aula, que variam conforme o mês de referência. Alta de um lado e perda do outro descrevem o mesmo movimento visto de lados opostos: o dólar subiu 454% em reais (5,15 ÷ 0,93), e o real perdeu 1 − 0,93 ÷ 5,15, ou 82%, em dólar. Por isso uma alta de 100% do dólar equivale a uma perda de 50% do real, nunca de 100%, e os 733% de alta dos preços correspondem a 88% de perda do poder de compra.",
-        "O detalhe que muda a decisão vem em seguida: o dólar também perde valor. O índice de preços ao consumidor americano subiu 126% no mesmo intervalo (a aula fala em 200%), e uma nota de dólar guardada desde 1994 compra hoje menos da metade do que comprava. Daí a conclusão de Felippe: dolarizar exige ativos que gerem renda e acompanhem a inflação, e não moeda parada.",
+        "A outra metade da primeira razão é história. Quem viveu os anos 1980 lembra: o dinheiro não guardava valor de um mês para o outro. Entre o fim de 1979 e junho de 1994, véspera do real, os preços subiram cerca de 11 trilhões por cento pelo IPCA, o índice oficial de inflação. Na aula, Felippe fala em 13 trilhões, cifra que circula com outras datas e outros índices. Nenhuma das duas cabe na imaginação.",
+        "Nesse ambiente, o brasileiro já usava o dólar para guardar valor, ainda que não para pagar o pão. Os contratos passaram a ser corrigidos por índices como o IGP-M, criado em 1989 e muito influenciado por preços cotados em dólar, que até hoje reajusta aluguéis. E o país trocou de moeda oito vezes entre 1942 e 1994, cinco delas em só oito anos.",
+        "O real é o grande sucesso dessa história e, mesmo assim, perdeu valor. Pense em R$ 1 em julho de 1994: para comprar a mesma coisa hoje, você precisa de cerca de R$ 8,30. Contra o dólar, o tombo foi parecido: a moeda americana saiu de R$ 0,93 para R$ 5,15. A aula fala em 762% de inflação e 83% de perda do real; os números mudam conforme o mês de referência, e até agosto de 2026 são 733% e 82%.",
+        "Um detalhe de aritmética evita confusão: alta e perda são o mesmo movimento visto de lados opostos. Se o dólar dobra de preço, ele subiu 100%, mas o real perdeu metade do valor, e não 100%. Pelo mesmo motivo, 733% de alta dos preços equivalem a 88% de perda do poder de compra.",
+        "E aqui vem o ponto que muda a decisão: o dólar também perde valor. Os preços nos Estados Unidos subiram 126% no mesmo período (na aula, 200%), e uma nota de dólar guardada desde 1994 compra hoje menos da metade do que comprava. Por isso Felippe insiste: dolarizar é ter ativos que geram renda e acompanham a inflação, não dinheiro parado.",
       ],
     },
     {
       tipo: "linhaDoTempo",
       tempo: "11:49",
       titulo: "Oito trocas de moeda entre 1942 e 1994",
-      subtitulo: "Padrões monetários brasileiros e o corte de zeros em cada troca",
+      subtitulo: "As moedas do Brasil e os zeros cortados em cada troca",
       eventos: [
         { data: "nov/1942", titulo: "Cruzeiro", texto: "Substitui o réis: mil réis passam a valer um cruzeiro." },
-        { data: "fev/1967", titulo: "Cruzeiro novo", texto: "Corte de três zeros." },
-        { data: "mai/1970", titulo: "Cruzeiro", texto: "Volta o nome antigo, sem corte de zeros." },
-        { data: "fev/1986", titulo: "Cruzado", texto: "Plano Cruzado: três zeros a menos e congelamento de preços." },
+        { data: "fev/1967", titulo: "Cruzeiro novo", texto: "Três zeros a menos." },
+        { data: "mai/1970", titulo: "Cruzeiro", texto: "Volta o nome antigo, sem cortar zeros." },
+        { data: "fev/1986", titulo: "Cruzado", texto: "Plano Cruzado: três zeros a menos e preços congelados." },
         { data: "jan/1989", titulo: "Cruzado novo", texto: "Plano Verão: mais três zeros." },
-        { data: "mar/1990", titulo: "Cruzeiro", texto: "Plano Collor: volta o nome, com bloqueio de aplicações financeiras." },
+        { data: "mar/1990", titulo: "Cruzeiro", texto: "Plano Collor: volta o nome, e as aplicações ficam bloqueadas." },
         { data: "ago/1993", titulo: "Cruzeiro real", texto: "Mais três zeros." },
         { data: "jul/1994", titulo: "Real", texto: "Um real passa a valer 2.750 cruzeiros reais, o valor de uma URV." },
       ],
@@ -163,7 +161,7 @@ const secao: SecaoDaAula = {
       tipo: "grafico",
       tempo: "12:31",
       titulo: "Desde o real, os preços subiram oito vezes aqui e pouco mais de duas vezes nos EUA",
-      subtitulo: "Índice, julho de 1994 = 100; dezembro de cada ano e agosto de 2026",
+      subtitulo: "Quanto cada um subiu desde julho de 1994 (= 100); dezembro de cada ano e agosto de 2026",
       forma: "linha",
       escala: "log",
       eixoX: ["jul/1994", "dez/1994", "dez/1999", "dez/2004", "dez/2009", "dez/2014", "dez/2019", "dez/2024", "ago/2026"],
@@ -177,7 +175,7 @@ const secao: SecaoDaAula = {
       fonte:
         "IBGE, IPCA (Sidra, tabela 1737); Banco Central do Brasil, SGS 3698 (dólar comercial, venda, média mensal); BLS, CPI-U sem ajuste sazonal (FRED, CPIAUCNS)",
       nota:
-        "Escala logarítmica. O dólar subiu mais do que a diferença entre as duas inflações (5,5 vezes contra 3,7 vezes): além da inflação, o real perdeu valor real contra a moeda americana no período.",
+        "Escala logarítmica: distâncias iguais no eixo são multiplicações iguais. O dólar subiu 5,5 vezes, mais que a diferença entre as duas inflações (3,7 vezes): além da inflação, o real perdeu valor de verdade contra o dólar.",
     },
 
     // ---- razão 2: a bolsa brasileira ----------------------------------------------------------------
@@ -185,17 +183,16 @@ const secao: SecaoDaAula = {
       tipo: "capitulo",
       id: "uma-bolsa-de-bancos-e-commodities",
       titulo: "Razão 2: uma bolsa de bancos e commodities",
-      resumo: "A B3 concentra finanças, energia e mineração; as teses que movem o mundo estão quase todas fora dela.",
+      resumo: "A B3 é feita de bancos, energia e mineração. As teses que movem o mundo estão quase todas fora dela.",
       tempo: "13:04",
     },
     {
       tipo: "texto",
-      tempo: "13:32",
       paragrafos: [
-        "A segunda razão aparece quando o investidor já decidiu diversificar dentro do Brasil e olha para a bolsa. As empresas brasileiras mais lembradas, Itaú, Petrobras, JBS, Bradesco, Banco do Brasil, dividem-se entre bancos e commodities. O MSCI Brazil, que cobre cerca de 85% do valor do mercado local com 46 empresas, mostra o tamanho da concentração: no fim de agosto de 2026, financeiro, energia e materiais somavam 71% do índice, e as dez maiores posições, 61%. Tecnologia da informação não aparece.",
-        "As 46 empresas citadas na aula vêm da mesma família de índices. O MSCI Emerging Markets reúne 1.178 ações de 24 países emergentes, e o Brasil responde por 3,9% dele; Taiwan, Coreia do Sul e China, juntos, passam de dois terços. O MSCI ACWI, que soma emergentes e desenvolvidos, tem 2.458 ações e valia US$ 104 trilhões em agosto, cerca de 214 vezes o MSCI Brazil. É a esse índice global, e não ao de emergentes, que corresponde a cifra de mais de 100 trilhões de dólares mencionada em aula.",
-        "Os ETFs são o atalho para esse universo: fundos negociados em bolsa que replicam um índice e permitem comprar centenas ou milhares de empresas numa única cota, muitas vezes por algumas dezenas de dólares, e em vários casos pela própria B3, via ETFs locais e BDRs. É o tema do módulo de Luiz Roxo. A consequência prática é o acesso a teses que a bolsa brasileira não oferece. Só a Nvidia, a maior empresa do mundo em valor de mercado, tinha em agosto de 2026 US$ 5,1 trilhões em ações em livre circulação, mais de dez vezes o MSCI Brazil inteiro. Semicondutores, software, inteligência artificial, robótica e exploração espacial são negócios quase ausentes da B3.",
-        "Felippe faz questão de separar constatação de recomendação: citar Inter, C6, BTG ou Itaú não é sugerir uma instituição, e sim registrar algo que já aconteceu. A onda de fintechs da última década, que pôs um banco digital brasileiro entre os maiores do mundo em número de clientes, é a mesma infraestrutura que hoje leva o investidor comum ao exterior.",
+        "Faça o exercício contrário ao da abertura. Pense nas empresas brasileiras mais lembradas: Itaú, Petrobras, JBS, Bradesco, Banco do Brasil. Quase todas são bancos ou commodities. O índice da MSCI para o Brasil, com 46 empresas, confirma: financeiro, energia e materiais somam 71% dele, e as dez maiores posições, 61%. Tecnologia simplesmente não aparece.",
+        "Agora compare com os vizinhos. O índice de emergentes da MSCI reúne 1.178 ações de 24 países, e o Brasil é só 3,9% dele. Na aula, Felippe atribui a esse índice os mais de US$ 100 trilhões; o número, na verdade, é do índice global, que soma emergentes e ricos e vale cerca de 214 vezes o índice brasileiro.",
+        "O atalho para esse universo são os ETFs, fundos negociados em bolsa que copiam um índice. Com uma única cota, às vezes de algumas dezenas de dólares, você vira sócio de centenas ou milhares de empresas, em muitos casos pela própria B3, via ETFs locais e BDRs (recibos de ações estrangeiras negociados aqui). É o tema do módulo de Luiz Roxo. E é o caminho para teses que a bolsa brasileira não oferece. Só a Nvidia, a maior empresa do mundo, valia em agosto de 2026 mais de dez vezes o índice brasileiro inteiro. Chips, software, inteligência artificial, robótica e exploração espacial quase não existem na B3.",
+        "Felippe faz questão de separar constatação de recomendação: citar Inter, C6, BTG ou Itaú não é indicar banco, é registrar algo que já aconteceu. A onda de fintechs, que pôs um banco digital brasileiro entre os maiores do mundo em clientes, é a mesma que hoje leva o investidor comum para fora.",
       ],
     },
     {
@@ -211,7 +208,7 @@ const secao: SecaoDaAula = {
       ],
       formato: { sufixo: "%", casas: 1 },
       fonte: "MSCI, factsheets MSCI Brazil e MSCI ACWI (USD), 31/ago/2026",
-      nota: "Classificação setorial GICS. Setores omitidos: industriais, consumo básico, comunicação e imobiliário.",
+      nota: "Setores pela classificação da MSCI. Ficaram fora do gráfico: indústria, consumo básico, comunicação e imobiliário.",
     },
 
     // ---- razão 3: o câmbio --------------------------------------------------------------------------
@@ -219,24 +216,22 @@ const secao: SecaoDaAula = {
       tipo: "capitulo",
       id: "o-cambio-e-o-preco-do-risco",
       titulo: "Razão 3: o câmbio e o preço do risco",
-      resumo: "O real se desvalorizou em saltos, e o mesmo risco aparece no preço e na oscilação das ações brasileiras.",
+      resumo: "O real perdeu valor aos saltos, e o mesmo risco aparece no preço e no sobe e desce das ações brasileiras.",
       tempo: "18:55",
     },
     {
       tipo: "texto",
-      tempo: "18:55",
       paragrafos: [
-        "A terceira razão é o próprio dólar. Nos primeiros anos do Plano Real, a moeda americana valeu perto de um real: a média mensal ficou abaixo de R$ 1 até meados de 1996 e subiu devagar, dentro de uma banda administrada pelo Banco Central, até R$ 1,21 em dezembro de 1998. Em janeiro de 1999 o regime caiu. O Banco Central alterou a banda em 13 de janeiro, o câmbio passou a flutuar dias depois, e em fevereiro a média mensal do dólar já estava em R$ 1,91, 59% acima de dezembro. A aula descreve o episódio como uma desvalorização esperada que o mercado antecipou; para quem tinha tudo em reais, o efeito foi um corte abrupto do patrimônio medido em dólar.",
-        "É esse o risco político e cambial de que fala Felippe. Ele tem histórico e pode ser medido, por exemplo, observando como o dólar se comporta em anos de eleição, como 2002, quando a média mensal passou de R$ 3,80 em outubro. Não há como evitá-lo. O que se escolhe é quanto do patrimônio fica exposto a ele.",
-        "O mesmo risco aparece no preço das empresas. No fim de agosto de 2026, o MSCI Brazil era negociado a 9,3 vezes o lucro dos últimos doze meses, contra 15,2 vezes do MSCI Emerging Markets e 21,9 vezes do índice global. A aula cita 9,6 e 18,6 vezes, números de outra data; a distância é da mesma natureza. Parte dela vem da expectativa de crescimento menor e parte é prêmio de risco: o investidor estrangeiro não deixa de comprar Brasil por causa de uma eleição turbulenta, mas cobra o risco no preço do papel.",
-        "A volatilidade completa o quadro. Nos dez anos até agosto de 2026, o desvio-padrão anualizado dos retornos mensais em dólar foi de 30,8% no MSCI Brazil e de 17,5% no MSCI Emerging Markets, quase o dobro, como diz a aula. Parte da diferença vem de decisões concentradas: uma reunião em Brasília sobre preço de combustíveis mexe com uma das maiores empresas do índice, e um parecer do Cade decide o destino de uma fusão. Diversificar entre países é trocar a exposição a um único conjunto de regras pela exposição a muitos.",
+        "A terceira razão é o próprio dólar. Nos primeiros anos do real, a moeda americana valia perto de R$ 1 e subia devagar, dentro de uma faixa controlada pelo Banco Central. Em janeiro de 1999 essa faixa caiu, o câmbio passou a flutuar e, em fevereiro, o dólar já valia R$ 1,91, 59% acima de dezembro. Felippe lembra que o mercado já esperava a desvalorização e só a antecipou. Para quem tinha tudo em reais, o efeito foi um corte brusco do patrimônio medido em dólar.",
+        "É esse o risco político e cambial de que fala a aula. Dá para medir, olhando, por exemplo, como o dólar se comporta em anos de eleição: em 2002, ele passou de R$ 3,80. Não dá para evitar. O que você escolhe é quanto do seu patrimônio fica exposto a ele.",
+        "O mesmo risco aparece no preço das empresas. Um jeito simples de ver se uma bolsa está cara é o preço/lucro: quantos anos de lucro você paga ao comprar a ação. Em agosto de 2026, a bolsa brasileira valia 9,3 vezes o lucro, contra 15,2 vezes nos emergentes e 21,9 vezes no mundo. Na aula, os números são 9,6 e 18,6 vezes, de outra data. Parte da diferença é crescimento esperado menor. Parte é risco: o estrangeiro não deixa de comprar Brasil por causa de uma eleição turbulenta, mas cobra o risco no preço.",
+        "Falta a montanha-russa. O mercado chama de volatilidade o quanto um preço sobe e desce. Nos últimos dez anos, a bolsa brasileira, medida em dólar, oscilou quase o dobro da média dos emergentes, como diz a aula. Parte disso vem de decisões concentradas: uma reunião em Brasília sobre combustíveis mexe com uma das maiores empresas do índice, e um parecer do Cade decide uma fusão. Investir em vários países é trocar um único conjunto de regras por muitos.",
       ],
     },
     {
       tipo: "grafico",
-      tempo: "19:04",
       titulo: "O real perdeu valor em saltos, não em linha reta",
-      subtitulo: "Dólar comercial, R$ por US$, média anual das médias mensais de venda",
+      subtitulo: "Dólar comercial, R$ por US$, média anual",
       forma: "linha",
       eixoX: [
         "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004",
@@ -275,29 +270,27 @@ const secao: SecaoDaAula = {
         { nome: "MSCI ACWI", resumo: "2.458 empresas" },
       ],
       metricas: [
-        { rotulo: "Preço/lucro, 12 meses", valores: [9.33, 15.23, 21.85], formato: "multiplo" },
-        { rotulo: "Preço/lucro projetado", valores: [8.34, 10.07, 16.87], formato: "multiplo" },
-        { rotulo: "Dividend yield", valores: [5.46, 2.01, 1.56], formato: "pct" },
+        { rotulo: "Preço/lucro, últimos 12 meses", valores: [9.33, 15.23, 21.85], formato: "multiplo" },
+        { rotulo: "Preço/lucro esperado", valores: [8.34, 10.07, 16.87], formato: "multiplo" },
+        { rotulo: "Dividendos, % do preço", valores: [5.46, 2.01, 1.56], formato: "pct" },
         { rotulo: "Volatilidade anual, 10 anos", valores: [30.77, 17.45, 14.71], formato: "pct", melhor: "menor" },
         { rotulo: "Maior queda desde 1987", valores: [-75.79, -65.14, -58.06], formato: "pct", melhor: "maior" },
       ],
       fonte: "MSCI, factsheets MSCI Brazil, MSCI Emerging Markets e MSCI ACWI (USD), 31/ago/2026",
       nota:
-        "Volatilidade: desvio-padrão anualizado de retornos mensais em dólar. Maior queda: perda máxima do pico ao fundo, pela tabela do factsheet do MSCI Brazil (série desde dez/1987).",
+        "Volatilidade: quanto os retornos mensais em dólar variaram, em ritmo anual. Maior queda: a perda do pico ao fundo, na série desde dez/1987.",
     },
     {
       tipo: "conceito",
-      tempo: "20:29",
-      termo: "Comparar preço/lucro entre países",
+      termo: "Preço/lucro entre países",
       definicao:
-        "O preço/lucro de um mercado resume três coisas ao mesmo tempo: quanto as empresas distribuem, quanto se espera que cresçam e quanto o investidor exige de retorno. Pelo modelo de Gordon, o P/L que os fundamentos justificam sobe com o payout (a parcela do lucro distribuída) e com o crescimento esperado g, e cai com o retorno exigido k, que embute os juros do país e o prêmio de risco. Stowe, Robinson, Pinto e McLeavey acrescentam que P/L de países diferentes carregam também diferenças de contabilidade, de composição setorial e de risco, e que múltiplos baseados em caixa são os menos afetados por elas.",
-      formula: "P/L = payout × (1 + g) / (k − g)",
+        "Quando você paga 10 vezes o lucro por uma empresa, o preço embute três apostas: quanto ela vai distribuir aos acionistas, quanto vai crescer e quanto retorno você exige para correr o risco dela. A lógica é intuitiva. Mais crescimento esperado justifica pagar mais. Mais risco, ou juro mais alto no país, obriga a pagar menos. Entre países, entram ainda diferenças de contabilidade e de setores.",
       naPratica:
-        "O desconto brasileiro é a combinação que a aula descreve, crescimento esperado menor e risco maior, e a fórmula mostra como ela pesa: com payout de 50%, crescimento de 5% e retorno exigido de 9%, o P/L justificado é de 13 vezes; com crescimento de 4% e retorno exigido de 11%, cai para 7,4 vezes (números ilustrativos). Parte da distância, porém, é de composição: bancos e commodities, que dominam a B3, costumam negociar a múltiplos menores em qualquer país, e tecnologia, quase um terço do índice global, a múltiplos maiores. P/L baixo não é sinônimo de barato: a pergunta é que crescimento e que risco o preço embute.",
+        "Um exemplo com números redondos. Uma empresa que distribui metade do lucro, cresce 5% ao ano e de quem se exige 9% de retorno vale cerca de 13 vezes o lucro. Baixe o crescimento para 4% e suba a exigência para 11%, e o mesmo negócio passa a valer perto de 7 vezes. É o desconto brasileiro em miniatura. Mas parte da distância é só de composição: bancos e commodities, que dominam a B3, valem menos vezes o lucro em qualquer país, e tecnologia, quase um terço do índice global, vale mais. Preço/lucro baixo não quer dizer barato. A pergunta é que crescimento e que risco o preço já embute.",
       referencia: {
         autor: "John D. Stowe, Thomas R. Robinson, Jerald E. Pinto e Dennis W. McLeavey",
         obra: "Analysis of Equity Investments: Valuation",
-        capitulo: "cap. 2, seção 4.5, e cap. 4, seção 9",
+        capitulo: "caps. 2 e 4",
         ano: 2002,
       },
     },
@@ -307,14 +300,14 @@ const secao: SecaoDaAula = {
       tempo: "19:49",
       titulo: "O seu patrimônio medido em dólar",
       descricao:
-        "Um patrimônio em reais, sem rendimento, medido em dólar ao longo do tempo, com uma fatia convertida hoje. Mude a perda anual do real e a fatia em dólar para ver quanto da diferença vem só do câmbio.",
+        "Um patrimônio em reais, sem rendimento, medido em dólar ao longo dos anos, com uma parte convertida hoje. Mexa na perda anual do real e na fatia em dólar para ver quanto da diferença vem só do câmbio.",
       modelo: "cambioPatrimonio",
       parametros: {
-        cambio: { valor: 5.15, ajuda: "Média mensal de agosto de 2026: R$ 5,15 (BCB, SGS 3698)." },
+        cambio: { valor: 5.15, ajuda: "Média de agosto de 2026, pelo Banco Central: R$ 5,15." },
         depreciacao: {
           valor: 4,
           ajuda:
-            "De julho de 1994 a agosto de 2026, o real perdeu em média cerca de 5,5% ao ano contra o dólar, com anos de alta e de queda. O passado não define o futuro.",
+            "De 1994 para cá, o real perdeu em média cerca de 5,5% ao ano contra o dólar, com anos de alta e de queda. O passado não garante o futuro.",
         },
         fatia: { valor: 30 },
       },
@@ -322,33 +315,32 @@ const secao: SecaoDaAula = {
     {
       tipo: "conceito",
       tempo: "22:12",
-      termo: "Holdup e risco de regra",
+      termo: "Risco de mudança de regra",
       definicao:
-        "Depois que o capital está investido e não pode sair sem custo, quem fixa impostos, tarifas, preços ou regras passa a ter incentivo para capturar parte do retorno, porque a decisão já não altera o investimento feito. Antecipando isso, o investidor exige retorno maior ou investe menos. Na formulação de Acemoglu, a ineficiência persiste quando quem governa não consegue se comprometer de forma crível a não mudar a regra depois.",
+        "Imagine que você construiu uma fábrica. Ela não sai do lugar. A partir daí, quem define impostos, tarifas e preços sabe que pode apertar sem que você vá embora, porque o investimento já está feito. Os economistas chamam isso de holdup. Quem entende o jogo se antecipa: cobra retorno maior para entrar ou investe menos. O problema persiste quando o governo não consegue prometer, de um jeito que convença, que não vai mudar a regra depois.",
       naPratica:
-        "Trocar uma ação brasileira por outra diversifica o risco da empresa, não o da regra: uma intervenção em preços, uma mudança tributária ou uma decisão regulatória atinge ao mesmo tempo ações, títulos, câmbio e imóveis do mesmo país. Só outra jurisdição dilui esse fator. O exterior não elimina o risco político; troca um risco concentrado por vários riscos diferentes.",
+        "Trocar uma ação brasileira por outra reduz o risco da empresa, não o da regra. Uma intervenção em preços, um imposto novo ou uma decisão regulatória atinge ao mesmo tempo ações, títulos, câmbio e imóveis do mesmo país. Só outra jurisdição dilui esse risco. O exterior não elimina o risco político: troca um risco concentrado por vários diferentes.",
       referencia: {
         autor: "Daron Acemoglu",
         obra: "Political Economy Lecture Notes",
-        capitulo: "caps. 1 e 11, problema de compromisso e holdup",
+        capitulo: "caps. 1 e 11",
       },
     },
     {
       tipo: "tabela",
-      tempo: "22:12",
       titulo: "O que cada escolha dilui, e o que não dilui",
       colunas: ["Risco", "Mais ações brasileiras", "Exportadoras e multinacionais brasileiras", "Ativos no exterior"],
       linhas: [
         ["Da empresa", "Dilui", "Dilui", "Dilui"],
         ["Do setor", "Pouco: a B3 se concentra em bancos e commodities", "Pouco: são poucos setores", "Dilui"],
-        ["Da moeda", "Não", "Em parte: a receita é em dólar, mas a ação é cotada em reais e segue o mercado local", "Dilui, e acrescenta o risco do dólar"],
-        ["Prêmio de risco-país no preço", "Não", "Não", "Dilui"],
-        ["De regra: impostos, preços, intervenções", "Não", "Não: a empresa segue sob a mesma jurisdição", "Em parte: o investidor continua residente fiscal no Brasil"],
+        ["Da moeda", "Não", "Em parte: a receita é em dólar, mas a ação é cotada em reais e segue a bolsa daqui", "Dilui, e acrescenta o risco do dólar"],
+        ["Desconto do risco Brasil no preço", "Não", "Não", "Dilui"],
+        ["De regra: impostos, preços, intervenções", "Não", "Não: a empresa segue sob as mesmas leis", "Em parte: você continua pagando imposto no Brasil"],
       ],
       fonte:
         "Síntese do notebook a partir de Bodie, Kane e Marcus, Investments, cap. 25, e Laffont, Regulation and Development, caps. 4 e 7",
       nota:
-        "Laffont mostra que compromisso fraco e expropriação regulatória são traços de uma jurisdição inteira; a ponte com carteiras é do notebook, não do livro. Nenhuma coluna elimina risco: diversificar troca um risco concentrado por vários riscos menores e diferentes.",
+        "Nenhuma coluna elimina risco: diversificar troca um risco concentrado por vários riscos menores e diferentes. A aplicação a carteiras é leitura do notebook, não dos livros.",
     },
 
     // ---- razão 4: o fiscal --------------------------------------------------------------------------
@@ -356,17 +348,16 @@ const secao: SecaoDaAula = {
       tipo: "capitulo",
       id: "o-risco-brasil-tem-endereco",
       titulo: "Razão 4: o risco Brasil tem endereço fiscal",
-      resumo: "Carga alta, dívida alta e juro alto contam a mesma história: o prêmio que o país paga para se financiar.",
+      resumo: "Imposto alto, dívida alta e juro alto contam a mesma história: o preço que o país paga para se financiar.",
       tempo: "23:49",
     },
     {
       tipo: "texto",
-      tempo: "23:49",
       paragrafos: [
-        "A quarta razão explica de onde vêm o desconto das ações e o juro alto: o orçamento público. A carga tributária bruta do governo geral chegou a 32,4% do PIB em 2025, a maior da série do Tesouro Nacional iniciada em 2010. A aula fala em cerca de 34% para o Brasil e 25% na média dos emergentes; o ponto é que o país arrecada como economia rica com renda de economia emergente, porque gasta em áreas, a seguridade social à frente, que pares de renda parecida não financiam na mesma escala.",
-        "Mesmo arrecadando muito, o Estado gasta mais do que arrecada, e a diferença vira dívida. Pela metodologia do FMI, que inclui todos os títulos na carteira do Banco Central, a dívida bruta do governo geral deve chegar a 96,5% do PIB em 2026, o número citado na aula; pela metodologia do Banco Central, estava em 82,9% em agosto. Japão e Estados Unidos devem mais, cerca de 204% e 126% do PIB, e pagam juros muito menores. Em setembro de 2026, a Selic estava em 13,75% ao ano e o juro básico americano, na faixa de 3,75% a 4% (a aula usa 14,25% e 3%, números do momento da gravação). A 13,75% ao ano, um capital dobra em pouco mais de cinco anos; a 4%, leva quase 18.",
-        "Por que o país que deve menos paga mais? A aula aponta três motivos. O histórico: Reinhart e Rogoff contam nove episódios de calote ou reestruturação da dívida externa brasileira entre 1828 e 1983. A poupança doméstica que financia essa dívida, pequena em relação ao PIB quando comparada à de Japão e Estados Unidos. E a baixa integração financeira: um governo europeu em dificuldade recorre a um mercado amplo de investidores globais, enquanto o brasileiro depende muito mais da poupança interna e de capital externo volátil. Juro alto, portanto, não é generosidade com o poupador. É o preço que se exige para carregar o risco do país, e por isso uma aplicação 100% em reais não é um porto neutro: ela é o próprio risco Brasil, remunerado.",
-        "Dois sinais fecham a razão. O primeiro é o atraso no acesso a novas teses: o primeiro ETF de ouro do mundo, o Gold Bullion Securities, estreou na bolsa australiana em março de 2003; na B3, o primeiro ETF de ouro, o GOLD11, chegou em dezembro de 2020, e o primeiro lastreado em barras físicas, em 2025. A aula fala em 2002 e 2023, mas a distância de quase duas décadas se mantém. O segundo é o crescimento: pelas projeções do FMI de abril de 2026, o Brasil deve crescer 1,9% neste ano, contra 3,9% do conjunto de emergentes e economias em desenvolvimento, os mesmos números da aula. Barro e Sala-i-Martin lembram que diferenças pequenas de crescimento, compostas por décadas, pesam mais do que qualquer ciclo, e por isso diversificar não é só ir aos Estados Unidos, mas também a México, Indonésia, Coreia do Sul e outros emergentes.",
+        "A quarta razão explica de onde vêm a bolsa barata e o juro alto: as contas do governo. O Brasil arrecada em impostos cerca de um terço de tudo o que produz, 32,4% do PIB em 2025, o maior nível da série do Tesouro. Na aula, Felippe fala em 34%, contra 25% na média dos emergentes. A ideia é a mesma: o país cobra imposto como país rico, com renda de emergente, porque gasta, sobretudo com previdência e assistência, numa escala que países de renda parecida não bancam.",
+        "Mesmo arrecadando muito, o governo gasta mais do que arrecada, e a diferença vira dívida. Pelo critério do FMI, ela deve chegar a 96,5% do PIB em 2026, o número da aula; pelo do Banco Central, que conta de outro jeito, eram 82,9% em agosto. Japão e Estados Unidos devem mais e pagam muito menos juro. Em setembro de 2026, a Selic estava em 13,75% ao ano, e o juro básico americano, perto de 4% (na gravação, eram 14,25% e 3%). Veja no tempo para dobrar um capital: a 13,75% ao ano, pouco mais de cinco anos; a 4%, quase 18.",
+        "Por que o país que deve menos paga mais? A aula aponta três motivos. O histórico: o Brasil deu calote ou renegociou a dívida externa nove vezes entre 1828 e 1983. A poupança: os brasileiros têm pouco guardado em relação ao tamanho da dívida, bem menos que japoneses e americanos. E o isolamento: um governo europeu em apuros recorre a investidores do mundo todo, enquanto o brasileiro depende da poupança interna e de capital estrangeiro que vai e volta. Juro alto, portanto, não é presente para o poupador. É o preço de carregar o risco do país. Uma aplicação 100% em reais não é um porto neutro: é o próprio risco Brasil, com remuneração.",
+        "Dois sinais fecham a razão. O primeiro é o atraso. O primeiro ETF de ouro do mundo estreou na Austrália em 2003; na B3, o primeiro chegou em 2020, e o primeiro lastreado em barras de verdade, em 2025. Na aula, as datas são 2002 e 2023, mas a distância de quase duas décadas é a mesma. O segundo é o crescimento: pelo FMI, o Brasil deve crescer 1,9% em 2026, contra 3,9% dos emergentes, os mesmos números da aula. Diferenças pequenas, repetidas por décadas, viram distâncias enormes. Por isso diversificar não é só ir aos Estados Unidos, mas também a México, Indonésia, Coreia do Sul e outros emergentes.",
       ],
     },
     {
@@ -374,7 +365,7 @@ const secao: SecaoDaAula = {
       tempo: "24:45",
       titulo: "O retrato fiscal em quatro números",
       itens: [
-        { rotulo: "Carga tributária bruta", valor: 32.4, formato: { sufixo: "% do PIB", casas: 1 }, nota: "governo geral, 2025" },
+        { rotulo: "Carga tributária", valor: 32.4, formato: { sufixo: "% do PIB", casas: 1 }, nota: "governo geral, 2025" },
         {
           rotulo: "Dívida bruta, critério do FMI",
           valor: 96.5,
@@ -392,42 +383,39 @@ const secao: SecaoDaAula = {
       tipo: "grafico",
       tempo: "27:05",
       titulo: "O Brasil deve menos que Japão e EUA, mas paga juro muito mais alto",
-      subtitulo: "Dívida bruta do governo geral, % do PIB, projeção para 2026",
+      subtitulo: "Dívida bruta do governo, % do PIB, projeção para 2026",
       forma: "barra",
       eixoX: ["Japão", "EUA", "China", "Brasil", "Índia", "México", "Indonésia"],
       series: [{ nome: "Dívida bruta", valores: [204.4, 125.8, 106.9, 96.5, 83.4, 62.7, 41.5] }],
       formato: { sufixo: "% do PIB", casas: 1 },
       fonte: "FMI, World Economic Outlook, abr/2026 (GGXWDG_NGDP)",
-      nota: "Critério do FMI. Para o Brasil, inclui os títulos públicos na carteira do Banco Central, por isso fica acima da série do BCB.",
+      nota: "Critério do FMI, que no caso do Brasil inclui os títulos em poder do Banco Central e por isso fica acima da conta do BCB.",
     },
     {
       tipo: "conceito",
       tempo: "26:22",
-      termo: "Paridade descoberta de juros",
+      termo: "Paridade de juros",
       definicao:
-        "Aplicações em moedas diferentes só se comparam numa mesma moeda. Uma aplicação em dólar, medida em reais, rende o juro americano composto com a variação do dólar no período. Há paridade quando os dois caminhos rendem o mesmo em reais, e a variação do dólar que iguala os dois é o ponto de indiferença. Assaf Neto observa que essa conta não incorpora o risco-país: a diferença entre o juro brasileiro e o retorno esperado da aplicação em dólar reflete a desvalorização esperada do real e o prêmio de risco.",
-      formula: "(1 + i em reais) = (1 + i em dólar) × E1/E0",
+        "Para comparar uma aplicação em reais com uma em dólar, você precisa medir as duas na mesma moeda. A aplicação em dólar, vista daqui, rende o juro americano mais o que o dólar subir no período. As duas empatam quando o dólar sobe exatamente o suficiente para cobrir a diferença de juros. Esse ponto de empate se chama paridade. A conta simples deixa de fora o risco-país: parte do juro mais alto daqui é a desvalorização esperada do real, e parte é o prêmio por emprestar ao Brasil.",
       naPratica:
-        "É a resposta técnica à pergunta da aula, por que não ficar só no CDB. Com a Selic a 13,75% e o juro americano no teto de 4%, o dólar teria de subir cerca de 9,4% ao ano para que uma aplicação em dólar empatasse, antes de impostos e custos, com uma em reais (1,1375 ÷ 1,04 − 1). O diferencial não é ganho garantido nem perda certa: é o preço do risco. Quem fica 100% em reais aposta, sem dizer, que o real perderá menos do que o diferencial embute. E Bodie, Kane e Marcus mostram que o diferencial de juros é um mau previsor do câmbio de cada ano: o câmbio efetivo se afasta da paridade em magnitudes do tamanho da volatilidade da moeda.",
+        "É a resposta à pergunta da aula: por que não ficar só no CDB? Com a Selic a 13,75% e o juro americano em 4%, o dólar precisaria subir cerca de 9,4% ao ano para a aplicação lá fora empatar com a daqui, antes de impostos e custos. Isso não é ganho garantido de um lado nem perda certa do outro: é o preço do risco. Quem fica 100% em reais aposta, sem dizer, que o real vai perder menos do que isso. E não adianta tentar adivinhar o dólar do ano pela diferença de juros: na vida real, o câmbio se afasta muito dessa conta.",
       referencia: {
         autor: "Alexandre Assaf Neto",
         obra: "Mercado Financeiro",
-        capitulo: "cap. 5, seção 5.5.2",
+        capitulo: "cap. 5",
       },
     },
     {
       tipo: "conceito",
-      tempo: "26:22",
-      termo: "Superávit primário que estabiliza a dívida",
+      termo: "O superávit que segura a dívida",
       definicao:
-        "A dívida pública como proporção do PIB cresce sozinha quando o juro real que o governo paga (r) supera o crescimento real da economia (g). Para mantê-la estável, é preciso um superávit primário, receitas menos despesas sem contar juros, proporcional ao tamanho da dívida (b) e à distância entre r e g. Se o mercado duvida de que esses superávits virão, cobra um prêmio maior, e r sobe.",
-      formula: "s* = (r − g)/(1 + g) × b",
+        "Pense na dívida pública medida em relação à renda do país. Se o juro que o governo paga for maior que o crescimento da economia, a dívida cresce sozinha, mesmo sem gasto novo. Para segurá-la, o governo precisa fechar o ano no azul antes de pagar os juros, o chamado superávit primário. Quanto maior a dívida e maior a distância entre juro e crescimento, maior esse azul precisa ser.",
       naPratica:
-        "Com dívida de 96% do PIB, cada ponto de diferença entre juro real e crescimento exige perto de 1% do PIB de superávit só para a dívida não subir. Por isso juro alto e dívida alta se alimentam, e por isso o juro de uma aplicação em reais carrega o risco fiscal do país.",
+        "Com uma dívida perto de 96% do PIB, cada ponto de diferença entre o juro já descontada a inflação e o crescimento exige cerca de 1% do PIB de superávit só para a dívida não subir. Se o mercado duvida que esse superávit virá, cobra mais juro, e a conta piora. Por isso dívida alta e juro alto se alimentam, e por isso o juro de uma aplicação em reais carrega o risco fiscal do país.",
       referencia: {
         autor: "F. Rocha, em Arvate e Biderman (orgs.)",
         obra: "Economia do Setor Público no Brasil",
-        capitulo: "cap. 24, déficit público e sustentabilidade fiscal",
+        capitulo: "cap. 24",
         ano: 2004,
       },
     },
@@ -437,14 +425,13 @@ const secao: SecaoDaAula = {
       tempo: "30:33",
       termo: "Convergência condicional",
       definicao:
-        "A teoria do crescimento não diz que países mais pobres crescem mais. Diz que cada economia caminha para o próprio patamar de longo prazo, o estado estacionário y*, definido por instituições, capital humano, política fiscal e estabilidade, e cresce mais quanto mais longe está dele. Barro e Sala-i-Martin estimam que essa distância se fecha a cerca de 2% ao ano (β na fórmula): metade do caminho leva perto de 35 anos. E como cada país sofre choques próprios, a dispersão entre eles não desaparece.",
-      formula: "ln y(t) = e^(−βt) × ln y(0) + [1 − e^(−βt)] × ln y*",
+        "Há uma ideia popular de que países mais pobres crescem mais rápido, porque têm mais espaço para correr atrás. A teoria do crescimento diz algo mais sutil. Cada país corre em direção ao próprio teto, definido por instituições, educação, contas públicas e estabilidade, e cresce mais rápido quanto mais longe está desse teto, e não dos países ricos. E corre devagar: a distância costuma fechar uns 2% por ano, o que dá perto de 35 anos para percorrer metade do caminho.",
       naPratica:
-        "Ser emergente não garante crescer mais: o Brasil converge para o patamar que as próprias instituições permitem, e os choques brasileiros, fiscais, políticos ou de termos de troca, atingem ao mesmo tempo todo o patrimônio aplicado aqui. É um argumento de concentração, não de decadência, e não depende de prever que país crescerá mais. Com um cuidado que o livro impõe: ele trata de PIB, não de retorno de ativos. Crescimento alto não garante bolsa com retorno alto, porque o preço pode já embutir esse crescimento.",
+        "Ser emergente não garante crescer mais. O Brasil caminha para o patamar que as próprias instituições permitem, e os choques daqui, fiscais, políticos ou de preço de commodities, atingem de uma vez todo o patrimônio aplicado aqui. É um argumento de concentração, não de decadência, e não depende de adivinhar que país vai crescer mais. Um cuidado: crescimento alto não garante bolsa boa, porque o preço pode já embutir esse crescimento.",
       referencia: {
         autor: "Robert J. Barro e Xavier Sala-i-Martin",
         obra: "Economic Growth",
-        capitulo: "cap. 1, seções 1.2.10 a 1.2.13, e cap. 12",
+        capitulo: "caps. 1 e 12",
         ano: 2004,
       },
     },
@@ -454,23 +441,22 @@ const secao: SecaoDaAula = {
       tipo: "capitulo",
       id: "a-demografia-nao-negocia",
       titulo: "Razão 5: a demografia não negocia",
-      resumo: "A população brasileira para de crescer em 2041, e o Estado foi desenhado para outra pirâmide etária.",
+      resumo: "A população brasileira para de crescer em 2041, e o Estado foi desenhado para outra pirâmide de idades.",
       tempo: "31:28",
     },
     {
       tipo: "texto",
-      tempo: "31:28",
       paragrafos: [
-        "A quinta razão junta as anteriores, crescimento baixo, dívida alta, juro alto e regulação pesada, a uma variável que nenhum governo controla no curto prazo: a demografia. Para uma população se manter estável sem imigração, cada mulher precisa ter em média cerca de 2,1 filhos, a chamada taxa de reposição. O Brasil passou abaixo dela na primeira metade dos anos 2000. Pelas projeções do IBGE de 2024, a fecundidade caiu de 2,32 filhos por mulher em 2000 para 1,57 em 2023 e deve chegar a 1,44 por volta de 2041.",
-        "As consequências são aritméticas. A população deve parar de crescer em 2041, com 220,4 milhões de habitantes, e cair para 199,2 milhões em 2070. A parcela de pessoas com 60 anos ou mais, que era de 8,7% em 2000 e de 15,6% em 2023, deve chegar a 37,8% em 2070. Menos gente entra no mercado de trabalho, mais gente se aposenta e vive mais tempo aposentada. Num sistema em que os ativos de hoje pagam os benefícios de hoje, isso pressiona o orçamento por décadas, e a reforma da Previdência de 2019 dificilmente terá sido a última, como diz a aula.",
-        "O ajuste tem poucos caminhos. A carga tributária já é alta para o padrão emergente, e cada real a mais de imposto sai do investimento ou do consumo de famílias e empresas; imprimir moeda não cria riqueza, só transfere a perda para quem guarda reais. Felippe é direto ao dizer que a aposentadoria pública tende a valer menos do que o trabalhador espera e que a resposta individual é construir a própria estratégia de proteção. A aula reconhece o outro lado: uma população mais velha tende a ser mais escolarizada, mais rica por pessoa e com menos problemas urbanos. Para o investidor, porém, o dado que pesa é que haverá menos trabalhadores para sustentar um Estado com gastos sociais já contratados.",
+        "A quinta razão junta tudo o que veio antes, crescimento baixo, dívida alta, juro alto e regra instável, a uma variável que nenhum governo muda no curto prazo: a demografia. Para uma população se manter estável sem imigração, cada mulher precisa ter, em média, cerca de 2,1 filhos. O Brasil caiu abaixo disso no começo dos anos 2000 e hoje está em pouco mais de 1,5.",
+        "As consequências são aritmética pura. Pelo IBGE, a população para de crescer em 2041 e depois começa a encolher. Em 2070, quase quatro em cada dez brasileiros terão 60 anos ou mais. Menos gente entra no mercado de trabalho, mais gente se aposenta e vive mais tempo aposentada. Num sistema em que quem trabalha hoje paga a aposentadoria de quem parou hoje, isso pressiona o orçamento por décadas. A reforma da Previdência de 2019, diz a aula, dificilmente terá sido a última.",
+        "O ajuste tem poucos caminhos. O imposto já é alto para um emergente, e cada real a mais sai do investimento ou do consumo. Imprimir dinheiro não cria riqueza, só passa a conta para quem guarda reais. Felippe é direto: a aposentadoria pública tende a valer menos do que você espera, e a resposta é montar a própria estratégia de proteção. A aula reconhece o outro lado: uma população mais velha tende a ser mais escolarizada e mais rica por pessoa. Para o investidor, porém, o que pesa é que haverá menos trabalhadores sustentando um Estado com gastos sociais já contratados.",
       ],
     },
     {
       tipo: "grafico",
       tempo: "31:56",
       titulo: "O Brasil já está abaixo da taxa de reposição e deve continuar abaixo",
-      subtitulo: "Taxa de fecundidade total, filhos por mulher; de 2030 em diante, projeção",
+      subtitulo: "Filhos por mulher; de 2030 em diante, projeção",
       forma: "linha",
       eixoX: ["2000", "2010", "2023", "2030", "2041", "2050", "2060", "2070"],
       series: [{ nome: "Brasil", valores: [2.32, 1.75, 1.57, 1.47, 1.44, 1.45, 1.47, 1.5], destaque: true }],
@@ -483,27 +469,25 @@ const secao: SecaoDaAula = {
     {
       tipo: "conceito",
       tempo: "33:09",
-      termo: "Regime de repartição",
+      termo: "Previdência por repartição",
       definicao:
-        "No regime de repartição, as contribuições de quem trabalha hoje pagam os benefícios de quem está aposentado hoje. O retorno implícito do sistema depende do crescimento dos salários (w) e do número de contribuintes (n), pela fórmula de Samuelson e Aaron. Quando a população em idade ativa para de crescer, n vai a zero ou fica negativo, e o sistema só fecha com mais contribuição, menos benefício ou mais dívida.",
-      formula: "1 + r = (1 + w)(1 + n)",
+        "No INSS, o que você contribui hoje não fica guardado para você: paga quem está aposentado hoje. É o regime de repartição. O rendimento desse sistema vem de duas fontes: quanto os salários crescem e quanto cresce o número de pessoas contribuindo. Se os salários sobem 2% ao ano e os contribuintes aumentam 1%, o sistema rende cerca de 3%. Se os contribuintes passam a diminuir 1% ao ano, cai para perto de 1%.",
       naPratica:
-        "Quem contribui para o INSS já tem uma parte grande da aposentadoria atrelada à demografia e aos salários brasileiros, em reais. A poupança própria é o espaço em que essa exposição pode ser diversificada, inclusive entre moedas e países.",
+        "Quando a população em idade de trabalhar para de crescer, o sistema só fecha com mais contribuição, menos benefício ou mais dívida. Quem contribui para o INSS já tem boa parte da aposentadoria presa à demografia e aos salários brasileiros, em reais. A sua poupança própria é o lugar onde essa exposição pode ser diversificada, inclusive entre moedas e países.",
       referencia: {
         autor: "L. E. Afonso, em Arvate e Biderman (orgs.)",
         obra: "Economia do Setor Público no Brasil",
-        capitulo: "cap. 20, seguridade social",
+        capitulo: "cap. 20",
         ano: 2004,
       },
     },
     {
       tipo: "fluxo",
-      tempo: "33:28",
-      titulo: "Da demografia ao patrimônio",
+      titulo: "Da demografia ao seu patrimônio",
       nos: [
-        { titulo: "Fecundidade", texto: "1,57 filho por mulher em 2023, abaixo da reposição.", sentido: "desce" },
-        { titulo: "Força de trabalho", texto: "A população para de crescer em 2041.", sentido: "desce" },
-        { titulo: "Gasto previdenciário", texto: "Mais aposentados, por mais tempo.", sentido: "sobe" },
+        { titulo: "Filhos por mulher", texto: "1,57 em 2023, abaixo da reposição.", sentido: "desce" },
+        { titulo: "Gente trabalhando", texto: "A população para de crescer em 2041.", sentido: "desce" },
+        { titulo: "Gasto com aposentadoria", texto: "Mais aposentados, por mais tempo.", sentido: "sobe" },
         { titulo: "Imposto, dívida ou inflação", texto: "Alguém paga a conta do ajuste.", sentido: "sobe" },
         { titulo: "Prêmio de risco", texto: "Juro e câmbio cobram mais de quem está só em reais.", sentido: "sobe" },
       ],
@@ -516,17 +500,16 @@ const secao: SecaoDaAula = {
       tipo: "capitulo",
       id: "facil-nao-e-simples",
       titulo: "Mais fácil não quer dizer mais simples",
-      resumo: "O acesso ao exterior virou um clique; entender veículo, custo e imposto continua sendo trabalho.",
+      resumo: "Investir lá fora virou um clique. Entender o veículo, o custo e o imposto continua dando trabalho.",
       tempo: "35:56",
     },
     {
       tipo: "texto",
-      tempo: "36:09",
       paragrafos: [
-        "A aula termina com um alerta que soa contraintuitivo num curso sobre investir lá fora. Quando abrir conta no exterior exigia papelada e valores altos, a própria barreira funcionava como filtro: só passava por ela quem tinha estudado o tema. Agora que basta um aplicativo, o filtro sumiu, e é fácil comprar um ativo sem saber se ele é uma ação, um ETF, um BDR ou um fundo, quanto custa mantê-lo e como ele é tributado.",
-        "Felippe resume o que observar: taxas de administração e de câmbio, o veículo usado, o apelo emocional de uma cotação na tela e, sobretudo, a tributação. Desde a Lei 14.754, de 2023, os rendimentos de aplicações financeiras no exterior de pessoas físicas residentes no Brasil são tributados a 15%, em apuração anual, e o ganho é calculado em reais. A consequência é pouco intuitiva: o imposto alcança também a variação do câmbio. Um ativo vendido pelo mesmo preço em dólar pode gerar imposto se o dólar subiu contra o real no período, e o investidor paga sobre um ganho que, medido em dólar, não existiu. As regras detalhadas, com exceções e compensação de perdas, são tema dos próximos módulos e devem ser conferidas na legislação vigente.",
-        "O outro imposto no caminho é o IOF, que tem natureza regulatória: o governo muda as alíquotas por decreto, com efeito imediato, e as usa para frear entradas ou saídas de capital. Em 2022, um decreto fixou um cronograma para zerar o IOF sobre câmbio até 2029; em 2025, decretos de maio e junho revogaram esse cronograma e elevaram alíquotas. Pelo Decreto 12.499, de junho de 2025, que o Congresso chegou a derrubar e o STF restabeleceu quase inteiro em julho, a remessa para investimento do próprio residente no exterior paga 1,1%, e a compra de moeda em espécie, os gastos com cartão internacional e as saídas não especificadas, 3,5%. Não é a primeira vez que a regra muda no meio do caminho. Arvate e Biderman registram que, quando o imposto sobre aplicações financeiras subiu no fim dos anos 1990, os formuladores contavam com um investidor sem saída, que ficaria no sistema brasileiro por falta de opção. Quem tem acesso ao exterior deixa de ser base cativa, mas passa a comparar retornos líquidos, depois de todos esses custos.",
-        "Não há fórmula para ganhar 2% ou 10% ao mês, insiste a aula, e não há atalho; há formas corretas de fazer. O curso foi montado com professores escolhidos pela experiência no mercado, e não pela presença em redes sociais, para percorrer cada uma delas: o diagnóstico, a renda fixa e as ações americanas, os veículos de acesso e os ativos digitais.",
+        "A aula termina com um alerta que parece estranho num curso sobre investir lá fora. Quando abrir conta no exterior exigia papelada e muito dinheiro, a própria barreira funcionava como filtro: só passava quem tinha estudado. Agora que basta um aplicativo, o filtro sumiu. Fica fácil comprar algo sem saber se é ação, ETF, BDR ou fundo, quanto custa manter e como é tributado.",
+        "Felippe resume o que observar: taxas de administração e de câmbio, o veículo usado, a emoção de ver a cotação na tela e, acima de tudo, o imposto. Desde a Lei 14.754, de 2023, o ganho de pessoa física com aplicações no exterior paga 15%, na declaração anual, e é calculado em reais. Daí vem uma surpresa: o imposto pega também a variação do câmbio. Se você vende um ativo pelo mesmo preço em dólar que pagou, mas o dólar subiu, paga imposto sobre um ganho que, em dólar, não existiu. Os detalhes, com exceções e compensação de perdas, ficam para os próximos módulos e devem ser sempre conferidos na regra em vigor.",
+        "O outro imposto no caminho é o IOF, que o governo muda por decreto, com efeito imediato, para frear ou estimular a entrada e a saída de dinheiro. Em 2022, um decreto prometeu zerar o IOF sobre câmbio até 2029. Em 2025, decretos de maio e junho desfizeram a promessa e subiram as alíquotas; o Congresso chegou a derrubar a mudança, e o STF restabeleceu quase tudo em julho. Hoje, mandar dinheiro para investir lá fora em seu próprio nome paga 1,1%; comprar dólar em espécie, gastar no cartão internacional e outras saídas pagam 3,5%. Não é a primeira vez que a regra muda no meio do jogo. Quando o imposto sobre aplicações subiu no fim dos anos 1990, o governo contava com um investidor sem saída. Quem tem acesso ao exterior deixa de ser cativo, mas precisa comparar os retornos depois de todos esses custos.",
+        "Não há fórmula para ganhar 2% ou 10% ao mês, insiste a aula, e não há atalho. Há formas corretas de fazer. O curso foi montado com professores escolhidos pela experiência de mercado, e não pela fama nas redes, para percorrer cada uma delas: o diagnóstico, a renda fixa e as ações americanas, os veículos de acesso e os ativos digitais.",
       ],
     },
     {
@@ -555,49 +538,49 @@ const secao: SecaoDaAula = {
           autor: "Paulo Roberto Arvate e Ciro Biderman (orgs.)",
           titulo: "Economia do Setor Público no Brasil",
           ano: 2004,
-          nota: "Cap. 12, tributação de aplicações financeiras e IOF; cap. 20, seguridade social; cap. 24, sustentabilidade da dívida pública.",
+          nota: "Imposto sobre aplicações e IOF, previdência e o equilíbrio da dívida pública.",
         },
         {
           autor: "Marianne Baxter e Urban J. Jermann",
           titulo: "The International Diversification Puzzle Is Worse Than You Think",
           ano: 1997,
-          nota: "American Economic Review. Por que a renda do trabalho reforça o argumento para diversificar fora do país.",
+          nota: "Por que a renda do trabalho reforça o argumento para diversificar fora do país.",
         },
         {
           autor: "Carmen M. Reinhart e Kenneth S. Rogoff",
           titulo: "This Time Is Different: Eight Centuries of Financial Folly",
           ano: 2009,
-          nota: "A cronologia de calotes e reestruturações soberanas, Brasil incluído.",
+          nota: "A história dos calotes de governos, Brasil incluído.",
         },
         {
           autor: "Robert J. Barro e Xavier Sala-i-Martin",
           titulo: "Economic Growth",
           ano: 2004,
-          nota: "Introdução, cap. 1 (convergência condicional e velocidade de convergência) e cap. 12: por que o crescimento difere tanto entre países.",
+          nota: "Por que o crescimento difere tanto entre países.",
         },
         {
           autor: "Zvi Bodie, Alex Kane e Alan J. Marcus",
           titulo: "Investments",
           ano: 2014,
-          nota: "10ª ed. Cap. 25, retorno em moeda de origem, câmbio e diversificação internacional; caps. 9, 11 e 28, capital humano.",
+          nota: "10ª ed. Câmbio e diversificação internacional; a renda do trabalho como parte do patrimônio.",
         },
         {
           autor: "John D. Stowe, Thomas R. Robinson, Jerald E. Pinto e Dennis W. McLeavey",
           titulo: "Analysis of Equity Investments: Valuation",
           ano: 2002,
-          nota: "Cap. 2, P/L justificado pelo modelo de Gordon; cap. 4, seção 9, comparação de múltiplos entre países.",
+          nota: "O preço/lucro que os fundamentos justificam e a comparação de múltiplos entre países.",
         },
         {
           autor: "Alexandre Assaf Neto",
           titulo: "Mercado Financeiro",
           ano: 2014,
-          nota: "12ª ed. Cap. 5, seção 5.5.2, paridade de juros e risco cambial.",
+          nota: "12ª ed. Paridade de juros e risco cambial.",
         },
         {
           autor: "Jean-Jacques Laffont",
           titulo: "Regulation and Development",
           ano: 2005,
-          nota: "Caps. 4 e 7, compromisso fraco, enforcement imperfeito e expropriação regulatória.",
+          nota: "Regulação em países em desenvolvimento e o risco de o governo mudar a regra depois.",
         },
       ],
     },

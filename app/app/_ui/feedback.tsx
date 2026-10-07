@@ -153,7 +153,7 @@ export function pintarCaixa(
  *
  * Repete o envelope das telas portadas (`#f7f4ee`, `#1a1815`, `100vh - 58px` descontando a
  * topbar) para o recado cair dentro do chrome como qualquer outra tela, em vez de romper o
- * layout. Título em Playfair, corpo em Montserrat, como manda o DESIGN.md §2.
+ * layout. Título em Jost 500 desde 07/out/2026 (era Playfair), como os títulos da sala (`sala.css`).
  */
 export function Painel({
   titulo,
@@ -179,8 +179,8 @@ export function Painel({
       <div style={{ maxWidth: 560, textAlign: "center" }} role={role} aria-live={role ? "polite" : undefined}>
         <h1
           style={{
-            fontFamily: "'Playfair Display',Georgia,serif",
-            fontWeight: 600,
+            fontFamily: "'Jost',sans-serif",
+            fontWeight: 500,
             fontSize: "clamp(24px, 4vw, 34px)",
             lineHeight: 1.2,
             margin: "0 0 12px",

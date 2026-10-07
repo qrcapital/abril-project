@@ -7,7 +7,6 @@ import { getCalendario, type Calendario } from "@/lib/calendario";
 import { getCurriculo } from "@/lib/curriculo";
 import { ROMANO, href, rotuloModulo, type Aula, type Curriculo } from "@/lib/curso";
 import { getConcluidas } from "@/lib/progresso";
-import { getMateriais } from "@/lib/materiais";
 import { fonteDoVideo } from "@/lib/video";
 import { notebookDoModulo } from "@/content/notebooks";
 import { segundosDaUrl } from "@/lib/notebook";
@@ -33,8 +32,8 @@ const nomeDoModulo = (ord: number, titulo: string) => `${rotuloModulo(ord)} · $
 /**
  * A página do módulo, que desde 30/set/2026 é também a sala de aula. De cima para baixo:
  *
- * 1. **o teatro**: a aula escolhida tocando no palco escuro, com título, o botão de concluir e a bio
- *    curta do docente. É o layout da antiga página da aula, que virou redirect para cá;
+ * 1. **o teatro**: a aula escolhida tocando no palco escuro, com título, o botão de concluir e a
+ *    assinatura do docente da aula. É o layout da antiga página da aula, que virou redirect para cá;
  * 2. **a playlist**: as aulas do módulo em fila horizontal, a do teatro em destaque;
  * 3. **o notebook**: um documento só para o módulo, com uma seção por aula (`#aula-<n>`).
  *
@@ -47,6 +46,10 @@ const nomeDoModulo = (ord: number, titulo: string) => `${rotuloModulo(ord)} · $
  * aulas sem link e a trilha. Nenhum vídeo, nenhum material, nenhum notebook. A guarda é a mesma das
  * outras portas (`getCalendario`, que aplica `lib/liberacao.ts`), e é ela, e não a ausência de link,
  * que impede o vídeo: o id do Panda só entra no HTML depois dela.
+ *
+ * SEM "MATERIAIS DESTA AULA" DESDE 07/out/2026. A linha de downloads do palco mostrava a "Apostila ·
+ * Módulo I", e o dono decidiu que a apostila do módulo é o próprio notebook, logo abaixo. A tabela
+ * `materials`, o `lib/materiais.ts` e o admin continuam como estão; só a sala deixou de exibir.
  *
  * Desde 05/out/2026 o curso não tem Módulo 0: o ord 0 é o Módulo I, que abre na compra. O antigo
  * "Comece por aqui" (`/app/comece`) virou redirect para `/app/modulo/0`.
@@ -118,8 +121,10 @@ export default async function ModuloPage({
   const concluida = concluidas.has(aula.n);
   const anterior = aulas.find((a) => a.pos === aula.pos - 1);
   const proxima = aulas.find((a) => a.pos === aula.pos + 1);
-  const materiais = await getMateriais(aula.n);
   const nb = notebookDoModulo(ord);
+  // O docente DA AULA quando o notebook sabe (07/out/2026): o Módulo I tem dois num campo só do
+  // banco, e a aula 3 é só do Rodolfo. Sem o mapa, os docentes do módulo, como antes.
+  const docenteDaAula = nb?.docentePorAula?.[aula.pos] ?? mod.docente;
 
   return (
     <div className="sl">
@@ -151,9 +156,9 @@ export default async function ModuloPage({
             </span>
             <h1 id="aula-titulo">{aula.titulo}</h1>
             {aula.descricao && <p className="sl-palco-desc">{aula.descricao}</p>}
-            {mod.docente && (
+            {docenteDaAula && (
               <div className="sl-palco-docente">
-                <CartaoDocente nome={mod.docente} />
+                <CartaoDocente nome={docenteDaAula} />
               </div>
             )}
           </div>
@@ -165,7 +170,8 @@ export default async function ModuloPage({
                 scroll={false}
                 aria-label={`Aula anterior: ${anterior.titulo}`}
               >
-                ← Aula {anterior.pos}
+                <Seta lado="esquerda" />
+                Aula {anterior.pos}
               </Link>
             )}
             {/* O contrato do botão não mudou com a mudança de página: `data-concluir` com o número
@@ -174,7 +180,8 @@ export default async function ModuloPage({
             <AulaClient key={`${aula.n}-${concluida}`} n={aula.n} pos={aula.pos} concluida={concluida} />
             {proxima && (
               <Link className="sl-btn" href={href(proxima)} scroll={false} aria-label={`Próxima aula: ${proxima.titulo}`}>
-                Próxima aula →
+                Próxima aula
+                <Seta lado="direita" />
               </Link>
             )}
           </div>
@@ -184,28 +191,6 @@ export default async function ModuloPage({
           <FimDoModulo ord={ord} aulas={aulas} concluidas={concluidas} curriculo={curriculo} calendario={calendario} />
         )}
 
-        <section className="sl-palco-materiais" aria-labelledby="materiais-titulo">
-          <span className="sl-cartao-rotulo" id="materiais-titulo">
-            Materiais desta aula
-          </span>
-          {materiais.length ? (
-            <ul>
-              {materiais.map((mt) => (
-                <li key={mt.arquivo + mt.titulo}>
-                  <a href={mt.arquivo} download>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                      <path d="M12 3v12M7 10l5 5 5-5M5 21h14" />
-                    </svg>
-                    {mt.titulo}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            // PRD §6: sem material, a seção diz "em breve", sem link quebrado.
-            <p>Os materiais desta aula chegam em breve.</p>
-          )}
-        </section>
       </section>
 
       <div className="sl-wrap-largo">
@@ -250,7 +235,7 @@ function FimDoModulo({
   return (
     <div className="sl-palco-fim" role="status">
       <div>
-        <span className="sl-cartao-rotulo">Fim do módulo</span>
+        <span className="sl-eyebrow">Fim do módulo</span>
         <p className="sl-palco-fim-titulo">
           {pendentes > 0
             ? `Você chegou à última aula. ${pendentes === 1 ? "Falta 1 aula" : `Faltam ${pendentes} aulas`} deste módulo na playlist.`
@@ -328,5 +313,16 @@ function CabecaFechada({
         </div>
       </div>
     </header>
+  );
+}
+
+/** Chevron fino dos botões de navegação. O "←" e o "→" de texto saíram em 07/out/2026: o Jost
+ *  auto-hospedado (subconjunto latino) não tem as setas, e o navegador as buscava noutra fonte, mais
+ *  grossa e fora da linha de base. */
+function Seta({ lado }: { lado: "esquerda" | "direita" }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d={lado === "esquerda" ? "M14.5 6l-6 6 6 6" : "M9.5 6l6 6-6 6"} />
+    </svg>
   );
 }

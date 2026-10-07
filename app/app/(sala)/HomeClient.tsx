@@ -242,9 +242,10 @@ function Modal({ aviso, fechar }: { aviso: Aviso; fechar: () => void }) {
         </div>
         <h3
           style={{
-            fontFamily: "'Playfair Display',serif",
+            // Jost desde 07/out/2026, como os títulos da sala (sala.css).
+            fontFamily: "'Jost',sans-serif",
             fontSize: 21,
-            fontWeight: 600,
+            fontWeight: 500,
             color: "#1a1815",
             margin: "0 0 8px",
           }}

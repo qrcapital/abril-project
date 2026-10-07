@@ -1,12 +1,15 @@
 // Preenche a Home (vitrine) com dados de lib/curso: banner "Continue de onde
 // parou" e os cards de módulo (contador, %, estado). Fonte única de verdade —
 // muda o progresso, muda a Home. Mantém os estilos exatos do design.
+//
+// 07/out/2026: título do card em Jost 500 (era Playfair) e rótulos em Jost 600 com tracking de
+// .07em (eram .14em e .16em), o mesmo rótulo único da sala (`.sl-eyebrow` em sala.css).
 
 import type { Curriculo } from "./curso";
 import { esc, innerOfDiv } from "./html-slice.ts";
 
 const BADGE_BASE =
-  "position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:800;letter-spacing:.14em;border-radius:4px;padding:3px 7px";
+  "position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:600;letter-spacing:.07em;font-family:'Jost',sans-serif;border-radius:4px;padding:3px 7px";
 // Capa tipografica do modulo (numeral, titulo e docentes), gerada em 06/out/2026 e servida de
 // public/modulos/. Arquivo por posicao (ord 0 = Modulo I). Sem capa, volta o placeholder antigo.
 const CAPAS_MODULO = 4;
@@ -73,7 +76,7 @@ function card(
   const aulasTxt = total === 1 ? "1 aula" : `${total} aulas`;
 
   const trava = travado ? "opacity:.72;cursor:default" : "cursor:pointer";
-  return `<div class="mcard"${travado ? ' data-travado="1"' : ""} style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;${trava};position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(72,60,42,.05)"><span style="${badge}">${badgeText}</span><div style="position:relative;aspect-ratio:2/3;flex:0 0 auto;background:#F7F3EC">${capaModulo(m.idx)}</div><div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1"><span style="font-size:8.5px;letter-spacing:.16em;color:#7E6836;font-weight:700">${label}</span><h3 style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;margin:3px 0 9px;line-height:1.2;color:#1a1815">${esc(m.titulo)}</h3><div style="height:4px;border-radius:2px;background:#EDE6DD;overflow:hidden"><i style="display:block;height:100%;width:${pct}%;background:#C1121F;border-radius:2px"></i></div><div style="display:flex;justify-content:space-between;font-size:9.5px;color:#6f6860;margin-top:7px"><span>${aulasTxt}</span><span style="color:${countColor};font-weight:600">${count}</span></div></div></div>`;
+  return `<div class="mcard"${travado ? ' data-travado="1"' : ""} style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;${trava};position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(72,60,42,.05)"><span style="${badge}">${badgeText}</span><div style="position:relative;aspect-ratio:2/3;flex:0 0 auto;background:#F7F3EC">${capaModulo(m.idx)}</div><div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1"><span style="font-size:8.5px;letter-spacing:.07em;color:#7E6836;font-weight:600;font-family:'Jost',sans-serif">${label}</span><h3 style="font-family:'Jost',sans-serif;font-size:16px;font-weight:500;margin:3px 0 9px;line-height:1.2;color:#1a1815">${esc(m.titulo)}</h3><div style="height:4px;border-radius:2px;background:#EDE6DD;overflow:hidden"><i style="display:block;height:100%;width:${pct}%;background:#C1121F;border-radius:2px"></i></div><div style="display:flex;justify-content:space-between;font-size:9.5px;color:#6f6860;margin-top:7px"><span>${aulasTxt}</span><span style="color:${countColor};font-weight:600">${count}</span></div></div></div>`;
 }
 
 /**

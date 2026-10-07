@@ -24,13 +24,14 @@ import Simulador from "./Simulador";
  * seção e a âncora, com o aviso de conteúdo em produção: a playlist aponta para todas, e uma âncora
  * que não existe faria o clique não levar a lugar nenhum.
  *
- * NO DESKTOP O MIOLO ROLA DENTRO DA PRÓPRIA CAIXA (`data-nb-rolagem`), com o índice parado ao lado.
- * É isso que deixa a troca de aula pela playlist posicionar o notebook na seção dela sem tirar o
- * teatro da tela (`AncoraDaAula`). No celular a caixa volta a ser página corrida, porque rolagem
- * dentro de rolagem com o polegar é armadilha.
+ * O NOTEBOOK CORRE NA ROLAGEM DA PÁGINA (07/out/2026). Até aqui, no desktop, o miolo rolava dentro de
+ * uma caixa da altura da janela, com o índice parado ao lado; o dono pediu uma barra de rolagem só,
+ * sem caixa rolando dentro da página, e a caixa saiu. O índice continua fixo ao lado no desktop
+ * (`position: sticky`), marcando a aula do teatro.
  *
- * A LINGUAGEM VISUAL (01/out/2026, `docs/NOTEBOOK.md`): papel, tinta e um vermelho; sans da casa
- * em tudo, com algarismos tabulares; a serifa só no título de cada aula e na citação em destaque.
+ * A LINGUAGEM VISUAL (01/out/2026, `docs/NOTEBOOK.md`): papel, tinta e um vermelho, com algarismos
+ * tabulares. Desde 07/out/2026 é Jost em tudo, título de aula e citação inclusive, e os rótulos
+ * ("Notebook", "Neste notebook", "Aula 03") seguem o rótulo único da sala (`.sl-eyebrow`).
  *
  * Componente de servidor; gráficos, KPIs, linha do tempo, matriz, simulador e o atalho de tempo
  * descem para o cliente.
@@ -50,7 +51,8 @@ export default function NotebookModulo({
   return (
     <section className="sl-nbm" id="notebook" aria-labelledby="nb-titulo">
       <header className="sl-nbm-cabeca">
-        <p className="sl-nbm-rotulo">Notebook do módulo</p>
+        {/* Só "Notebook" (07/out/2026): o módulo já está no título logo abaixo. */}
+        <p className="sl-eyebrow">Notebook</p>
         <h2 className="sl-h2" id="nb-titulo">
           {notebook ? notebook.titulo : "Em preparação"}
         </h2>
@@ -68,7 +70,9 @@ export default function NotebookModulo({
 
       <div className="sl-nb">
         <nav className="sl-nb-indice" aria-labelledby="indice-titulo">
-          <h3 id="indice-titulo">Neste notebook</h3>
+          <h3 className="sl-eyebrow" id="indice-titulo">
+            Neste notebook
+          </h3>
           <ol>
             {aulas.map((a) => (
               <li key={a.id}>
@@ -81,9 +85,9 @@ export default function NotebookModulo({
           </ol>
         </nav>
 
-        {/* Região rolável precisa de foco para o teclado rolar, e de nome para o leitor de tela
-            dizer o que é. */}
-        <div className="sl-nb-rolagem" data-nb-rolagem="" tabIndex={0} role="region" aria-label="Conteúdo do notebook">
+        {/* Sem foco nem papel de região desde 07/out/2026: a caixa deixou de rolar sozinha, e uma
+            parada de Tab que não rola nada só atrapalharia o teclado. */}
+        <div className="sl-nb-corpo">
           <div className="sl-nb-canvas">
             {aulas.map((a) => {
               const secao = secaoDaAula(notebook, a.pos);
@@ -93,8 +97,9 @@ export default function NotebookModulo({
                 <section key={a.id} className="sl-nb-secao" id={ancora} aria-labelledby={`${ancora}-titulo`}>
                   <header className="sl-nb-secao-cabeca">
                     <p className="sl-nb-secao-meta">
-                      <span className="sl-nb-secao-num">Aula {String(a.pos).padStart(2, "0")}</span>
-                      {a.duracao ? <span>{minutos(a.duracao)}</span> : null}
+                      <span className="sl-eyebrow">Aula {String(a.pos).padStart(2, "0")}</span>
+                      {/* Sem duração no banco, a linha fica só com o rótulo e o link: nada a reservar. */}
+                      {a.duracao ? <span className="sl-nb-secao-dur">{minutos(a.duracao)}</span> : null}
                       {tocando ? (
                         <span className="sl-nb-secao-agora">No player agora</span>
                       ) : (
@@ -210,7 +215,7 @@ function UmBloco({ bloco: b }: { bloco: Bloco }) {
     case "conceito":
       return (
         <aside className="sl-conceito" aria-label={`Conceito: ${b.termo}`}>
-          <p className="sl-conceito-rotulo">Teoria</p>
+          <p className="sl-eyebrow">Teoria</p>
           <h4 className="sl-conceito-termo">{b.termo}</h4>
           <div className="sl-conceito-grade">
             <div>
@@ -218,7 +223,7 @@ function UmBloco({ bloco: b }: { bloco: Bloco }) {
               {b.formula && <p className="sl-conceito-formula">{b.formula}</p>}
             </div>
             <div className="sl-conceito-pratica">
-              <p className="sl-conceito-sub">Na prática</p>
+              <p className="sl-eyebrow sl-conceito-sub">Na prática</p>
               <p>{b.naPratica}</p>
             </div>
           </div>

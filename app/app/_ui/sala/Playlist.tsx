@@ -19,6 +19,10 @@ export function minutos(segundos: number): string {
  *
  * Módulo fechado mostra os títulos sem link, como a página do módulo sempre fez: ver o que vem é o
  * que faz o aluno esperar em vez de desistir, e a guarda de verdade é a do servidor.
+ *
+ * O PÉ DO CARTÃO TEM ALTURA RESERVADA (07/out/2026). A duração vem de `lessons.duracao`, que nem toda
+ * aula tem preenchida; o pé sai sempre, com a duração à esquerda (ou vazio) e o "Tocando agora" à
+ * direita, para os cartões com e sem minutagem ficarem com o título e o pé na mesma altura.
  */
 export default function Playlist({
   aulas,
@@ -45,10 +49,10 @@ export default function Playlist({
           const corpo = (
             <>
               <span className="sl-pl-topo">
-                <span className="sl-pl-rotulo">Aula {a.pos}</span>
+                <span className="sl-eyebrow sl-pl-rotulo">Aula {a.pos}</span>
                 {feita && (
                   <span className="sl-pl-ok">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" aria-hidden="true">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                       <path d="M5 12.5l4.5 4.5L19 7.5" />
                     </svg>
                     Concluída
@@ -57,8 +61,8 @@ export default function Playlist({
               </span>
               <span className="sl-pl-titulo">{a.titulo}</span>
               <span className="sl-pl-pe">
+                <span className="sl-pl-dur">{a.duracao ? minutos(a.duracao) : null}</span>
                 {eAtual ? <span className="sl-pl-agora">Tocando agora</span> : null}
-                {a.duracao ? <span>{minutos(a.duracao)}</span> : null}
               </span>
             </>
           );

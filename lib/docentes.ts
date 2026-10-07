@@ -27,7 +27,9 @@ const CONHECIDOS: Record<string, Omit<Docente, "nome">> = {
     foto: "/lp/9fe8de2f-df8d-4f74-948e-34ff295753f9.webp",
   },
   "rodolfo bastos": {
-    credencial: "XP e Oyster",
+    // "XP e Oyster", a da pré-lista, dizia pouco na cabeça da aula; trocada a pedido do dono
+    // (07/out/2026).
+    credencial: "Ex-CEO da XP nos EUA e fundador da Oyster",
     foto: "/lp/8eb077d2-3fb0-4c55-9a78-6eddc936cdb5.webp",
   },
   "luiz fernando roxo": {

@@ -32,7 +32,8 @@ export default function LinhaDoTempo({
   origem: TipoOrigem;
 }) {
   const ref = useEntrada<HTMLElement>();
-  // O padrão é a largura mínima do trilho no CSS (188px por evento): o HTML do servidor já sai alinhado.
+  // O padrão é a largura mínima do trilho no celular (188px por evento): ali o HTML do servidor já sai
+  // alinhado. No desktop o mínimo é 116px desde 07/out/2026 (sala.css), e a medida acerta na montagem.
   const [trilhoRef, w] = useLargura(eventos.length * 188);
   const [ativo, setAtivo] = useState<number | null>(null);
 

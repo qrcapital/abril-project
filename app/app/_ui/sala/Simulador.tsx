@@ -229,7 +229,7 @@ export default function Simulador({ bloco }: { bloco: BlocoSimulador }) {
   return (
     <section className="sl-sim" id={bloco.id} aria-labelledby={`${bloco.id}-titulo`}>
       <header className="sl-sim-cabeca">
-        <p className="sl-sim-rotulo">Simulador</p>
+        <p className="sl-eyebrow sl-sim-rotulo">Simulador</p>
         <h4 id={`${bloco.id}-titulo`} className="sl-fig-titulo">
           {bloco.titulo}
         </h4>

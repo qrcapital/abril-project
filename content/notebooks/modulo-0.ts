@@ -23,6 +23,9 @@ const notebook: Notebook = {
     "O argumento do módulo, aula por aula: o risco de concentrar tudo numa moeda só, o que trinta anos de Brasil ensinam sobre ele e a estratégia para olhar para fora.",
   demo: false,
   aulas: [aula1, aula2, aula3, aula4],
+  // O banco grava "Felippe Hermes e Rodolfo Bastos" no módulo; a cabeça de cada aula mostra só quem
+  // a dá (07/out/2026).
+  docentePorAula: { 1: "Felippe Hermes", 2: "Felippe Hermes", 3: "Rodolfo Bastos", 4: "Rodolfo Bastos" },
 };
 
 export default notebook;

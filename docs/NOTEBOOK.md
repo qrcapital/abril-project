@@ -163,8 +163,8 @@ Coluna de tabela só com números alinha à direita sozinha.
 ## Linguagem visual
 
 Faça:
-- uma família para interface e números, a sans da casa, com algarismos tabulares (já aplicado);
-- serifa (Playfair) só no título da aula e no `destaque`;
+- uma família só, o Jost, para títulos, texto, interface e números, com algarismos tabulares (já
+  aplicado; desde 07/out/2026 o título da aula e o `destaque` também saíram da serifa);
 - rótulos em caixa normal, frases curtas, unidade sempre visível;
 - vermelho em UMA coisa por figura: a série ou o número que o texto discute (`destaque`);
 - cinzas quentes para o resto; dourado raro; verde e vermelho só quando o sinal do dado importa;
