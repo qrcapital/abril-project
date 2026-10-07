@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 import { emTrabalho } from "@/app/app/_ui/feedback";
@@ -9,6 +9,17 @@ import { emTrabalho } from "@/app/app/_ui/feedback";
 import contato from "@/lib/contato.json";
 
 const WHATSAPP = contato.whatsapp;
+
+/**
+ * Qual item do topo é a página atual (07/out/2026, com a entrada do Glossário). O Início vale para a
+ * home e para as páginas de módulo, que são o caminho do curso; a conta e o certificado não acendem
+ * nenhum.
+ */
+function itemAtual(caminho: string): string | null {
+  if (caminho.startsWith("/app/glossario")) return "glossario";
+  if (caminho === "/app" || caminho.startsWith("/app/modulo")) return "inicio";
+  return null;
+}
 
 /**
  * Chrome das telas autenticadas da área (topbar + footer, design portado).
@@ -29,6 +40,18 @@ export default function AreaChrome({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const caminho = usePathname();
+
+  // O item ativo vai no próprio HTML do topo, antes de injetar: sai certo já na primeira pintura (o
+  // `usePathname` também responde no servidor) e não depende de mexer no DOM depois.
+  const topo = useMemo(() => {
+    const atual = itemAtual(caminho ?? "");
+    if (!atual) return top;
+    return top.replace(
+      new RegExp(`(<nav class="topbar-nav"[\\s\\S]*?)data-nav="${atual}"`),
+      `$1data-nav="${atual}" aria-current="page"`,
+    );
+  }, [top, caminho]);
 
   // O nome, o e-mail e o prazo de acesso do aluno NÃO são preenchidos aqui: saem prontos do
   // servidor, pelo `preencherUsuario` do layout e de cada tela (tarefa 5, 29/jul/2026).
@@ -68,6 +91,13 @@ export default function AreaChrome({
 
       if (a.closest("#account-menu")) {
         e.preventDefault();
+        // Item com endereço real (o Glossário, que só aparece aqui no celular).
+        const ir = a.getAttribute("href");
+        if (ir?.startsWith("/app/")) {
+          const m = menu();
+          if (m) m.hidden = true;
+          return router.push(ir);
+        }
         if (/Sair/i.test(txt)) {
           // `signOut` é ida à rede: sem sinal, o menu fica aberto e parado, e o aluno clica
           // de novo. O rótulo vira "Saindo..." e o link para de aceitar clique; nada é
@@ -128,7 +158,7 @@ export default function AreaChrome({
 
   return (
     <div ref={ref}>
-      <div dangerouslySetInnerHTML={{ __html: top }} />
+      <div dangerouslySetInnerHTML={{ __html: topo }} />
       {children}
       <div dangerouslySetInnerHTML={{ __html: foot }} />
     </div>

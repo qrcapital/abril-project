@@ -1,0 +1,168 @@
+// Glossário do curso e linha do tempo da home (07/out/2026).
+//
+// Inspirados na Educação do site da QR Asset (qrasset-site: lib/eduData.js e components/Educacao.jsx),
+// sem nada de fundos ou produtos da QR: aqui o assunto é o do curso. O conteúdo mora em
+// `content/glossario/*.ts` (verbetes, um arquivo por bloco de categorias) e
+// `content/linha-do-tempo.ts` (marcos). Este arquivo só define os tipos, as categorias e os
+// utilitários; quem junta e valida é `content/glossario/index.ts`.
+//
+// Tom: o mesmo do notebook (`docs/TOM-DO-NOTEBOOK.md`): conversa inteligente, exemplo antes do
+// conceito, sem fórmula quando der, sem academicismo, sem travessão.
+
+/** Categorias do glossário, na ordem em que aparecem nos filtros. */
+export const CATEGORIAS_GLOSSARIO = [
+  "Câmbio e moeda",
+  "Juros e inflação",
+  "Renda fixa",
+  "Ações",
+  "Fundos e ETFs",
+  "Carteira e risco",
+  "Comportamento",
+  "Macro e contas públicas",
+  "História do Brasil",
+  "Acesso, contas e impostos",
+  "Cripto e tecnologia",
+] as const;
+export type CategoriaGlossario = (typeof CATEGORIAS_GLOSSARIO)[number];
+
+export type Verbete = {
+  /** Identificador estável e URL: /app/glossario/<slug>. Minúsculas, sem acento, com hífen. */
+  slug: string;
+  /** Como o termo aparece no título do verbete ("Paridade do poder de compra"). */
+  termo: string;
+  /** Sigla ou nome curto, se houver ("PPC"). Aparece ao lado do termo. */
+  sigla?: string;
+  categoria: CategoriaGlossario;
+  /**
+   * Formas pelas quais o termo aparece no texto do notebook, para o link automático. O `termo` e a
+   * `sigla` já entram; aqui vão plurais, variações e sinônimos ("paridade de poder de compra",
+   * "PPC"). Sem acento não precisa: a busca já ignora acento e caixa.
+   */
+  apelidos?: string[];
+  /** Uma ou duas frases: é o que aparece no balão ao passar o mouse sobre o link no notebook. */
+  resumo: string;
+  /** O verbete completo, em parágrafos curtos, no tom do curso. */
+  texto: string[];
+  /** Um exemplo concreto, com números redondos quando couber. */
+  exemplo?: string;
+  /** O que isso muda para quem pensa em dolarizar parte do patrimônio. */
+  naPratica?: string;
+  /** Slugs de outros verbetes. Slug que não existir é ignorado (e acusado no check). */
+  relacionados?: string[];
+  /** Onde o assunto aparece no curso: módulo (ord, 0 = Módulo I) e aula (posição no módulo). */
+  noCurso?: { modulo: number; aula: number; tempo?: string }[];
+};
+
+export const CATEGORIAS_LINHA = [
+  "Dinheiro e dólar",
+  "Brasil",
+  "Crises",
+  "Investimentos",
+  "Tecnologia e internet",
+  "Inteligência artificial",
+  "Cripto",
+] as const;
+export type CategoriaLinha = (typeof CATEGORIAS_LINHA)[number];
+
+export type Marco = {
+  /** Identificador estável ("1971-fim-do-padrao-ouro"). */
+  slug: string;
+  /** Ano para o eixo ("1971"); `data` dá o detalhe quando houver ("15 de agosto de 1971"). */
+  ano: number;
+  data?: string;
+  categoria: CategoriaLinha;
+  titulo: string;
+  /** Uma ou duas frases, o que aparece no cartão fechado. */
+  resumo: string;
+  /** Até três parágrafos curtos, o que aparece ao abrir o marco: o que foi e por que importa aqui. */
+  texto?: string[];
+  /** Verbetes do glossário ligados ao marco (slugs). */
+  verbetes?: string[];
+  /**
+   * Marcos anteriores que levam a este (slugs). É a "linhagem" que a linha do tempo desenha ao
+   * passar o mouse, como no site da QR Asset: o fio que liga, por exemplo, Bretton Woods ao fim do
+   * padrão-ouro e ao Plano Real.
+   */
+  antecedentes?: string[];
+  /** Aula do curso em que o assunto aparece. */
+  noCurso?: { modulo: number; aula: number; tempo?: string };
+  /** Fonte curta do fato (instituição, documento). */
+  fonte?: string;
+};
+
+/** Normaliza para comparação: sem acento, minúsculas, espaços simples. */
+export const normalizar = (s: string) =>
+  s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+
+/** Slug a partir de um texto qualquer. */
+export const slugificar = (s: string) =>
+  normalizar(s).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+export const urlDoVerbete = (slug: string) => `/app/glossario/${slug}`;
+
+// ---- utilitários das telas (07/out/2026) ------------------------------------------------------
+// Moram aqui, e não nos componentes, porque o `scripts/glossario-check.mts` e o cliente (a busca
+// do glossário e a linha do tempo da home) usam os mesmos, e este arquivo não importa nada.
+
+/** A letra do índice A a Z: a inicial do termo sem acento, ou "#" para número e símbolo. */
+export const letraDe = (termo: string) => {
+  const c = normalizar(termo).charAt(0).toUpperCase();
+  return c >= "A" && c <= "Z" ? c : "#";
+};
+
+/**
+ * "12:34" ou "1:02:03" em segundos, para o `&t=` do link da aula. Cópia mínima de `segundos()` de
+ * `lib/notebook.ts`, que este arquivo não importa para continuar sem dependência.
+ */
+const segundosDe = (tempo?: string): number | null => {
+  const m = /^(?:(\d{1,2}):)?([0-5]?\d):([0-5]\d)$/.exec((tempo ?? "").trim());
+  return m ? Number(m[1] ?? 0) * 3600 + Number(m[2]) * 60 + Number(m[3]) : null;
+};
+
+/**
+ * O endereço de uma aula do curso a partir do `noCurso` de um verbete ou marco. Com tempo, o
+ * mesmo formato do "Na aula, 12:34" do notebook (`NaAula.tsx`): o player nasce no ponto. Sem
+ * tempo, o da playlist (`href()` de `lib/curso.ts`), que desce até a seção da aula no notebook.
+ */
+export const hrefNoCurso = (n: { modulo: number; aula: number; tempo?: string }) => {
+  const s = segundosDe(n.tempo);
+  return s !== null
+    ? `/app/modulo/${n.modulo}?aula=${n.aula}&t=${s}#player`
+    : `/app/modulo/${n.modulo}?aula=${n.aula}#aula-${n.aula}`;
+};
+
+/** "Módulo II · Aula 03", sem depender de `lib/curso.ts` (que o cliente não importa). */
+export const rotuloNoCurso = (n: { modulo: number; aula: number; tempo?: string }) =>
+  `Módulo ${["I", "II", "III", "IV"][n.modulo] ?? n.modulo + 1} · Aula ${String(n.aula).padStart(2, "0")}` +
+  (segundosDe(n.tempo) !== null ? ` · ${n.tempo}` : "");
+
+/**
+ * As cores das categorias da linha do tempo. Tons quentes e baixos, tirados da paleta de papel e
+ * tinta: o ouro da casa, o vermelho só para as crises (é o assunto que pede alarme), e o resto em
+ * tons terrosos que leem como cor sem virar arco-íris. Todos passam de 4,5:1 sobre o papel
+ * (#f7f4ee), porque também pintam o rótulo da categoria.
+ */
+export const COR_DA_LINHA: Record<CategoriaLinha, string> = {
+  "Dinheiro e dólar": "#7e6836",
+  Brasil: "#3f6b4e",
+  Crises: "#b0101c",
+  Investimentos: "#2f5a73",
+  "Tecnologia e internet": "#575a63",
+  "Inteligência artificial": "#6e4a7a",
+  Cripto: "#9a5418",
+};
+
+/**
+ * As eras da linha do tempo da home: dão ritmo à lista e marcam a régua de anos. O ano de corte é o
+ * último ano da era. Era sem marco não aparece.
+ */
+export const ERAS: { ate: number; faixa: string; nome: string }[] = [
+  { ate: 1943, faixa: "Até 1943", nome: "O dinheiro antes do dólar" },
+  { ate: 1970, faixa: "1944 a 1970", nome: "O mundo de Bretton Woods" },
+  { ate: 1993, faixa: "1971 a 1993", nome: "Moeda solta, inflação e dívida" },
+  { ate: 2007, faixa: "1994 a 2007", nome: "Real, internet e globalização" },
+  { ate: 2019, faixa: "2008 a 2019", nome: "Crise, juro zero e cripto" },
+  { ate: Infinity, faixa: "2020 em diante", nome: "Pandemia, juros altos e IA" },
+];
+
+export const eraDe = (ano: number) => ERAS.findIndex((e) => ano <= e.ate);

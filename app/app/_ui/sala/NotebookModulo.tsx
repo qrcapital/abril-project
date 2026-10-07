@@ -3,6 +3,8 @@ import Link from "next/link";
 import { href, type Aula } from "@/lib/curso";
 import { ancoraDaAula, deComparador, secaoDaAula, type Bloco, type Notebook } from "@/lib/notebook";
 
+import { GLOSSARIO } from "@/content/glossario";
+
 import Comparativo from "./Comparativo";
 import Fluxo from "./Fluxo";
 import Grafico from "./Grafico";
@@ -13,6 +15,8 @@ import NaAula from "./NaAula";
 import Origem from "./Origem";
 import { minutos } from "./Playlist";
 import Simulador from "./Simulador";
+import Balao from "./glossario/Balao";
+import { criarLigador, type Ligador } from "./glossario/texto";
 
 /**
  * O notebook do módulo: UM documento longo, com uma seção por aula (`#aula-<n>`), dentro da página
@@ -33,8 +37,15 @@ import Simulador from "./Simulador";
  * tabulares. Desde 07/out/2026 é Jost em tudo, título de aula e citação inclusive, e os rótulos
  * ("Notebook", "Neste notebook", "Aula 03") seguem o rótulo único da sala (`.sl-eyebrow`).
  *
- * Componente de servidor; gráficos, KPIs, linha do tempo, matriz, simulador e o atalho de tempo
- * descem para o cliente.
+ * OS TERMOS DO GLOSSÁRIO VIRAM LINK (07/out/2026). No texto corrido (os parágrafos de `texto` e a
+ * definição e a prática de `conceito`; a citação de `destaque` não), a primeira ocorrência de cada
+ * termo em cada seção de aula aponta para o verbete, com o resumo num balão. O conteúdo dos arquivos
+ * de `content/notebooks/` não muda: o casamento é feito aqui, na renderização (`glossario/texto.tsx`,
+ * regras em `lib/glossario-links.ts`). O ligador é um por seção, e os textos são ligados ANTES do
+ * JSX, na ordem do documento, para "a primeira ocorrência" ser a primeira que o aluno lê.
+ *
+ * Componente de servidor; gráficos, KPIs, linha do tempo, matriz, simulador, o atalho de tempo e o
+ * balão do glossário descem para o cliente.
  */
 export default function NotebookModulo({
   notebook,
@@ -61,9 +72,15 @@ export default function NotebookModulo({
             ? notebook.subtitulo
             : "Os gráficos, textos e simuladores de cada aula entram aqui quando o conteúdo for publicado."}
         </p>
-        {demo && (
+        {(demo || GLOSSARIO.length > 0) && (
           <div className="sl-nb-meta">
-            <span className="sl-chip sl-chip-demo">Conteúdo de demonstração</span>
+            {demo && <span className="sl-chip sl-chip-demo">Conteúdo de demonstração</span>}
+            {GLOSSARIO.length > 0 && (
+              <p className="sl-nb-glossario">
+                Termos com <span className="sl-termo-amostra">sublinhado pontilhado</span> abrem o{" "}
+                <Link href="/app/glossario">glossário do curso</Link>.
+              </p>
+            )}
           </div>
         )}
       </header>
@@ -87,10 +104,13 @@ export default function NotebookModulo({
 
         {/* Sem foco nem papel de região desde 07/out/2026: a caixa deixou de rolar sozinha, e uma
             parada de Tab que não rola nada só atrapalharia o teclado. */}
-        <div className="sl-nb-corpo">
+        <Balao className="sl-nb-corpo">
           <div className="sl-nb-canvas">
             {aulas.map((a) => {
               const secao = secaoDaAula(notebook, a.pos);
+              // Um ligador por seção: cada termo vira link na primeira vez que aparece nesta aula.
+              const ligar = criarLigador();
+              const ligados = secao?.blocos.map((b) => ligarBloco(b, ligar)) ?? [];
               const ancora = ancoraDaAula(a.pos);
               const tocando = a.pos === atual;
               return (
@@ -113,7 +133,7 @@ export default function NotebookModulo({
                   {secao ? (
                     secao.blocos.map((b, i) => (
                       <div className="sl-bloco" data-tipo={b.tipo} key={i}>
-                        <UmBloco bloco={b} />
+                        <UmBloco bloco={b} ligado={ligados[i]} />
                         {b.tempo && notebook && <NaAula modulo={notebook.modulo} aula={a.pos} tempo={b.tempo} />}
                       </div>
                     ))
@@ -124,16 +144,25 @@ export default function NotebookModulo({
               );
             })}
           </div>
-        </div>
+        </Balao>
       </div>
     </section>
   );
 }
 
+/** Os textos de um bloco já com os termos do glossário ligados. Só os blocos de texto corrido. */
+type Ligado = { paragrafos?: React.ReactNode[]; definicao?: React.ReactNode; naPratica?: React.ReactNode };
+
+function ligarBloco(b: Bloco, ligar: Ligador): Ligado {
+  if (b.tipo === "texto") return { paragrafos: b.paragrafos.map(ligar) };
+  if (b.tipo === "conceito") return { definicao: ligar(b.definicao), naPratica: ligar(b.naPratica) };
+  return {};
+}
+
 /** Célula de tabela que é número (valor, percentual, moeda): alinha à direita, em tabular. */
 const NUMERICO = /^[\s(+\-−]*(R\$|US\$|€)?\s*[\d.,]+\s*(%|p\.p\.|×|x|bi|mi|mil)?\)?\s*$/;
 
-function UmBloco({ bloco: b }: { bloco: Bloco }) {
+function UmBloco({ bloco: b, ligado }: { bloco: Bloco; ligado?: Ligado }) {
   switch (b.tipo) {
     case "capitulo":
       // Subtítulo dentro da seção da aula. O número de capítulo saiu com as seções: quem numera
@@ -148,7 +177,7 @@ function UmBloco({ bloco: b }: { bloco: Bloco }) {
       return (
         <div className={`sl-prosa${b.capitular ? " is-abertura" : ""}`}>
           {b.paragrafos.map((p, i) => (
-            <p key={i}>{p}</p>
+            <p key={i}>{ligado?.paragrafos?.[i] ?? p}</p>
           ))}
         </div>
       );
@@ -219,12 +248,12 @@ function UmBloco({ bloco: b }: { bloco: Bloco }) {
           <h4 className="sl-conceito-termo">{b.termo}</h4>
           <div className="sl-conceito-grade">
             <div>
-              <p>{b.definicao}</p>
+              <p>{ligado?.definicao ?? b.definicao}</p>
               {b.formula && <p className="sl-conceito-formula">{b.formula}</p>}
             </div>
             <div className="sl-conceito-pratica">
               <p className="sl-eyebrow sl-conceito-sub">Na prática</p>
-              <p>{b.naPratica}</p>
+              <p>{ligado?.naPratica ?? b.naPratica}</p>
             </div>
           </div>
           {b.referencia && (

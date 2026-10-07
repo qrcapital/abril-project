@@ -12,6 +12,7 @@ import { dataLonga, diasAteData } from "@/lib/liberacao";
 import { getUsuario } from "@/lib/usuario";
 import { preencherUsuario } from "@/lib/usuario-template";
 import Trilha from "@/app/app/_ui/sala/Trilha";
+import LinhaDoTempoHome from "@/app/app/_ui/sala/glossario/LinhaDoTempoHome";
 import { hrefDoModulo } from "@/app/app/_ui/sala/estado";
 
 export const metadata: Metadata = { title: "Início" };
@@ -91,6 +92,9 @@ export default async function HomePage({
   return (
     <HomeClient
       meio={meio}
+      // A linha do tempo, depois dos módulos (07/out/2026). Os marcos são conteúdo estático
+      // (`content/linha-do-tempo.ts`); só o filtro, a linhagem e os cartões descem para o cliente.
+      depois={<LinhaDoTempoHome />}
       html={preencherUsuario(
         fillHome(template, curriculo, concluidas, travados, certificado ? "emitido" : "pendente"),
         user,

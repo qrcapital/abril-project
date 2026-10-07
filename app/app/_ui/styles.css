@@ -269,5 +269,13 @@ summary::-webkit-details-marker{display:none}
 [style-hover="background:#C1121F;color:#fff;border-color:#C1121F"]:hover{background:#C1121F!important;color:#fff!important;border-color:#C1121F!important}
 }
 [style-focus="border-color:#C1121F"]:focus{border-color:#C1121F!important}
+/* Itens do topo da área (07/out/2026). Saíram do style inline do chrome-top.html para o item da
+   página atual poder se destacar: o AreaChrome.tsx marca `aria-current="page"` pelo `data-nav`. */
+.topbar-nav a{color:rgba(253,250,245,.68);font-size:13px;font-weight:500;text-decoration:none;transition:color .2s ease}
+.topbar-nav a:hover{color:#fdfaf5}
+.topbar-nav a[aria-current="page"]{color:#fdfaf5;font-weight:600}
+/* O Glossário no menu da conta só aparece quando a barra de navegação some. */
+.menu-so-celular{display:none !important}
+@media (max-width:920px){.menu-so-celular{display:block !important}}
 /* O olho do banner da home some no celular: a 250px ele passaria por cima do título. */
 @media (max-width:720px){.hero-olho{display:none}}

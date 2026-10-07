@@ -43,6 +43,7 @@ export default function HomeClient({
   totalAulas,
   travado,
   meio,
+  depois,
 }: {
   html: string;
   /**
@@ -51,6 +52,12 @@ export default function HomeClient({
    * `.mcard`, e um a mais deslocaria o destino de todos.
    */
   meio?: React.ReactNode;
+  /**
+   * O que vem depois da prateleira "A Formação": a linha do tempo (07/out/2026). Fica FORA do
+   * contêiner da delegação de clique de propósito: lá, qualquer botão com "Continuar" ou "Começar" no
+   * texto leva à aula atual, e o título de um marco pode ter essas palavras.
+   */
+  depois?: React.ReactNode;
   /** Para onde cada cartão de módulo leva, na ordem deles. */
   destinos: string[];
   /** Destino do "Continuar de onde parou". */
@@ -179,6 +186,7 @@ export default function HomeClient({
           <div dangerouslySetInnerHTML={{ __html: html }} />
         )}
       </div>
+      {depois}
       {aviso && <Modal aviso={aviso} fechar={() => setAviso(null)} />}
     </>
   );
