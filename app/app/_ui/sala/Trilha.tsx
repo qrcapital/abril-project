@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { ModuloCalendario } from "@/lib/calendario";
 import { ROMANO, rotuloModulo } from "@/lib/curso";
 
-import CartaoDocente from "./CartaoDocente";
 import { estadoDoModulo, hrefDoModulo } from "./estado";
 
 /**
@@ -41,6 +40,7 @@ export default function Trilha({ modulos, rotulo = "Trilha da formação" }: { m
         const conteudo = (
           <>
             {m.atual && <span className="sl-aqui">Você está aqui</span>}
+            <span className="sl-no-slot">
             <span className="sl-no-bola" aria-hidden="true">
               {m.concluido ? (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
@@ -55,24 +55,14 @@ export default function Trilha({ modulos, rotulo = "Trilha da formação" }: { m
                 ROMANO[m.ord] ?? m.ord
               )}
             </span>
+            </span>
             <span className="sl-no-texto">
               <span className="sl-eyebrow sl-no-rotulo">{rotuloModulo(m.ord)}</span>
               <span className="sl-no-titulo">{m.titulo}</span>
-              {/* A mesma assinatura da cabeça da aula, na versão curta (07/out/2026). Até aqui era
-                  um docente por linha, cada um com o próprio retrato, e o Módulo I, que tem dois,
-                  ficava mais alto que os vizinhos. */}
-              {m.docente && (
-                <span className="sl-no-docente">
-                  <CartaoDocente nome={m.docente} tamanho="p" prefixo="" credencial={false} />
-                </span>
-              )}
-              <span className="sl-no-estado">
-                <span
-                  className={`sl-chip ${e.classe === "is-feito" ? "sl-chip-ok" : e.classe === "is-travado" ? "sl-chip-trava" : ""}`}
-                >
-                  {e.texto}
-                </span>
-              </span>
+              {/* Três linhas por nó, iguais em todos (08/out/2026): rótulo, título em duas linhas
+                  reservadas e o estado em texto simples. O docente e o chip saíram: eram quatro
+                  retrancas num elemento só, e o docente já está na capa do módulo logo abaixo. */}
+              <span className="sl-no-estado">{e.texto}</span>
             </span>
           </>
         );
