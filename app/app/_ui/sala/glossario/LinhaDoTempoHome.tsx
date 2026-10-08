@@ -1,6 +1,6 @@
 import { verbete } from "@/content/glossario";
 import { LINHA_DO_TEMPO } from "@/content/linha-do-tempo";
-import { CATEGORIAS_LINHA, hrefNoCurso, rotuloNoCurso } from "@/lib/glossario";
+import { CATEGORIAS_LINHA, hrefNoCurso, rotuloDoAno, rotuloNoCurso } from "@/lib/glossario";
 
 import LinhaViva, { type ItemLinha } from "./LinhaViva";
 
@@ -27,6 +27,7 @@ export default function LinhaDoTempoHome() {
   const itens: ItemLinha[] = marcos.map((m, i) => ({
     slug: m.slug,
     ano: m.ano,
+    rotulo: rotuloDoAno(m),
     data: m.data,
     categoria: m.categoria,
     titulo: m.titulo,

@@ -1192,10 +1192,11 @@ a.sl-pl-item:hover {
 .sl-lt-cabeca .sl-sub { margin-top: 18px; max-width: 60ch }
 .sl-lt-dica { max-width: 28ch; text-align: right; font-size: 13.5px; line-height: 1.5; color: var(--sl-tinta-3) }
 
-/* A régua: a linha inteira numa faixa, um traço fino por marco (08/out/2026, antes eram pontos
-   coloridos). O traço é de tinta neutra e só ganha a cor da categoria quando ela diz alguma coisa:
-   sob o mouse, na categoria filtrada e na linhagem acesa. Cada botão é a área de toque (10 x 8 px);
-   o traço é o `::after`, de 1,5 x 6 px, com 2 px de folga embaixo, e empilha de 8 em 8 px (`PASSO`). */
+/* A régua: a linha inteira numa faixa, um ponto de 9 px por marco, na cor da categoria. Os pontos
+   voltaram em 08/out/2026, só aqui (de manhã tinham virado traços de tinta; o Marcelo preferiu os
+   pontos na régua). Chips, lista e linhagem seguem sem bolinha. A camada de pontos acaba na linha de
+   base (`bottom: 20%`); cada ponto tem o centro na base e sobe de 9 em 9 px quando empilha (`PASSO`).
+   A linhagem acesa ganha um anel; o resto, e as outras categorias com um filtro, esmaecem. */
 .sl-lt-regua { position: relative; height: 80px; margin: 52px 0 48px }
 .sl-lt-regua-base { position: absolute; left: 0; right: 0; top: 80%; height: 1px; background: var(--sl-linha-forte) }
 .sl-lt-regua-faixa { position: absolute; top: 80%; height: 1px }
@@ -1205,29 +1206,28 @@ a.sl-pl-item:hover {
   font: 600 11px/1 var(--sl-sans); letter-spacing: .07em; text-transform: uppercase; color: var(--sl-tinta-3);
 }
 .sl-lt-regua-faixa > i + span { padding-left: 9px }
-.sl-lt-regua-tracos { position: absolute; left: 0; right: 0; top: 0; bottom: 20% }
-.sl-lt-regua-traco {
-  position: absolute; width: 10px; height: 8px; margin-left: -5px; padding: 0;
-  border: 0; background: none; cursor: pointer; transition: opacity .2s ease;
+.sl-lt-regua-pontos { position: absolute; left: 0; right: 0; top: 0; bottom: 20% }
+.sl-lt-regua-ponto {
+  position: absolute; width: 9px; height: 9px; margin: 0 0 -4.5px -4.5px; padding: 0;
+  border: 0; border-radius: 50%; background: var(--c); cursor: pointer;
+  transition: transform .2s ease, opacity .22s ease, box-shadow .2s ease;
 }
-.sl-lt-regua-traco::after {
-  content: ""; position: absolute; left: 50%; bottom: 2px; width: 1.5px; height: 6px; margin-left: -.75px;
-  border-radius: 1px; background: rgba(26, 24, 21, .42);
-  transition: background-color .2s ease, transform .2s ease;
-}
-.sl-lt-regua-traco.is-cor::after { background: var(--c) }
-.sl-lt-regua-traco:hover, .sl-lt-regua-traco.is-foco { z-index: 2 }
-.sl-lt-regua-traco:hover::after, .sl-lt-regua-traco.is-foco::after { background: var(--c); transform: scaleX(1.6) }
-.sl-lt-regua-traco.is-apagado { opacity: .45 }
+/* A área de toque passa um pouco do ponto, sem invadir o vizinho de cima na pilha. */
+.sl-lt-regua-ponto::before { content: ""; position: absolute; inset: -3px -4px }
+.sl-lt-regua-ponto:hover, .sl-lt-regua-ponto.is-foco { transform: scale(1.6); z-index: 2 }
+.sl-lt-regua-ponto.is-linhagem { box-shadow: 0 0 0 2.5px var(--sl-papel), 0 0 0 3.5px var(--c) }
+.sl-lt-regua-ponto.is-apagado { opacity: .2 }
+/* O ponto cresce 1,6x no hover e levaria a dica junto: o `scale(.625)` desfaz isso. */
 .sl-lt-regua-dica {
-  position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translate(-50%, 3px);
+  position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%) scale(.625);
+  transform-origin: 50% 100%;
   width: max-content; max-width: 300px; padding: 7px 11px; border-radius: 9px;
   background: var(--sl-tinta); color: var(--sl-creme);
   font: 500 13px/1.35 var(--sl-sans); text-align: left; white-space: normal;
-  opacity: 0; pointer-events: none; transition: opacity .15s ease, transform .2s ease;
+  opacity: 0; pointer-events: none; transition: opacity .15s ease;
 }
 .sl-lt-regua-dica b { font-weight: 600; color: var(--sl-palha); margin-right: 4px }
-.sl-lt-regua-traco:hover .sl-lt-regua-dica { opacity: 1; transform: translate(-50%, 0) }
+.sl-lt-regua-ponto:hover .sl-lt-regua-dica { opacity: 1 }
 
 /* Os chips de categoria: sem bolinha. A cor é o fio da borda, baixa no repouso e plena no hover;
    o ativo é preenchido com ela, texto creme. O "Tudo" segue o chip do glossário (ativo em tinta). */
@@ -1271,6 +1271,10 @@ a.sl-pl-item:hover {
   font-size: 20px; font-weight: 500; line-height: 28px; letter-spacing: -.01em; color: var(--sl-tinta);
   font-variant-numeric: tabular-nums lining-nums; transition: color .2s ease;
 }
+/* Antes de Cristo, o "a.C." vai miúdo embaixo do número; o rótulo de texto ("séc. III", "Antes da
+   moeda") desce um corpo e pode quebrar em duas linhas (08/out/2026). */
+.sl-lt-ano small { display: block; margin-top: 1px; font: 600 10.5px/14px var(--sl-sans); letter-spacing: .08em; color: var(--sl-tinta-3) }
+.sl-lt-ano.is-texto { margin-top: 21px; padding-right: 8px; font-size: 15px; line-height: 19px; letter-spacing: 0 }
 .sl-lt-no { grid-column: 2; grid-row: 1; position: relative; z-index: 3 }
 /* O marcador do marco: um anel vazado com o contorno na cor da categoria. Antecedente aceso ganha o
    miolo (um alvo); marco aberto, o anel cheio; o marco em foco, um halo fino. */
@@ -1365,6 +1369,8 @@ a.sl-pl-item:hover {
   .sl-lt-era:first-of-type .sl-lt-era-cabeca::after { top: 12px }
   .sl-lt-marco { grid-template-columns: var(--lt-no) minmax(0, 1fr); column-gap: 14px; padding: 12px 0 14px }
   .sl-lt-ano { grid-column: 2; grid-row: 1; margin-top: 0; font-size: 15px; line-height: 22px; color: var(--sl-tinta-2) }
+  .sl-lt-ano.is-texto { margin-top: 0; font-size: 15px; line-height: 22px }
+  .sl-lt-ano small { display: inline; margin: 0 }
   .sl-lt-no { grid-column: 1; grid-row: 1 / span 2 }
   .sl-lt-ponto { margin-top: 6.5px }
   .sl-lt-miolo { grid-column: 2; grid-row: 2 }

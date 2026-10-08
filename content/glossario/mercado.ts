@@ -27,7 +27,7 @@ export const VERBETES_MERCADO: Verbete[] = [
       {
         titulo: "Os números",
         paragrafos: [
-          "Quando o real foi lançado, em julho de 1994, um real valia um dólar, e nos meses seguintes chegou a valer mais: o dólar foi a R$ 0,93. No fim de setembro de 2026, a PTAX estava perto de R$ 5,18. Em pouco mais de três décadas, o real perdeu cerca de 82% do seu valor em dólar.",
+          "Quando o real foi lançado, em julho de 1994, um real valia um dólar, e nos meses seguintes chegou a valer mais: a média de julho foi de R$ 0,93 por dólar, e em outubro o dólar chegou a R$ 0,83. No fim de setembro de 2026, a PTAX estava perto de R$ 5,18. Medido a partir daquele primeiro mês, o real perdeu cerca de 82% do seu valor em dólar em pouco mais de três décadas.",
           "Esse caminho não foi uma linha reta. Houve saltos em 1999, 2002, 2008, 2015 e 2020, e longos períodos de real forte no meio, como entre 2003 e 2011, quando o dólar chegou a ficar abaixo de R$ 1,60. Quem olhava só aqueles anos achava que o dólar era um mau negócio.",
           "No mundo, o mercado de câmbio é o maior de todos: segundo o levantamento trienal do BIS, o banco dos bancos centrais, giravam US$ 9,6 trilhões por dia em abril de 2025, e o dólar estava de um dos lados de 89% das operações.",
         ],
@@ -78,7 +78,7 @@ export const VERBETES_MERCADO: Verbete[] = [
       {
         titulo: "Como funciona",
         paragrafos: [
-          "O comercial nasce do mercado interbancário de câmbio, em que bancos autorizados pelo Banco Central compram e vendem moeda entre si e com clientes grandes. Como os volumes são altos e a concorrência é grande, a diferença entre o preço de compra e o de venda fica pequena, de centavos de centavo.",
+          "O comercial nasce do mercado interbancário de câmbio, em que bancos autorizados pelo Banco Central compram e vendem moeda entre si e com clientes grandes. Como os volumes são altos e a concorrência é grande, a diferença entre o preço de compra e o de venda fica pequena, de frações de centavo.",
           "O preço muda a cada negócio, ao longo do dia. Quando a notícia diz que o dólar fechou a tal valor, ela usa o último preço negociado no fim da sessão, que não é a mesma coisa que a PTAX, uma média calculada pelo Banco Central em quatro janelas do dia.",
           "Em geral, essas operações são liquidadas em dois dias úteis: os reais saem de uma conta e os dólares entram em outra lá fora. É o chamado câmbio à vista, ou pronto.",
         ],
@@ -99,7 +99,7 @@ export const VERBETES_MERCADO: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Hipotético: o comercial está a R$ 5,00. Uma conta internacional que cobra 1% de spread converte a R$ 5,05; uma casa de câmbio que vende papel-moeda pode cobrar R$ 5,25 ou mais. Para converter R$ 50 mil, a diferença entre os dois caminhos passa de R$ 1.900, antes do IOF. Os três preços convivem no mesmo dia, e só um deles é o do noticiário.",
+    exemplo: "Hipotético: o comercial está a R$ 5,00. Uma conta internacional que cobra 1% de spread converte a R$ 5,05; uma casa de câmbio que vende papel-moeda pode cobrar R$ 5,25 ou mais. Para converter R$ 50 mil, a diferença entre os dois caminhos fica perto de R$ 2 mil, antes do IOF. Os três preços convivem no mesmo dia, e só um deles é o do noticiário.",
     naPratica: "Use o comercial como régua para saber quanto você realmente paga ao converter. A distância entre ele e o preço que te ofereceram é o custo da conversão, antes do IOF. Para quem pretende dolarizar uma parte do patrimônio aos poucos, com aportes ao longo de anos, essa distância se repete a cada operação e vira um custo relevante. Vale anotar o comercial no momento da conversão e comparar com o preço efetivo que apareceu no comprovante.",
     relacionados: ["cambio", "ptax", "spread-cambial", "custo-total", "iof", "remessa", "conta-global"],
     noCurso: [
@@ -133,15 +133,15 @@ export const VERBETES_MERCADO: Verbete[] = [
       {
         titulo: "De onde vem",
         paragrafos: [
-          "O nome vem do código da transação no antigo sistema de informações do Banco Central, o Sisbacen, que publicava a taxa média do mercado. A metodologia atual, com as quatro janelas de consulta, está em vigor desde 2011.",
-          "Antes dela, a PTAX era a média ponderada de todos os negócios do dia no interbancário, o que a deixava mais exposta a operações isoladas. A troca buscou uma referência mais difícil de manipular, numa época em que o mundo descobria escândalos de manipulação de taxas de referência lá fora.",
+          "O nome vem do código da transação no sistema de informações do Banco Central, o Sisbacen, que publicava a taxa média do mercado. A metodologia atual, com as quatro janelas de consulta, está em vigor desde 2011.",
+          "Antes dela, a PTAX era a média ponderada de todos os negócios do dia no interbancário, o que a deixava mais exposta a operações isoladas. A troca buscou uma referência mais difícil de distorcer com poucos negócios fechados num momento só.",
         ],
       },
       {
         titulo: "Onde ela aparece",
         paragrafos: [
           "A PTAX é usada para liquidar contratos de dólar futuro na B3 no vencimento, para converter balanços de empresas com operações em dólar, para calcular cotas de fundos que investem lá fora e para a declaração de bens no exterior no imposto de renda.",
-          "Para referência histórica, é a série mais usada, inclusive nos gráficos deste curso. Ela tem a vantagem de ser uma só por dia e de existir desde muito tempo, o que permite comparar décadas.",
+          "Para referência histórica, é a série mais usada, inclusive nos gráficos deste curso. Ela tem a vantagem de ser uma só por dia e de existir há décadas, o que permite comparações longas.",
           "Como é uma média de um pedaço do dia, a PTAX quase nunca bate com o dólar de fechamento do mercado. Em dias agitados, a diferença pode ser de vários centavos.",
         ],
       },
@@ -274,7 +274,7 @@ export const VERBETES_MERCADO: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Se o dólar dobra de preço, ele subiu 100%, mas o real perdeu metade do valor. Pela mesma lógica, o dólar ter ido de R$ 0,93, nos primeiros meses do real, para perto de R$ 5,18 no fim de setembro de 2026 significa que o real perdeu cerca de 82% do seu valor em dólar. Em reais, o dólar subiu mais de 450%.",
+    exemplo: "Se o dólar dobra de preço, ele subiu 100%, mas o real perdeu metade do valor. Pela mesma lógica, o dólar ter ido de R$ 0,93, a média do primeiro mês do real, para perto de R$ 5,18 no fim de setembro de 2026 significa que o real perdeu cerca de 82% do seu valor em dólar. Em reais, o dólar subiu mais de 450%.",
     naPratica: "A desvalorização do real reduz o seu patrimônio medido em dólar e encarece tudo o que tem preço lá fora. Ter uma parte em outra moeda é o jeito de diluir esse risco sem precisar adivinhar quando o próximo salto vem. E, como os saltos costumam coincidir com crises internas, a parte em dólar tende a ganhar valor justamente quando o resto do patrimônio sofre.",
     relacionados: [
       "cambio",
@@ -574,7 +574,7 @@ export const VERBETES_MERCADO: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Hipotético: dois fundos compram o mesmo índice americano. Num ano em que o índice sobe 10% e o dólar sobe 15%, o fundo sem hedge ganha perto de 26% em reais; o com hedge fica perto dos 10%, mais a diferença de juros, digamos 19% no total. Num ano em que o dólar cai 15%, o sem hedge perde cerca de 6%, e o com hedge continua perto dos 19%.",
+    exemplo: "Hipotético: dois fundos compram o mesmo índice americano. Num ano em que o índice sobe 10% e o dólar sobe 15%, o fundo sem hedge ganha perto de 26% em reais; o com hedge fica perto dos 10%, mais a diferença de juros, digamos 19% no total. Num ano em que o dólar cai 15%, o sem hedge perde cerca de 6,5%, e o com hedge continua perto dos 19%.",
     naPratica: "Para quem ganha e gasta em reais, boa parte da proteção que o exterior oferece vem da própria moeda, porque o dólar tende a subir nas crises brasileiras. Fazer hedge de todo o câmbio elimina justamente essa parte. A escolha entre com e sem hedge depende do motivo de investir lá fora: diversificar a moeda pede a versão sem proteção; buscar outros setores e empresas, sem mexer na exposição ao real, pode pedir a com proteção.",
     relacionados: [
       "risco-cambial",
@@ -682,7 +682,7 @@ export const VERBETES_MERCADO: Verbete[] = [
         ],
       },
     ],
-    exemplo: "De 1995 a 2025, os preços no Brasil subiram 6,4 vezes e, nos Estados Unidos, 2,1 vezes. Só essa diferença levaria o dólar de R$ 0,92 para cerca de R$ 2,78. Ele foi a R$ 5,59: o resto foi perda real do real, concentrada nas crises. Em outras palavras, metade da alta do dólar no período foi inflação; a outra metade, risco.",
+    exemplo: "De 1995 a 2025, os preços no Brasil subiram 6,4 vezes e, nos Estados Unidos, 2,1 vezes. Só essa diferença levaria o dólar médio de R$ 0,92, em 1995, para cerca de R$ 2,78. A média de 2025 foi de R$ 5,59: o resto foi perda real do real, concentrada nas crises. Em outras palavras, a diferença de inflação explica uma parte grande da alta do dólar, mas não toda.",
     naPratica: "Ficar todo em reais amarra o poder de compra do seu patrimônio lá fora à inflação brasileira e aos solavancos do dólar. A PPC não serve para prever o câmbio do ano que vem, mas explica por que, em décadas, a moeda de inflação mais alta costuma perder. Para quem pensa no longo prazo, ela é um lembrete de que a parte do patrimônio em reais precisa render acima da inflação daqui só para não ficar para trás em dólar.",
     relacionados: [
       "inflacao",
@@ -797,7 +797,7 @@ export const VERBETES_MERCADO: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Em 2020, com a Selic a 2% e juro real negativo, o Brasil perdeu o atrativo para esse dinheiro de curto prazo. O dólar, que começara o ano a R$ 4,02, chegou a R$ 5,94 em maio. Hipotético, do lado de quem fazia o carry: quem tinha aplicado US$ 1 milhão em reais no começo do ano, ganhando juro de 4,5%, terminou maio com perda perto de 30% em dólar.",
+    exemplo: "Em 2020, com a Selic em queda rumo à mínima de 2%, que veio em agosto, e o juro real indo para o negativo, o Brasil perdeu o atrativo para esse dinheiro de curto prazo. O dólar, que começara o ano a R$ 4,02, chegou a R$ 5,94 em maio. Hipotético, do lado de quem fazia o carry: quem tinha aplicado US$ 1 milhão em reais no começo do ano, ganhando juro de 4,5%, terminou maio com perda perto de 30% em dólar.",
     naPratica: "Parte do fluxo que sustenta o real é dinheiro que vai embora no primeiro susto. É mais uma razão por que o câmbio brasileiro oscila tanto, e por que o patrimônio todo em reais fica exposto aos humores do mundo. Quem fica só em renda fixa brasileira faz, sem perceber, uma versão doméstica do carry: ganha a diferença de juros enquanto o real aguenta, e sente o câmbio de uma vez quando ele não aguenta.",
     relacionados: [
       "paridade-de-juros",
@@ -900,7 +900,7 @@ export const VERBETES_MERCADO: Verbete[] = [
       {
         titulo: "Quando as funções se separam",
         paragrafos: [
-          "Com inflação alta, as funções se separam. Nos anos 1980 e no começo dos 1990, o brasileiro pagava o pão em cruzeiros, mas guardava valor em dólar, em imóveis ou em aplicações de um dia corrigidas pela inflação, o overnight. Contratos eram reajustados por índices. O cruzeiro continuava meio de troca, mas tinha deixado de ser reserva de valor e, em boa parte, unidade de conta.",
+          "Com inflação alta, as funções se separam. Nos anos 1980 e no começo dos 1990, o brasileiro pagava o pão na moeda da vez, cruzeiro, cruzado ou cruzeiro real, mas guardava valor em dólar, em imóveis ou em aplicações de um dia corrigidas pela inflação, o overnight. Contratos eram reajustados por índices. A moeda nacional continuava meio de troca, mas tinha deixado de ser reserva de valor e, em boa parte, unidade de conta.",
           "Em países com hiperinflação, a separação vai mais longe. O dólar vira a unidade de conta de fato, com preços de imóveis e carros cotados nele, e às vezes vira também meio de troca, como aconteceu na Argentina e na Venezuela em vários momentos.",
         ],
       },
@@ -1139,7 +1139,7 @@ export const VERBETES_MERCADO: Verbete[] = [
         titulo: "Onde ela serve",
         paragrafos: [
           "Serve para qualquer coisa que cresça a uma taxa constante: um investimento, uma dívida, a população, os preços numa inflação. Funciona bem para taxas entre 2% e 20% ao ano; fora disso, o erro aumenta.",
-          "Ao contrário, ela mede a perda. Se os preços sobem 6% ao ano, o seu dinheiro parado perde metade do poder de compra em uns 12 anos. Se sobem 3%, em uns 24. É um jeito rápido de sentir o estrago da inflação sobre dinheiro guardado.",
+          "Ela também mede a perda. Se os preços sobem 6% ao ano, o seu dinheiro parado perde metade do poder de compra em uns 12 anos. Se sobem 3%, em uns 24. É um jeito rápido de sentir o estrago da inflação sobre dinheiro guardado.",
           "Também vale para crescimento econômico. Um país que cresce 2% ao ano dobra a renda em 36 anos; um que cresce 7%, em pouco mais de 10. Diferenças pequenas de taxa viram gerações de diferença.",
         ],
       },
@@ -1359,7 +1359,7 @@ export const VERBETES_MERCADO: Verbete[] = [
       {
         titulo: "O Brasil conhece o extremo",
         paragrafos: [
-          "Entre o fim de 1979 e junho de 1994, os preços subiram cerca de 11 trilhões por cento pelo IPCA. Em 1993, último ano inteiro antes do real, a inflação foi de 2.477%, e os preços dobravam a cada dois meses e meio. Seis planos econômicos tentaram resolver o problema antes do Real, com congelamentos, troca de moeda e até o bloqueio das aplicações no Plano Collor.",
+          "Entre o fim de 1979 e junho de 1994, os preços subiram cerca de 11 trilhões por cento pelo IPCA. Em 1993, último ano inteiro antes do real, a inflação foi de 2.477%, e os preços dobravam a cada dois meses e meio. Entre 1986 e 1991, cinco planos econômicos tentaram resolver o problema antes do Real, com congelamentos, troca de moeda e até o bloqueio das aplicações no Plano Collor.",
           "Desde 1999, o Banco Central trabalha com metas de inflação. A meta atual é de 3% ao ano, medida de forma contínua, com tolerância de 1,5 ponto para cima ou para baixo. O Fed persegue 2% ao ano nos Estados Unidos.",
         ],
       },
@@ -1759,7 +1759,7 @@ export const VERBETES_MERCADO: Verbete[] = [
       {
         titulo: "Um caso real",
         paragrafos: [
-          "Em 2020, com a inflação medida em queda no auge do isolamento, o Copom levou a Selic de 4,5% a 2%, a mínima da história. O juro real ficou negativo, o dinheiro estrangeiro de curto prazo saiu, e o dólar, que começara o ano a R$ 4,02, chegou a R$ 5,94 em maio.",
+          "Em 2020, com a inflação medida em queda no auge do isolamento, o Copom levou a Selic de 4,5% a 2% em agosto, a mínima da história. O juro real ficou negativo e o dinheiro estrangeiro de curto prazo saiu. No auge do pânico, em maio, o dólar, que começara o ano a R$ 4,02, chegou a R$ 5,94.",
           "A inflação voltou mais forte do que o esperado. A partir de março de 2021, o comitê iniciou um dos ciclos de alta mais rápidos de sua história, que levou a Selic a 13,75% em menos de um ano e meio.",
         ],
       },
@@ -1943,7 +1943,7 @@ export const VERBETES_MERCADO: Verbete[] = [
       },
     ],
     exemplo: "Hipotético: o banco central compra US$ 1 trilhão em títulos de 10 anos. Com mais um comprador gigante, o preço dos títulos sobe e a taxa cai, digamos de 3,5% para 2,5%. Uma hipoteca de US$ 400 mil em 30 anos fica perto de US$ 220 mais barata por mês. Empresas emitem dívida mais barato, e investidores, sem rendimento nos títulos, migram para ações.",
-    naPratica: "A década do dinheiro barato ajuda a explicar a alta das ações de tecnologia americanas e o juro real perto de zero no mundo rico, enquanto o Brasil pagava perto de 10% reais. Quem compara os dois lados precisa saber que esses regimes mudam: o desempenho de ações e títulos americanos entre 2009 e 2021 aconteceu num ambiente que pode não se repetir. Diversificar não é apostar que o passado volta, é não depender de um único regime.",
+    naPratica: "A década do dinheiro barato ajuda a explicar a alta das ações de tecnologia americanas e o juro real perto de zero no mundo rico, enquanto o Brasil pagava juros reais que muitas vezes passavam de 5% ao ano. Quem compara os dois lados precisa saber que esses regimes mudam: o desempenho de ações e títulos americanos entre 2009 e 2021 aconteceu num ambiente que pode não se repetir. Diversificar não é apostar que o passado volta, é não depender de um único regime.",
     relacionados: [
       "fed",
       "treasury",
@@ -2101,7 +2101,7 @@ export const VERBETES_MERCADO: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Hipotético: uma empresa emite um título de R$ 1.000, com vencimento em cinco anos e juros de 10% ao ano pagos semestralmente. Você recebe R$ 50 a cada seis meses e os R$ 1.000 no fim, se a empresa pagar: R$ 1.500 no total, em onze pagamentos com data marcada.",
+    exemplo: "Hipotético: uma empresa emite um título de R$ 1.000, com vencimento em cinco anos e juros de 10% ao ano pagos semestralmente. Você recebe R$ 50 a cada seis meses e os R$ 1.000 no fim, se a empresa pagar: R$ 1.500 no total, em dez datas marcadas.",
     naPratica: "Nos Estados Unidos, o mercado de títulos é gigante, com papéis de governo e de empresas de todos os prazos; só o Tesouro americano tinha US$ 31,8 trilhões em títulos negociáveis no fim de setembro de 2026. Para quem pensa em dolarizar, títulos são uma forma de ter renda combinada em dólar, com datas conhecidas, e com riscos que o curso discute no Módulo II: crédito, prazo e câmbio.",
     relacionados: [
       "renda-fixa",
@@ -2308,7 +2308,7 @@ export const VERBETES_MERCADO: Verbete[] = [
       {
         titulo: "Os números",
         paragrafos: [
-          "Em agosto de 2026, o programa tinha 3,8 milhões de investidores ativos e um estoque de R$ 272 bilhões, segundo o Tesouro. O Tesouro Selic era o título mais procurado, com perto de 37% do estoque. Apesar do crescimento, a pessoa física detém só cerca de 3% da dívida interna.",
+          "Em agosto de 2026, o programa tinha 3,8 milhões de investidores ativos e um estoque de R$ 272 bilhões, segundo o Tesouro. Os títulos atrelados à inflação eram a maior fatia do estoque, perto de 47%, seguidos pelo Tesouro Selic, com perto de 39%. Apesar do crescimento, a pessoa física detém só cerca de 3% da dívida interna.",
         ],
       },
       {
@@ -2367,7 +2367,7 @@ export const VERBETES_MERCADO: Verbete[] = [
       {
         titulo: "Uma peculiaridade brasileira",
         paragrafos: [
-          "Nasceu nos anos de inflação alta, quando ninguém emprestava ao governo a taxa fixa. E continua enorme. Em agosto de 2026, as LFTs somavam R$ 4,9 trilhões, mais da metade da dívida interna, segundo o Tesouro. No Tesouro Direto, eram perto de 37% do estoque.",
+          "Nasceu nos anos de inflação alta, quando ninguém emprestava ao governo a taxa fixa. E continua enorme. Em agosto de 2026, as LFTs somavam R$ 4,9 trilhões, mais da metade da dívida interna, segundo o Tesouro. No Tesouro Direto, eram perto de 39% do estoque.",
           "Isso faz uma alta de juros pesar rápido nas contas públicas: diferente de um título prefixado longo, cujo custo fica travado, a LFT passa a pagar mais no dia seguinte à decisão do Copom.",
           "Nenhuma grande economia tem uma fatia tão grande da dívida em títulos assim. Nos Estados Unidos, o mais parecido são as T-bills, títulos curtos, e os títulos de juro flutuante, que somam perto de 2% da dívida negociável.",
         ],
@@ -2491,7 +2491,7 @@ export const VERBETES_MERCADO: Verbete[] = [
         titulo: "Um caso real",
         paragrafos: [
           "Em novembro de 2025, o Banco Central decretou a liquidação extrajudicial do Banco Master, que por anos havia captado bilhões oferecendo CDBs a taxas bem acima do mercado, distribuídos por plataformas de investimento com o argumento da garantia do FGC. Foi o maior acionamento da história do fundo: cerca de R$ 41 bilhões em garantias para perto de 1,6 milhão de credores.",
-          "Quem tinha até R$ 250 mil foi ressarcido ao longo dos meses seguintes. Quem tinha mais ficou na fila da massa falida. O caso mostrou que taxa muito acima da média é um sinal de risco, e não um presente.",
+          "Quem tinha até R$ 250 mil foi ressarcido ao longo dos meses seguintes. Quem tinha mais entrou na fila dos credores da liquidação. O caso mostrou que taxa muito acima da média é um sinal de risco, e não um presente.",
         ],
       },
       {

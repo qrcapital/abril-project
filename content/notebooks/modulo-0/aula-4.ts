@@ -234,7 +234,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "12:50",
       paragrafos: [
-        "O exemplo do JPMorgan pede cuidado. Na aula, Rodolfo diz que a ação era King até 2008 e perdeu o título naquele ano, mas manteve os pagamentos. Os registros contam outra história: o banco nunca chegou a 50 anos de aumentos seguidos e, em fevereiro de 2009, cortou o dividendo de US$ 0,38 para US$ 0,05 por ação a cada trimestre, para guardar capital no auge da crise. Quem vivia daquele dividendo viu a renda cair a um oitavo de um trimestre para o outro.",
+        "O exemplo do JPMorgan pede cuidado. Na aula, Rodolfo diz que a ação era King até 2008 e perdeu o título naquele ano, mas manteve os pagamentos. Os registros contam outra história: o banco nunca chegou a 50 anos de aumentos seguidos e, em fevereiro de 2009, cortou o dividendo de US$ 0,38 para US$ 0,05 por ação a cada trimestre, para guardar capital no auge da crise. Quem vivia daquele dividendo viu a renda cair a perto de um oitavo de um trimestre para o outro.",
         "É aí que o dividendo se separa do cupom. Deixar de pagar o cupom de um título é calote. Já o dividendo é uma decisão do conselho da empresa, que pode reduzi-lo quando o lucro some ou o caixa aperta.",
         "Mais dois detalhes. O dividendo americano pago a quem mora no Brasil tem imposto retido nos Estados Unidos, tema do Módulo III. E uma carteira de boas pagadoras pode, sim, servir de fonte de renda, desde que tenha empresas suficientes para aguentar o corte de uma delas.",
       ],

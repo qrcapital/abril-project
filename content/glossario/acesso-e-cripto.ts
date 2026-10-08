@@ -70,7 +70,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
     texto: [
       "Você manda R$ 100 mil para uma corretora nos Estados Unidos. Antes de virar dólar, uma parte fica no caminho: R$ 1.100, se a remessa for classificada como investimento em seu nome; R$ 3.500, se for para ter saldo disponível lá fora. Essa diferença tem nome e sobrenome: Imposto sobre Operações Financeiras, o IOF.",
       "O IOF é um imposto federal que incide sobre crédito, câmbio, seguros e operações com títulos. No câmbio, é cobrado pela própria instituição na hora em que você compra ou vende moeda estrangeira, e a alíquota depende da finalidade da operação.",
-      "É um imposto diferente dos outros por um detalhe constitucional: o governo pode mudar as alíquotas por decreto, com efeito no dia seguinte, sem passar pelo Congresso e sem esperar o ano seguinte. Por isso ele funciona mais como uma alavanca de política econômica do que como uma fonte estável de arrecadação.",
+      "É um imposto diferente dos outros por um detalhe constitucional: o governo pode mudar as alíquotas por decreto, com efeito imediato, sem passar pelo Congresso e sem esperar o ano seguinte. Por isso ele funciona mais como uma alavanca de política econômica do que como uma fonte estável de arrecadação.",
     ],
     secoes: [
       {
@@ -85,7 +85,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
         titulo: "De onde vem a regra atual",
         paragrafos: [
           "Em março de 2022, o Decreto 10.997 desenhou uma redução gradual do IOF sobre câmbio até zerar em 2029, como parte do esforço do Brasil para entrar na OCDE. O cronograma chegou a ser aplicado nos primeiros anos.",
-          "Em maio de 2025, com as contas públicas apertadas, o governo mudou de rumo. Dois decretos, de 22 e 23 de maio, subiram alíquotas de câmbio e de crédito, e o segundo recuou em parte depois da reação do mercado. Em 11 de junho, o Decreto 12.499 consolidou a nova tabela. O Congresso aprovou um decreto legislativo para derrubar a alta, o caso foi parar no Supremo e, em julho de 2025, o tribunal restabeleceu quase todo o decreto do governo.",
+          "Em maio de 2025, com as contas públicas apertadas, o governo mudou de rumo. Dois decretos, de 22 e 23 de maio, subiram alíquotas de câmbio e de crédito, e o segundo recuou em parte depois da reação do mercado. Em 11 de junho, o Decreto 12.499 consolidou a nova tabela. O Congresso aprovou um decreto legislativo para derrubar a alta, o caso foi parar no Supremo e, em julho de 2025, uma decisão do tribunal restabeleceu quase todo o decreto do governo.",
           "A lição é menos sobre os números e mais sobre o mecanismo: uma promessa de zerar um imposto até 2029 durou três anos. Em 2026, a tabela de junho de 2025 continua valendo.",
         ],
       },
@@ -144,15 +144,15 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       {
         titulo: "No Brasil e lá fora",
         paragrafos: [
-          "Do ponto de vista do Brasil, a conta global é um bem no exterior. Ela precisa aparecer na ficha de bens e direitos da declaração de imposto de renda e, se o total que você tem fora passar de US$ 1 milhão em 31 de dezembro, entra também na declaração de capitais brasileiros no exterior, ao Banco Central.",
+          "Do ponto de vista do Brasil, a conta global é um bem no exterior. Ela precisa aparecer na ficha de bens e direitos da declaração de imposto de renda e, se o total que você tem fora chegar a US$ 1 milhão ou mais em 31 de dezembro, entra também na declaração de capitais brasileiros no exterior, ao Banco Central.",
           "Do ponto de vista dos Estados Unidos, você é um cliente estrangeiro. A instituição vai pedir o formulário W-8BEN, e as informações da conta chegam à Receita Federal pelos acordos de troca automática entre os dois países.",
         ],
       },
       {
         titulo: "Erros comuns",
         paragrafos: [
-          "Tratar a conta global como investimento. Saldo parado em dólar protege contra a desvalorização do real, mas não rende nada, e a inflação americana corrói o poder de compra dele com o tempo.",
-          "Esquecer de declarar porque o valor é pequeno. Pelas regras da Receita, bens no exterior entram na declaração conforme os limites em vigor, e a informação da conta chega de qualquer jeito pelos acordos internacionais.",
+          "Tratar a conta global como investimento. Saldo parado em dólar, numa conta sem juros, protege contra a desvalorização do real, mas não rende nada, e a inflação americana corrói o poder de compra dele com o tempo.",
+          "Esquecer de declarar porque o valor é pequeno. Os limites que a Receita dispensa de declarar para saldos em conta são baixos, e a informação da conta chega de qualquer jeito pelos acordos internacionais.",
         ],
       },
     ],
@@ -229,7 +229,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       {
         titulo: "No Brasil e lá fora",
         paragrafos: [
-          "No exterior, qualquer residente pode abrir conta num banco estrangeiro, diretamente ou pelos aplicativos de conta global. O dinheiro precisa sair por uma operação de câmbio regular, numa instituição autorizada, e a conta precisa aparecer na declaração de imposto de renda. Se o total de bens e valores no exterior passar de US$ 1 milhão em 31 de dezembro, também entra na declaração anual ao Banco Central.",
+          "No exterior, qualquer residente pode abrir conta num banco estrangeiro, diretamente ou pelos aplicativos de conta global. O dinheiro precisa sair por uma operação de câmbio regular, numa instituição autorizada, e a conta precisa aparecer na declaração de imposto de renda. Se o total de bens e valores no exterior chegar a US$ 1 milhão ou mais em 31 de dezembro, também entra na declaração anual ao Banco Central.",
           "Dentro do Brasil, contas em moeda estrangeira existem para situações específicas, como certas empresas, instituições e prestadores ligados ao comércio exterior e ao turismo. O marco cambial abriu caminho para ampliar esse universo, mas a ampliação depende de regulamentação do Banco Central, que tem sido gradual. Uma conta em dólar aberta pelo aplicativo de um banco brasileiro quase sempre fica, na verdade, numa instituição no exterior.",
         ],
       },
@@ -311,7 +311,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
     resumo:
       "A lei que, desde janeiro de 2024, tributa em 15%, na declaração anual, os rendimentos de pessoas físicas com aplicações financeiras, offshores e trusts no exterior. O cálculo é em reais, com a variação do câmbio dentro.",
     texto: [
-      "Imagine dois investidores. Um tem US$ 200 mil num ETF comprado direto numa corretora americana. O outro tem os mesmos US$ 200 mil, mas dentro de uma empresa nas Ilhas Virgens Britânicas que compra o mesmo ETF. Até 2023, o segundo podia adiar o imposto brasileiro quase para sempre. Desde 2024, os dois seguem a mesma lógica.",
+      "Imagine dois investidores. Um tem US$ 200 mil num ETF comprado direto numa corretora americana. O outro tem os mesmos US$ 200 mil, mas dentro de uma empresa nas Ilhas Virgens Britânicas que compra o mesmo ETF. Até 2023, o segundo podia adiar o imposto brasileiro quase para sempre. Desde 2024, os dois pagam os mesmos 15%, e o adiamento acabou.",
       "A Lei 14.754, de 12 de dezembro de 2023, em vigor desde 1º de janeiro de 2024, mudou a forma como o Brasil tributa o dinheiro que pessoas físicas residentes aplicam no exterior. Rendimentos de aplicações financeiras lá fora, lucros de empresas controladas no exterior e bens em trusts passaram a ter regra própria, numa ficha separada da declaração anual, com alíquota de 15%.",
       "É a lei mais importante para quem pensa em investir diretamente fora do país. Ela diz como o imposto é calculado, quando é devido e o que pode ser abatido.",
     ],
@@ -321,7 +321,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
         paragrafos: [
           "A lei chama de aplicação financeira no exterior quase tudo o que um investidor pessoa física tem lá fora: depósitos remunerados, ações, ETFs, fundos, títulos de renda fixa, derivativos e também ativos virtuais e carteiras digitais, nos termos que a Receita regulamenta. Os rendimentos incluem juros, dividendos, ganhos na venda e a variação do câmbio sobre o que foi aplicado.",
           "Esses rendimentos entram na declaração anual de ajuste, numa ficha própria, e pagam 15% sem nenhuma dedução. O imposto é devido quando o rendimento é efetivamente recebido: no pagamento de juros ou dividendos, e, no caso de ganhos, no resgate, na venda, no vencimento ou na liquidação. Enquanto você não vende, a valorização não é tributada.",
-          "Perdas realizadas e comprovadas compensam ganhos do mesmo ano. O que sobrar pode abater lucros de empresas controladas no exterior e, depois, ganhos dos anos seguintes, uma única vez. E o imposto pago no país de origem pode ser abatido do brasileiro quando houver tratado ou reciprocidade, até o limite do imposto brasileiro sobre aquele rendimento, sem direito de levar a sobra para outro ano.",
+          "Perdas realizadas e comprovadas compensam ganhos do mesmo ano. O que sobrar pode abater lucros de empresas controladas no exterior e, depois, ganhos dos anos seguintes. Cada perda só pode ser usada uma vez. E o imposto pago no país de origem pode ser abatido do brasileiro quando houver tratado ou reciprocidade, até o limite do imposto brasileiro sobre aquele rendimento, sem direito de levar a sobra para outro ano.",
         ],
       },
       {
@@ -341,7 +341,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       {
         titulo: "Por que importa para quem investe",
         paragrafos: [
-          "A lei trouxe três consequências práticas. O imposto é calculado em reais, então a alta do dólar entra na conta mesmo quando o ativo ficou parado em dólar. O imposto não é retido na fonte pela corretora estrangeira: você calcula e paga na declaração.",
+          "A lei trouxe duas consequências práticas. O imposto é calculado em reais, então a alta do dólar entra na conta mesmo quando o ativo ficou parado em dólar. O imposto não é retido na fonte pela corretora estrangeira: você calcula e paga na declaração.",
           "Para quem tem renda alta, há um detalhe novo desde 2026: a Lei 15.270, de 2025, criou uma tributação mínima para quem recebe mais de R$ 600 mil por ano somando todas as rendas, e os rendimentos da Lei 14.754 entram nessa soma. O imposto já pago por essa lei é abatido do cálculo do mínimo. Como as duas regras conversam no seu caso é assunto para um contador.",
         ],
       },
@@ -384,7 +384,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       {
         titulo: "Por que importa para quem investe",
         paragrafos: [
-          "Escolher o veículo também é escolher o regime de imposto. Uma ação americana comprada lá fora só é tributada quando você vende, e o imposto vem na declaração anual. Um BDR da mesma empresa pode gerar imposto mensal a cada venda com lucro. Um ETF brasileiro que compra ETFs americanos tem a sua própria camada de imposto dentro do fundo, como o imposto retido sobre dividendos lá fora.",
+          "Escolher o veículo também é escolher o regime de imposto. O ganho numa ação americana comprada lá fora só é tributado quando você vende, e o imposto vem na declaração anual. Um BDR da mesma empresa pode gerar imposto mensal a cada venda com lucro. Um ETF brasileiro que compra ETFs americanos tem a sua própria camada de imposto dentro do fundo, como o imposto retido sobre dividendos lá fora.",
           "Imposto não deve decidir sozinho, porque ele vem junto com outras diferenças: jurisdição, custódia, sucessão, liquidez e custo. Mas ele precisa entrar na comparação, sempre em reais e depois de todos os impostos.",
         ],
       },
@@ -398,7 +398,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       },
     ],
     exemplo:
-      "Hipotético: no mesmo ano, você vendeu com lucro cotas de um ETF americano comprado direto lá fora e cotas de um ETF da B3 que replica o S&P 500. O primeiro entra na ficha de aplicações no exterior e paga 15% na declaração do ano seguinte. O segundo foi apurado no mês da venda e pago por guia até o fim do mês seguinte, também a 15%, mas sem a isenção de R$ 20 mil, que vale só para ações. Mesmo ativo de fundo, mesma alíquota, calendários e formulários diferentes.",
+      "Hipotético: no mesmo ano, você vendeu com lucro cotas de um ETF americano comprado direto lá fora e cotas de um ETF da B3 que replica o S&P 500. O primeiro entra na ficha de aplicações no exterior e paga 15% na declaração do ano seguinte. O segundo foi apurado no mês da venda e pago por guia até o fim do mês seguinte, também a 15%, mas sem a isenção de R$ 20 mil, que vale só para ações. Mesma exposição, mesma alíquota, calendários e formulários diferentes.",
     naPratica:
       "Antes de escolher entre conta lá fora, ETF local ou BDR, desenhe como cada um será tributado, em que momento e quanto trabalho de cálculo ele dá. Organize os documentos desde o início, declare tudo o que tiver fora e, quando a carteira ganhar tamanho ou complexidade, leve o desenho a um contador. Aqui a regra geral está explicada; cada caso tem os seus detalhes.",
     relacionados: ["lei-14754", "ganho-de-capital", "variacao-cambial-no-imposto", "dupla-tributacao", "bdr", "residencia-fiscal", "troca-automatica-de-informacoes", "compensacao-de-perdas"],
@@ -617,7 +617,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
         paragrafos: [
           "A Lei 14.754 criou o conceito de entidade controlada no exterior por pessoa física. Em geral, é controlada a empresa em que você tem mais de 50% do capital ou dos lucros, sozinho ou com pessoas ligadas, ou em que tem poder de decidir.",
           "Se a controlada está num país com tributação favorecida ou num regime fiscal privilegiado, ou se menos de 60% da renda dela vem de atividade própria, como acontece com quem vive de juros, dividendos e ganhos financeiros, o lucro é tributado em 15% no Brasil todo 31 de dezembro, como se tivesse sido distribuído. As demais controladas, em geral empresas operacionais de verdade, continuam tributadas quando o lucro chega à pessoa física.",
-          "A lei também permitiu uma alternativa: declarar os bens da controlada como se fossem detidos diretamente pela pessoa física, a chamada opção pela transparência. A escolha é feita por empresa e é irrevogável enquanto você a mantiver.",
+          "A lei também permitiu uma alternativa: declarar os bens da controlada como se fossem detidos diretamente pela pessoa física, a chamada opção pela transparência. A escolha é feita empresa por empresa e não pode ser desfeita enquanto você detiver aquela empresa.",
         ],
       },
       {
@@ -630,13 +630,13 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       {
         titulo: "Erros comuns",
         paragrafos: [
-          "Usar offshore para esconder. Com a troca automática de informações entre países, contas e empresas no exterior chegam ao conhecimento da Receita. Esconder deixou de ser difícil e passou a ser inútil, além de crime.",
+          "Usar offshore para esconder. Com a troca automática de informações entre países, contas e empresas no exterior chegam ao conhecimento da Receita. Esconder, além de crime, passou a ser inútil.",
           "Abrir estrutura por moda. Para quem tem algumas centenas de milhares de dólares lá fora, os custos fixos de uma offshore costumam superar qualquer benefício. Avalie pelo resultado depois de custos e impostos, com profissionais, e não pela promessa.",
         ],
       },
     ],
     exemplo:
-      "Hipotético: sua offshore nas Ilhas Virgens Britânicas teve lucro equivalente a R$ 200 mil num ano, só com juros e dividendos de uma carteira de ETFs. Mesmo sem distribuir nada, o lucro é considerado seu em 31 de dezembro, e você paga R$ 30 mil na declaração do ano seguinte. Se a mesma carteira estivesse em seu nome numa corretora americana, sem venda no ano, só os dividendos recebidos seriam tributados, e o ganho das cotas esperaria a venda.",
+      "Hipotético: sua offshore nas Ilhas Virgens Britânicas teve lucro equivalente a R$ 200 mil num ano, só com juros e dividendos de uma carteira de ETFs, e não distribuiu nada. Até 2023, o imposto brasileiro esperaria a distribuição, talvez por décadas. Desde 2024, o lucro é considerado seu em 31 de dezembro, e você paga R$ 30 mil na declaração do ano seguinte. É o mesmo que pagaria se a carteira estivesse em seu nome numa corretora americana e você tivesse recebido esses juros e dividendos.",
     naPratica:
       "Para a grande maioria de quem começa a dolarizar, a conta em nome próprio numa corretora no exterior resolve, com menos custo e menos burocracia. A offshore entra na conversa quando o patrimônio lá fora fica grande o bastante para que sucessão, estate tax e organização familiar justifiquem custos fixos anuais. Nesse ponto, a decisão é de planejamento patrimonial, com advogado e contador, e não de investimento.",
     relacionados: ["lei-14754", "trust", "estate-tax", "jurisdicao", "imposto-de-renda", "troca-automatica-de-informacoes", "declaracao-de-capitais-no-exterior"],
@@ -756,7 +756,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
         titulo: "O que muda com ele",
         paragrafos: [
           "Dividendos de empresas americanas sofrem retenção de 30% na fonte, a alíquota padrão para não residentes sem tratado. Juros de títulos do Tesouro americano, de boa parte dos títulos corporativos e de depósitos bancários costumam ficar livres de retenção para não residentes. E o ganho na venda de ações, em geral, não é tributado nos Estados Unidos, ficando para o país de residência.",
-          "Sem o formulário válido, a corretora pode aplicar a chamada retenção de segurança, o backup withholding, que vale para quem não comprovou a situação fiscal e pode alcançar até o valor bruto de vendas, o que atrapalha a conta e o caixa.",
+          "Sem o formulário válido, a corretora pode aplicar a chamada retenção de segurança, o backup withholding, hoje de 24%, que vale para quem não comprovou a situação fiscal e pode incidir sobre o valor bruto das vendas, e não só sobre o lucro, o que atrapalha a conta e o caixa.",
         ],
       },
       {
@@ -805,7 +805,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
         titulo: "Por que importa para quem investe",
         paragrafos: [
           "Para quem busca renda com dividendos americanos, o rendimento efetivo é de cerca de 70% do anunciado. Uma ação com dividend yield de 4% entrega, na prática, 2,8%. Isso muda a comparação com títulos de renda fixa, cujos juros chegam sem retenção.",
-          "Também explica por que o veículo importa. ETFs que acumulam os dividendos, em vez de distribuí-los, ou ETFs domiciliados em países com tratado com os Estados Unidos, como a Irlanda, sofrem uma retenção menor dentro do fundo. Cada estrutura tem os seus custos e os seus efeitos no imposto brasileiro e na sucessão, e a comparação precisa olhar tudo junto. O tema é aprofundado no Módulo III.",
+          "Também explica por que o veículo importa. ETFs domiciliados em países com tratado com os Estados Unidos, como a Irlanda, sofrem uma retenção menor sobre os dividendos americanos dentro do fundo, em geral de 15%, e muitos deles acumulam os dividendos em vez de distribuí-los. Cada estrutura tem os seus custos e os seus efeitos no imposto brasileiro e na sucessão, e a comparação precisa olhar tudo junto. O tema é aprofundado no Módulo III.",
         ],
       },
     ],
@@ -937,7 +937,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
         titulo: "O que não está coberto",
         paragrafos: [
           "Queda de preço, ativos sem valor vendidos a você, maus conselhos de investimento. Também ficam fora contratos futuros de commodities, operações de câmbio e contratos de investimento não registrados na SEC.",
-          "Criptoativos merecem atenção. A SIPC só protege o que é valor mobiliário registrado na SEC. Criptoativos que não se enquadram nisso, inclusive stablecoins, não são cobertos, mesmo que estejam guardados numa corretora associada. Um ETF de bitcoin registrado, por outro lado, é um valor mobiliário como qualquer ETF.",
+          "Criptoativos merecem atenção. A SIPC protege valores mobiliários, e criptoativos que não são valores mobiliários registrados na SEC, inclusive stablecoins, não são cobertos, mesmo que estejam guardados numa corretora associada. Um ETF de bitcoin registrado, por outro lado, é um valor mobiliário como qualquer ETF.",
         ],
       },
       {
@@ -950,7 +950,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       {
         titulo: "Um caso real",
         paragrafos: [
-          "Na quebra do Lehman Brothers, em setembro de 2008, a corretora do grupo entrou em liquidação sob a lei que criou a SIPC. Dezenas de milhares de contas de clientes foram transferidas para outras instituições em poucos dias, com os ativos dentro. Foi o maior teste do sistema, e ele funcionou como desenhado: a segregação fez quase todo o trabalho, e a SIPC ficou para cobrir o que faltasse.",
+          "Na quebra do Lehman Brothers, em setembro de 2008, a corretora do grupo entrou em liquidação sob a lei que criou a SIPC, na maior liquidação de corretora da história americana. Cerca de 110 mil contas de clientes, com US$ 92 bilhões, foram transferidas para outras corretoras em uns dez dias, com os ativos dentro. A segregação fez o trabalho: ao fim do processo, os clientes tinham recebido o que era deles sem que fosse preciso usar dinheiro da SIPC.",
         ],
       },
     ],
@@ -991,7 +991,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       {
         titulo: "Um caso real",
         paragrafos: [
-          "No fim de 2025, a liquidação do Banco Master, que captava por meio de CDBs com taxas bem acima das do mercado, virou um dos maiores testes da história do fundo. Os depositantes cobertos passaram a ser ressarcidos dentro do limite, e o episódio levou o Conselho Monetário Nacional a endurecer, em 2026, as regras de contribuição dos bancos que dependem muito de captação garantida.",
+          "Em 18 de novembro de 2025, o Banco Central decretou a liquidação do Banco Master, que captava por meio de CDBs com taxas bem acima das do mercado. Foi o maior acionamento da história do fundo. Os depositantes cobertos passaram a ser ressarcidos dentro do limite, e o episódio levou o Conselho Monetário Nacional a endurecer, em 2026, as regras de contribuição dos bancos que dependem muito de captação garantida.",
           "A lição para o investidor é antiga: taxa muito acima da média costuma pagar por um risco. O FGC transfere parte desse risco para o sistema, mas só até o limite, e o ressarcimento leva algum tempo.",
         ],
       },
@@ -1051,7 +1051,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       },
     ],
     exemplo:
-      "Hipotético: uma brasileira se muda para Portugal para trabalhar em março e não faz a comunicação de saída definitiva. Até março do ano seguinte, para a Receita, ela continua residente e deve declarar aqui a renda que ganha lá, ao mesmo tempo em que Portugal passa a considerá-la residente pela regra de presença. As duas declarações e o abatimento do imposto pelo tratado Brasil Portugal viram um quebra-cabeça que a saída formal teria evitado.",
+      "Hipotético: uma brasileira se muda para Portugal para trabalhar em março e não faz a comunicação de saída definitiva. Até março do ano seguinte, para a Receita, ela continua residente e deve declarar aqui a renda que ganha lá, ao mesmo tempo em que Portugal passa a considerá-la residente pela regra de presença. As duas declarações e o abatimento do imposto pelo tratado entre Brasil e Portugal viram um quebra-cabeça que a saída formal teria evitado.",
     naPratica:
       "Ter dinheiro lá fora não muda onde você paga imposto: quem manda é a residência. Para quem fica no Brasil, a consequência é simples e às vezes esquecida: tudo o que está fora entra na declaração daqui. Para quem pensa em se mudar, a decisão fiscal vem antes da mudança, não depois.",
     relacionados: ["imposto-de-renda", "dupla-tributacao", "w-8ben", "lei-14754", "troca-automatica-de-informacoes", "jurisdicao"],
@@ -1087,7 +1087,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       {
         titulo: "Por que importa para quem investe",
         paragrafos: [
-          "Investir lá fora é legal e não exige esconder nada. A troca automática só torna mais caro quem tenta esconder: omissões viram cruzamento, multa e, nos casos graves, processo.",
+          "Investir lá fora é legal e não exige esconder nada. A troca automática só complica a vida de quem tenta esconder: omissões viram cruzamento, multa e, nos casos graves, processo.",
           "Para quem declara direito, ela não muda nada, a não ser reforçar a importância de manter os números da declaração coerentes com os extratos que a instituição estrangeira vai informar.",
         ],
       },
@@ -1256,7 +1256,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
         titulo: "Os cortes até aqui",
         paragrafos: [
           "O primeiro halving aconteceu em novembro de 2012, no bloco 210 mil, e levou a recompensa de 50 para 25 bitcoins. O segundo, em julho de 2016, para 12,5. O terceiro, em maio de 2020, para 6,25. O quarto, em abril de 2024, no bloco 840 mil, para 3,125. O próximo é esperado para 2028, no bloco 1,05 milhão, quando a recompensa cairá para 1,5625.",
-          "A soma de uma série que começa em 50 e cai pela metade a cada etapa explica o teto: 210 mil blocos vezes 50, mais 210 mil vezes 25, e assim por diante, dá praticamente 21 milhões. O último corte relevante deve ocorrer por volta de 2140.",
+          "A soma de uma série que começa em 50 e cai pela metade a cada etapa explica o teto: 210 mil blocos vezes 50, mais 210 mil vezes 25, e assim por diante, dá praticamente 21 milhões. A emissão deve terminar por volta de 2140, quando a recompensa ficar menor que a menor fração de bitcoin que o protocolo registra.",
         ],
       },
       {
@@ -1296,7 +1296,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       {
         titulo: "Como funciona",
         paragrafos: [
-          "O minerador monta um bloco candidato com transações pendentes e calcula a impressão digital dele, o hash. A regra exige que esse hash comece com um certo número de zeros. Como não dá para prever o resultado, a única forma é variar um número no cabeçalho, o nonce, e tentar de novo, bilhões de vezes.",
+          "O minerador monta um bloco candidato com transações pendentes e calcula a impressão digital dele, o hash. A regra exige que esse hash fique abaixo de um alvo, o que, na prática, significa começar com uma longa fila de zeros. Como não dá para prever o resultado, a única forma é variar um número no cabeçalho, o nonce, e tentar de novo, bilhões de vezes.",
           "Quem encontra um hash válido espalha o bloco pela rede. Os outros nós conferem em um instante, aceitam e passam a minerar o bloco seguinte em cima dele. A dificuldade se ajusta sozinha a cada 2.016 blocos, cerca de duas semanas, para que os blocos continuem saindo a cada dez minutos em média, não importa quantas máquinas entrem ou saiam.",
           "Como a chance de um minerador pequeno ganhar um bloco é mínima, a maioria se junta em grupos, os pools, que somam o poder de computação e dividem as recompensas na proporção do esforço de cada um.",
         ],
@@ -1444,7 +1444,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
         titulo: "Um caso real",
         paragrafos: [
           "Em 2022, durante a crise do mercado cripto, plataformas que prometiam rendimento sobre depósitos de clientes, como a Celsius, suspenderam saques e quebraram. Parte do que elas chamavam de rendimento vinha de staking, parte de empréstimos arriscados. Os clientes descobriram que tinham um crédito contra a empresa, e não ativos guardados.",
-          "Em fevereiro de 2023, uma grande exchange americana fechou um acordo com a SEC e encerrou o seu programa de staking para clientes nos Estados Unidos. O episódio mostrou que, para o regulador, oferecer rendimento sobre o ativo do cliente pode ser um produto financeiro com regras próprias.",
+          "Em fevereiro de 2023, uma grande exchange americana fechou um acordo com a SEC e encerrou o seu programa de staking para clientes nos Estados Unidos. O episódio mostrou que, para o regulador, oferecer rendimento sobre o ativo do cliente pode ser um produto financeiro com regras próprias. A posição mudou depois: em 2025, com outra direção, a área técnica da SEC declarou que o staking feito diretamente no protocolo, em geral, não é oferta de valor mobiliário. A regra muda com o regulador, e isso também é risco.",
         ],
       },
     ],
@@ -1494,14 +1494,14 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       {
         titulo: "Um caso real",
         paragrafos: [
-          "Em 2013, um técnico de informática no País de Gales jogou fora um disco rígido antigo que guardava as chaves de milhares de bitcoins minerados nos primeiros anos. O disco foi parar num aterro sanitário. Ele passou mais de uma década tentando obter autorização para escavar o lugar, sem sucesso. Os bitcoins continuam lá, visíveis na blockchain e inacessíveis para sempre.",
+          "Em 2013, um técnico de informática no País de Gales jogou fora um disco rígido antigo que guardava as chaves de milhares de bitcoins minerados nos primeiros anos. O disco foi parar num aterro sanitário. Ele passou mais de uma década tentando obter autorização para escavar o lugar, sem sucesso. Os bitcoins continuam lá, visíveis na blockchain e, ao que tudo indica, inacessíveis para sempre.",
         ],
       },
     ],
     exemplo:
       "Hipotético: seu celular com a carteira é roubado. Se você anotou a frase de 24 palavras em papel, guardada num lugar seguro e longe do celular, instala a carteira num aparelho novo, digita a frase e, em minutos, tem o controle dos ativos de volta. Mais prudente ainda: transfere tudo para uma carteira nova, já que não sabe se o ladrão conseguiu ver a frase. Se você não anotou, o acesso está perdido, e nada nem ninguém pode reverter isso.",
     naPratica:
-      "Ter cripto numa carteira própria é a forma mais direta de estar fora de qualquer intermediário e de qualquer jurisdição. Também é a forma em que todo erro é seu. Muitos investidores preferem a exposição por ETF ou por uma exchange regulada justamente por isso. Se escolher a carteira própria, trate a frase de recuperação como trataria a escritura de um imóvel, e pense desde já em como alguém de confiança chegaria a ela se você não puder.",
+      "Ter cripto numa carteira própria é a forma mais direta de ter o ativo sem depender de intermediário nenhum. Também é a forma em que todo erro é seu. Muitos investidores preferem a exposição por ETF ou por uma exchange regulada justamente por isso. Se escolher a carteira própria, trate a frase de recuperação como trataria a escritura de um imóvel, e pense desde já em como alguém de confiança chegaria a ela se você não puder.",
     relacionados: ["chave-privada", "autocustodia", "exchange", "bitcoin", "custodia", "etf-de-bitcoin"],
   },
   {
@@ -1595,7 +1595,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       "Uma função que transforma qualquer conteúdo numa sequência curta e de tamanho fixo, como uma impressão digital. Mudar uma vírgula no conteúdo muda o resultado por completo, e não dá para fazer o caminho de volta.",
     texto: [
       "Passe um livro inteiro de 500 páginas por uma função hash e você recebe uma sequência de 64 caracteres. Passe de novo e recebe exatamente a mesma sequência. Troque uma vírgula na página 312 e o resultado muda por completo, sem nenhuma semelhança com o anterior.",
-      "Hash é uma função que transforma qualquer conteúdo, de uma palavra a um filme, numa sequência curta e de tamanho fixo, como uma impressão digital. É fácil de calcular, impossível de reverter e praticamente impossível de duas entradas diferentes darem o mesmo resultado.",
+      "Hash é uma função que transforma qualquer conteúdo, de uma palavra a um filme, numa sequência curta e de tamanho fixo, como uma impressão digital. É fácil de calcular, inviável de reverter e praticamente impossível de duas entradas diferentes darem o mesmo resultado.",
       "Essas propriedades fazem do hash uma das peças mais usadas da computação, da senha do seu e-mail à segurança do bitcoin.",
     ],
     secoes: [
@@ -1673,7 +1673,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
     exemplo:
       "Hipotético: um investidor tem o equivalente a R$ 50 mil em bitcoin. Deixa R$ 5 mil numa exchange regulada, para ter liquidez rápida, e guarda R$ 45 mil numa carteira fria, com a frase de recuperação anotada em metal e guardada num cofre, e uma carta com instruções para a família num envelope separado. Ele aceita o risco de uma pequena parte na exchange e assume pessoalmente o risco da maior parte, com um método para isso.",
     naPratica:
-      "Autocustódia é a forma mais pura de ter um ativo fora de qualquer intermediário e de qualquer jurisdição, e por isso conversa com a lógica da diversificação de jurisdição do curso. Mas ela só faz sentido com método. Para valores relevantes, entenda bem os dois riscos antes de decidir, teste o processo com valores pequenos e pense na sucessão. Se a responsabilidade não combinar com você, ETF ou instituição regulada são escolhas igualmente válidas.",
+      "Autocustódia é a forma mais pura de ter um ativo sem intermediário, e por isso conversa com a lógica da diversificação de jurisdição do curso, ainda que você continue sujeito às leis e à Receita do país onde mora. Mas ela só faz sentido com método. Para valores relevantes, entenda bem os dois riscos antes de decidir, teste o processo com valores pequenos e pense na sucessão. Se a responsabilidade não combinar com você, ETF ou instituição regulada são escolhas igualmente válidas.",
     relacionados: ["carteira-cripto", "chave-privada", "exchange", "custodia", "marco-legal-dos-criptoativos", "jurisdicao", "etf-de-bitcoin"],
   },
   {
@@ -2058,7 +2058,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
         titulo: "Como funciona",
         paragrafos: [
           "Quando há demanda por cotas, grandes instituições entregam dinheiro ou bitcoins ao fundo e recebem cotas novas; quando há venda, o caminho é o inverso. Esse mecanismo mantém o preço da cota próximo do valor dos bitcoins que o fundo tem. Os bitcoins ficam com um custodiante, em geral uma instituição regulada especializada, em carteiras frias.",
-          "O investidor paga uma taxa de administração anual, descontada do patrimônio do fundo, e os custos de negociação da bolsa. Nos Estados Unidos, a disputa entre gestoras levou as taxas dos maiores ETFs para menos de 0,3% ao ano.",
+          "O investidor paga uma taxa de administração anual, descontada do patrimônio do fundo, e os custos de negociação da bolsa. Nos Estados Unidos, a disputa entre gestoras levou as taxas de boa parte desses ETFs para perto de 0,25% ao ano.",
         ],
       },
       {
@@ -2106,7 +2106,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       {
         titulo: "Quem fez o quê",
         paragrafos: [
-          "As Bahamas lançaram a primeira CBDC de varejo em 2020. A Nigéria lançou a sua em 2021, com adoção baixa. A China testa o yuan digital desde 2020 em várias cidades. O Banco Central Europeu trabalha num euro digital, que depende de legislação aprovada pelos países do bloco.",
+          "As Bahamas lançaram a primeira CBDC de varejo em 2020. A Nigéria lançou a sua em 2021, com adoção baixa. A China testa o yuan digital desde 2020 em várias cidades. O Banco Central Europeu trabalha num euro digital, que depende de uma lei da União Europeia.",
           "Os Estados Unidos seguiram outro caminho. Em janeiro de 2025, uma ordem executiva proibiu agências federais de promover um dólar digital de varejo, e o país passou a apostar na regulação de stablecoins privadas, aprovada em lei em julho daquele ano. O Brasil começou com um projeto de real digital e mudou o desenho ao longo do caminho, no que virou o Drex.",
         ],
       },
@@ -2311,7 +2311,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
         titulo: "Como funcionava",
         paragrafos: [
           "A inovação técnica foi a comutação de pacotes, pensada de forma independente por Paul Baran, nos Estados Unidos, e por Donald Davies, no Reino Unido, nos anos 1960. Em vez de abrir uma linha dedicada de ponta a ponta, como num telefonema, a mensagem é quebrada em pedaços que viajam por caminhos diferentes e são remontados no destino.",
-          "Cada universidade ligada à rede tinha um pequeno computador dedicado a encaminhar os pacotes, construído por uma empresa de engenharia de Boston. Se uma linha ou um nó caísse, os pacotes procurariam outro caminho. A rede não tinha um ponto central cuja falha derrubasse tudo.",
+          "Cada universidade ligada à rede tinha um pequeno computador dedicado a encaminhar os pacotes, construído por uma empresa de engenharia da região de Boston. Se uma linha ou um nó caísse, os pacotes procurariam outro caminho. A rede não tinha um ponto central cuja falha derrubasse tudo.",
         ],
       },
       {
@@ -2454,7 +2454,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       },
     ],
     exemplo:
-      "Hipotético, para ter a escala: se cada transistor de um chip moderno de IA fosse do tamanho de um grão de arroz, o chip cobriria uma área parecida com a de uma cidade grande. Na realidade, os 200 bilhões de transistores cabem numa peça de alguns centímetros, fabricada em poucas fábricas do mundo, com máquinas que custam centenas de milhões de dólares cada.",
+      "Hipotético, para ter a escala: se cada transistor de um chip moderno de IA fosse do tamanho de um grão de arroz, o chip cobriria perto de 3 quilômetros quadrados, algo como 400 campos de futebol. Na realidade, os 200 bilhões de transistores cabem numa peça de alguns centímetros, fabricada em poucas fábricas do mundo, com máquinas que custam centenas de milhões de dólares cada.",
     naPratica:
       "Toda a cadeia que vai do transistor ao chip de inteligência artificial está concentrada em poucas empresas e poucos países, quase nenhum deles representado na bolsa brasileira. Para quem quer participar dessa história, o caminho passa pelo exterior, sabendo que é um setor cíclico, intensivo em capital e sujeito a disputas geopolíticas.",
     relacionados: ["semicondutor", "lei-de-moore", "gpu", "inteligencia-artificial", "arpanet", "data-center"],
@@ -2531,7 +2531,7 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       {
         titulo: "O ritmo hoje",
         paragrafos: [
-          "Nas últimas décadas, o ritmo desacelerou. Os transistores chegaram perto de limites físicos, medidos em poucas dezenas de átomos, e o custo das fábricas explodiu. Cada nova geração custa mais e entrega um ganho proporcionalmente menor.",
+          "Desde os anos 2010, o ritmo desacelerou. Os transistores chegaram perto de limites físicos, medidos em poucas dezenas de átomos, e o custo das fábricas explodiu. Cada nova geração custa mais e entrega um ganho proporcionalmente menor.",
           "O desempenho continua crescendo, mas por outros caminhos: chips empilhados, vários chips num mesmo pacote, arquiteturas especializadas e software otimizado. Para a inteligência artificial, a capacidade de computação usada no treinamento dos maiores modelos cresceu muito mais rápido que a Lei de Moore, à custa de usar mais chips e mais energia.",
         ],
       },
@@ -2656,8 +2656,8 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
       {
         titulo: "A virada",
         paragrafos: [
-          "A virada veio do aprendizado de máquina, com três ingredientes que se juntaram na década de 2010: muitos dados, graças à internet; muito poder de computação barato, graças às GPUs; e redes neurais profundas. Em 2012, uma rede neural venceu com folga a principal competição de reconhecimento de imagens. Em 2016, um programa venceu o campeão mundial de go, o jogo de tabuleiro mais complexo que existe.",
-          "Em 2017, pesquisadores do Google publicaram a arquitetura transformer, que abriu caminho para os grandes modelos de linguagem. O lançamento do ChatGPT, em 2022, levou a IA generativa, que escreve, resume, programa e cria imagens, ao uso de massa. Em 2024, o Nobel de Física premiou pioneiros das redes neurais, e o de Química, os criadores de um sistema de IA que prevê a estrutura de proteínas.",
+          "A virada veio do aprendizado de máquina, com três ingredientes que se juntaram na década de 2010: muitos dados, graças à internet; muito poder de computação barato, graças às GPUs; e redes neurais profundas. Em 2012, uma rede neural venceu com folga a principal competição de reconhecimento de imagens. Em 2016, um programa venceu Lee Sedol, um dos maiores jogadores de go do mundo, num jogo de tabuleiro muito mais complexo que o xadrez.",
+          "Em 2017, pesquisadores do Google publicaram a arquitetura transformer, que abriu caminho para os grandes modelos de linguagem. O lançamento do ChatGPT, em 2022, levou a IA generativa, que escreve, resume, programa e cria imagens, ao uso de massa. Em 2024, o Nobel de Física premiou pioneiros das redes neurais, e metade do de Química foi para os criadores de um sistema de IA que prevê a estrutura de proteínas.",
         ],
       },
       {
@@ -2787,13 +2787,13 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
         titulo: "Os pioneiros",
         paragrafos: [
           "Três pesquisadores mantiveram a ideia viva nos anos de descrédito: Geoffrey Hinton, no Canadá, Yann LeCun, nos Estados Unidos, e Yoshua Bengio, também no Canadá. A equipe de Hinton foi a que venceu o ImageNet de 2012. Os três receberam o Prêmio Turing, o mais importante da computação, referente a 2018.",
-          "Em 2024, Hinton dividiu o Nobel de Física com John Hopfield, pelos trabalhos que lançaram as bases das redes neurais. No mesmo ano, o Nobel de Química foi para pesquisadores que usaram aprendizado profundo para prever a estrutura de proteínas, um problema de biologia aberto havia meio século.",
+          "Em 2024, Hinton dividiu o Nobel de Física com John Hopfield, pelos trabalhos que lançaram as bases das redes neurais. No mesmo ano, metade do Nobel de Química foi para pesquisadores que usaram aprendizado profundo para prever a estrutura de proteínas, um problema de biologia aberto havia meio século.",
         ],
       },
       {
         titulo: "O que veio depois",
         paragrafos: [
-          "Em poucos anos, o aprendizado profundo passou a dominar reconhecimento de imagens, de voz, tradução e jogos. Em 2016, um programa baseado nele venceu o campeão mundial de go. Em 2017, a arquitetura transformer levou a técnica para a linguagem em escala, e daí vieram os grandes modelos de linguagem.",
+          "Em poucos anos, o aprendizado profundo passou a dominar reconhecimento de imagens, de voz, tradução e jogos. Em 2016, um programa baseado nele venceu um dos maiores jogadores de go do mundo. Em 2017, a arquitetura transformer levou a técnica para a linguagem em escala, e daí vieram os grandes modelos de linguagem.",
           "A lógica que guiou a década foi simples e cara: modelos maiores, com mais dados e mais computação, ficam melhores. Isso transformou o aprendizado profundo num negócio de infraestrutura.",
         ],
       },

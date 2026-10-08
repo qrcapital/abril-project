@@ -375,7 +375,7 @@ const secao: SecaoDaAula = {
           rotulo: "Rendimento em dólar (bolsa americana)",
           ajuda: "O S&P 500 com dividendos rendeu 8,0% ao ano em dólar de 2000 a 2025 e 14,7% de 2016 a 2025 (Damodaran), com anos de queda forte no caminho.",
         },
-        cambio: { valor: 5.18, ajuda: "Fim de agosto de 2026: R$ 5,18 (BCB, SGS 3696)." },
+        cambio: { valor: 5.18, ajuda: "30 de setembro de 2026: R$ 5,18 (BCB, PTAX), a mesma cotação do simulador da aula 2." },
         depreciacao: {
           valor: 4,
           ajuda: "De dez/1999 a dez/2025, o real perdeu em média 4,4% ao ano contra o dólar; nos últimos dez anos, 3,5%. O passado não define o futuro.",

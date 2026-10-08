@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { GLOSSARIO, verbete } from "@/content/glossario";
 import { LINHA_DO_TEMPO } from "@/content/linha-do-tempo";
 import { getCurriculo } from "@/lib/curriculo";
-import { hrefNoCurso, rotuloNoCurso, slugificar, urlDoVerbete } from "@/lib/glossario";
+import { hrefNoCurso, rotuloDoAno, rotuloNoCurso, slugificar, urlDoVerbete } from "@/lib/glossario";
 import Balao from "@/app/app/_ui/sala/glossario/Balao";
 import { criarLigador } from "@/app/app/_ui/sala/glossario/texto";
 
@@ -140,7 +140,7 @@ export default async function VerbetePage({ params }: Params) {
                     {marcos.map((m) => (
                       <li key={m.slug}>
                         <Link href={`/app#marco-${m.slug}`} prefetch={false}>
-                          <span className="sl-vb-links-rotulo">{m.ano}</span>
+                          <span className="sl-vb-links-rotulo">{rotuloDoAno(m)}</span>
                           <span className="sl-vb-links-titulo">{m.titulo}</span>
                         </Link>
                       </li>

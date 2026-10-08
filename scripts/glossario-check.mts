@@ -26,6 +26,7 @@ import {
   hrefNoCurso,
   letraDe,
   normalizar,
+  rotuloDoAno,
   rotuloNoCurso,
   slugificar,
   type Marco,
@@ -47,7 +48,13 @@ assert.equal(dobrar("Ação Câmbio").length, "Ação Câmbio".length, "a dobra 
 assert.equal(hrefNoCurso({ modulo: 1, aula: 3 }), "/app/modulo/1?aula=3#aula-3");
 assert.equal(hrefNoCurso({ modulo: 1, aula: 3, tempo: "12:34" }), "/app/modulo/1?aula=3&t=754#player");
 assert.equal(rotuloNoCurso({ modulo: 0, aula: 2 }), "Módulo I · Aula 02");
-assert.equal(eraDe(1944), 1);
+assert.equal(eraDe(-3000), 0, "a pré-história do dinheiro é a primeira era");
+assert.equal(eraDe(1791), 0);
+assert.equal(eraDe(1792), 1);
+assert.equal(eraDe(1944), 2);
+assert.equal(rotuloDoAno({ ano: -600 }), "600 a.C.");
+assert.equal(rotuloDoAno({ ano: 1971 }), "1971");
+assert.equal(rotuloDoAno({ ano: 260, anoRotulo: "séc. III" }), "séc. III");
 assert.equal(eraDe(2026), ERAS.length - 1);
 for (const c of CATEGORIAS_LINHA) assert.ok(COR_DA_LINHA[c], `categoria da linha sem cor: ${c}`);
 assert.ok(ehSigla("IR") && ehSigla("PPC") && ehSigla("S&P") && ehSigla("IPCA"));

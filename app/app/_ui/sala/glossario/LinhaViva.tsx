@@ -10,6 +10,8 @@ import { semMovimento } from "../Entrada";
 export type ItemLinha = {
   slug: string;
   ano: number;
+  /** O ano como o aluno lê ("1971", "600 a.C.", "séc. III"): `rotuloDoAno` de `lib/glossario.ts`. */
+  rotulo: string;
   data?: string;
   categoria: CategoriaLinha;
   titulo: string;
@@ -22,22 +24,37 @@ export type ItemLinha = {
   fonte?: string;
 };
 
-/** Quantos marcos a home mostra antes do "Ver a linha do tempo inteira". */
-const LIMITE = 12;
+/**
+ * Quantos marcos a home mostra antes do "Ver a linha do tempo inteira". Eram 12; com a pré-história
+ * do dinheiro no topo (08/out/2026, 12 marcos), viraram 16, para a lista recolhida ainda chegar ao
+ * nascimento do dólar e aos primeiros marcos depois dele.
+ */
+const LIMITE = 16;
 
 /** A folga, em ms, entre sair de um marco e apagar a linhagem. */
 const ESPERA = 90;
 
-/** A pilha da régua: até `CAMADAS` traços, um a cada `PASSO` px (o CSS desenha o traço nesse passo). */
-const CAMADAS = 6;
-const PASSO = 8;
+/**
+ * A pilha da régua: até `CAMADAS` pontos, um a cada `PASSO` px. Sete porque 2022 tem sete marcos; a
+ * pilha mais alta ainda cabe acima da linha de base (64 px). `JUNTO` é a distância, em % da régua,
+ * abaixo da qual dois pontos se encostariam e o segundo sobe uma camada.
+ */
+const CAMADAS = 7;
+const PASSO = 9;
+const JUNTO = 0.95;
+
+/**
+ * A era `porOrdem` (a pré-história do dinheiro) ganha um pouco mais de largura por marco: cada um
+ * tem um lugar próprio na régua, sem empilhar, e o ponto precisa de folga dos vizinhos.
+ */
+const FOLGA_POR_ORDEM = 1.4;
 
 /** Quantos antecedentes diretos a linhagem desenha, no máximo. */
 const ARCOS = 3;
 
 /**
  * O marco aceso. `origem` diz onde o mouse (ou o foco) está: só a lista desenha arcos e esmaece;
- * a régua só pinta os traços. Os arcos guardam as duas pontas para o degradê de cada um.
+ * a régua só marca os pontos. Os arcos guardam as duas pontas para o degradê de cada um.
  */
 type Luz = {
   i: number;
@@ -54,7 +71,7 @@ type Luz = {
  * 07/out/2026 ela seguia o fecho inteiro, recursivo, com arcos na cor de cada categoria e também
  * na régua; num marco de 2022 isso dava uma dúzia de linhas cruzando a tela, e o Marcelo pediu
  * para limpar (08/out/2026). Agora os arcos são de tinta, finos, baixos, só na lista, e mais
- * fortes perto do marco em foco do que perto da origem. A régua só pinta os traços da mesma
+ * fortes perto do marco em foco do que perto da origem. A régua só marca os pontos da mesma
  * linhagem. A linhagem completa continua a um clique: os chips de "Origens" de cada marco levam ao
  * antecedente, que mostra os dele. A medida dos pontos é feita no próprio evento, e não num efeito:
  * o desenho só depende de onde os pontos estão naquele instante.
@@ -63,8 +80,8 @@ type Luz = {
  * mouse entra em outro marco nesse meio tempo. Assim, ao descer a lista (ou cruzar o cabeçalho de
  * uma era), a luz passa de um marco ao outro sem piscar o papel inteiro.
  *
- * A HOME NÃO PODE VIRAR UMA PAREDE. São perto de 90 marcos: a lista abre com os primeiros
- * `LIMITE` e um botão para o resto; a régua mostra a linha inteira de uma vez, e um clique num traço
+ * A HOME NÃO PODE VIRAR UMA PAREDE. São mais de 100 marcos: a lista abre com os primeiros
+ * `LIMITE` e um botão para o resto; a régua mostra a linha inteira de uma vez, e um clique num ponto
  * dela abre a lista naquele marco. Os antecedentes vêm sempre antes, então a linhagem de um marco
  * visível nunca depende de um marco escondido. Com uma categoria escolhida, a lista mostra só os
  * marcos dela, todos; os antecedentes de outras categorias continuam nos chips de "Origens".
@@ -201,6 +218,15 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
   const escondidos = filtro ? 0 : inteira ? 0 : Math.max(0, itens.length - LIMITE);
   const primeiro = itens[0]?.ano;
   const ultimo = itens[itens.length - 1]?.ano;
+  // Com a pré-história, a linha começa antes de qualquer ano que caiba num "De ... a ...".
+  const periodo =
+    primeiro === undefined
+      ? ""
+      : primeiro < 0
+        ? `Das conchas e do sal a ${ultimo}`
+        : primeiro === ultimo
+          ? `${primeiro}`
+          : `De ${primeiro} a ${ultimo}`;
 
   return (
     <section className="sl-lt" aria-labelledby="lt-titulo">
@@ -211,8 +237,7 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
             Como o dinheiro chegou até aqui
           </h2>
           <p className="sl-sub">
-            {primeiro === ultimo ? `${primeiro}` : `De ${primeiro} a ${ultimo}`}: a história do dólar, as crises, a
-            moeda do Brasil, os investimentos, a internet, a inteligência artificial e o cripto, num fio só. Cada marco
+            {periodo}: a história do dinheiro e do dólar, as crises, a moeda do Brasil, os investimentos, a internet, a inteligência artificial e o cripto, num fio só. Cada marco
             leva ao verbete e à aula em que o assunto aparece.
           </p>
         </div>
@@ -314,7 +339,7 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
                         alternar(i);
                       }}
                     >
-                      <span className="sl-lt-ano">{x.ano}</span>
+                      <AnoDoMarco rotulo={x.rotulo} />
                       <span className="sl-lt-no" aria-hidden="true">
                         <span
                           className="sl-lt-ponto"
@@ -335,7 +360,7 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
                             aria-controls={painel}
                             onClick={() => alternar(i)}
                           >
-                            <span className="sl-so-leitor">{x.ano}: </span>
+                            <span className="sl-so-leitor">{x.rotulo}: </span>
                             {x.titulo}
                             <svg className="sl-lt-chev" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
                               <path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -384,7 +409,7 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
                                 style={{ "--c": COR_DA_LINHA[itens[p].categoria] } as React.CSSProperties}
                                 onClick={() => irPara(p)}
                               >
-                                {itens[p].ano} · {itens[p].titulo}
+                                {itens[p].rotulo} · {itens[p].titulo}
                               </button>
                             ))}
                           </div>
@@ -412,17 +437,43 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
 }
 
 /**
- * A régua de anos (desktop): a linha inteira numa faixa só, um traço vertical fino por marco.
+ * O ano na coluna da lista. "600 a.C." vira o número no corpo do ano e o "a.C." miúdo embaixo, para
+ * caber na coluna de 76 px sem diminuir o número; rótulo de texto ("séc. III", "Antes da moeda")
+ * desce um corpo e quebra em duas linhas se precisar (08/out/2026).
+ */
+function AnoDoMarco({ rotulo }: { rotulo: string }) {
+  const ac = /^(\d+) a\.C\.$/.exec(rotulo);
+  if (ac)
+    return (
+      <span className="sl-lt-ano">
+        {ac[1]}
+        <small> a.C.</small>
+      </span>
+    );
+  return <span className={/^\d+$/.test(rotulo) ? "sl-lt-ano" : "sl-lt-ano is-texto"}>{rotulo}</span>;
+}
+
+/**
+ * A régua de anos (desktop): a linha inteira numa faixa só, um ponto por marco, na cor da categoria.
  * O eixo é por era, e não linear: cada era ganha largura pelo número de marcos (com um mínimo), e
  * dentro dela os anos correm em escala linear. Linear de ponta a ponta, os séculos antes de 1944
  * comeriam a régua e as décadas de 2008 em diante, as mais cheias, virariam um borrão. Marcos que
- * cairiam no mesmo lugar empilham traços, e a pilha lê como densidade.
+ * cairiam no mesmo lugar empilham pontos, e a pilha lê como densidade.
  *
- * Desde 08/out/2026 os traços são de tinta neutra (antes eram pontos coloridos, um confete). A cor
- * da categoria só aparece quando ela diz alguma coisa: no traço sob o mouse, nos da categoria
- * filtrada e nos da linhagem acesa. A régua não desenha arcos; quem desenha é a lista.
+ * A PRÉ-HISTÓRIA (08/out/2026). A era que vai de antes de 3000 a.C. a 1791 é `porOrdem`: lá dentro,
+ * os marcos ficam a intervalos iguais, na ordem do tempo, e não pela distância em anos. Em escala de
+ * anos, 4.800 anos com uma dúzia de marcos deixariam a Antiguidade solta à esquerda e espremeriam
+ * Potosí, a quebra da Espanha e o peso de 1571 num ponto só. A faixa da era ganha `FOLGA_POR_ORDEM`
+ * por marco, e o rótulo "Antes de 1792" avisa que ali o eixo é outro.
  *
- * Os traços não entram no Tab (seriam 90 paradas): quem usa teclado percorre a lista, que tem tudo.
+ * OS PONTOS VOLTARAM (08/out/2026). Na mesma manhã a régua tinha trocado os pontos por traços de
+ * tinta neutra; o Marcelo pediu os pontos de volta, só aqui ("na linha do tempo horizontal lá em
+ * cima, com as datas, estava legal"). Os chips continuam sem bolinha, a lista com os anéis vazados e
+ * a linhagem de um nível, desenhada só na lista. Na régua, a linhagem acesa ganha um anel e o resto
+ * esmaece; com uma categoria escolhida, esmaecem os pontos das outras.
+ *
+ * Os pontos não entram no Tab (seriam mais de 100 paradas): quem usa teclado percorre a lista, que
+ * tem tudo.
  */
 function Regua({
   itens,
@@ -443,28 +494,37 @@ function Regua({
     const eras = ERAS.map((era, e) => ({ era, idx: itens.map((_, i) => i).filter((i) => eraDe(itens[i].ano) === e) })).filter(
       (x) => x.idx.length > 0,
     );
-    const pesos = eras.map((x) => Math.max(4, x.idx.length));
+    const pesos = eras.map((x) => (x.era.porOrdem ? x.idx.length * FOLGA_POR_ORDEM : Math.max(4, x.idx.length)));
     const total = pesos.reduce((a, b) => a + b, 0);
     const xs: number[] = [];
     const faixas: { ini: number; fim: number; rotulo: string }[] = [];
     let ini = 0;
     eras.forEach((x, k) => {
       const largura = (pesos[k] / total) * 100;
-      const anos = x.idx.map((i) => itens[i].ano);
-      const min = Math.min(...anos);
-      const max = Math.max(...anos);
       const pad = largura * 0.1;
-      for (const i of x.idx)
-        xs[i] = ini + pad + (max === min ? (largura - 2 * pad) / 2 : ((itens[i].ano - min) / (max - min)) * (largura - 2 * pad));
+      const util = largura - 2 * pad;
+      if (x.era.porOrdem) {
+        // Um lugar por ano distinto, na ordem: dois marcos do mesmo ano dividem o lugar e empilham.
+        const anos = [...new Set(x.idx.map((i) => itens[i].ano))].sort((a, b) => a - b);
+        for (const i of x.idx) {
+          const r = anos.indexOf(itens[i].ano);
+          xs[i] = ini + pad + (anos.length === 1 ? util / 2 : (r / (anos.length - 1)) * util);
+        }
+      } else {
+        const anos = x.idx.map((i) => itens[i].ano);
+        const min = Math.min(...anos);
+        const max = Math.max(...anos);
+        for (const i of x.idx) xs[i] = ini + pad + (max === min ? util / 2 : ((itens[i].ano - min) / (max - min)) * util);
+      }
       faixas.push({ ini, fim: ini + largura, rotulo: x.era.faixa });
       ini += largura;
     });
-    // Traços que cairiam um sobre o outro sobem uma camada (até seis).
+    // Pontos que se encostariam sobem uma camada (até `CAMADAS`).
     const camadas: number[] = [];
     const ultimoNaCamada: number[] = [];
     itens.forEach((_, i) => {
       let c = 0;
-      while (c < CAMADAS - 1 && ultimoNaCamada[c] !== undefined && xs[i] - ultimoNaCamada[c] < 0.6) c++;
+      while (c < CAMADAS - 1 && ultimoNaCamada[c] !== undefined && xs[i] - ultimoNaCamada[c] < JUNTO) c++;
       camadas[i] = c;
       ultimoNaCamada[c] = xs[i];
     });
@@ -482,14 +542,13 @@ function Regua({
           <span>{f.rotulo}</span>
         </span>
       ))}
-      <div className="sl-lt-regua-tracos">
+      <div className="sl-lt-regua-pontos">
         {itens.map((x, i) => {
           const naLuz = luz?.linhagem.has(i) ?? false;
-          const doFiltro = filtro === x.categoria;
-          const apagado = luz ? !naLuz : filtro !== null && !doFiltro;
+          const apagado = luz ? !naLuz : filtro !== null && filtro !== x.categoria;
           const cls = [
-            "sl-lt-regua-traco",
-            (naLuz || (!luz && doFiltro)) && "is-cor",
+            "sl-lt-regua-ponto",
+            naLuz && luz?.i !== i && "is-linhagem",
             luz?.i === i && "is-foco",
             apagado && "is-apagado",
           ]
@@ -513,7 +572,7 @@ function Regua({
               onClick={() => irPara(i)}
             >
               <span className="sl-lt-regua-dica">
-                <b>{x.ano}</b> {x.titulo}
+                <b>{x.rotulo}</b> {x.titulo}
               </span>
             </button>
           );

@@ -32,7 +32,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
       {
         titulo: "De onde vem",
         paragrafos: [
-          "A intuição é velha: não pôr todos os ovos na mesma cesta. Quem transformou a intuição em conta foi Harry Markowitz, um estudante de doutorado de 25 anos que publicou em 1952 um artigo curto chamado Portfolio Selection. Ele mostrou que o risco de uma carteira não é a soma dos riscos de cada ativo. Depende também de como eles se movem uns em relação aos outros.",
+          "A intuição é velha: não pôr todos os ovos na mesma cesta. Quem transformou a intuição em conta foi Harry Markowitz, um estudante de doutorado que, aos 24 anos, publicou em 1952 um artigo curto chamado Portfolio Selection. Ele mostrou que o risco de uma carteira não é a soma dos riscos de cada ativo. Depende também de como eles se movem uns em relação aos outros.",
           "A ideia rendeu a Markowitz o Nobel de Economia em 1990, dividido com William Sharpe e Merton Miller. Dela saíram quase todas as ferramentas que gestores usam até hoje para montar carteiras, dos fundos de pensão aos ETFs de índice.",
         ],
       },
@@ -100,7 +100,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
         titulo: "Como ler o número",
         paragrafos: [
           "Correlação não mede tamanho, mede direção. Duas ações podem ter correlação alta e uma oscilar o dobro da outra. Também não fala de causa: o sorvete e o guarda-chuva não se influenciam, só respondem ao mesmo tempo, o clima.",
-          "Na prática, quase todas as ações de um mesmo país têm correlação positiva entre si, porque respondem à mesma economia. Ações de países diferentes costumam ter correlação menor. Câmbio e bolsa, vistos do Brasil, muitas vezes têm correlação negativa: quando o mundo foge do risco, o real cai e a bolsa daqui também.",
+          "Na prática, quase todas as ações de um mesmo país têm correlação positiva entre si, porque respondem à mesma economia. Ações de países diferentes costumam ter correlação menor. O dólar e a bolsa, vistos do Brasil, muitas vezes têm correlação negativa: quando o mundo foge do risco, o dólar sobe e a bolsa daqui cai.",
         ],
       },
       {
@@ -125,7 +125,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Hipotético: você tem metade do dinheiro num fundo de ações brasileiras e metade num fundo de bolsa americana sem proteção cambial. Num ano em que o Brasil vai mal e o real se desvaloriza 20%, a bolsa daqui cai 15% e a americana fica parada em dólar. Medida em reais, a metade de fora sobe perto de 20%, e a carteira inteira termina perto do zero a zero, em vez de perder 15%.",
+    exemplo: "Hipotético: você tem metade do dinheiro num fundo de ações brasileiras e metade num fundo de bolsa americana sem proteção cambial. Num ano em que o Brasil vai mal e o dólar sobe 20% contra o real, a bolsa daqui cai 15% e a americana fica parada em dólar. Medida em reais, a metade de fora sobe 20%, e a carteira inteira termina com ganho de 2,5%, em vez de perder 15%.",
     naPratica: "O dólar tende a subir quando a economia brasileira vai mal, o que dá a ele uma correlação útil com o resto de um patrimônio em reais: salário, imóvel, CDI e Ibovespa. Não é garantia, e há anos em que tudo cai junto, mas é a razão de a moeda ser, para o brasileiro, metade do benefício de investir lá fora.",
     relacionados: [
       "diversificacao",
@@ -165,7 +165,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
         titulo: "Os números",
         paragrafos: [
           "Nos dez anos até agosto de 2026, a bolsa brasileira, medida em dólar pelo índice MSCI Brazil, oscilou 30,8% ao ano. Os emergentes como um todo, 17,5%. O mundo, 14,7%. É quase o dobro da média dos emergentes, como diz a aula.",
-          "Nos Estados Unidos, o mercado acompanha um índice próprio de volatilidade, o VIX, calculado pela Cboe desde 1993 a partir dos preços de opções do S&P 500. Em dias normais, ele fica entre 12 e 20. O maior fechamento da história foi 82,69, em 16 de março de 2020, no auge do pânico da pandemia; o pico durante um pregão, 89,53, em outubro de 2008.",
+          "Nos Estados Unidos, o mercado acompanha um índice próprio de volatilidade, o VIX, criado pela Cboe em 1993 e hoje calculado a partir dos preços de opções do S&P 500. Em dias normais, ele fica entre 12 e 20. O maior fechamento da história foi 82,69, em 16 de março de 2020, no auge do pânico da pandemia; o pico durante um pregão, 89,53, em outubro de 2008.",
         ],
       },
       {
@@ -189,7 +189,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Hipotético: R$ 100 mil numa carteira com volatilidade de 20% ao ano. Uma oscilação de uma volatilidade para baixo, que acontece com frequência, significa ver o saldo cair para perto de R$ 80 mil num ano ruim. Se essa cifra faria você resgatar tudo, o problema não está no investimento, e sim no tamanho da fatia.",
+    exemplo: "Hipotético: R$ 100 mil numa carteira com volatilidade de 20% ao ano. Um ano ruim, com o resultado uma volatilidade abaixo da média, algo que acontece mais ou menos um ano em cada seis, pode levar o saldo para perto de R$ 80 mil. Se essa cifra faria você resgatar tudo, o problema não está no investimento, e sim no tamanho da fatia.",
     naPratica: "A volatilidade importa por causa do seu comportamento. A fatia em dólar e em bolsa deve ser a que você consegue ver oscilar, inclusive medida em reais, sem vender. Antes de converter, vale imaginar o pior ano provável dessa fatia e perguntar se você continuaria dormindo.",
     relacionados: [
       "risco-de-mercado",
@@ -212,7 +212,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     apelidos: ["maior queda", "do pico ao fundo", "perda do pico ao fundo", "queda máxima"],
     resumo: "A queda de um investimento desde o ponto mais alto até o mais baixo seguinte. Mostra o tamanho do estrago que você teria de aguentar.",
     texto: [
-      "Sua carteira chegou a R$ 500 mil, caiu para R$ 350 mil e depois voltou a subir. Do pico ao fundo, a queda foi de 30%. Esse número tem nome: drawdown. É a maior perda que você teria sofrido se tivesse entrado no pior momento e saído no pior momento seguinte.",
+      "Sua carteira chegou a R$ 500 mil, caiu para R$ 350 mil e depois voltou a subir. Do pico ao fundo, a queda foi de 30%. Esse número tem nome: drawdown. É a maior perda que você teria sofrido se tivesse comprado no pico e vendido no fundo.",
       "É uma medida de risco mais intuitiva que a volatilidade, porque fala da dor de verdade. Ninguém perde o sono com um desvio-padrão. Perde com o saldo encolhendo um terço.",
       "O drawdown tem duas dimensões: a profundidade, quanto caiu, e a duração, quanto tempo levou para voltar ao pico. As duas importam, porque a segunda é a que testa a paciência.",
     ],
@@ -234,8 +234,8 @@ export const VERBETES_CARTEIRA: Verbete[] = [
       {
         titulo: "Um caso real",
         paragrafos: [
-          "Em fevereiro de 2020, o S&P 500 estava no recorde. Em pouco mais de um mês, caiu cerca de 34%, a queda mais rápida dessa profundidade da história do índice. Em agosto, já estava de volta ao pico. Quem vendeu em março, para esperar passar, transformou um drawdown de cinco meses numa perda definitiva.",
-          "O exemplo mostra o outro lado: nem todo drawdown fundo é longo. Mas ninguém sabe, no meio da queda, se ela vai durar cinco meses ou quinze anos.",
+          "Em fevereiro de 2020, o S&P 500 estava no recorde. Em pouco mais de um mês, caiu cerca de 34%, a queda mais rápida dessa profundidade da história do índice. Em agosto, já estava de volta ao pico. Quem vendeu em março, para esperar passar, transformou um drawdown de seis meses numa perda definitiva.",
+          "O exemplo mostra o outro lado: nem todo drawdown fundo é longo. Mas ninguém sabe, no meio da queda, se ela vai durar seis meses ou quinze anos.",
         ],
       },
       {
@@ -412,7 +412,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
       {
         titulo: "No Brasil",
         paragrafos: [
-          "Em 18 de maio de 2017, o dia que o mercado apelidou de Joesley Day, a divulgação de uma gravação envolvendo o presidente fez a bolsa brasileira cair quase 9% num único pregão, com o circuit breaker acionado, e o dólar subir perto de 8%. Nenhuma diversificação dentro do Ibovespa protegeu ninguém naquele dia.",
+          "Em 18 de maio de 2017, o dia que o mercado apelidou de Joesley Day, a divulgação de uma gravação envolvendo o presidente fez a bolsa brasileira cair quase 9% num único pregão, com o circuit breaker acionado, e o dólar subir perto de 9%. Nenhuma diversificação dentro do Ibovespa protegeu ninguém naquele dia.",
           "A greve dos caminhoneiros de 2018, as intervenções em preços de combustíveis, as mudanças de imposto e as decisões de um regulador atingem ao mesmo tempo ações, títulos, câmbio e imóveis do mesmo país. São riscos de jurisdição: não estão numa empresa, estão no endereço.",
         ],
       },
@@ -622,7 +622,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
       {
         titulo: "Os números",
         paragrafos: [
-          "Pela base histórica de Aswath Damodaran, professor da NYU, de 1928 a 2025 o S&P 500 com dividendos rendeu em média 10,0% ao ano. O título de 10 anos do Tesouro americano, 4,5%. A letra de três meses, 3,4%. A diferença de perto de 5,5 pontos por ano entre ações e títulos longos, composta por quase um século, é o prêmio de risco das ações americanas.",
+          "Pela base histórica de Aswath Damodaran, professor da NYU, de 1928 a 2025 o S&P 500 com dividendos rendeu em média 10,0% ao ano. O título de 10 anos do Tesouro americano, 4,5%. A letra de três meses, 3,3%. A diferença de perto de 5,5 pontos por ano entre ações e títulos longos, composta por quase um século, é o prêmio de risco das ações americanas.",
           "Ele cobrou caro no caminho. Em 26 desses 98 anos, a bolsa caiu. Em 35, rendeu menos que o título do Tesouro. Mesmo em janelas de dez anos, perdeu dele em 13 de 89. Em janelas de 20 anos, só uma vez.",
         ],
       },
@@ -725,7 +725,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     apelidos: ["descasamento de moeda", "descasamento"],
     resumo: "O risco de um investimento seguro numa moeda ou unidade não casar com o objetivo, que está em outra. Um título sem risco em reais é arriscado para um gasto em dólar.",
     texto: [
-      "Imagine que você guardou R$ 300 mil no Tesouro Selic para pagar, daqui a três anos, um mestrado nos Estados Unidos que custa US$ 60 mil. O título é o mais seguro do Brasil. Mesmo assim, se o dólar subir 30% até lá, o dinheiro não chega. O investimento era seguro; o descasamento com o objetivo, não.",
+      "Imagine que você guardou R$ 300 mil no Tesouro Selic para pagar, daqui a três anos, um mestrado nos Estados Unidos que custa US$ 60 mil. O título é o mais seguro do Brasil. Mesmo assim, se o dólar subir 50% até lá, o dinheiro não chega, mesmo com os juros do período. O investimento era seguro; o descasamento com o objetivo, não.",
       "Isso é risco de base: a distância entre a moeda ou a unidade em que o investimento é seguro e a moeda ou a unidade do objetivo. Um título é sem risco só em relação a uma unidade de conta. Para um gasto em outra, ele carrega risco, por mais sólido que seja.",
       "A ideia muda a pergunta da dolarização. Ela deixa de ser real ou dólar e passa a ser em que moeda estão os seus gastos futuros.",
     ],
@@ -795,7 +795,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
       {
         titulo: "Os números",
         paragrafos: [
-          "Pela base de Aswath Damodaran, de 1928 a 2025 o S&P 500 rendeu em média perto de 8,4 pontos por ano acima da letra do Tesouro americano, com volatilidade perto de 19%. O Sharpe de longo prazo da bolsa americana fica, assim, perto de 0,4.",
+          "Pela base de Aswath Damodaran, de 1928 a 2025 o S&P 500 rendeu em média perto de 8,5 pontos por ano acima da letra do Tesouro americano, com volatilidade perto de 19%. O Sharpe de longo prazo da bolsa americana fica, assim, perto de 0,4.",
           "Uma carteira com 60% em ações e 40% em títulos de 10 anos rendeu menos, 8,3% ao ano contra 10,0%, mas oscilou bem menos, perto de 12% contra 19%. O Sharpe dela fica um pouco acima do da bolsa pura. Menos retorno, mais retorno por unidade de risco.",
         ],
       },
@@ -1041,7 +1041,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
         ],
       },
     ],
-    exemplo: "R$ 12 mil convertidos em seis parcelas de R$ 2 mil, com cotações hipotéticas de R$ 5,20, R$ 5,50, R$ 5,80, R$ 5,30, R$ 4,90 e R$ 5,10, compraram US$ 2.270,76, a R$ 5,28 em média, abaixo da média das cotações, R$ 5,30. Tudo de uma vez renderia de US$ 2.069, no mês mais caro, a US$ 2.449, no mais barato.",
+    exemplo: "R$ 12 mil convertidos em seis parcelas de R$ 2 mil, com cotações hipotéticas de R$ 5,20, R$ 5,50, R$ 5,80, R$ 5,30, R$ 4,90 e R$ 5,10, compraram US$ 2.270,76, a R$ 5,28 em média, abaixo da média das cotações, R$ 5,30. Tudo de uma vez compraria de US$ 2.069, no mês mais caro, a US$ 2.449, no mais barato.",
     naPratica: "Para quem decidiu dolarizar, Rodolfo sugere dividir o valor em parcelas mensais e converter uma por vez, sem tentar adivinhar o dia certo. Isso protege de três tropeços clássicos: correr atrás do que já subiu, esperar o dólar voltar a um preço antigo e ficar parado por medo de errar. Quem espera o dólar cair para começar costuma esperar para sempre.",
     relacionados: [
       "market-timing",
@@ -1154,7 +1154,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
       {
         titulo: "No câmbio",
         paragrafos: [
-          "O câmbio também tem horizonte. Quem converteu reais em dólar no fim de 2024, com o dólar acima de R$ 6, chegou ao fim de 2025 praticamente no zero a zero em reais, porque o dólar caiu cerca de 11% e comeu o rendimento. De dezembro de 1994 a dezembro de 2025, porém, o dólar subiu em média perto de 6% ao ano contra o real. Num ano, o câmbio pode anular o rendimento; em décadas, pesa de outra forma.",
+          "O câmbio também tem horizonte. Quem converteu reais em dólar no fim de 2024, com o dólar acima de R$ 6, e deixou o dinheiro em títulos curtos do Tesouro americano chegou ao fim de 2025 perdendo perto de 8% em reais: o rendimento de cerca de 4% em dólar não cobriu a queda de cerca de 11% do dólar. De dezembro de 1994 a dezembro de 2025, porém, o dólar subiu em média perto de 6% ao ano contra o real. Num ano, o câmbio pode anular o rendimento; em décadas, pesa de outra forma.",
         ],
       },
       {
@@ -1645,7 +1645,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
       {
         titulo: "O debate com a teoria clássica",
         paragrafos: [
-          "Durante décadas, a ideia dominante era a de mercados eficientes: os preços refletem toda a informação disponível, e os erros de uns são corrigidos pelos acertos de outros. Em 2013, o Nobel foi dividido entre Eugene Fama, o grande defensor dessa visão, e Robert Shiller, que estudava as bolhas e os exageros do mercado.",
+          "Durante décadas, a ideia dominante era a de mercados eficientes: os preços refletem toda a informação disponível, e os erros de uns são corrigidos pelos acertos de outros. Em 2013, o Nobel foi dividido entre Eugene Fama, o grande defensor dessa visão, Robert Shiller, que estudava as bolhas e os exageros do mercado, e Lars Peter Hansen.",
           "O consenso que sobrou é razoável. Os mercados são difíceis de vencer, e por isso a maioria dos gestores perde dos índices. Mas os investidores, individualmente, erram muito, e esses erros custam caro para quem os comete.",
         ],
       },
@@ -1863,7 +1863,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Hipotético: em 2020, um investidor decide dolarizar parte do patrimônio, mas acha o dólar caro a R$ 5,20 e resolve esperar os R$ 4,90 que viu no ano anterior. O dólar passa a maior parte dos anos seguintes acima de R$ 4,90. A decisão não foi rejeitada; ficou adiada, ancorada num número que tinha virado história.",
+    exemplo: "Hipotético: em 2020, um investidor decide dolarizar parte do patrimônio, mas acha o dólar caro a R$ 5,20 e resolve esperar a volta aos cerca de R$ 4,50 do fim de fevereiro. O dólar não volta a esse patamar nos anos seguintes. A decisão não foi rejeitada; ficou adiada, ancorada num número que tinha virado história.",
     naPratica: "Não existe preço certo do dólar para começar. Converter em janelas, com datas marcadas e valores iguais, tira a âncora da decisão. E, depois de convertido, avalie a parte em dólar pelo que ela faz pelo patrimônio, não pela cotação do dia em que você comprou.",
     relacionados: [
       "custo-medio",
@@ -2371,7 +2371,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     categoria: "Comportamento",
     resumo: "A tendência de vender cedo o que está dando lucro e segurar demais o que está dando prejuízo, à espera de voltar ao preço de compra.",
     texto: [
-      "Você tem duas ações. Uma subiu 30%, a outra caiu 30%. Precisa de dinheiro e vai vender uma delas. Qual? A maioria vende a que subiu, para garantir o ganho, e guarda a que caiu, para não admitir a perda. Esperando que ela volte.",
+      "Você tem duas ações. Uma subiu 30%, a outra caiu 30%. Precisa de dinheiro e vai vender uma delas. Qual? A maioria vende a que subiu, para garantir o ganho, e guarda a que caiu, para não admitir a perda, esperando que ela volte.",
       "Esse é o efeito disposição: a tendência de vender cedo o que está dando lucro e segurar demais o que está dando prejuízo, à espera de voltar ao preço de compra. O nome foi dado pelos economistas Hersh Shefrin e Meir Statman, nos anos 1980.",
       "É filho direto da aversão à perda e do ponto de referência. Vender no prejuízo transforma uma perda de papel numa perda de verdade, e isso dói. Vender no lucro dá uma sensação de acerto.",
     ],
@@ -2501,7 +2501,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Hipotético: olhando o gráfico do dólar de 1994 a 2026, a alta parece uma escada óbvia. No caminho, porém, houve anos longos de real forte, como de 2003 a 2011, quando o dólar caiu de cerca de R$ 3,50 para perto de R$ 1,60 e dolarizar parecia um erro evidente. Quem diz hoje que era óbvio provavelmente não estava comprando dólar em 2008.",
+    exemplo: "Hipotético: olhando o gráfico do dólar de 1994 a 2026, a alta parece uma escada óbvia. No caminho, porém, houve anos longos de real forte, como de 2003 a 2011, quando o dólar caiu de cerca de R$ 3,50 para R$ 1,53, em julho de 2011, e dolarizar parecia um erro evidente. Quem diz hoje que era óbvio provavelmente não estava comprando dólar em 2008.",
     naPratica: "Os gráficos do curso mostram o passado, não garantem o futuro. O argumento para diversificar não depende de o dólar subir: depende justamente de não saber o que vai acontecer. Se você tivesse certeza do futuro, concentraria tudo no vencedor. Como ninguém tem, espalha.",
     relacionados: [
       "excesso-de-confianca",

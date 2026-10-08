@@ -43,7 +43,7 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         titulo: "O risco de uma ação só",
         paragrafos: [
           "A maior parte do risco de uma ação isolada é dela mesma: um produto que falha, um escândalo, uma dívida mal feita. Esse risco some quando você tem muitas empresas. O que não some é o risco do mercado inteiro, que cai junto numa crise.",
-          "Um caso conhecido: quem comprou ações da General Electric no pico de 2001, perto de US$ 60, viu o papel perder 84% até março de 2009. Era uma das empresas mais admiradas do mundo. É por isso que fundos de índice e ETFs, que compram centenas de empresas de uma vez, viraram o caminho padrão para quem não quer depender de uma aposta.",
+          "Um caso conhecido: quem comprou ações da General Electric no pico de agosto de 2000, perto de US$ 60, viu o papel perder perto de 90% até março de 2009. Era uma das empresas mais admiradas do mundo. É por isso que fundos de índice e ETFs, que compram centenas de empresas de uma vez, viraram o caminho padrão para quem não quer depender de uma aposta.",
         ],
       },
       {
@@ -54,7 +54,7 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Na aula, Rodolfo lembra que o S&P 500 rendeu de 6% a 11% ao ano em dólar, conforme a janela, sem contar dividendos. Em 2008, o mesmo índice caiu 37%. Hipotético: quem tinha US$ 100 mil no índice no começo daquele ano terminou com perto de US$ 63 mil, e precisou de mais de quatro anos, com os dividendos reinvestidos, para voltar ao valor inicial.",
+    exemplo: "Na aula, Rodolfo lembra que o S&P 500 rendeu de 6% a 11% ao ano em dólar, conforme a janela, sem contar dividendos. Em 2008, o índice caiu 37%, já contando os dividendos. Hipotético: quem tinha US$ 100 mil no índice no começo daquele ano terminou com perto de US$ 63 mil, e precisou de mais de quatro anos, com os dividendos reinvestidos, para voltar ao valor inicial.",
     naPratica: "Ações americanas e de outros países dão acesso a setores que quase não existem na bolsa brasileira. É a via de dolarizar com ativos que geram lucro e renda, e não com dinheiro parado. O preço da escolha é a oscilação: a parte em ações precisa ser dinheiro que pode esperar anos, e a decisão de quanto pôr em cada país pesa mais que a escolha de cada papel.",
     relacionados: [
       "renda-variavel",
@@ -119,7 +119,7 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
       {
         titulo: "Por que importa para quem investe",
         paragrafos: [
-          "A pergunta útil não é se renda variável é boa ou ruim, e sim quanto dela você aguenta carregar na pior semana. Rodolfo insiste nisso: a estratégia vive ou morre no dia em que a carteira cai 15% ou 20%, e não na planilha.",
+          "A pergunta útil não é se renda variável é boa ou ruim, e sim quanto dela você aguenta carregar na pior semana. Rodolfo insiste nisso: a estratégia vive ou morre na semana em que a carteira cai 10%, 15%, 20%, e não na planilha.",
           "Por isso a fatia de renda variável depende do prazo, da reserva de emergência e do quanto da sua renda já está exposto ao mesmo risco.",
         ],
       },
@@ -251,7 +251,7 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         titulo: "No Brasil e lá fora",
         paragrafos: [
           "A Lei das S.A. obriga as empresas brasileiras a distribuir um mínimo do lucro, definido no estatuto, em geral 25%. Nos Estados Unidos, não há mínimo, e muitas empresas preferem recomprar ações a pagar dividendos.",
-          "O imposto também mudou. Por décadas, o dividendo foi isento para a pessoa física no Brasil. Desde janeiro de 2026, pela Lei 15.270, há retenção de 10% quando uma mesma empresa paga mais de R$ 50 mil num mês à mesma pessoa. Os juros sobre capital próprio passaram a ter 17,5% retidos na fonte.",
+          "O imposto também mudou. Por décadas, o dividendo foi isento para a pessoa física no Brasil. Desde janeiro de 2026, pela Lei 15.270, há retenção de 10% quando uma mesma empresa paga mais de R$ 50 mil num mês à mesma pessoa. E, pela Lei Complementar 224, de 2025, os juros sobre capital próprio passaram a ter 17,5% retidos na fonte.",
           "O dividendo americano pago a quem mora no Brasil chega com 30% retidos nos Estados Unidos, porque os dois países não têm tratado para evitar a dupla tributação. Como isso conversa com o imposto brasileiro é tema do Módulo III.",
         ],
       },
@@ -265,7 +265,7 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
       {
         titulo: "Um caso real",
         paragrafos: [
-          "Em fevereiro de 2009, no auge da crise financeira, o JPMorgan cortou o dividendo trimestral de US$ 0,38 para US$ 0,05 por ação. Era um dos bancos mais sólidos dos Estados Unidos. Quem vivia daquele dividendo viu a renda cair a um oitavo de um trimestre para o outro.",
+          "Em fevereiro de 2009, no auge da crise financeira, o JPMorgan cortou o dividendo trimestral de US$ 0,38 para US$ 0,05 por ação. Era um dos bancos mais sólidos dos Estados Unidos. Quem vivia daquele dividendo viu a renda cair a perto de um oitavo de um trimestre para o outro.",
           "O corte não foi exceção. Em crises fortes, bancos e empresas cíclicas cortam primeiro. É o momento em que o dividendo mais faz falta e o preço da ação está mais baixo, o que obriga a vender barato quem não tem outra reserva.",
         ],
       },
@@ -579,7 +579,7 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
       {
         titulo: "Um caso real",
         paragrafos: [
-          "No fim de 1972, as cerca de 50 ações de crescimento mais admiradas dos Estados Unidos, o chamado Nifty Fifty, valiam em média 37 vezes o lucro, contra 18 do S&P 500. O mercado as tratava como compráveis a qualquer preço. Até o fim de 1974, o S&P 500 caiu 46%, e algumas delas caíram muito mais: a Disney, 91%.",
+          "No fim de 1972, as cerca de 50 ações de crescimento mais admiradas dos Estados Unidos, o chamado Nifty Fifty, valiam em média perto de 42 vezes o lucro, contra 19 do S&P 500. O mercado as tratava como compráveis a qualquer preço. Do pico de janeiro de 1973 ao fundo de outubro de 1974, o S&P 500 caiu 48%, e algumas delas caíram muito mais: a Disney, 86%; Polaroid e Avon, mais de 90%.",
           "Em março de 2000, as empresas lucrativas do Nasdaq 100 valiam em média 228 vezes o lucro. Nos 21 meses seguintes, o índice caiu 64%. Preço alto pode se sustentar por anos, mas cobra a conta quando o crescimento não vem.",
         ],
       },
@@ -825,7 +825,7 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         titulo: "Por que importa para quem investe",
         paragrafos: [
           "A maioria dos índices, como o S&P 500 e o MSCI ACWI, dá a cada empresa um peso proporcional ao valor de mercado em livre circulação. É uma escolha lógica: o índice reflete o mercado como ele é, e quase não precisa de compras e vendas para se manter, porque os pesos andam sozinhos com os preços.",
-          "O efeito colateral é a concentração. No S&P 500, as dez maiores empresas eram 38% do índice em setembro de 2026. Quando poucas gigantes sobem, o índice sobe com elas; quando caem, cai junto.",
+          "O efeito colateral é a concentração. Em setembro de 2026, as dez maiores empresas eram 38% do índice MSCI das ações americanas, montado com a mesma lógica do S&P 500. Quando poucas gigantes sobem, o índice sobe com elas; quando caem, cai junto.",
           "Há índices que dão o mesmo peso a todas as empresas, como os Dividend Aristocrats. Diversificam mais entre empresas, mas exigem rebalanceamento constante e se afastam do mercado.",
         ],
       },
@@ -1115,7 +1115,7 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         titulo: "Um caso real",
         paragrafos: [
           "Em 18 de maio de 2017, o Joesley Day, a divulgação de uma gravação envolvendo o então presidente derrubou a bolsa logo na abertura, e o pregão foi interrompido, o que não acontecia desde 2008. O dólar disparou no mesmo dia.",
-          "Em março de 2020, no começo da pandemia, o circuit breaker foi acionado seis vezes na B3 em oito pregões, uma delas duas vezes no mesmo dia. Nos Estados Unidos, a parada de 7% aconteceu quatro vezes no mesmo mês.",
+          "Em março de 2020, no começo da pandemia, o circuit breaker foi acionado seis vezes na B3 em oito pregões, duas delas no mesmo dia. Nos Estados Unidos, a parada de 7% aconteceu quatro vezes no mesmo mês.",
         ],
       },
     ],
@@ -1286,7 +1286,7 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         titulo: "Como funciona",
         paragrafos: [
           "As empresas não entram por tamanho automaticamente. Um comitê escolhe, seguindo critérios de valor de mercado, liquidez, ações em livre circulação e lucro: a soma dos lucros dos últimos quatro trimestres precisa ser positiva. Por isso a Tesla, por exemplo, só entrou em 2020, anos depois de já ser uma das maiores empresas do país.",
-          "O peso de cada empresa é proporcional ao valor de mercado em livre circulação. Por isso as gigantes de tecnologia dominam: em setembro de 2026, as dez maiores eram 38% do índice.",
+          "O peso de cada empresa é proporcional ao valor de mercado em livre circulação. Por isso as gigantes de tecnologia dominam: em setembro de 2026, as dez maiores empresas eram 38% do índice MSCI das ações americanas, que segue a mesma lógica de peso.",
         ],
       },
       {
@@ -1306,7 +1306,7 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
       {
         titulo: "No Brasil e lá fora",
         paragrafos: [
-          "Na aula 3, Rodolfo soma o S&P 500 e o dólar para mostrar o que o brasileiro teria ganho em reais. Em 2008, o S&P caiu 37% em dólar e o dólar subiu 32% contra o real. A conta exata dá uma perda de cerca de 16% em reais, bem menor que a do Ibovespa no mesmo ano.",
+          "Na aula 3, Rodolfo soma o S&P 500 e o dólar para mostrar o que o brasileiro teria ganho em reais. Em 2008, o S&P caiu 37% em dólar e o dólar subiu 32% contra o real. A conta exata dá uma perda de perto de 17% em reais, bem menor que a do Ibovespa no mesmo ano.",
           "O índice pode ser comprado por ETFs listados nos Estados Unidos, por ETFs domiciliados na Europa e por fundos e BDRs negociados na B3. Cada caminho tem custo e imposto diferentes, tema do Módulo III.",
         ],
       },
@@ -1452,7 +1452,7 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
       },
     ],
     exemplo: "Em agosto de 2026, o MSCI ACWI somava US$ 104 trilhões em valor de mercado. Quem investe só na B3 olha para menos de um duzentos avos desse universo. Hipotético: uma carteira de R$ 1 milhão montada na proporção do índice teria menos de R$ 5 mil no Brasil e perto de R$ 640 mil nos Estados Unidos.",
-    naPratica: "O ACWI é a referência do que seria uma carteira neutra de ações do mundo. Não é recomendação de alocação: o brasileiro tem salário, imóvel e gastos em reais, e faz sentido ter mais Brasil do que o índice. Mas ele ajuda a medir o tamanho da aposta de quem tem tudo em casa.",
+    naPratica: "O ACWI é a referência do que seria uma carteira neutra de ações do mundo. Não é recomendação de alocação: o brasileiro tem salário, imóvel e gastos em reais, e pode fazer sentido ter mais Brasil do que o índice. Mas ele ajuda a medir o tamanho da aposta de quem tem tudo em casa.",
     relacionados: [
       "msci-emerging-markets",
       "msci-brazil",
@@ -1894,7 +1894,7 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
       {
         titulo: "Os números",
         paragrafos: [
-          "Os levantamentos SPIVA, da S&P, medem isso há 25 anos. Em 2025, 79% dos fundos ativos de grandes empresas americanas ficaram atrás do S&P 500. Em 15 anos, perto de nove em cada dez.",
+          "Os levantamentos SPIVA, da S&P, medem isso há mais de duas décadas. Em 2025, 79% dos fundos ativos de grandes empresas americanas ficaram atrás do S&P 500. Em 15 anos, perto de nove em cada dez.",
           "Warren Buffett transformou o argumento em aposta: em 2008, apostou que um fundo de índice do S&P 500 renderia mais em dez anos que uma seleção de fundos de hedge escolhida por um gestor profissional. O fundo de índice rendeu cerca de 8,5% ao ano; a média da seleção, menos de 3%.",
         ],
       },
@@ -2612,7 +2612,7 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Hipotético: um índice com dividendos de 1,5% ao ano. Com 30% retidos, você perde 0,45 ponto por ano; com 15%, 0,22 ponto. Em US$ 500 mil, a diferença é de pouco mais de US$ 1.100 por ano, e em 20 anos, com juros compostos, passa de US$ 50 mil.",
+    exemplo: "Hipotético: um índice com dividendos de 1,5% ao ano. Com 30% retidos, você perde 0,45 ponto por ano; com 15%, 0,22 ponto. Em US$ 500 mil, a diferença é de pouco mais de US$ 1.100 por ano. Em 20 anos, numa carteira que renda 8% ao ano, a diferença acumulada passa de US$ 90 mil.",
     naPratica: "O domicílio do ETF é uma das escolhas técnicas mais importantes de quem dolariza, e envolve imposto sobre dividendos, momento da tributação no Brasil e risco de imposto sobre herança nos Estados Unidos. É assunto do Módulo III, com Luiz Roxo; confira sempre a regra em vigor e, para patrimônios grandes, a orientação de um especialista.",
     relacionados: [
       "etf",

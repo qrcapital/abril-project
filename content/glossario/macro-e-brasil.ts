@@ -380,7 +380,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Hipotético: uma família gasta R$ 5 mil por mês em compras, contas e serviços. Se um terço do preço desses itens for tributo, como é comum em energia, combustível e telefonia, perto de R$ 1,6 mil do orçamento vai para o governo antes de qualquer imposto de renda. É a parte invisível da carga.",
+    exemplo: "Hipotético: uma família gasta R$ 5 mil por mês em compras, contas e serviços. Se um terço do preço desses itens for tributo, como é comum em energia, combustível e telefonia, perto de R$ 1,7 mil do orçamento vai para o governo antes de qualquer imposto de renda. É a parte invisível da carga.",
     naPratica: "A carga alta é um dos elos entre o risco fiscal e o patrimônio de quem tem tudo em reais: se aumentar imposto é difícil, o ajuste tende a vir por outros caminhos. E ela lembra que regras tributárias mudam. Diversificar para fora não livra você do imposto brasileiro, que alcança a renda de quem mora aqui no mundo todo, mas reduz a dependência de uma única política econômica.",
     relacionados: ["resultado-primario", "divida-publica", "iof", "imposto-de-renda", "previdencia", "lei-14754", "arcabouco-fiscal"],
     noCurso: [{ modulo: 0, aula: 1, tempo: "24:45" }],
@@ -584,7 +584,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Hipotético: um trabalhador recebe R$ 3.000 no dia 1º e gasta R$ 100 por dia ao longo do mês, com inflação de 30% ao mês. Na média, ele carrega R$ 1.500 em dinheiro parado. Ao fim do mês, terá perdido perto de R$ 300 em poder de compra sem pagar nenhum imposto declarado. Quem recebe o mesmo salário e aplica no overnight perde quase nada.",
+    exemplo: "Hipotético: um trabalhador recebe R$ 3.000 no dia 1º e gasta R$ 100 por dia ao longo do mês, com inflação de 30% ao mês. Na média, ele carrega R$ 1.500 em dinheiro parado. Ao fim do mês, terá perdido perto de R$ 350 em poder de compra sem pagar nenhum imposto declarado. Quem recebe o mesmo salário e aplica no overnight perde quase nada.",
     naPratica: "Quando o imposto inflacionário some, o governo perde uma receita que não precisava de votação, e o rombo que ela escondia aparece. Foi o que aconteceu depois de 1994. Esse risco, de a conta pública voltar a ser paga por quem guarda a moeda, é o motivo de fundo para que a reserva de valor do seu patrimônio não dependa só de uma moeda.",
     relacionados: ["senhoriagem", "hiperinflacao", "inflacao", "plano-real", "overnight", "proer", "poder-de-compra"],
     noCurso: [{ modulo: 0, aula: 2, tempo: "2:56" }],
@@ -762,7 +762,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
     texto: [
       "As agências de rating dividem a escala de notas em dois mundos. Do BBB- para cima, na S&P e na Fitch, ou do Baa3 para cima, na Moody's, o emissor tem grau de investimento: risco de calote considerado baixo. Abaixo, tem grau especulativo, também chamado de high yield, alto rendimento, ou junk, lixo, no jargão menos educado do mercado.",
       "A linha é arbitrária, mas tem efeito prático enorme. Regras e estatutos de muitos fundos de pensão, seguradoras, bancos centrais e fundos de índice exigem grau de investimento para comprar um título. Cruzar a linha para baixo obriga parte desses investidores a vender.",
-      "O Brasil ficou com grau de investimento de 2008 a 2015 nas três grandes agências. Desde então, está no grau especulativo.",
+      "O Brasil teve grau de investimento de 2008 a 2015 na S&P e na Fitch, e de 2009 a 2016 na Moody's. Desde então, está no grau especulativo.",
     ],
     secoes: [
       {
@@ -838,7 +838,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
     resumo: "O dinheiro em moeda forte que o Banco Central guarda, sobretudo em títulos do governo americano. Serve de colchão para o país pagar compromissos externos e conter disparadas do dólar.",
     texto: [
       "Assim como você guarda uma reserva de emergência, um país guarda reservas em moeda forte: dólar, euro, ouro e outras. No Brasil, quem administra é o Banco Central, e boa parte está aplicada em títulos do Tesouro americano, que podem ser vendidos a qualquer hora.",
-      "No começo de outubro de 2026, as reservas brasileiras estavam perto de US$ 360 bilhões, pela série diária do Banco Central. É um colchão grande para padrões de emergentes, e uma mudança enorme em relação ao passado.",
+      "Em junho de 2026, as reservas brasileiras somavam US$ 367,6 bilhões, pelos dados do Banco Central. É um colchão grande para padrões de emergentes, e uma mudança enorme em relação ao passado.",
       "Até os anos 1990, a falta de reservas foi o calcanhar de Aquiles do Brasil. Toda crise externa terminava com o país sem dólares para pagar as contas, pedindo socorro ao FMI ou suspendendo pagamentos.",
     ],
     secoes: [
@@ -854,7 +854,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
         titulo: "De onde vem",
         paragrafos: [
           "Em 1987, com as reservas no chão, o Brasil declarou moratória da dívida externa. Entre 1998 e o começo de 1999, perdeu dezenas de bilhões de dólares tentando segurar o real, mesmo com um pacote de cerca de US$ 41,5 bilhões montado com o FMI no fim de 1998. Em janeiro de 1999, a banda cambial caiu.",
-          "A virada veio nos anos 2000. Com o ciclo de commodities, o Banco Central comprou dólares em grande quantidade. Desde 2008, as reservas superam a dívida externa do setor público, e o país passou de devedor a credor líquido em moeda estrangeira.",
+          "A virada veio nos anos 2000. Com o ciclo de commodities, o Banco Central comprou dólares em grande quantidade. No começo de 2008, as reservas e os outros créditos do país no exterior passaram a superar a dívida externa, e o Brasil deixou de ser devedor líquido em moeda estrangeira.",
         ],
       },
       {
@@ -906,7 +906,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Em 1979, o Fed, comandado por Paul Volcker, subiu os juros para perto de 20% para derrubar a inflação americana. A decisão funcionou nos Estados Unidos, mas encareceu a dívida em dólar da América Latina e ajudou a provocar a década perdida. Um banco central decide pelo próprio país; os efeitos atravessam fronteiras.",
+    exemplo: "A partir de 1979, o Fed, comandado por Paul Volcker, levou os juros para perto de 20% para derrubar a inflação americana. A decisão funcionou nos Estados Unidos, mas encareceu a dívida em dólar da América Latina e ajudou a provocar a década perdida. Um banco central decide pelo próprio país; os efeitos atravessam fronteiras.",
     naPratica: "Ter todo o patrimônio em reais é confiar em um único banco central. Uma parte em outra moeda põe o seu dinheiro sob outra política monetária, com outros erros e outros acertos. Não se trata de achar um banco central melhor, mas de não depender de um só.",
     relacionados: ["independencia-do-banco-central", "meta-de-inflacao", "selic", "reservas-internacionais", "senhoriagem", "tripe-macroeconomico", "copom", "fed"],
     noCurso: [{ modulo: 0, aula: 1 }, { modulo: 0, aula: 2 }],
@@ -980,7 +980,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
         titulo: "A história da meta",
         paragrafos: [
           "As primeiras metas foram de 8% em 1999, 6% em 2000 e 4% em 2001. De 2005 a 2018, o centro ficou em 4,5%. Depois, caiu aos poucos até 3% em 2024 e passou a ser contínua em 2025.",
-          "A meta foi descumprida várias vezes, em anos como 2001, 2002, 2003, 2015, 2021 e 2022, quase sempre depois de choques de câmbio ou de preços. Em julho de 2025, saiu a primeira carta pelo regime contínuo: em junho, o IPCA de 12 meses estava em 5,35%, acima do teto de 4,5% pelo sexto mês seguido.",
+          "A meta foi descumprida várias vezes, como em 2001, 2002, 2003, 2015, 2021, 2022 e 2024, quase sempre depois de choques de câmbio ou de preços. Em 2017, foi descumprida pelo outro lado, com a inflação abaixo do piso. Em julho de 2025, saiu a primeira carta pelo regime contínuo: em junho, o IPCA de 12 meses estava em 5,35%, acima do teto de 4,5% pelo sexto mês seguido.",
         ],
       },
       {
@@ -1496,7 +1496,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
         titulo: "O Brasil e o FMI",
         paragrafos: [
           "O Brasil recorreu ao Fundo várias vezes. No começo dos anos 1980, durante a crise da dívida externa. No fim de 1998, num pacote internacional de cerca de US$ 41,5 bilhões para defender o real, que não evitou a desvalorização de janeiro de 1999. Em 2001 e, de novo, em 2002, em plena crise eleitoral.",
-          "Em dezembro de 2005, o país pagou adiantado os US$ 15,5 bilhões que ainda devia. Desde então, o Brasil é credor do Fundo, e não devedor.",
+          "Em dezembro de 2005, o país pagou adiantado os US$ 15,5 bilhões que ainda devia. Desde então, o Brasil não deve nada ao Fundo e, a partir de 2009, passou a emprestar recursos a ele.",
         ],
       },
       {
@@ -1633,7 +1633,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
         titulo: "A lição para quem investe",
         paragrafos: [
           "Em 2008, diversificar entre bolsas de países diferentes ajudou pouco no primeiro momento, porque quase todas caíram juntas. O que funcionou foi diversificar entre tipos de ativos e entre moedas: títulos do Tesouro americano e o próprio dólar se valorizaram enquanto as ações despencavam.",
-          "Para o investidor brasileiro, a crise deixou uma regra prática: em pânico global, o real costuma perder valor, e ter uma parte do patrimônio em dólar funciona como amortecedor. Não é garantia, mas é um padrão que se repetiu em 2008, em 2015 e em 2020.",
+          "Para o investidor brasileiro, a crise deixou uma regra prática: em pânico global, o real costuma perder valor, e ter uma parte do patrimônio em dólar funciona como amortecedor. Não é garantia, mas é um padrão que se repetiu em 2008 e em 2020, e também na crise doméstica de 2015.",
         ],
       },
     ],
@@ -1693,10 +1693,10 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
     termo: "Cruzeiro",
     categoria: "História do Brasil",
     apelidos: ["cruzeiros", "cruzeiro novo", "cruzeiros novos", "NCr$", "réis", "mil réis", "padrões monetários"],
-    resumo: "A moeda que substituiu o réis em 1942 e que, com idas e vindas de nome, foi o dinheiro do Brasil na maior parte do século 20. Voltou três vezes, a última no Plano Collor, em 1990.",
+    resumo: "A moeda que substituiu o réis em 1942 e que, com idas e vindas de nome, foi o dinheiro do Brasil na maior parte do século 20. O nome voltou duas vezes, a última no Plano Collor, em 1990.",
     texto: [
       "Em novembro de 1942, em plena Segunda Guerra e no governo Vargas, o Brasil aposentou o réis, a moeda que vinha dos tempos da colônia. Mil réis passaram a valer um cruzeiro. Começava a moeda que, com idas e vindas de nome, seria o dinheiro do Brasil na maior parte do século 20.",
-      "O cruzeiro viveu mais vidas do que qualquer outra moeda brasileira. Foi cortado, renomeado, substituído e ressuscitado três vezes, a última no Plano Collor, em 1990.",
+      "O cruzeiro viveu mais vidas do que qualquer outra moeda brasileira. Foi cortado, renomeado, substituído e ressuscitado duas vezes, a última no Plano Collor, em 1990.",
       "Contar a história do cruzeiro é contar a história da inflação brasileira: cada volta do nome marcava uma tentativa de recomeçar do zero, literalmente cortando zeros.",
     ],
     secoes: [
@@ -1765,7 +1765,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
         titulo: "O que ficou",
         paragrafos: [
           "O cruzado deixou uma lição que os economistas do real levariam a sério: inflação com indexação generalizada não se mata por decreto. Também deixou a desconfiança do público com planos de choque, que pesou contra todos os planos seguintes.",
-          "Também ficou a imagem dos fiscais do Sarney, cidadãos que denunciavam supermercados por remarcar preços. A mobilização mostrava a ânsia por estabilidade, e o fracasso mostrou que ela não se impõe por fiscalização.",
+          "A imagem que sobrou foi a dos fiscais do Sarney, que denunciavam supermercados por remarcar preços. A mobilização mostrava a ânsia por estabilidade, e o fracasso mostrou que ela não se impõe por fiscalização.",
         ],
       },
       {
@@ -1817,7 +1817,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
       {
         titulo: "O que ficou",
         paragrafos: [
-          "Em 1º de julho de 1994, cada URV virou um real, e CR$ 2.750 viraram R$ 1. Foi a última conversão de moeda do país, e a única feita sem congelamento de preços.",
+          "Em 1º de julho de 1994, cada URV virou um real, e CR$ 2.750 viraram R$ 1. Foi a última conversão de moeda do país, e a primeira de um plano de estabilização feita sem congelamento de preços.",
           "Para a memória popular, o cruzeiro real ficou como a moeda das notas com valores gigantescos e da remarcação diária. Para os economistas, como o último capítulo antes de o Brasil finalmente ter uma moeda que guardava valor.",
         ],
       },
@@ -1829,7 +1829,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
         ],
       },
     ],
-    exemplo: "Com inflação de 2.477% no ano, quem segurou cruzeiros reais de janeiro a dezembro de 1993 terminou comprando menos de um vigésimo do que comprava. E só nos quatro meses da URV, de março a junho de 1994, o cruzeiro real perdeu mais de três quartos do valor contra a nova régua.",
+    exemplo: "Com inflação de 2.477% no ano, quem segurou dinheiro parado de janeiro a dezembro de 1993, primeiro em cruzeiros e, a partir de agosto, em cruzeiros reais, terminou comprando menos de um vigésimo do que comprava. E só nos quatro meses da URV, de março a junho de 1994, o cruzeiro real perdeu mais de três quartos do valor contra a nova régua.",
     naPratica: "A curta vida do cruzeiro real mostra o que é viver numa moeda que não guarda valor: ninguém deixava dinheiro parado, e quem podia se protegia em aplicações diárias ou em dólar. Quem não podia pagava a conta. É a raiz do hábito brasileiro de buscar aplicações que rendem um pouco todo dia.",
     relacionados: ["urv", "plano-real", "cruzeiro", "hiperinflacao", "overnight", "imposto-inflacionario"],
     noCurso: [{ modulo: 0, aula: 2, tempo: "1:10" }],
@@ -1878,7 +1878,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
       },
     ],
     exemplo: "Um aluguel de 500 URV ficava em 500 URV de março a junho. Em cruzeiros reais, o valor subia todo dia: de CR$ 323.750 no começo de março para CR$ 1.375.000 no fim de junho. Em julho, virou simplesmente R$ 500, e o inquilino e o proprietário pararam de brigar pelo índice.",
-    naPratica: "A URV separou as três funções da moeda: régua de preços, meio de pagamento e reserva de valor. Vale lembrar que, por décadas, a função de reserva de valor no Brasil era cumprida pelo dólar e pela correção monetária, não pela moeda nacional. Pensar nessas três funções separadamente ajuda a decidir o que você espera de cada moeda no seu patrimônio.",
+    naPratica: "Durante quatro meses, a URV dividiu o trabalho da moeda: ela era a régua dos preços, enquanto o cruzeiro real seguia como meio de pagamento. Vale lembrar que, por décadas, a função de reserva de valor no Brasil era cumprida pelo dólar e pela correção monetária, não pela moeda nacional. Pensar nessas três funções separadamente ajuda a decidir o que você espera de cada moeda no seu patrimônio.",
     relacionados: ["plano-real", "inflacao-inercial", "cruzeiro-real", "correcao-monetaria", "hiperinflacao", "funcoes-da-moeda"],
     noCurso: [{ modulo: 0, aula: 2, tempo: "9:02" }],
   },
@@ -1911,7 +1911,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
       {
         titulo: "Por que deu certo",
         paragrafos: [
-          "Sem congelamento e sem surpresa, a inflação caiu de 2.477% em 1993 para 22% em 1995 e menos de 10% em 1996. O plano atacou a inércia com a URV e ganhou credibilidade com a âncora no dólar.",
+          "Sem congelamento e sem surpresa, a inflação despencou. O plano atacou a inércia com a URV e ganhou credibilidade com a âncora no dólar.",
           "Mas o sucesso trouxe um problema: sem o imposto inflacionário, o governo e parte dos bancos tiveram de se ajustar. Vieram o Proer, a renegociação das dívidas dos estados, as privatizações e juros altos para segurar o câmbio.",
           "A virada aparece em qualquer série. O IPCA foi de 2.477% em 1993 para 916% em 1994, quase toda essa alta concentrada no primeiro semestre, antes da moeda nova. Depois, 22% em 1995, menos de 10% em 1996 e menos de 2% em 1998. Em quatro anos, o país saiu de uma inflação de quatro dígitos para um patamar de país desenvolvido.",
           "O custo também aparece. Para segurar o real perto do dólar, o Banco Central manteve juros reais altíssimos por anos, e a dívida pública cresceu. Quando a crise da Rússia chegou, em 1998, a âncora já estava cara demais.",
@@ -2133,18 +2133,18 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
     termo: "Hiperinflação",
     categoria: "História do Brasil",
     apelidos: ["hiperinflações", "inflação galopante", "inflação descontrolada", "superinflação"],
-    resumo: "Inflação tão alta que a moeda deixa de funcionar. A definição clássica fala em mais de 50% ao mês. O Brasil chegou lá no começo de 1990, depois de quase uma década de inflação de três ou quatro dígitos ao ano.",
+    resumo: "Inflação tão alta que a moeda deixa de funcionar. A definição clássica fala em mais de 50% ao mês. O Brasil chegou lá na virada de 1989 para 1990, depois de quase uma década de inflação de três ou quatro dígitos ao ano.",
     texto: [
       "Imagine receber o salário no dia 1º e saber que, no dia 30, ele vai comprar só dois terços do que compra hoje. Você corre ao supermercado no mesmo dia, enche o carrinho, aplica o resto antes de o banco fechar. Ninguém guarda dinheiro parado; todo mundo foge da moeda.",
       "Isso é hiperinflação: inflação tão alta que a moeda deixa de funcionar como reserva de valor e, no limite, até como régua de preços. O economista Phillip Cagan, nos anos 1950, propôs a definição clássica: preços subindo mais de 50% ao mês.",
-      "O Brasil passou dessa linha no começo de 1990, depois de quase uma década de inflação de três ou quatro dígitos ao ano.",
+      "O Brasil passou dessa linha no fim de 1989, depois de quase uma década de inflação de três ou quatro dígitos ao ano.",
     ],
     secoes: [
       {
         titulo: "O que aconteceu",
         paragrafos: [
           "Em março de 1990, o IPCA subiu 82% num único mês, e a inflação de 12 meses chegou a 6.821% em abril. Mas a hiperinflação brasileira foi menos um pico e mais uma longa doença. De janeiro de 1980 a junho de 1994, os preços subiram cerca de 11 trilhões por cento pelo IPCA. Na aula, o número citado é de 13 trilhões; pelo IGP-DI, da FGV, o mesmo período dá 14 trilhões.",
-          "Nesse período, o país trocou de moeda cinco vezes, lançou seis planos de estabilização e conviveu com remarcações diárias de preços.",
+          "Nesse período, o país trocou de moeda quatro vezes, lançou cinco planos de estabilização antes do Real e conviveu com remarcações diárias de preços.",
         ],
       },
       {
@@ -2315,7 +2315,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
         ],
       },
     ],
-    exemplo: "O Brasil teve cinco moedas entre 1986 e 1994 e declarou moratória da dívida externa em 1987. A dívida só foi renegociada de forma definitiva em abril de 1994. Hipotético: uma família que poupou em cruzeiros de 1980 a 1990, sem correção, chegou ao fim da década com uma fração insignificante do que guardou.",
+    exemplo: "O Brasil teve cinco moedas entre 1986 e 1994 e declarou moratória da dívida externa em 1987. A dívida só foi renegociada de forma definitiva em abril de 1994. Hipotético: uma família que guardou dinheiro sem correção de 1980 a 1990 chegou ao fim da década com uma fração insignificante do que guardou.",
     naPratica: "A década perdida mostra como uma decisão tomada fora do país, a alta de juros nos Estados Unidos, pode desmontar uma economia emergente endividada em dólar. É um exemplo de choque que nenhuma carteira só brasileira teria evitado, e de por que horizontes longos pedem diversificação entre economias, e não só entre ativos do mesmo país.",
     relacionados: ["crise-da-divida-externa", "moratoria-de-1987", "hiperinflacao", "banco-central", "fmi", "fed", "mercados-emergentes"],
     noCurso: [{ modulo: 0, aula: 2, tempo: "4:02" }],
@@ -2327,7 +2327,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
     apelidos: ["crise da dívida", "dívida externa", "choque do petróleo", "choques do petróleo", "choque de juros de 1979", "Plano Brady"],
     resumo: "A crise que começou em 1979, com o segundo choque do petróleo e a alta de juros nos Estados Unidos, e quebrou a América Latina endividada em dólar. Só foi resolvida no Brasil com o acordo de 1994.",
     texto: [
-      "Em 1979, a Revolução Iraniana disparou o preço do petróleo, e a inflação americana encostou em 15% ao ano. O Fed, comandado por Paul Volcker, decidiu que ia derrubá-la custasse o que custasse, e levou os juros para perto de 20%.",
+      "Em 1979, a Revolução Iraniana disparou o preço do petróleo, e a inflação americana caminhou para perto de 15% ao ano. O Fed, comandado por Paul Volcker, decidiu que ia derrubá-la custasse o que custasse, e levou os juros para perto de 20%.",
       "Do outro lado do continente, a América Latina devia centenas de bilhões de dólares a bancos americanos e europeus, a juros que acompanhavam os americanos. A conta dos juros explodiu justo quando os preços das exportações caíam.",
       "O que veio depois foi a crise da dívida externa: uma década de moratórias, renegociações e ajustes que quebrou a América Latina endividada em dólar e só foi resolvida, no caso brasileiro, em 1994.",
     ],
@@ -2754,7 +2754,7 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
         titulo: "O que aconteceu",
         paragrafos: [
           "O PIB brasileiro caiu 3,3% em 2020. Para segurar a renda das famílias, o governo pagou o auxílio emergencial e programas de manutenção de emprego. Em maio, o Congresso aprovou o chamado orçamento de guerra, a Emenda Constitucional 106, que separou os gastos da emergência das regras fiscais normais.",
-          "Com a inflação em queda no auge do isolamento, o Banco Central levou a Selic a 2% em agosto de 2020, o menor nível da história. Com juro real negativo, o Brasil perdeu atrativo para o dinheiro de curto prazo, e o dólar chegou a R$ 5,94 em maio.",
+          "Com o pânico global, o dinheiro de curto prazo saiu do país, e o dólar chegou a R$ 5,94 em maio. Com a inflação em queda no auge do isolamento, o Banco Central cortou a Selic em sequência, até 2% em agosto de 2020, o menor nível da história, e o juro real ficou negativo.",
           "Cadeias globais de produção quebraram. A falta de chips travou a indústria de carros por anos.",
         ],
       },

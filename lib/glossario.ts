@@ -73,8 +73,17 @@ export type CategoriaLinha = (typeof CATEGORIAS_LINHA)[number];
 export type Marco = {
   /** Identificador estável ("1971-fim-do-padrao-ouro"). */
   slug: string;
-  /** Ano para o eixo ("1971"); `data` dá o detalhe quando houver ("15 de agosto de 1971"). */
+  /**
+   * Ano para o eixo ("1971"); `data` dá o detalhe quando houver ("15 de agosto de 1971"). Antes de
+   * Cristo, ano negativo (-600 aparece como "600 a.C.", ver `rotuloDoAno`).
+   */
   ano: number;
+  /**
+   * O ano como aparece na lista quando o número sozinho promete uma precisão que não existe
+   * ("séc. III", "Antes da moeda"). O `ano` continua valendo para ordenar e para a régua.
+   * Desde 08/out/2026, com a pré-história do dinheiro.
+   */
+  anoRotulo?: string;
   data?: string;
   categoria: CategoriaLinha;
   titulo: string;
@@ -146,8 +155,9 @@ export const rotuloNoCurso = (n: { modulo: number; aula: number; tempo?: string 
  * As cores das categorias da linha do tempo. Revistas em 08/out/2026: a primeira paleta tinha um
  * azul e um roxo vivos demais ao lado do papel. Agora são sete tons de tinta envelhecida, todos na
  * mesma altura de valor: ouro velho (a casa), musgo, vinho (as crises, o único que puxa para o
- * vermelho), ardósia, grafite, ameixa e cobre. A cor não pinta mais bolinha nenhuma: aparece no fio
- * da borda dos chips, no anel do marco e no rótulo da categoria. Todos passam de 5,5:1 sobre o
+ * vermelho), ardósia, grafite, ameixa e cobre. A cor aparece no fio da borda dos chips, no anel do
+ * marco, no rótulo da categoria e, desde a tarde de 08/out/2026, de novo nos pontos da régua do topo
+ * (o único lugar com bolinha cheia). Todos passam de 5,5:1 sobre o
  * papel (#f7f4ee) e sobre o creme (#fdfbf6), porque pintam texto pequeno e servem de fundo para o
  * texto creme do chip ativo.
  */
@@ -164,9 +174,16 @@ export const COR_DA_LINHA: Record<CategoriaLinha, string> = {
 /**
  * As eras da linha do tempo da home: dão ritmo à lista e marcam a régua de anos. O ano de corte é o
  * último ano da era. Era sem marco não aparece.
+ *
+ * A pré-história do dinheiro (08/out/2026, pedido do Marcelo: "desde a moeda commodity até o
+ * dólar, sem se aprofundar muito") vai de antes de 3000 a.C. a 1791. São milênios com poucos
+ * marcos: numa escala de anos, eles virariam um borrão num canto da régua. Por isso `porOrdem`: na
+ * régua, os marcos dessa era ficam a intervalos iguais, na ordem do tempo, e a faixa dela é
+ * proporcional ao número de marcos, como a das outras.
  */
-export const ERAS: { ate: number; faixa: string; nome: string }[] = [
-  { ate: 1943, faixa: "Até 1943", nome: "O dinheiro antes do dólar" },
+export const ERAS: { ate: number; faixa: string; nome: string; porOrdem?: boolean }[] = [
+  { ate: 1791, faixa: "Antes de 1792", nome: "A pré-história do dinheiro", porOrdem: true },
+  { ate: 1943, faixa: "1792 a 1943", nome: "O dólar antes de Bretton Woods" },
   { ate: 1970, faixa: "1944 a 1970", nome: "O mundo de Bretton Woods" },
   { ate: 1993, faixa: "1971 a 1993", nome: "Moeda solta, inflação e dívida" },
   { ate: 2007, faixa: "1994 a 2007", nome: "Real, internet e globalização" },
@@ -175,3 +192,10 @@ export const ERAS: { ate: number; faixa: string; nome: string }[] = [
 ];
 
 export const eraDe = (ano: number) => ERAS.findIndex((e) => ano <= e.ate);
+
+/**
+ * O ano de um marco como o aluno lê (08/out/2026): o `anoRotulo` quando houver, "600 a.C." para ano
+ * negativo e o número puro para o resto.
+ */
+export const rotuloDoAno = (m: { ano: number; anoRotulo?: string }) =>
+  m.anoRotulo ?? (m.ano < 0 ? `${-m.ano} a.C.` : String(m.ano));
