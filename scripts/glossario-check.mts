@@ -18,6 +18,7 @@ import assert from "node:assert/strict";
 import { register } from "node:module";
 
 import {
+  aulasDoMarco,
   CATEGORIAS_GLOSSARIO,
   CATEGORIAS_LINHA,
   COR_DA_LINHA,
@@ -27,6 +28,7 @@ import {
   letraDe,
   normalizar,
   rotuloDoAno,
+  romanoDoModulo,
   rotuloNoCurso,
   slugificar,
   type Marco,
@@ -48,6 +50,14 @@ assert.equal(dobrar("Ação Câmbio").length, "Ação Câmbio".length, "a dobra 
 assert.equal(hrefNoCurso({ modulo: 1, aula: 3 }), "/app/modulo/1?aula=3#aula-3");
 assert.equal(hrefNoCurso({ modulo: 1, aula: 3, tempo: "12:34" }), "/app/modulo/1?aula=3&t=754#player");
 assert.equal(rotuloNoCurso({ modulo: 0, aula: 2 }), "Módulo I · Aula 02");
+assert.equal(romanoDoModulo(1), "II");
+// O `noCurso` do marco aceita uma aula ou uma lista (08/out/2026); `aulasDoMarco` devolve sempre a lista.
+assert.deepEqual(aulasDoMarco({}), []);
+assert.deepEqual(aulasDoMarco({ noCurso: { modulo: 0, aula: 2 } }), [{ modulo: 0, aula: 2 }]);
+assert.deepEqual(
+  aulasDoMarco({ noCurso: [{ modulo: 0, aula: 2 }, { modulo: 1, aula: 3, tempo: "10:46" }] }),
+  [{ modulo: 0, aula: 2 }, { modulo: 1, aula: 3, tempo: "10:46" }],
+);
 assert.equal(eraDe(-3000), 0, "a pré-história do dinheiro é a primeira era");
 assert.equal(eraDe(1791), 0);
 assert.equal(eraDe(1792), 1);
@@ -196,7 +206,22 @@ for (const m of linha) {
   if (!Number.isInteger(m.ano) || m.ano < -3000 || m.ano > 2100) erros.push(`${onde}: ano ${m.ano} inválido`);
   if (!m.titulo?.trim()) erros.push(`${onde}: sem título`);
   if (!m.resumo?.trim()) erros.push(`${onde}: sem resumo`);
-  if (m.noCurso) aulaValida(m.noCurso, onde);
+  {
+    const aulas = aulasDoMarco(m);
+    if (Array.isArray(m.noCurso) && aulas.length === 0) erros.push(`${onde}: noCurso é uma lista vazia`);
+    const vistas = new Set<string>();
+    for (const n of aulas) {
+      aulaValida(n, onde);
+      const k = `${n.modulo}-${n.aula}`;
+      if (vistas.has(k)) erros.push(`${onde}: aula ${k} repetida no noCurso`);
+      vistas.add(k);
+    }
+    // A ordem do curso: a frase da linha do tempo ("na aula 2 do Módulo I e na aula 3 do Módulo II")
+    // segue a ordem do arquivo.
+    for (let k = 1; k < aulas.length; k++)
+      if (aulas[k - 1].modulo * 100 + aulas[k - 1].aula > aulas[k].modulo * 100 + aulas[k].aula)
+        erros.push(`${onde}: noCurso fora da ordem do curso`);
+  }
   for (const s of m.verbetes ?? []) if (!verbete(s)) avisos.push(`${onde}: verbete "${s}" não existe`);
   semTravessao(m, onde);
 }

@@ -75,6 +75,9 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     noCurso: [
       { modulo: 0, aula: 1, tempo: "22:12" },
       { modulo: 0, aula: 3, tempo: "23:44" },
+      { modulo: 1, aula: 1, tempo: "36:10" },
+      { modulo: 1, aula: 2, tempo: "44:09" },
+      { modulo: 1, aula: 3, tempo: "32:00" },
     ],
   },
   {
@@ -138,6 +141,9 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 2, tempo: "1:29:44" },
+      { modulo: 1, aula: 1, tempo: "34:33" },
+      { modulo: 1, aula: 2, tempo: "16:19" },
+      { modulo: 1, aula: 3, tempo: "33:25" },
     ],
   },
   {
@@ -203,6 +209,9 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     noCurso: [
       { modulo: 0, aula: 1, tempo: "18:55" },
       { modulo: 0, aula: 3, tempo: "23:44" },
+      { modulo: 1, aula: 1, tempo: "35:10" },
+      { modulo: 1, aula: 2, tempo: "13:25" },
+      { modulo: 1, aula: 3, tempo: "10:46" },
     ],
   },
   {
@@ -259,6 +268,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 1, tempo: "20:29" },
+      { modulo: 1, aula: 3, tempo: "10:46" },
     ],
   },
   {
@@ -316,6 +326,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 3, tempo: "23:44" },
+      { modulo: 1, aula: 1, tempo: "37:35" },
     ],
   },
   {
@@ -374,6 +385,8 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 3, tempo: "23:44" },
+      { modulo: 1, aula: 1, tempo: "24:32" },
+      { modulo: 1, aula: 2, tempo: "1:04" },
     ],
   },
   {
@@ -501,6 +514,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     noCurso: [
       { modulo: 0, aula: 1, tempo: "0:19" },
       { modulo: 0, aula: 4, tempo: "26:46" },
+      { modulo: 1, aula: 3, tempo: "3:14" },
     ],
   },
   {
@@ -661,6 +675,9 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 2, tempo: "45:15" },
+      { modulo: 1, aula: 1, tempo: "24:32" },
+      { modulo: 1, aula: 2, tempo: "25:16" },
+      { modulo: 1, aula: 3, tempo: "9:50" },
     ],
   },
   {
@@ -716,6 +733,8 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 3, tempo: "23:44" },
+      { modulo: 1, aula: 1, tempo: "1:40" },
+      { modulo: 1, aula: 3, tempo: "9:50" },
     ],
   },
   {
@@ -824,6 +843,11 @@ export const VERBETES_CARTEIRA: Verbete[] = [
       "carteira-60-40",
       "ativo-livre-de-risco",
     ],
+    noCurso: [
+      { modulo: 1, aula: 1, tempo: "34:33" },
+      { modulo: 1, aula: 2, tempo: "45:15" },
+      { modulo: 1, aula: 3, tempo: "27:44" },
+    ],
   },
   {
     slug: "alocacao-de-ativos",
@@ -885,6 +909,8 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 4, tempo: "0:12" },
+      { modulo: 1, aula: 1, tempo: "39:43" },
+      { modulo: 1, aula: 3, tempo: "31:01" },
     ],
   },
   {
@@ -941,6 +967,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     noCurso: [
       { modulo: 0, aula: 3, tempo: "25:26" },
       { modulo: 0, aula: 4, tempo: "22:22" },
+      { modulo: 1, aula: 2, tempo: "46:35" },
     ],
   },
   {
@@ -1177,6 +1204,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 4, tempo: "26:46" },
+      { modulo: 1, aula: 3, tempo: "11:45" },
     ],
   },
   {
@@ -1454,6 +1482,8 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 4, tempo: "8:05" },
+      { modulo: 1, aula: 1, tempo: "6:07" },
+      { modulo: 1, aula: 2, tempo: "38:02" },
     ],
   },
   {
@@ -2619,6 +2649,7 @@ export const VERBETES_CARTEIRA: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 4, tempo: "14:31" },
+      { modulo: 1, aula: 3, tempo: "22:51" },
     ],
   },
 ];

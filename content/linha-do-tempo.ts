@@ -254,7 +254,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["sp-500", "gestao-passiva"],
     antecedentes: ["1792-acordo-de-buttonwood"],
-    noCurso: { modulo: 0, aula: 4, tempo: "14:31" },
+    noCurso: [
+      { modulo: 0, aula: 4, tempo: "14:31" },
+      { modulo: 1, aula: 3, tempo: "8:23" },
+    ],
     fonte: "S&P Dow Jones Indices",
   },
   {
@@ -288,7 +291,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["banco-central", "treasury"],
     antecedentes: ["1900-padrao-ouro-nos-eua", "1694-nasce-o-banco-da-inglaterra"],
-    noCurso: { modulo: 0, aula: 2, tempo: "1:00:29" },
+    noCurso: [
+      { modulo: 0, aula: 2, tempo: "1:00:29" },
+      { modulo: 1, aula: 1, tempo: "17:21" },
+    ],
     fonte: "Federal Reserve Act; Federal Reserve History",
   },
   {
@@ -305,7 +311,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["volatilidade", "diversificacao", "market-timing"],
     antecedentes: ["1896-indice-dow-jones", "1913-nasce-o-fed"],
-    noCurso: { modulo: 0, aula: 2, tempo: "1:01:20" },
+    noCurso: [
+      { modulo: 0, aula: 2, tempo: "1:01:20" },
+      { modulo: 1, aula: 3, tempo: "10:46" },
+    ],
     fonte: "S&P Dow Jones Indices; Federal Reserve History",
   },
   {
@@ -372,7 +381,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["bretton-woods", "padrao-ouro", "cambio"],
     antecedentes: ["1933-ouro-recolhido-nos-eua", "1913-nasce-o-fed"],
-    noCurso: { modulo: 0, aula: 1, tempo: "3:49" },
+    noCurso: [
+      { modulo: 0, aula: 1, tempo: "3:49" },
+      { modulo: 1, aula: 1, tempo: "4:55" },
+    ],
     fonte: "FMI; Federal Reserve History",
   },
   {
@@ -421,7 +433,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["diversificacao", "carteira-60-40", "volatilidade"],
     antecedentes: ["1929-crash-de-nova-york"],
-    noCurso: { modulo: 0, aula: 1, tempo: "9:00" },
+    noCurso: [
+      { modulo: 0, aula: 1, tempo: "9:00" },
+      { modulo: 1, aula: 1, tempo: "34:33" },
+    ],
     fonte: "H. Markowitz, Portfolio Selection, Journal of Finance; Fundação Nobel",
   },
   {
@@ -455,7 +470,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["sp-500", "gestao-passiva", "etf"],
     antecedentes: ["1896-indice-dow-jones"],
-    noCurso: { modulo: 0, aula: 3, tempo: "17:57" },
+    noCurso: [
+      { modulo: 0, aula: 3, tempo: "17:57" },
+      { modulo: 1, aula: 3, tempo: "5:25" },
+    ],
     fonte: "S&P Dow Jones Indices",
   },
   {
@@ -488,7 +506,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["bretton-woods", "treasury", "divida-publica"],
     antecedentes: ["1944-bretton-woods"],
-    noCurso: { modulo: 0, aula: 1, tempo: "3:49" },
+    noCurso: [
+      { modulo: 0, aula: 1, tempo: "3:49" },
+      { modulo: 1, aula: 1, tempo: "3:39" },
+    ],
     fonte: "R. Triffin, Gold and the Dollar Crisis",
   },
   {
@@ -522,7 +543,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["ibovespa", "home-bias", "diversificacao"],
     antecedentes: ["1957-nasce-o-sp-500"],
-    noCurso: { modulo: 0, aula: 1, tempo: "13:04" },
+    noCurso: [
+      { modulo: 0, aula: 1, tempo: "13:04" },
+      { modulo: 1, aula: 3, tempo: "36:56" },
+    ],
     fonte: "B3",
   },
   {
@@ -538,7 +562,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["home-bias", "diversificacao", "gestao-passiva"],
     antecedentes: ["1952-markowitz-e-a-diversificacao", "1957-nasce-o-sp-500"],
-    noCurso: { modulo: 0, aula: 1, tempo: "6:50" },
+    noCurso: [
+      { modulo: 0, aula: 1, tempo: "6:50" },
+      { modulo: 1, aula: 3, tempo: "3:14" },
+    ],
     fonte: "MSCI",
   },
   {
@@ -606,7 +633,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["inflacao", "divida-publica", "risco-cambial"],
     antecedentes: ["1971-fim-do-padrao-dolar-ouro"],
-    noCurso: { modulo: 0, aula: 2, tempo: "4:02" },
+    noCurso: [
+      { modulo: 0, aula: 2, tempo: "4:02" },
+      { modulo: 1, aula: 3, tempo: "14:42" },
+    ],
     fonte: "Federal Reserve History, Oil Shock of 1973-74",
   },
   {
@@ -640,7 +670,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["gestao-passiva", "sp-500", "etf"],
     antecedentes: ["1957-nasce-o-sp-500", "1952-markowitz-e-a-diversificacao"],
-    noCurso: { modulo: 0, aula: 4, tempo: "0:12" },
+    noCurso: [
+      { modulo: 0, aula: 4, tempo: "0:12" },
+      { modulo: 1, aula: 3, tempo: "29:54" },
+    ],
     fonte: "Vanguard",
   },
   {
@@ -657,7 +690,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["banco-central", "inflacao", "juro-real", "treasury"],
     antecedentes: ["1971-fim-do-padrao-dolar-ouro", "1973-choque-do-petroleo"],
-    noCurso: { modulo: 0, aula: 2, tempo: "4:02" },
+    noCurso: [
+      { modulo: 0, aula: 2, tempo: "4:02" },
+      { modulo: 1, aula: 3, tempo: "15:58" },
+    ],
     fonte: "Federal Reserve History",
   },
   {
@@ -827,7 +863,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["etf", "gestao-passiva", "sp-500"],
     antecedentes: ["1976-primeiro-fundo-de-indice", "1957-nasce-o-sp-500"],
-    noCurso: { modulo: 0, aula: 1, tempo: "15:28" },
+    noCurso: [
+      { modulo: 0, aula: 1, tempo: "15:28" },
+      { modulo: 1, aula: 3, tempo: "32:00" },
+    ],
     fonte: "State Street Global Advisors",
   },
   {
@@ -912,7 +951,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["internet", "volatilidade"],
     antecedentes: ["1991-world-wide-web"],
-    noCurso: { modulo: 0, aula: 4, tempo: "14:31" },
+    noCurso: [
+      { modulo: 0, aula: 4, tempo: "14:31" },
+      { modulo: 1, aula: 3, tempo: "15:58" },
+    ],
     fonte: "Computer History Museum; registros da Nasdaq",
   },
   {
@@ -1031,7 +1073,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["volatilidade", "diversificacao", "market-timing"],
     antecedentes: ["1995-ipo-da-netscape", "1987-segunda-feira-negra"],
-    noCurso: { modulo: 0, aula: 4, tempo: "14:31" },
+    noCurso: [
+      { modulo: 0, aula: 4, tempo: "14:31" },
+      { modulo: 1, aula: 3, tempo: "19:05" },
+    ],
     fonte: "Nasdaq",
   },
   {
@@ -1082,7 +1127,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["cambio", "ibovespa", "pib"],
     antecedentes: ["2000-lei-de-responsabilidade-fiscal"],
-    noCurso: { modulo: 0, aula: 2, tempo: "47:14" },
+    noCurso: [
+      { modulo: 0, aula: 2, tempo: "47:14" },
+      { modulo: 1, aula: 3, tempo: "36:56" },
+    ],
     fonte: "OMC; Banco Central do Brasil, IC-Br (SGS 29042)",
   },
   {
@@ -1150,7 +1198,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["risco-pais", "divida-publica", "tripe-macroeconomico"],
     antecedentes: ["2002-crise-de-confianca", "2000-lei-de-responsabilidade-fiscal", "2001-china-na-omc"],
-    noCurso: { modulo: 0, aula: 2, tempo: "51:10" },
+    noCurso: [
+      { modulo: 0, aula: 2, tempo: "51:10" },
+      { modulo: 1, aula: 2, tempo: "5:03" },
+    ],
     fonte: "S&P Global Ratings",
   },
   {
@@ -1167,7 +1218,11 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["volatilidade", "dividendo", "risco-cambial", "diversificacao"],
     antecedentes: ["2000-bolha-pontocom", "1929-crash-de-nova-york"],
-    noCurso: { modulo: 0, aula: 2, tempo: "56:28" },
+    noCurso: [
+      { modulo: 0, aula: 2, tempo: "56:28" },
+      { modulo: 1, aula: 2, tempo: "1:04" },
+      { modulo: 1, aula: 3, tempo: "10:46" },
+    ],
     fonte: "Federal Reserve History, The Great Recession; S&P Dow Jones Indices",
   },
   {
@@ -1201,7 +1256,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["banco-central", "juro-real", "treasury"],
     antecedentes: ["2008-quebra-do-lehman", "1979-choque-volcker"],
-    noCurso: { modulo: 0, aula: 2, tempo: "56:28" },
+    noCurso: [
+      { modulo: 0, aula: 2, tempo: "56:28" },
+      { modulo: 1, aula: 2, tempo: "31:27" },
+    ],
     fonte: "Federal Reserve, comunicado do FOMC de 16/dez/2008",
   },
   {
@@ -1320,7 +1378,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["risco-pais", "pib", "selic", "divida-publica"],
     antecedentes: ["2008-grau-de-investimento", "2001-china-na-omc"],
-    noCurso: { modulo: 0, aula: 2, tempo: "1:09:04" },
+    noCurso: [
+      { modulo: 0, aula: 2, tempo: "1:09:04" },
+      { modulo: 1, aula: 2, tempo: "18:13" },
+    ],
     fonte: "S&P Global Ratings; IBGE, Contas Nacionais",
   },
   {
@@ -1422,7 +1483,11 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["volatilidade", "market-timing", "selic", "juro-real"],
     antecedentes: ["2008-quebra-do-lehman", "1987-segunda-feira-negra"],
-    noCurso: { modulo: 0, aula: 2, tempo: "1:22:05" },
+    noCurso: [
+      { modulo: 0, aula: 2, tempo: "1:22:05" },
+      { modulo: 1, aula: 1, tempo: "30:32" },
+      { modulo: 1, aula: 2, tempo: "41:06" },
+    ],
     fonte: "OMS; Banco Central do Brasil (SGS 1, 432 e 5793); S&P Dow Jones Indices",
   },
   {
@@ -1506,7 +1571,12 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["treasury", "carteira-60-40", "inflacao", "volatilidade"],
     antecedentes: ["2020-pandemia", "2008-juro-zero-e-qe", "1979-choque-volcker"],
-    noCurso: { modulo: 0, aula: 3, tempo: "20:26" },
+    noCurso: [
+      { modulo: 0, aula: 3, tempo: "20:26" },
+      { modulo: 1, aula: 1, tempo: "31:27" },
+      { modulo: 1, aula: 2, tempo: "31:27" },
+      { modulo: 1, aula: 3, tempo: "40:09" },
+    ],
     fonte: "Federal Reserve; U.S. Bureau of Labor Statistics; S&P Dow Jones Indices",
   },
   {
@@ -1557,7 +1627,11 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["inteligencia-artificial", "sp-500"],
     antecedentes: ["2017-transformer", "2006-computacao-em-nuvem"],
-    noCurso: { modulo: 0, aula: 4, tempo: "15:30" },
+    noCurso: [
+      { modulo: 0, aula: 4, tempo: "15:30" },
+      { modulo: 1, aula: 2, tempo: "11:17" },
+      { modulo: 1, aula: 3, tempo: "22:51" },
+    ],
     fonte: "OpenAI",
   },
   {
@@ -1608,7 +1682,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["treasury", "volatilidade", "conta-global"],
     antecedentes: ["2022-inflacao-e-alta-de-juros"],
-    noCurso: { modulo: 0, aula: 3, tempo: "23:44" },
+    noCurso: [
+      { modulo: 0, aula: 3, tempo: "23:44" },
+      { modulo: 1, aula: 1, tempo: "37:35" },
+    ],
     fonte: "FDIC; Federal Reserve",
   },
   {
@@ -1659,7 +1736,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["tokenizacao", "treasury", "blockchain"],
     antecedentes: ["2015-ethereum", "2014-primeira-stablecoin"],
-    noCurso: { modulo: 0, aula: 4, tempo: "9:28" },
+    noCurso: [
+      { modulo: 0, aula: 4, tempo: "9:28" },
+      { modulo: 1, aula: 1, tempo: "13:57" },
+    ],
     fonte: "BlackRock, comunicado de março de 2024",
   },
   {
@@ -1710,7 +1790,11 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["inteligencia-artificial", "sp-500", "diversificacao", "home-bias"],
     antecedentes: ["2022-chatgpt", "2012-alexnet"],
-    noCurso: { modulo: 0, aula: 4, tempo: "8:05" },
+    noCurso: [
+      { modulo: 0, aula: 4, tempo: "8:05" },
+      { modulo: 1, aula: 2, tempo: "38:50" },
+      { modulo: 1, aula: 3, tempo: "3:14" },
+    ],
     fonte: "Nasdaq; B3",
   },
   {
@@ -1727,7 +1811,10 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["cambio", "bretton-woods", "treasury", "diversificacao"],
     antecedentes: ["2022-reservas-russas-congeladas", "1999-nasce-o-euro", "1944-bretton-woods", "1960-dilema-de-triffin"],
-    noCurso: { modulo: 0, aula: 1, tempo: "3:49" },
+    noCurso: [
+      { modulo: 0, aula: 1, tempo: "3:49" },
+      { modulo: 1, aula: 1, tempo: "8:02" },
+    ],
     fonte: "FMI, COFER (Currency Composition of Official Foreign Exchange Reserves)",
   },
 ];

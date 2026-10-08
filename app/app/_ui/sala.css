@@ -1318,6 +1318,17 @@ a.sl-pl-item:hover {
 .sl-lt-naaula svg { color: var(--sl-acento); transform: translateY(1px) }
 .sl-lt-naaula:hover { color: var(--sl-acento) !important }
 .sl-lt-naaula-titulo { font-weight: 400; color: var(--sl-tinta-3) }
+/* Mais de uma aula (08/out/2026): a frase não é link, cada aula dentro dela é. */
+.sl-lt-naaula-varias:hover { color: var(--sl-tinta-2) !important }
+.sl a.sl-lt-naaula-link {
+  color: var(--sl-tinta);
+  text-decoration: underline;
+  text-decoration-color: rgba(26, 24, 21, .3);
+  text-decoration-thickness: 1px;
+  text-underline-offset: .22em;
+  transition: color .2s ease, text-decoration-color .2s ease;
+}
+.sl a.sl-lt-naaula-link:hover, .sl a.sl-lt-naaula-link:focus-visible { color: var(--sl-acento); text-decoration-color: currentColor }
 .sl-lt-ir { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px }
 .sl .sl-lt-verbete {
   display: inline-flex; align-items: center; min-height: 30px; padding: 0 12px; border-radius: 999px;

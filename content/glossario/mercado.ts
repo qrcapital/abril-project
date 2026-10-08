@@ -467,6 +467,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     noCurso: [
       { modulo: 0, aula: 1, tempo: "2:00" },
       { modulo: 0, aula: 3, tempo: "22:31" },
+      { modulo: 1, aula: 3, tempo: "12:30" },
     ],
   },
   {
@@ -588,6 +589,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 1, tempo: "2:00" },
+      { modulo: 1, aula: 3, tempo: "12:30" },
     ],
   },
   {
@@ -871,6 +873,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 1, tempo: "3:49" },
+      { modulo: 1, aula: 1, tempo: "4:55" },
     ],
   },
   {
@@ -1004,6 +1007,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     noCurso: [
       { modulo: 0, aula: 1, tempo: "3:49" },
       { modulo: 0, aula: 4, tempo: "0:12" },
+      { modulo: 1, aula: 3, tempo: "45:31" },
     ],
   },
   {
@@ -1059,6 +1063,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 1, tempo: "23:49" },
+      { modulo: 1, aula: 1, tempo: "8:02" },
     ],
   },
   {
@@ -1115,6 +1120,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 1, tempo: "23:49" },
+      { modulo: 1, aula: 3, tempo: "13:18" },
     ],
   },
   {
@@ -1323,6 +1329,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 2, tempo: "1:03:56" },
+      { modulo: 1, aula: 1, tempo: "19:11" },
     ],
   },
   {
@@ -1393,6 +1400,8 @@ export const VERBETES_MERCADO: Verbete[] = [
     noCurso: [
       { modulo: 0, aula: 1, tempo: "9:48" },
       { modulo: 0, aula: 2, tempo: "0:19" },
+      { modulo: 1, aula: 1, tempo: "32:30" },
+      { modulo: 1, aula: 3, tempo: "17:57" },
     ],
   },
   {
@@ -1609,6 +1618,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 1, tempo: "12:31" },
+      { modulo: 1, aula: 1, tempo: "16:16" },
     ],
   },
   {
@@ -1728,6 +1738,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     noCurso: [
       { modulo: 0, aula: 3, tempo: "17:57" },
       { modulo: 0, aula: 4, tempo: "22:22" },
+      { modulo: 1, aula: 1, tempo: "16:16" },
     ],
   },
   {
@@ -1838,6 +1849,9 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 2, tempo: "4:02" },
+      { modulo: 1, aula: 1, tempo: "17:21" },
+      { modulo: 1, aula: 2, tempo: "14:16" },
+      { modulo: 1, aula: 3, tempo: "15:58" },
     ],
   },
   {
@@ -1894,6 +1908,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     noCurso: [
       { modulo: 0, aula: 1, tempo: "24:45" },
       { modulo: 0, aula: 3, tempo: "5:48" },
+      { modulo: 1, aula: 1, tempo: "17:21" },
     ],
   },
   {
@@ -2009,6 +2024,9 @@ export const VERBETES_MERCADO: Verbete[] = [
       "vies-do-status-quo",
       "juros-compostos",
     ],
+    noCurso: [
+      { modulo: 1, aula: 1, tempo: "33:36" },
+    ],
   },
   {
     slug: "renda-fixa",
@@ -2059,6 +2077,8 @@ export const VERBETES_MERCADO: Verbete[] = [
     noCurso: [
       { modulo: 0, aula: 4, tempo: "10:09" },
       { modulo: 0, aula: 3, tempo: "23:44" },
+      { modulo: 1, aula: 1, tempo: "0:00" },
+      { modulo: 1, aula: 2, tempo: "0:00" },
     ],
   },
   {
@@ -2115,6 +2135,8 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 4, tempo: "8:05" },
+      { modulo: 1, aula: 1, tempo: "13:57" },
+      { modulo: 1, aula: 2, tempo: "7:45" },
     ],
   },
   {
@@ -2172,6 +2194,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 3, tempo: "23:44" },
+      { modulo: 1, aula: 1, tempo: "3:39" },
     ],
   },
   {
@@ -2230,6 +2253,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     noCurso: [
       { modulo: 0, aula: 3, tempo: "5:48" },
       { modulo: 0, aula: 3, tempo: "20:26" },
+      { modulo: 1, aula: 1, tempo: "19:11" },
     ],
   },
   {
@@ -2285,6 +2309,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 4, tempo: "8:05" },
+      { modulo: 1, aula: 1, tempo: "0:00" },
     ],
   },
   {
@@ -2393,6 +2418,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 3, tempo: "20:26" },
+      { modulo: 1, aula: 1, tempo: "19:11" },
     ],
   },
   {
@@ -2456,6 +2482,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 4, tempo: "10:09" },
+      { modulo: 1, aula: 1, tempo: "16:16" },
     ],
   },
   {
@@ -2618,6 +2645,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 4, tempo: "8:05" },
+      { modulo: 1, aula: 2, tempo: "0:00" },
     ],
   },
   {
@@ -2694,6 +2722,9 @@ export const VERBETES_MERCADO: Verbete[] = [
     noCurso: [
       { modulo: 0, aula: 3, tempo: "23:44" },
       { modulo: 0, aula: 3, tempo: "25:26" },
+      { modulo: 1, aula: 1, tempo: "3:39" },
+      { modulo: 1, aula: 2, tempo: "0:00" },
+      { modulo: 1, aula: 3, tempo: "33:25" },
     ],
   },
   {
@@ -2744,6 +2775,9 @@ export const VERBETES_MERCADO: Verbete[] = [
       "inflacao",
       "correcao-monetaria",
     ],
+    noCurso: [
+      { modulo: 1, aula: 1, tempo: "16:16" },
+    ],
   },
   {
     slug: "frn",
@@ -2789,6 +2823,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     relacionados: ["pos-fixado", "tesouro-selic", "treasury", "fed-funds", "prefixado", "cdi"],
     noCurso: [
       { modulo: 0, aula: 3, tempo: "20:26" },
+      { modulo: 1, aula: 1, tempo: "16:16" },
     ],
   },
   {
@@ -2846,6 +2881,8 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 4, tempo: "10:56" },
+      { modulo: 1, aula: 1, tempo: "13:57" },
+      { modulo: 1, aula: 2, tempo: "7:45" },
     ],
   },
   {
@@ -2897,6 +2934,10 @@ export const VERBETES_MERCADO: Verbete[] = [
       "duration",
       "valor-presente",
       "dividend-yield",
+    ],
+    noCurso: [
+      { modulo: 1, aula: 1, tempo: "1:40" },
+      { modulo: 1, aula: 2, tempo: "8:18" },
     ],
   },
   {
@@ -3045,6 +3086,10 @@ export const VERBETES_MERCADO: Verbete[] = [
       "yield",
       "tesouro-ipca",
     ],
+    noCurso: [
+      { modulo: 1, aula: 1, tempo: "14:51" },
+      { modulo: 1, aula: 2, tempo: "12:08" },
+    ],
   },
   {
     slug: "curva-de-juros",
@@ -3103,6 +3148,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 2, tempo: "14:55" },
+      { modulo: 1, aula: 1, tempo: "22:35" },
     ],
   },
   {
@@ -3160,6 +3206,10 @@ export const VERBETES_MERCADO: Verbete[] = [
       "rating-soberano",
       "crise-de-2008",
     ],
+    noCurso: [
+      { modulo: 1, aula: 1, tempo: "24:32" },
+      { modulo: 1, aula: 2, tempo: "1:04" },
+    ],
   },
   {
     slug: "spread-de-credito",
@@ -3208,6 +3258,8 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 2, tempo: "45:15" },
+      { modulo: 1, aula: 1, tempo: "31:27" },
+      { modulo: 1, aula: 2, tempo: "13:25" },
     ],
   },
   {
@@ -3257,6 +3309,7 @@ export const VERBETES_MERCADO: Verbete[] = [
     ],
     noCurso: [
       { modulo: 0, aula: 1, tempo: "23:49" },
+      { modulo: 1, aula: 2, tempo: "12:08" },
     ],
   },
 ];

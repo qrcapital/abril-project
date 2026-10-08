@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
-import { COR_DA_LINHA, ERAS, eraDe, urlDoVerbete, type CategoriaLinha } from "@/lib/glossario";
+import { COR_DA_LINHA, ERAS, eraDe, romanoDoModulo, urlDoVerbete, type CategoriaLinha } from "@/lib/glossario";
 
 import { semMovimento } from "../Entrada";
 
@@ -20,9 +20,12 @@ export type ItemLinha = {
   verbetes: { slug: string; termo: string }[];
   /** Posições, na lista, dos marcos que levaram a este. Sempre menores que a dele. */
   antecedentes: number[];
-  aula: { href: string; rotulo: string; numero: number; titulo: string | null } | null;
+  /** As aulas em que o assunto aparece, na ordem do curso. Vazia quando o marco não aponta para aula. */
+  aulas: AulaDoMarco[];
   fonte?: string;
 };
+
+export type AulaDoMarco = { href: string; rotulo: string; modulo: number; numero: number; titulo: string | null };
 
 // Sem "ver mais" desde 08/out/2026 (decisão do Marcelo): a linha do tempo carrega inteira de cara.
 
@@ -358,15 +361,7 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
                           </button>
                         </h3>
                         <p className="sl-lt-resumo">{x.resumo}</p>
-                        {x.aula && (
-                          <Link className="sl-lt-naaula" href={x.aula.href} prefetch={false}>
-                            <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
-                              <path d="M3 1.8v8.4L10 6z" fill="currentColor" />
-                            </svg>
-                            Você vê isso na aula {x.aula.numero}
-                            {x.aula.titulo && <span className="sl-lt-naaula-titulo"> · {x.aula.titulo}</span>}
-                          </Link>
-                        )}
+                        <NaAula aulas={x.aulas} />
 
                         <div className="sl-lt-painel" id={painel} hidden={!aberto}>
                           {x.data && <p className="sl-lt-data">{x.data}</p>}
@@ -562,5 +557,85 @@ function Regua({
         })}
       </div>
     </div>
+  );
+}
+
+const PLAY = (
+  <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
+    <path d="M3 1.8v8.4L10 6z" fill="currentColor" />
+  </svg>
+);
+
+/** "a, b e c": a lista em português, com elementos (links) no lugar das palavras. */
+const emLista = (partes: React.ReactNode[]) =>
+  partes.flatMap((p, k) => (k === 0 ? [p] : [k === partes.length - 1 ? " e " : ", ", p]));
+
+/**
+ * O "Você vê isso na aula" do marco (08/out/2026, com as aulas do Tony Volpon no Módulo II).
+ *
+ * Com uma aula só, o link inteiro de sempre, com o título da aula ao lado; o módulo só aparece
+ * quando não é o Módulo I ("na aula 1 do Módulo II"). Com mais de uma, uma frase com um link por
+ * aula, agrupada por módulo: "Você vê isso na aula 2 do Módulo I e nas aulas 1 e 3 do Módulo II".
+ * Aí o título não cabe na linha e vai para o balão do navegador (`title`) e para o leitor de tela.
+ */
+function NaAula({ aulas }: { aulas: AulaDoMarco[] }) {
+  if (aulas.length === 0) return null;
+  if (aulas.length === 1) {
+    const [a] = aulas;
+    return (
+      <Link className="sl-lt-naaula" href={a.href} prefetch={false}>
+        {PLAY}
+        {`Você vê isso na aula ${a.numero}${a.modulo === 0 ? "" : ` do Módulo ${romanoDoModulo(a.modulo)}`}`}
+        {a.titulo && <span className="sl-lt-naaula-titulo"> · {a.titulo}</span>}
+      </Link>
+    );
+  }
+
+  const grupos: AulaDoMarco[][] = [];
+  for (const a of aulas) {
+    const g = grupos.find((x) => x[0].modulo === a.modulo);
+    if (g) {
+      if (!g.some((b) => b.numero === a.numero)) g.push(a);
+    } else grupos.push([a]);
+  }
+  const nome = (a: AulaDoMarco) => `Aula ${a.numero} do Módulo ${romanoDoModulo(a.modulo)}${a.titulo ? `: ${a.titulo}` : ""}`;
+  const partes = grupos.map((g) => {
+    const modulo = `Módulo ${romanoDoModulo(g[0].modulo)}`;
+    if (g.length === 1)
+      return (
+        <span key={g[0].modulo}>
+          na{" "}
+          <Link className="sl-lt-naaula-link" href={g[0].href} prefetch={false} title={g[0].titulo ?? undefined}>
+            aula {g[0].numero} do {modulo}
+          </Link>
+        </span>
+      );
+    return (
+      <span key={g[0].modulo}>
+        nas aulas{" "}
+        {emLista(
+          g.map((a) => (
+            <Link
+              key={a.numero}
+              className="sl-lt-naaula-link"
+              href={a.href}
+              prefetch={false}
+              title={a.titulo ?? undefined}
+              aria-label={nome(a)}
+            >
+              {a.numero}
+            </Link>
+          )),
+        )}{" "}
+        do {modulo}
+      </span>
+    );
+  });
+
+  return (
+    <p className="sl-lt-naaula sl-lt-naaula-varias">
+      {PLAY}
+      <span>Você vê isso {emLista(partes)}</span>
+    </p>
   );
 }

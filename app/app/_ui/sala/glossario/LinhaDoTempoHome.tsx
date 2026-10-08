@@ -1,6 +1,6 @@
 import { verbete } from "@/content/glossario";
 import { LINHA_DO_TEMPO } from "@/content/linha-do-tempo";
-import { CATEGORIAS_LINHA, hrefNoCurso, rotuloDoAno, rotuloNoCurso } from "@/lib/glossario";
+import { aulasDoMarco, CATEGORIAS_LINHA, hrefNoCurso, rotuloDoAno, rotuloNoCurso } from "@/lib/glossario";
 
 import LinhaViva, { type ItemLinha } from "./LinhaViva";
 
@@ -42,15 +42,15 @@ export default function LinhaDoTempoHome({ titulos = {} }: { titulos?: Record<st
       .map((s) => pos.get(s))
       .filter((p): p is number => p !== undefined && p < i),
     // Todo marco aponta para uma aula (08/out/2026, pedido do Marcelo: "você pode ver isso na aula
-    // tal"). O título vem do banco, pela página; sem ele, fica só o número da aula.
-    aula: m.noCurso
-      ? {
-          href: hrefNoCurso(m.noCurso),
-          rotulo: rotuloNoCurso(m.noCurso),
-          numero: m.noCurso.aula,
-          titulo: titulos[`${m.noCurso.modulo}-${m.noCurso.aula}`] ?? null,
-        }
-      : null,
+    // tal"), e desde as aulas do Tony Volpon pode apontar para mais de uma, do Módulo I e do II. O
+    // título vem do banco, pela página; sem ele, fica só o número da aula.
+    aulas: aulasDoMarco(m).map((n) => ({
+      href: hrefNoCurso(n),
+      rotulo: rotuloNoCurso(n),
+      modulo: n.modulo,
+      numero: n.aula,
+      titulo: titulos[`${n.modulo}-${n.aula}`] ?? null,
+    })),
     fonte: m.fonte,
   }));
   const categorias = CATEGORIAS_LINHA.filter((c) => marcos.some((m) => m.categoria === c));

@@ -2293,6 +2293,9 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
     naPratica:
       "As empresas que mais ganharam com a internet estão quase todas listadas fora do Brasil. É um exemplo de como transformações tecnológicas grandes podem acontecer longe da bolsa onde está o seu dinheiro. E a bolha de 2000 é a outra lição: estar certo sobre uma tecnologia não garante ganhar dinheiro com ela, sobretudo se o preço já embute todo o otimismo.",
     relacionados: ["arpanet", "tcp-ip", "world-wide-web", "inteligencia-artificial", "semicondutor", "bolha", "nasdaq"],
+    noCurso: [
+      { modulo: 1, aula: 3, tempo: "15:58" },
+    ],
   },
   {
     slug: "arpanet",
@@ -2499,7 +2502,11 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
     naPratica:
       "Na aula, Felippe Hermes e Rodolfo Bastos lembram que chips, semicondutores e inteligência artificial quase não existem na B3. Quem quer exposição a esses setores precisa olhar para fora, sabendo que eles também são concentrados, cíclicos e sujeitos a riscos geopolíticos. Exposição a tecnologia ganha com diversificação dentro dela, por índice ou por um conjunto amplo de empresas, em vez de uma aposta única.",
     relacionados: ["transistor", "lei-de-moore", "gpu", "inteligencia-artificial", "data-center", "home-bias", "risco-de-concentracao"],
-    noCurso: [{ modulo: 0, aula: 1, tempo: "13:04" }, { modulo: 0, aula: 4, tempo: "14:31" }],
+    noCurso: [
+      { modulo: 0, aula: 1, tempo: "13:04" },
+      { modulo: 0, aula: 4, tempo: "14:31" },
+      { modulo: 1, aula: 2, tempo: "38:50" },
+    ],
   },
   {
     slug: "lei-de-moore",
@@ -2583,7 +2590,11 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
     naPratica:
       "A corrida da IA criou um dos setores mais concentrados e voláteis da bolsa americana, e quase nada dele existe na B3. Ter exposição a ele, por um índice amplo ou por um fundo setorial, é uma forma de participar de uma tese que o mercado brasileiro não oferece. Também é assumir o risco do outro lado: poucos nomes pesando muito nos índices, preços que embutem muito otimismo e quedas fortes quando a expectativa muda.",
     relacionados: ["semicondutor", "aprendizado-profundo", "inteligencia-artificial", "data-center", "lei-de-moore", "risco-de-concentracao", "sp-500"],
-    noCurso: [{ modulo: 0, aula: 1, tempo: "13:04" }, { modulo: 0, aula: 4, tempo: "8:05" }],
+    noCurso: [
+      { modulo: 0, aula: 1, tempo: "13:04" },
+      { modulo: 0, aula: 4, tempo: "8:05" },
+      { modulo: 1, aula: 2, tempo: "38:50" },
+    ],
   },
   {
     slug: "data-center",
@@ -2631,6 +2642,9 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
     naPratica:
       "A infraestrutura física da IA é uma tese de investimento que atravessa vários setores, de chips a energia e imóveis. Quase todos esses setores, na escala global, estão fora da bolsa brasileira. Quem quiser participar precisa olhar para fora e, de preferência, de forma diversificada, porque ondas de investimento em infraestrutura costumam ter vencedores e perdedores bem diferentes do que se imaginava no início.",
     relacionados: ["gpu", "inteligencia-artificial", "semicondutor", "internet", "reit", "bolha"],
+    noCurso: [
+      { modulo: 1, aula: 2, tempo: "10:18" },
+    ],
   },
   {
     slug: "inteligencia-artificial",
@@ -2679,7 +2693,12 @@ export const VERBETES_ACESSO_CRIPTO: Verbete[] = [
     naPratica:
       "Na aula, inteligência artificial aparece como uma das teses que quase não existem na B3. As empresas que mais investem e faturam com IA estão listadas fora, e um índice global amplo já dá exposição relevante a elas. Isso não torna o setor uma aposta segura: euforia, concentração e preços que embutem anos de crescimento também fazem parte da história da tecnologia. Participar com diversificação, sem apostar tudo numa narrativa, é o caminho mais prudente.",
     relacionados: ["aprendizado-de-maquina", "rede-neural", "modelo-de-linguagem", "gpu", "semicondutor", "data-center", "bolha", "home-bias"],
-    noCurso: [{ modulo: 0, aula: 1, tempo: "13:04" }, { modulo: 0, aula: 4, tempo: "14:31" }],
+    noCurso: [
+      { modulo: 0, aula: 1, tempo: "13:04" },
+      { modulo: 0, aula: 4, tempo: "14:31" },
+      { modulo: 1, aula: 2, tempo: "10:18" },
+      { modulo: 1, aula: 3, tempo: "3:14" },
+    ],
   },
   {
     slug: "aprendizado-de-maquina",

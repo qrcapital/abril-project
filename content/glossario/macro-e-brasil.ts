@@ -223,7 +223,12 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
     exemplo: "Hipotético: o governo tem R$ 100 bilhões em títulos vencendo no mês. Se o mercado está tranquilo, emite títulos novos de cinco anos a 13% ao ano e paga os antigos. Se o mercado está nervoso, só consegue vender papéis de dois anos a 15%. A dívida não aumentou de tamanho naquele dia, mas ficou mais cara e mais curta, e a próxima rolagem chega mais cedo.",
     naPratica: "Quem tem dinheiro em títulos públicos, CDB ou fundo DI está, direta ou indiretamente, emprestando ao governo brasileiro e recebendo pelo risco de fazer isso. Diversificar para fora também é diversificar o devedor: o seu patrimônio deixa de depender de uma única capacidade de pagamento, de um único Tesouro e de uma única moeda.",
     relacionados: ["divida-pib", "resultado-primario", "resultado-nominal", "risco-pais", "selic", "dominancia-fiscal", "tesouro-direto", "titulo-publico"],
-    noCurso: [{ modulo: 0, aula: 1, tempo: "23:49" }, { modulo: 0, aula: 2, tempo: "1:24:02" }, { modulo: 0, aula: 3 }],
+    noCurso: [
+      { modulo: 0, aula: 1, tempo: "23:49" },
+      { modulo: 0, aula: 2, tempo: "1:24:02" },
+      { modulo: 0, aula: 3 },
+      { modulo: 1, aula: 1, tempo: "3:39" },
+    ],
   },
   {
     slug: "divida-pib",
@@ -383,7 +388,10 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
     exemplo: "Hipotético: uma família gasta R$ 5 mil por mês em compras, contas e serviços. Se um terço do preço desses itens for tributo, como é comum em energia, combustível e telefonia, perto de R$ 1,7 mil do orçamento vai para o governo antes de qualquer imposto de renda. É a parte invisível da carga.",
     naPratica: "A carga alta é um dos elos entre o risco fiscal e o patrimônio de quem tem tudo em reais: se aumentar imposto é difícil, o ajuste tende a vir por outros caminhos. E ela lembra que regras tributárias mudam. Diversificar para fora não livra você do imposto brasileiro, que alcança a renda de quem mora aqui no mundo todo, mas reduz a dependência de uma única política econômica.",
     relacionados: ["resultado-primario", "divida-publica", "iof", "imposto-de-renda", "previdencia", "lei-14754", "arcabouco-fiscal"],
-    noCurso: [{ modulo: 0, aula: 1, tempo: "24:45" }],
+    noCurso: [
+      { modulo: 0, aula: 1, tempo: "24:45" },
+      { modulo: 1, aula: 1, tempo: "7:11" },
+    ],
   },
   {
     slug: "arcabouco-fiscal",
@@ -752,6 +760,9 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
     exemplo: "Hipotético: um fundo de pensão europeu tem regra que só permite títulos com nota BBB- ou melhor. Se um país cai de BBB- para BB+, o fundo precisa vender os títulos em poucos meses, mesmo que o gestor ache que o país vai pagar. Multiplique isso por centenas de fundos e você tem uma onda de venda que derruba preços e pressiona o câmbio.",
     naPratica: "A nota de crédito é mais um sinal de como o mundo enxerga o risco Brasil, e de quanto o preço dos ativos daqui pode oscilar com uma decisão de agência. Não serve para prever crise. Serve para lembrar que o seu patrimônio em reais está atrelado a um devedor que o mercado classifica como especulativo, e que isso faz parte do preço do juro alto que ele paga.",
     relacionados: ["grau-de-investimento", "risco-pais", "cds", "recessao-2015-2016", "divida-publica", "rating", "superciclo-de-commodities"],
+    noCurso: [
+      { modulo: 1, aula: 2, tempo: "5:03" },
+    ],
   },
   {
     slug: "grau-de-investimento",
@@ -790,6 +801,10 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
     exemplo: "Hipotético: um país com grau de investimento paga 5% ao ano para vender títulos de dez anos em dólar. Perde o selo e, para atrair compradores fora do clube, passa a pagar 6,5%. Numa dívida externa de US$ 50 bilhões, renovada aos poucos, a diferença chega a US$ 750 milhões por ano quando toda ela tiver sido rolada.",
     naPratica: "O selo não garante nada, mas muda quem pode comprar os ativos do país. Para você, é mais um sinal de como o mundo enxerga o risco Brasil. E é um lembrete de que boa parte das aplicações em reais está, por tabela, num devedor que os grandes investidores institucionais do mundo tratam como especulativo.",
     relacionados: ["rating-soberano", "risco-pais", "cds", "recessao-2015-2016", "treasury", "rating", "superciclo-de-commodities"],
+    noCurso: [
+      { modulo: 1, aula: 1, tempo: "29:00" },
+      { modulo: 1, aula: 2, tempo: "1:04" },
+    ],
   },
   {
     slug: "balanca-de-pagamentos",
@@ -868,7 +883,10 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
     exemplo: "Em janeiro de 1999, a perda de reservas tornou insustentável a banda cambial, e o real passou a flutuar: o dólar foi de R$ 1,21 para quase R$ 2 em pouco mais de duas semanas. Em 2020, com reservas altas, o dólar também subiu forte, mas o país pagou todas as contas externas em dia, e o debate foi sobre juros, não sobre calote.",
     naPratica: "Reservas altas reduzem o risco de uma crise externa clássica, mas não protegem contra crises domésticas, fiscais ou políticas, nem impedem o real de perder valor. Elas são o seguro do país, e protegem o país como devedor. O seguro do seu patrimônio contra a moeda é outra conversa, e depende de você.",
     relacionados: ["balanca-de-pagamentos", "banco-central", "cambio-flutuante", "crise-de-1999", "moratoria-de-1987", "treasury", "fmi"],
-    noCurso: [{ modulo: 0, aula: 2 }],
+    noCurso: [
+      { modulo: 0, aula: 2 },
+      { modulo: 1, aula: 1, tempo: "8:02" },
+    ],
   },
   {
     slug: "banco-central",
@@ -1430,7 +1448,11 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
     exemplo: "Quem comprou dólar no fim de 2002 e o deixou parado até o fim de 2010 perdeu cerca de 70% do poder de compra em reais: o dólar caiu 53% e os preços no Brasil subiram 57% no período. Foi o melhor momento da história recente para ter tudo em reais, e o pior para ter dólar parado. Nenhuma estratégia de diversificação ganha em todos os períodos.",
     naPratica: "A bolsa brasileira é feita em boa parte de bancos e commodities. Quando o ciclo vira, ela sofre junto com o real e com a arrecadação, porque tudo depende do mesmo preço. Diversificar para setores que dependem de outros motores, como tecnologia e consumo global, reduz essa dependência, sem exigir que você adivinhe quando o próximo ciclo começa ou termina.",
     relacionados: ["termos-de-troca", "balanca-de-pagamentos", "recessao-2015-2016", "cambio-flutuante", "diversificacao", "ibovespa", "grau-de-investimento"],
-    noCurso: [{ modulo: 0, aula: 2, tempo: "47:14" }, { modulo: 0, aula: 4, tempo: "14:31" }],
+    noCurso: [
+      { modulo: 0, aula: 2, tempo: "47:14" },
+      { modulo: 0, aula: 4, tempo: "14:31" },
+      { modulo: 1, aula: 3, tempo: "36:56" },
+    ],
   },
   {
     slug: "termos-de-troca",
@@ -1640,7 +1662,12 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
     exemplo: "Em 2008, o S&P 500 caiu 37% em dólar, e o dólar subiu 32% contra o real, de R$ 1,77 para R$ 2,34. Para quem mora no Brasil, a bolsa americana medida em reais caiu 16%, enquanto o Ibovespa caiu 41%. A moeda amorteceu mais da metade da queda.",
     naPratica: "Em crises globais, as bolsas costumam cair juntas, e o que protegeu o investidor brasileiro em 2008 foi a moeda, não a bolsa de fora. O dólar tende a subir quando o mundo entra em pânico e o real tende a cair. Não há garantia de que o padrão se repita, mas é um exemplo de por que o câmbio também é diversificação.",
     relacionados: ["banco-central", "risco-cambial", "diversificacao", "treasury", "superciclo-de-commodities", "afrouxamento-quantitativo", "fed", "correlacao"],
-    noCurso: [{ modulo: 0, aula: 2, tempo: "56:28" }, { modulo: 0, aula: 3 }],
+    noCurso: [
+      { modulo: 0, aula: 2, tempo: "56:28" },
+      { modulo: 0, aula: 3 },
+      { modulo: 1, aula: 2, tempo: "1:04" },
+      { modulo: 1, aula: 3, tempo: "10:46" },
+    ],
   },
   {
     slug: "corralito",
@@ -2783,7 +2810,12 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
     exemplo: "Em 2020, o dólar foi de R$ 4,02 em janeiro para R$ 5,94 em maio, uma alta de quase 48%. Hipotético: um investidor com 20% do patrimônio em dólar viu essa parte subir perto de 48% em reais nos mesmos meses em que a bolsa brasileira despencava, o que amorteceu boa parte da queda do total.",
     naPratica: "A pandemia é o cisne negro clássico: um evento raro e de impacto enorme que ninguém pôs no cenário. A defesa contra o que não dá para prever é não ter tudo exposto à mesma causa. Em choques globais, o dólar tende a se valorizar contra moedas emergentes, e é por isso que ele costuma funcionar como amortecedor numa carteira brasileira.",
     relacionados: ["divida-pib", "resultado-primario", "selic", "juro-real", "cambio-flutuante", "cisne-negro", "circuit-breaker"],
-    noCurso: [{ modulo: 0, aula: 2, tempo: "1:22:05" }],
+    noCurso: [
+      { modulo: 0, aula: 2, tempo: "1:22:05" },
+      { modulo: 1, aula: 1, tempo: "12:33" },
+      { modulo: 1, aula: 2, tempo: "36:03" },
+      { modulo: 1, aula: 3, tempo: "40:09" },
+    ],
   },
   {
     slug: "privatizacoes",
@@ -2876,6 +2908,9 @@ export const VERBETES_MACRO_BRASIL: Verbete[] = [
     exemplo: "Hipotético: com inflação de 40% ao mês, R$ 10 mil parados por um mês viravam o equivalente a cerca de R$ 7 mil em poder de compra. No overnight, voltavam corrigidos dia a dia e preservavam quase todo o valor. Duas famílias com o mesmo saldo terminavam o mês com patrimônios bem diferentes.",
     naPratica: "O hábito brasileiro de buscar aplicações que rendem um pouquinho todo dia, como o CDI, vem desse tempo. Ele explica parte do conforto com o pós-fixado e do estranhamento com investimentos que oscilam, como a renda fixa americana. Entender essa herança ajuda a não confundir oscilação de preço com perda quando você começa a investir lá fora.",
     relacionados: ["imposto-inflacionario", "hiperinflacao", "correcao-monetaria", "cdi", "plano-collor", "pos-fixado", "selic"],
-    noCurso: [{ modulo: 0, aula: 2 }],
+    noCurso: [
+      { modulo: 0, aula: 2 },
+      { modulo: 1, aula: 1, tempo: "17:21" },
+    ],
   },
 ];

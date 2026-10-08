@@ -77,6 +77,11 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         aula: 4,
         tempo: "8:05",
       },
+      {
+        modulo: 1,
+        aula: 3,
+        tempo: "4:30",
+      },
     ],
   },
   {
@@ -141,6 +146,16 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         modulo: 0,
         aula: 3,
         tempo: "4:57",
+      },
+      {
+        modulo: 1,
+        aula: 1,
+        tempo: "35:10",
+      },
+      {
+        modulo: 1,
+        aula: 3,
+        tempo: "32:00",
       },
     ],
   },
@@ -219,6 +234,11 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         aula: 1,
         tempo: "3:49",
       },
+      {
+        modulo: 1,
+        aula: 3,
+        tempo: "0:00",
+      },
     ],
   },
   {
@@ -288,6 +308,11 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         aula: 4,
         tempo: "11:53",
       },
+      {
+        modulo: 1,
+        aula: 3,
+        tempo: "5:25",
+      },
     ],
   },
   {
@@ -352,6 +377,11 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         modulo: 0,
         aula: 1,
         tempo: "20:29",
+      },
+      {
+        modulo: 1,
+        aula: 3,
+        tempo: "6:33",
       },
     ],
   },
@@ -536,6 +566,9 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
       "imposto-retido-nos-eua",
       "suavizacao-de-dividendos",
     ],
+    noCurso: [
+      { modulo: 1, aula: 3, tempo: "5:25" },
+    ],
   },
   {
     slug: "preco-lucro",
@@ -607,6 +640,11 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         modulo: 0,
         aula: 1,
         tempo: "20:29",
+      },
+      {
+        modulo: 1,
+        aula: 3,
+        tempo: "6:33",
       },
     ],
   },
@@ -852,6 +890,11 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         aula: 4,
         tempo: "8:05",
       },
+      {
+        modulo: 1,
+        aula: 3,
+        tempo: "3:14",
+      },
     ],
   },
   {
@@ -967,6 +1010,9 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
       "nasdaq",
       "ibovespa",
     ],
+    noCurso: [
+      { modulo: 1, aula: 3, tempo: "26:43" },
+    ],
   },
   {
     slug: "gics",
@@ -1026,6 +1072,11 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         modulo: 0,
         aula: 1,
         tempo: "17:05",
+      },
+      {
+        modulo: 1,
+        aula: 3,
+        tempo: "21:28",
       },
     ],
   },
@@ -1263,6 +1314,11 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         aula: 3,
         tempo: "25:26",
       },
+      {
+        modulo: 1,
+        aula: 3,
+        tempo: "8:23",
+      },
     ],
   },
   {
@@ -1334,6 +1390,11 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         aula: 4,
         tempo: "2:25",
       },
+      {
+        modulo: 1,
+        aula: 3,
+        tempo: "5:25",
+      },
     ],
   },
   {
@@ -1401,6 +1462,11 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         modulo: 0,
         aula: 4,
         tempo: "22:22",
+      },
+      {
+        modulo: 1,
+        aula: 3,
+        tempo: "36:56",
       },
     ],
   },
@@ -1715,6 +1781,16 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         aula: 1,
         tempo: "30:33",
       },
+      {
+        modulo: 1,
+        aula: 1,
+        tempo: "12:33",
+      },
+      {
+        modulo: 1,
+        aula: 3,
+        tempo: "0:00",
+      },
     ],
   },
   {
@@ -1916,6 +1992,9 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
       "alocacao-de-ativos",
       "custo-total",
       "alfa",
+    ],
+    noCurso: [
+      { modulo: 1, aula: 3, tempo: "29:54" },
     ],
   },
   {
@@ -2509,6 +2588,11 @@ export const VERBETES_ACOES_FUNDOS: Verbete[] = [
         modulo: 0,
         aula: 3,
         tempo: "20:26",
+      },
+      {
+        modulo: 1,
+        aula: 1,
+        tempo: "11:28",
       },
     ],
   },

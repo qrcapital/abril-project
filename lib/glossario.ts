@@ -25,6 +25,9 @@ export const CATEGORIAS_GLOSSARIO = [
 ] as const;
 export type CategoriaGlossario = (typeof CATEGORIAS_GLOSSARIO)[number];
 
+/** Um ponto do curso: módulo (ord, 0 = Módulo I), aula (posição no módulo) e, se houver, o tempo. */
+export type RefAula = { modulo: number; aula: number; tempo?: string };
+
 export type Verbete = {
   /** Identificador estável e URL: /app/glossario/<slug>. Minúsculas, sem acento, com hífen. */
   slug: string;
@@ -56,7 +59,7 @@ export type Verbete = {
   /** Slugs de outros verbetes. Slug que não existir é ignorado (e acusado no check). */
   relacionados?: string[];
   /** Onde o assunto aparece no curso: módulo (ord, 0 = Módulo I) e aula (posição no módulo). */
-  noCurso?: { modulo: number; aula: number; tempo?: string }[];
+  noCurso?: RefAula[];
 };
 
 export const CATEGORIAS_LINHA = [
@@ -99,8 +102,12 @@ export type Marco = {
    * padrão-ouro e ao Plano Real.
    */
   antecedentes?: string[];
-  /** Aula do curso em que o assunto aparece. */
-  noCurso?: { modulo: number; aula: number; tempo?: string };
+  /**
+   * Aula ou aulas do curso em que o assunto aparece. Até 08/out/2026 era uma só, sempre do Módulo
+   * I; com as aulas do Tony Volpon no Módulo II, um marco pode apontar para mais de uma. Um objeto
+   * só continua valendo; para ler, use `aulasDoMarco`, que devolve sempre a lista.
+   */
+  noCurso?: RefAula | RefAula[];
   /** Fonte curta do fato (instituição, documento). */
   fonte?: string;
 };
@@ -139,17 +146,27 @@ const segundosDe = (tempo?: string): number | null => {
  * mesmo formato do "Na aula, 12:34" do notebook (`NaAula.tsx`): o player nasce no ponto. Sem
  * tempo, o da playlist (`href()` de `lib/curso.ts`), que desce até a seção da aula no notebook.
  */
-export const hrefNoCurso = (n: { modulo: number; aula: number; tempo?: string }) => {
+export const hrefNoCurso = (n: RefAula) => {
   const s = segundosDe(n.tempo);
   return s !== null
     ? `/app/modulo/${n.modulo}?aula=${n.aula}&t=${s}#player`
     : `/app/modulo/${n.modulo}?aula=${n.aula}#aula-${n.aula}`;
 };
 
+/** O módulo em romano, como o aluno lê: 0 vira "I", 1 vira "II". */
+export const romanoDoModulo = (modulo: number) => ["I", "II", "III", "IV"][modulo] ?? String(modulo + 1);
+
 /** "Módulo II · Aula 03", sem depender de `lib/curso.ts` (que o cliente não importa). */
-export const rotuloNoCurso = (n: { modulo: number; aula: number; tempo?: string }) =>
-  `Módulo ${["I", "II", "III", "IV"][n.modulo] ?? n.modulo + 1} · Aula ${String(n.aula).padStart(2, "0")}` +
+export const rotuloNoCurso = (n: RefAula) =>
+  `Módulo ${romanoDoModulo(n.modulo)} · Aula ${String(n.aula).padStart(2, "0")}` +
   (segundosDe(n.tempo) !== null ? ` · ${n.tempo}` : "");
+
+/**
+ * As aulas de um marco, sempre como lista (08/out/2026): o `noCurso` aceita uma aula ou várias.
+ * Na ordem do arquivo, que é a do curso (Módulo I antes do Módulo II).
+ */
+export const aulasDoMarco = (m: { noCurso?: RefAula | RefAula[] }): RefAula[] =>
+  m.noCurso === undefined ? [] : Array.isArray(m.noCurso) ? m.noCurso : [m.noCurso];
 
 /**
  * As cores das categorias da linha do tempo. Revistas em 08/out/2026: a primeira paleta tinha um
