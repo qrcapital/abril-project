@@ -24,12 +24,7 @@ export type ItemLinha = {
   fonte?: string;
 };
 
-/**
- * Quantos marcos a home mostra antes do "Ver a linha do tempo inteira". Eram 12; com a pré-história
- * do dinheiro no topo (08/out/2026, 12 marcos), viraram 16, para a lista recolhida ainda chegar ao
- * nascimento do dólar e aos primeiros marcos depois dele.
- */
-const LIMITE = 16;
+// Sem "ver mais" desde 08/out/2026 (decisão do Marcelo): a linha do tempo carrega inteira de cara.
 
 /** A folga, em ms, entre sair de um marco e apagar a linhagem. */
 const ESPERA = 90;
@@ -80,10 +75,8 @@ type Luz = {
  * mouse entra em outro marco nesse meio tempo. Assim, ao descer a lista (ou cruzar o cabeçalho de
  * uma era), a luz passa de um marco ao outro sem piscar o papel inteiro.
  *
- * A HOME NÃO PODE VIRAR UMA PAREDE. São mais de 100 marcos: a lista abre com os primeiros
- * `LIMITE` e um botão para o resto; a régua mostra a linha inteira de uma vez, e um clique num ponto
- * dela abre a lista naquele marco. Os antecedentes vêm sempre antes, então a linhagem de um marco
- * visível nunca depende de um marco escondido. Com uma categoria escolhida, a lista mostra só os
+ * A lista carrega inteira (desde 08/out/2026); a régua mostra a linha toda de uma vez, e um clique
+ * num ponto dela leva a lista até aquele marco. Com uma categoria escolhida, a lista mostra só os
  * marcos dela, todos; os antecedentes de outras categorias continuam nos chips de "Origens".
  *
  * NO CELULAR a lista vira o fio à esquerda, sem arcos e sem régua (não há mouse para acender); o
@@ -91,7 +84,6 @@ type Luz = {
  */
 export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; categorias: CategoriaLinha[] }) {
   const [filtro, setFiltro] = useState<CategoriaLinha | null>(null);
-  const [inteira, setInteira] = useState(false);
   const [abertos, setAbertos] = useState<Set<number>>(() => new Set());
   const [luz, setLuz] = useState<Luz | null>(null);
   const corpo = useRef<HTMLDivElement>(null);
@@ -99,8 +91,8 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
   const botoes = useRef<(HTMLButtonElement | null)[]>([]);
 
   const visivel = useCallback(
-    (i: number) => (filtro ? itens[i].categoria === filtro : inteira || i < LIMITE),
-    [filtro, inteira, itens],
+    (i: number) => (filtro ? itens[i].categoria === filtro : true),
+    [filtro, itens],
   );
 
   // O id do degradê vai dentro de um `url(#...)`: só letras, números, hífen e sublinhado.
@@ -167,7 +159,6 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
   const irPara = useCallback(
     (i: number) => {
       if (filtro && itens[i].categoria !== filtro) setFiltro(null);
-      if (i >= LIMITE) setInteira(true);
       setAbertos((s) => new Set(s).add(i));
       setLuz(null);
       requestAnimationFrame(() => {
@@ -215,7 +206,6 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
     return g.filter((x) => x.idx.length > 0);
   }, [itens]);
 
-  const escondidos = filtro ? 0 : inteira ? 0 : Math.max(0, itens.length - LIMITE);
   const primeiro = itens[0]?.ano;
   const ultimo = itens[itens.length - 1]?.ano;
   // Com a pré-história, a linha começa antes de qualquer ano que caiba num "De ... a ...".
@@ -425,14 +415,6 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
         })}
       </div>
 
-      {escondidos > 0 && (
-        <div className="sl-lt-mais">
-          <button type="button" className="sl-btn sl-btn-linha" onClick={() => setInteira(true)}>
-            Ver a linha do tempo inteira
-            <span className="sl-lt-mais-n">mais {escondidos} marcos</span>
-          </button>
-        </div>
-      )}
     </section>
   );
 }
