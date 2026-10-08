@@ -244,13 +244,15 @@ export default function Grafico(props: PropsGrafico) {
   let banda = PW / Math.max(1, n);
 
   // ---- rótulos do eixo X (08/out/2026) -------------------------------------------------------
-  // Barra de categoria (país, setor, faixa de nota: rótulo sem algarismo) mostra TODO rótulo: pular
+  // Barra de categoria (país, setor, faixa de nota: rótulos sem algarismo) mostra TODO rótulo: pular
   // deixava barra sem nome, com "Tecnologia da informação" e "Materiais" separados por barras mudas.
   // Primeiro tenta quebrar em até três linhas na largura da banda (a conta de largura aqui é a média
   // das minúsculas do Jost, um pouco mais estreita que a dos algarismos); se nem assim cabe (o
   // celular, com sete setores), o rótulo inclina, e a margem esquerda cresce o que for preciso para
   // o primeiro rótulo inclinado não sair da caixa. Série no tempo continua pulando rótulo, ver `pularX`.
-  const categorias = barras && eixoX.some((r) => !/\d/.test(r));
+  // Categoria é quando a maioria dos rótulos não tem algarismo: "Hoje, Ano 1, ..., Ano 15" do simulador
+  // é tempo, mesmo com o "Hoje" sem número.
+  const categorias = barras && eixoX.filter((r) => !/\d/.test(r)).length > eixoX.length / 2;
   const linhasX = categorias ? quebrarRotulos(eixoX, banda - 2, 6.1) : null;
   const inclinarX = categorias && !linhasX;
   const maxRotuloX = Math.max(1, ...eixoX.map((r) => r.length));
@@ -367,7 +369,7 @@ export default function Grafico(props: PropsGrafico) {
   const rotulosFinais = comRotuloFinal
     ? afastar(
         ultimos.map((u) => (u ? y(u.v) : 0)),
-        14,
+        16,
         M.topo,
         M.topo + PH,
       )
