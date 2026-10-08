@@ -382,7 +382,7 @@ body:has(.le-escuro) { background: #0a0a0a }
 }
 /* `min-width: 0` é o que permite o filho de flex encolher abaixo do conteúdo
    dele; sem isso o `flex: 1 1 0` não tem efeito e os itens estouram a coluna. */
-.le-prof { display: flex; align-items: center; gap: 14px; flex: 1 1 0; min-width: 0 }
+.le-prof { display: flex; align-items: flex-start; gap: 14px; flex: 1 1 0; min-width: 0 }
 /* Preto e branco com um toque de contraste: é o mesmo tratamento do estado de
    repouso dos retratos na LP de vendas. Sem ele entra o duotone verde da
    identidade anterior, que é de onde estes arquivos vêm.
@@ -408,7 +408,11 @@ body:has(.le-escuro) { background: #0a0a0a }
   filter: grayscale(1) contrast(1.05);
   border: 1px solid var(--le-linha);
 }
-.le-prof-txt { display: flex; flex-direction: column; gap: 2px }
+/* O texto parte do alto do retrato, e não do meio (08/out/2026): centrado, o nome de quem tem a
+   credencial em duas linhas ("Ex-diretor do Banco Central") subia e o do vizinho, de uma linha só,
+   descia, e os dois nomes do par ficavam em alturas diferentes. Com 10px de folga em cima, os nomes
+   alinham na mesma linha e o bloco de três linhas ainda fecha dentro dos 68px do retrato. */
+.le-prof-txt { display: flex; flex-direction: column; gap: 2px; padding-top: 10px }
 /* Os nomes sobem de 15px (herdado do corpo) para 16,5 e a credencial de 12,5
    para 13,5. O bloco inteiro cresceu junto com o retrato: quem está na live é
    argumento de conversão nesta página, e a 52px com nome no corpo do texto ele

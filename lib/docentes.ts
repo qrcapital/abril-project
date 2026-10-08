@@ -19,7 +19,7 @@ export type Docente = { nome: string; credencial: string | null; foto: string | 
 
 const CONHECIDOS: Record<string, Omit<Docente, "nome">> = {
   "felippe hermes": {
-    credencial: "Fundador da BlockTrends e do Spotniks",
+    credencial: "Fundador do BlockTrends e do Spotniks",
     foto: null,
   },
   "tony volpon": {

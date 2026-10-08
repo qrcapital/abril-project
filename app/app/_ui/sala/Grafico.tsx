@@ -213,7 +213,13 @@ export default function Grafico(props: PropsGrafico) {
   const casasEixo = log ? (yMin < 1 ? 2 : 0) : Number.isInteger(passoTick) ? 0 : Number.isInteger(passoTick * 10) ? 1 : 2;
   // Casas do eixo pelo passo, não pelo formato dos dados: um passo de 2,5 escrito sem casa viraria
   // "3" no rótulo, e "R$ 5,00" em todo tick é ruído.
-  const fmtEixo = (v: number) => formatar(v, { ...f, sinal: false, casas: casasEixo });
+  //
+  // A unidade por extenso sai do eixo (08/out/2026): "300% do PIB", "1.500 pontos" e "25 anos" em todo
+  // tick comiam um quarto da largura do gráfico no celular, e o subtítulo da figura já diz a unidade.
+  // Fica o "%" e fica a escala ("tri", "bi", "mil"), que muda o número. Rótulos de valor, dica e
+  // tabela continuam com a unidade inteira.
+  const sufixoEixo = !f.sufixo ? f.sufixo : /^%\s/.test(f.sufixo) ? "%" : /^\s(p\.p\.|anos|pontos)$/.test(f.sufixo) ? "" : f.sufixo;
+  const fmtEixo = (v: number) => formatar(v, { ...f, sinal: false, casas: casasEixo, sufixo: sufixoEixo });
 
   // ---- margens e escalas -----------------------------------------------------------------
   const largEixo = Math.max(...ticks.map((t) => fmtEixo(t).length)) * 6.6 + 12;
@@ -339,7 +345,7 @@ export default function Grafico(props: PropsGrafico) {
   const Titulo = (`h${nivel}` as "h3" | "h4" | "h5");
 
   // ---- desenho ------------------------------------------------------------------------------
-  const pularX = categorias ? 1 : Math.max(1, Math.ceil(n / Math.max(2, Math.floor(PW / (maxRotuloX * 7 + 18)))));
+  const pularX = categorias ? 1 : Math.max(1, Math.ceil(n / Math.max(2, Math.floor(PW / (maxRotuloX * 7 + 24)))));
   // O último ponto sempre tem rótulo (é o dado mais recente), e o rótulo da grade que ficaria a
   // menos de um passo dele sai, em vez de encostar nele: antes saía "2024 2026" colado, ou "Ano 12
   // Ano 15" um por cima do outro.
