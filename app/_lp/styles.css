@@ -915,3 +915,12 @@ footer :where(a, button, input, select, textarea):focus-visible{outline-color:#F
   html.barra-on .wa-float{bottom:84px!important;width:56px!important;height:56px!important}
   html.barra-on .wa-float svg{width:29px!important;height:29px!important}
 }
+
+/* Ajustes finos de 08/out/2026, depois da conferência no celular */
+.gar-texto h2,.of-parc,.pd-card h3{text-wrap:balance}
+@media (max-width:600px){
+  /* no celular o recuo de 64px da lista de aulas comia um sexto da largura */
+  .mod > div{padding:0 2px 22px 0!important}
+  .mod summary{gap:14px!important}
+  .mod .mnum{flex-basis:34px!important;font-size:32px!important}
+}
