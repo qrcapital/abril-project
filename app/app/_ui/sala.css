@@ -1053,9 +1053,26 @@ a.sl-pl-item:hover {
   .sl-tempo-rolagem { margin: 14px -16px 0; padding: 0 16px 8px }
   .sl-numero { grid-template-columns: minmax(0, 1fr); gap: 10px }
   .sl-sim-extras { grid-template-columns: minmax(0, 1fr) }
-  .sl-cmp-tabela { table-layout: auto; min-width: 460px }
+  /* No celular o rótulo da métrica vira uma linha inteira, e os valores das opções vêm embaixo, lado
+     a lado (08/out/2026). Com o rótulo como primeira coluna, a tabela pedia 460px e rolava de lado: o
+     aluno via a primeira opção e metade da segunda, e a destacada às vezes era a cortada. */
+  .sl-cmp-tabela, .sl-cmp-tabela :is(thead, tbody) { display: block }
+  .sl-cmp-tabela tr { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)) }
+  .sl-cmp-tabela[data-n="3"] tr { --n: 3 }
+  .sl-cmp-tabela[data-n="4"] tr { --n: 4 }
+  .sl-cmp-tabela thead td { display: none }
+  .sl-cmp-tabela thead th { padding: 10px 8px 12px }
+  .sl-cmp-tabela tbody th { grid-column: 1 / -1; padding: 12px 0 2px; border-bottom: 0 }
+  .sl-cmp-tabela td { padding: 6px 8px 12px }
+  .sl-cmp-valor { font-size: 16px }
   .sl-matriz-tabela tbody td { height: 88px; padding: 24px 8px 10px }
   .sl-matriz-par { font-size: 18px }
+  /* O rótulo da linha ganha mais coluna e pode quebrar palavra (08/out/2026): com 22% de 300px,
+     "Sem risco de crédito (Tesouro americano)" descia uma palavra por linha e "americano)" passava
+     por cima da célula vizinha. */
+  .sl-matriz-tabela thead td { width: 30% }
+  .sl-matriz-tabela tbody th { padding-right: 4px; font-size: 12px; hyphens: auto; -webkit-hyphens: auto; overflow-wrap: anywhere }
+  .sl-matriz-texto { font-size: 14px }
 }
 
 /* ---- miolo da home (entre o banner portado e a prateleira) ---------------- */
