@@ -5,6 +5,7 @@ import Link from "next/link";
 import { segundos } from "@/lib/notebook";
 
 import { semMovimento } from "./Entrada";
+import { REABRIR_VIDEO, type EstadoDoVideo } from "./VideoFixo";
 
 /**
  * "Na aula, 12:34": o atalho de um bloco do notebook para o momento da aula em que o assunto
@@ -23,8 +24,13 @@ import { semMovimento } from "./Entrada";
  *    parâmetro documentado; `currentTime` no <video>). Também é o que acontece sem JS e com o
  *    botão do meio do mouse.
  *
- * O player marca a aula que toca em `data-player-aula` (ver `Player.tsx`); é por ele que este
+ * O player marca a aula que toca em `data-player-aula` (ver `VideoFixo.tsx`); é por ele que este
  * componente sabe em qual dos dois casos está.
+ *
+ * COM O VÍDEO FIXO (08/out/2026), o caso 1 não rola mais a página: o vídeo já está à vista no alto
+ * da tela, e subir até o palco tiraria o aluno do texto que ele está lendo. Se o aluno tinha fechado
+ * o vídeo fixo, o clique o traz de volta (evento `REABRIR_VIDEO` na vaga), também sem rolar. A
+ * subida até o palco só acontece com o vídeo no palco, como antes.
  */
 export default function NaAula({ modulo, aula, tempo }: { modulo: number; aula: number; tempo: string }) {
   const s = segundos(tempo);
@@ -54,6 +60,9 @@ export default function NaAula({ modulo, aula, tempo }: { modulo: number; aula: 
     }
     if (!foi) return;
     e.preventDefault();
+    const onde = caixa.dataset.video as EstadoDoVideo | undefined;
+    if (onde === "fixo") return;
+    if (onde === "dispensado") return void caixa.dispatchEvent(new Event(REABRIR_VIDEO));
     caixa.scrollIntoView({ behavior: semMovimento() ? "auto" : "smooth", block: "center" });
   }
 

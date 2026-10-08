@@ -158,7 +158,11 @@ export default function AreaChrome({
 
   return (
     <div ref={ref}>
-      <div dangerouslySetInnerHTML={{ __html: topo }} />
+      {/* `display: contents` (08/out/2026): sem ele, o `position: sticky` do topo (chrome-top.html)
+          ficava preso a este invólucro, da altura da própria barra, e a barra rolava junto com a
+          página. Sem caixa própria, o topo gruda no alto da janela como o DESIGN.md pede, e o
+          vídeo fixo da sala e o índice do notebook se alinham logo abaixo dele (`--sl-topo`). */}
+      <div style={{ display: "contents" }} dangerouslySetInnerHTML={{ __html: topo }} />
       {children}
       <div dangerouslySetInnerHTML={{ __html: foot }} />
     </div>

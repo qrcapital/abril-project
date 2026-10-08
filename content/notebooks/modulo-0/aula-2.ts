@@ -9,9 +9,10 @@ import type { SecaoDaAula } from "@/lib/notebook";
 // DADOS. Toda série real foi baixada das fontes primárias em 01/out/2026: BCB SGS (433 IPCA,
 // 190 IGP-DI, 1 e 3698 dólar, 432 meta Selic, 5793 primário, 13762 dívida bruta, 7326 PIB,
 // 29042 IC-Br em US$), IpeaData (JPM366_EMBI366, EMBI+ Brasil), BCB Museu de Valores (padrões
-// monetários) e Cysne e Coimbra-Lisboa (2004, tabela 1) para o imposto inflacionário. Onde a aula
-// cita um número diferente da série oficial, o texto mostra os dois, sem corrigir o docente em tom
-// de errata. Contas e exemplos levam `ilustrativo`.
+// monetários) e Cysne e Coimbra-Lisboa (2004, tabela 1) para o imposto inflacionário. Voz
+// institucional (docs/TOM-DO-NOTEBOOK.md): o texto é parte da aula, sem narrar a fala. Onde a fala e
+// a série oficial trazem números diferentes, a diferença é explicada como fonte, recorte ou data
+// distintos, nunca como correção. Contas e exemplos levam `ilustrativo`.
 
 const anosIpca = ["1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996"];
 // IPCA acumulado no ano, composto a partir das variações mensais da série SGS 433.
@@ -97,7 +98,7 @@ const secao: SecaoDaAula = {
       capitular: true,
       paragrafos: [
         "Pensa na moeda que está na sua carteira. O real tem mais de 30 anos e é, de longe, a moeda mais bem-sucedida que o Brasil teve em um século. Mesmo assim, passou por crises que mudaram em semanas o patrimônio de quem guardava tudo nele. E antes dele foi bem pior: entre 1942 e 1994, o país trocou de moeda oito vezes, quase sempre junto com um plano que congelava preços, achatava salários ou bloqueava aplicações.",
-        "A ideia desta aula é simples, e por isso útil. Você não precisa achar que o Brasil vai dar errado para ver que deixar todo o patrimônio numa moeda, num banco central e num sistema político é uma aposta concentrada. A própria história do real tem pelo menos seis momentos em que uma decisão fora do seu controle mexeu, de uma vez, no câmbio, nos juros e na bolsa. Vamos a eles, na ordem da aula.",
+        "A ideia desta aula é simples, e por isso útil. Você não precisa achar que o Brasil vai dar errado para ver que deixar todo o patrimônio numa moeda, num banco central e num sistema político é uma aposta concentrada. A própria história do real tem pelo menos seis momentos em que uma decisão fora do seu controle mexeu, de uma vez, no câmbio, nos juros e na bolsa. Vamos a eles, um por um.",
       ],
     },
     {
@@ -172,8 +173,8 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Na aula, o número citado é de 13 trilhões por cento de inflação nos quinze anos antes do real. Os dados confirmam a ordem de grandeza: de janeiro de 1980 a junho de 1994, foram 11 trilhões pelo IPCA e 14 trilhões pelo IGP-DI. No pior mês, março de 1990, os preços dobravam a cada 35 dias, mais ou menos. Em 1993, último ano inteiro antes do real, dobravam a cada dois meses e meio.",
-        "Inflação assim não pesa igual para todo mundo. Quem tinha conta remunerada, dólar ou aplicação de um dia para o outro (o famoso overnight) se defendia. Quem recebia salário e gastava ao longo do mês perdia um pedaço a cada dia. Essa perda tem nome, e a aula a apresenta a partir dos estudos de Rubens Penha Cysne e Mario Henrique Simonsen: imposto inflacionário.",
+        "Nos quinze anos antes do real, os preços subiram na casa dos trilhões por cento, e a cifra de 13 trilhões, a mais citada, fica no meio da faixa. O número exato muda com o índice e com o mês em que a conta começa e termina: de janeiro de 1980 a junho de 1994, foram 11 trilhões pelo IPCA, o índice oficial, e 14 trilhões pelo IGP-DI, da FGV. No pior mês, março de 1990, os preços dobravam a cada 35 dias, mais ou menos. Em 1993, último ano inteiro antes do real, dobravam a cada dois meses e meio.",
+        "Inflação assim não pesa igual para todo mundo. Quem tinha conta remunerada, dólar ou aplicação de um dia para o outro (o famoso overnight) se defendia. Quem recebia salário e gastava ao longo do mês perdia um pedaço a cada dia. Essa perda tem nome, imposto inflacionário, e foi medida no Brasil pelos economistas Rubens Penha Cysne e Mario Henrique Simonsen. Ela concentrava a destruição de valor justamente em quem tinha menos como se proteger.",
       ],
     },
     {
@@ -199,7 +200,7 @@ const secao: SecaoDaAula = {
       formato: { sufixo: "% do PIB", casas: 2 },
       marcos: [{ em: "1994", rotulo: "Real" }],
       fonte: "Cysne e Coimbra-Lisboa, Revista de Economia Política, v. 24, n. 4, 2004, tabela 1",
-      nota: "Banco Central: a perda sobre o papel-moeda e as reservas dos bancos. Bancos comerciais: a perda sobre os depósitos à vista. A aula cita cerca de 6% do PIB em 1993; a série publicada registra 4,9%.",
+      nota: "Banco Central: a perda sobre o papel-moeda e as reservas dos bancos. Bancos comerciais: a perda sobre os depósitos à vista. O tamanho exato varia com o critério de cálculo, e para 1993 circulam estimativas perto de 6% do PIB; nesta série, as duas partes somam 4,9%, divididas quase meio a meio.",
     },
     {
       tipo: "texto",
@@ -221,7 +222,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       paragrafos: [
         "A história começa a piorar em 1979. A Revolução Iraniana dispara o preço do petróleo, a inflação americana encosta em 15% ao ano e o Fed, o banco central dos Estados Unidos, comandado por Paul Volcker, leva os juros para perto de 20%. A América Latina tinha crescido nos anos 1960 e 1970 com dívida em dólar a juros que flutuavam. Quando os juros americanos explodiram, a conta veio junto: o México parou de pagar em 1982, o Brasil declarou moratória em 1987 e a região entrou na década perdida.",
-        "Para renegociar com os credores, cada país precisava de um plano que convencesse o FMI e o Tesouro americano. A Argentina conseguiu esse apoio para o Plano Cavallo; o Brasil, não. Por isso a aula marca o início do Plano Real em 1992, numa data que ela mesma chama de arbitrária, quando o país passou a montar sozinho a renegociação da dívida externa. O acordo com os bancos saiu em abril de 1994, sem o FMI, e o Brasil comprou por conta própria os títulos americanos dados em garantia.",
+        "Para renegociar com os credores, cada país precisava de um plano que convencesse o FMI e o Tesouro americano. A Argentina conseguiu esse apoio para o Plano Cavallo; o Brasil, não. Por isso faz sentido marcar o início do Plano Real em 1992, uma data algo arbitrária, quando o país passou a montar sozinho a renegociação da dívida externa. O acordo com os bancos saiu em abril de 1994, sem o FMI, e o Brasil comprou por conta própria os títulos americanos dados em garantia: fez com recursos próprios o que, nos vizinhos, contou com o apoio do Tesouro americano.",
       ],
     },
     {
@@ -243,6 +244,7 @@ const secao: SecaoDaAula = {
       paragrafos: [
         "O que separa o real dos planos anteriores é o que veio antes e depois da troca de moeda. Cruzado, Bresser, Verão e Collor mudaram o nome do dinheiro ou congelaram preços, mas ninguém passou a confiar mais em quem emitia a moeda. O real teve um ensaio: a URV, Unidade Real de Valor, em vigor a partir de 1º de março de 1994.",
         "Funcionou assim. Por quatro meses, preços, salários e contratos passaram a ser escritos numa unidade estável, a URV, enquanto você continuava pagando em cruzeiros reais, que perdiam valor todo dia. Em 1º de julho, a régua virou dinheiro: cada URV passou a valer um real, e CR$ 2.750 viraram R$ 1. Não por acaso, era também a cotação do dólar em cruzeiros reais no último dia útil de junho.",
+        "Repare no que isso significa. Para dar credibilidade à moeda nova, o próprio governo a prendeu ao dólar, e ela ficou assim até 1999. O Estado brasileiro dolarizou o real por quatro anos e meio, a mesma ideia de buscar uma moeda mais estável que está por trás deste curso.",
       ],
       tempo: "9:02",
     },
@@ -262,7 +264,7 @@ const secao: SecaoDaAula = {
       tipo: "conceito",
       termo: "Inconsistência temporal e âncora nominal",
       definicao:
-        "Imagine um governo que promete inflação baixa. Depois que salários e contratos já foram fechados contando com a promessa, surge a tentação de soltar um pouco mais de inflação para aquecer a economia. Só que todo mundo sabe disso e já negocia contando com a traição. Resultado: a inflação fica mais alta do que o governo queria, sem nenhum crescimento a mais. Os economistas Robert Barro e David Gordon mostraram que esse viés só some quando o banco central consegue se amarrar à promessa.",
+        "Por que prender a moeda à de outro país ajuda? Imagine um governo que promete inflação baixa. Depois que salários e contratos já foram fechados contando com a promessa, surge a tentação de soltar um pouco mais de inflação para aquecer a economia. Só que todo mundo sabe disso e já negocia contando com a traição. Resultado: a inflação fica mais alta do que o governo queria, sem nenhum crescimento a mais. Os economistas Robert Barro e David Gordon mostraram que esse viés só some quando o banco central consegue se amarrar à promessa.",
       naPratica:
         "Prender a moeda ao dólar é um jeito de pegar emprestada a reputação de outro banco central. Foi o que o real fez de 1994 a 1999. Mas a amarra só vale enquanto mantê-la custa menos do que soltá-la. Quando o preço em reservas e juros fica alto demais, o mercado testa a promessa, e foi exatamente o que aconteceu em janeiro de 1999.",
       referencia: { autor: "Robert Gibbons", obra: "Game Theory for Applied Economists", capitulo: "cap. 2.3.E", ano: 1992 },
@@ -280,13 +282,13 @@ const secao: SecaoDaAula = {
         ["O que veio depois", "Meta de inflação, superávit nas contas e Lei de Responsabilidade Fiscal", "Cinco presidentes em cerca de duas semanas"],
       ],
       fonte: "Banco Central do Brasil; Argentina, Lei 23.928/1991 e Lei 25.561/2002",
-      nota: "A aula fala em oito anos de paridade argentina; da lei de abril de 1991 ao fim do regime, foram pouco mais de dez.",
+      nota: "A duração da paridade argentina muda conforme o marco de início e de fim escolhido (a lei de 1991, a troca do austral pelo peso, a crise de dezembro de 2001 ou o fim formal, em janeiro de 2002). Em qualquer conta, durou bem mais que a âncora brasileira, de quatro anos e meio.",
       tempo: "13:06",
     },
     {
       tipo: "texto",
       paragrafos: [
-        "A âncora brasileira durou menos que a argentina, e a aula atribui a diferença ao entusiasmo do FMI pelo plano de Cavallo. Para quem investe, importa mais a saída: o Brasil largou o câmbio fixo trocando de regime; a Argentina, dando calote. Antes disso, porém, o real teve de resolver o problema que o próprio sucesso criou.",
+        "A âncora brasileira durou menos que a argentina, e boa parte da diferença vem do entusiasmo do FMI pelo plano de Cavallo, um apoio que o Brasil nunca teve. Para quem investe, importa mais a saída: o Brasil largou o câmbio fixo trocando de regime; a Argentina, dando calote. Antes disso, porém, o real teve de resolver o problema que o próprio sucesso criou.",
         "Sem o imposto inflacionário, o governo precisava pagar com impostos, ou com dívida, os gastos que a Constituição tinha ampliado. As respostas foram muitas e pouco vistosas: a renegociação das dívidas dos estados em 1997, que acabou com o hábito dos governadores de bancar despesas com bancos estaduais como Banespa e Banerj; as privatizações, iniciadas com Collor e aceleradas com Fernando Henrique; e juros altos para segurar dólares no país e sustentar o câmbio. Por que tanto esforço? Porque existe uma conta por trás.",
       ],
       tempo: "14:55",
@@ -340,7 +342,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       paragrafos: [
         "No Brasil, a porta usada foi a de baixo, à esquerda. Os estudos das contas públicas de 1947 ao começo dos anos 1990 chegam sempre ao mesmo lugar: receitas e gastos só fechavam quando se contava o dinheiro que o governo ganhava imprimindo moeda. Por quase meio século, o orçamento fechou com a ajuda de quem guardava dinheiro. E, a partir de 1981, o governo não aumentava o superávit quando a dívida crescia.",
-        "É esse histórico que está por trás da pergunta da aula: como convencer o mercado de que o governo não vai voltar a imprimir dinheiro para pagar as contas? O tripé de 1999 foi a primeira tentativa duradoura de trocar essa porta pelas duas de cima. E a credibilidade não vem da promessa, vem do que o governo faz quando a dívida sobe. Quando o superávit fraqueja, como você vai ver a partir de 2014, o mercado volta a cobrar um prêmio de quem um dia pode reabrir a porta da inflação.",
+        "É esse histórico que está por trás da pergunta central do Plano Real: como convencer o mercado de que o governo não vai voltar a imprimir dinheiro para pagar as contas? O tripé de 1999 foi a primeira tentativa duradoura de trocar essa porta pelas duas de cima. E a credibilidade não vem da promessa, vem do que o governo faz quando a dívida sobe. Quando o superávit fraqueja, como você vai ver a partir de 2014, o mercado volta a cobrar um prêmio de quem um dia pode reabrir a porta da inflação.",
       ],
     },
 
@@ -355,9 +357,9 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Em 1998, a crise da Rússia veio somar-se à do México, de 1994 e 1995, e o mercado passou a desconfiar de toda moeda emergente presa ao dólar. Dentro do governo havia duas linhas: amarrar ainda mais o real ao dólar, como defendia Gustavo Franco, presidente do Banco Central, ou deixá-lo perder valor aos poucos. Pelo que conta a aula, o plano era uma desvalorização de cerca de 30% ao longo de 1999.",
-        "Não passou da primeira quinzena. Em 6 de janeiro, Itamar Franco, recém-empossado governador de Minas Gerais, anunciou uma moratória de 90 dias da dívida do estado com a União. A desconfiança se espalhou, Gustavo Franco deixou o Banco Central no dia 13 e, dois dias depois, o câmbio passou a flutuar. O dólar saiu de R$ 1,21 em 12 de janeiro para R$ 1,98 no dia 29 e chegou a R$ 2,16 no começo de março.",
-        "O ponto não é julgar o governador, cuja queixa contra a correção da dívida a aula considera razoável em parte. É ver como uma briga entre dois pedaços do mesmo Estado redesenhou, em semanas, o patrimônio de quem tinha tudo em títulos públicos em reais.",
+        "Em 1998, a crise da Rússia veio somar-se à do México, de 1994 e 1995, e o mercado passou a desconfiar de toda moeda emergente presa ao dólar. Dentro do governo havia duas linhas: amarrar ainda mais o real ao dólar, como defendia Gustavo Franco, presidente do Banco Central, ou deixá-lo perder valor aos poucos. O cenário com que o Banco Central trabalhava era o da desvalorização gradual, de cerca de 30% ao longo de 1999.",
+        "O plano não passou da primeira quinzena. Em 6 de janeiro, Itamar Franco, recém-empossado governador de Minas Gerais, anunciou uma moratória de 90 dias da dívida do estado com a União. A desconfiança se espalhou, Gustavo Franco deixou o Banco Central no dia 13 e, dois dias depois, o câmbio passou a flutuar. A desvalorização prevista para o ano inteiro aconteceu ainda em janeiro, e foi além: o dólar saiu de R$ 1,21 em 12 de janeiro para R$ 1,98 no dia 29 e chegou a R$ 2,16 no começo de março.",
+        "O ponto não é julgar o governador, cuja queixa contra a correção da dívida tinha a sua parte de razão. É ver como uma briga entre dois pedaços do mesmo Estado redesenhou, em semanas, o patrimônio de quem tinha tudo em títulos públicos em reais.",
       ],
     },
     {
@@ -374,14 +376,14 @@ const secao: SecaoDaAula = {
         { em: "15/jan", rotulo: "Câmbio flutua" },
       ],
       fonte: "Banco Central do Brasil, SGS 1 (dólar, venda, diário)",
-      nota: "A aula fala em 30% no mês. Pela PTAX, a alta de 12 a 29 de janeiro foi de 64%: o real perdeu 39% do valor em dólar.",
+      nota: "O tamanho do salto depende da régua. Pela cotação diária, de 12 a 29 de janeiro o dólar subiu 64%, e o real perdeu 39% do valor em dólar; pela média mensal, em fevereiro o dólar já estava 59% acima de dezembro. Em qualquer medida, o real perdeu em semanas mais que os 30% previstos para o ano.",
       tempo: "24:50",
     },
     {
       tipo: "conceito",
       termo: "Compromisso não crível e risco de regra",
       definicao:
-        "Quem manda hoje não tem como se obrigar a não mudar a regra amanhã. Depois que o seu dinheiro já está aplicado num país, quem faz as regras pode tributá-lo, bloqueá-lo ou desvalorizá-lo, e você não consegue desfazer o investimento a tempo. Sabendo disso, o investidor cobra mais para entrar ou investe menos. O economista Daron Acemoglu põe esse problema no centro da explicação de por que as instituições importam.",
+        "O episódio de Minas é um caso de um problema geral: quem manda hoje não tem como se obrigar a não mudar a regra amanhã. Depois que o seu dinheiro já está aplicado num país, quem faz as regras pode tributá-lo, bloqueá-lo ou desvalorizá-lo, e você não consegue desfazer o investimento a tempo. Sabendo disso, o investidor cobra mais para entrar ou investe menos. O economista Daron Acemoglu põe esse problema no centro da explicação de por que as instituições importam.",
       naPratica:
         "Trocar uma ação brasileira por outra, ou um título público por outro, diversifica empresas e prazos, não a regra do jogo. Uma moratória estadual, um imposto novo ou um bloqueio de aplicações atinge de uma vez tudo o que está sob a mesma caneta. Só outra jurisdição dilui esse risco.",
       referencia: { autor: "Daron Acemoglu", obra: "Political Economy Lecture Notes", capitulo: "caps. 1 e 11 (holdup, seção 11.2.9)" },
@@ -389,7 +391,7 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "A aula faz questão de dizer que isso não é exclusividade brasileira. Um americano com toda a aposentadoria em títulos do Tesouro também perde quando uma política de tarifas pressiona a inflação e os juros longos. O britânico viu a libra despencar depois do Brexit, em 2016. O que muda de um país para outro é a frequência e a força desses episódios.",
+        "Isso não é exclusividade brasileira, nem defeito dos políticos daqui. Um americano com toda a aposentadoria em títulos do Tesouro também perde quando uma política de tarifas pressiona a inflação e os juros longos. O britânico viu a libra despencar depois do Brexit, em 2016. O que muda de um país para outro é a frequência e a força desses episódios.",
         "E 1999 não ficou no passado. A União renegociou as dívidas dos estados outras vezes desde então, e estados que gastam boa parte do orçamento com juros, como Rio de Janeiro e Rio Grande do Sul, investem menos e prestam serviços piores. Isso também tem nome.",
       ],
       tempo: "26:37",
@@ -417,8 +419,9 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       paragrafos: [
         "A reação começou pela troca no comando do Banco Central. Arminio Fraga, que vinha da gestora de George Soros e conhecia por dentro os ataques especulativos contra moedas, assumiu em março de 1999 e montou em poucos meses o regime que o país usa até hoje, com ajustes. Ele tem três pés.",
-        "O primeiro é a meta de inflação, criada em junho de 1999 com inspiração na Nova Zelândia: o Banco Central anuncia um alvo e calibra os juros para chegar lá. Desde 2025, o alvo é de 3%, com tolerância de 1,5 ponto para cima ou para baixo, e é cobrado continuamente, não só em dezembro. O segundo é a meta de superávit primário, a economia que o governo faz antes de pagar juros, para mostrar que a dívida não vai crescer sem controle. O terceiro é o câmbio flutuante, que a aula chama de flutuante e sujo: o Banco Central não fixa o preço do dólar, mas entra no mercado quando acha o movimento exagerado.",
-        "Em maio de 2000, a Lei de Responsabilidade Fiscal fechou o desenho. A aula cita a regra que proíbe o governo de se financiar no próprio banco; na lei, ela está nos artigos 35 e 36. Foi o desrespeito a essa lógica, com Caixa, Banco do Brasil e BNDES cobrindo despesas da União, que embasou o impeachment de 2016.",
+        "O primeiro é a meta de inflação, criada em junho de 1999 com inspiração na Nova Zelândia: o Banco Central anuncia um alvo e calibra os juros para chegar lá. O alvo e a tolerância mudaram ao longo dos anos; desde 2025, o alvo é de 3%, com tolerância de 1,5 ponto para cima ou para baixo, e é cobrado continuamente, não só em dezembro. Se a inflação passa do teto, é sinal de que os juros não estão cumprindo o papel. O segundo é a meta de superávit primário, a economia que o governo faz antes de pagar juros, para mostrar que a dívida não vai crescer sem controle. O terceiro é o câmbio flutuante, ou, como se diz no mercado, flutuante e sujo: o Banco Central não fixa o preço do dólar, mas entra no mercado quando acha o movimento exagerado.",
+        "Em maio de 2000, a Lei de Responsabilidade Fiscal fechou o desenho. Entre outras regras, ela proíbe o governo de se financiar nos bancos que controla (artigos 35 e 36). Foi o desrespeito a essa lógica, com Caixa, Banco do Brasil e BNDES cobrindo despesas da União, que embasou o impeachment de 2016.",
+        "Dos três pés, a meta de inflação é o que mais depende de confiança: só funciona se o mercado acreditar que o Banco Central vai cumpri-la mesmo quando cumprir custa caro. Essa confiança se constrói como num jogo que se repete, e é o mesmo problema que fez o real nascer preso ao dólar. A matriz abaixo resume o jogo.",
       ],
     },
     {
@@ -468,8 +471,9 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "A Lei de Responsabilidade Fiscal não acaba com o risco político, lembra a aula, e a eleição de 2002 provou isso. O favorito, Lula, disputava pela quarta vez depois de ter sido contra o Plano Real, as privatizações, a reforma da previdência de Fernando Henrique, a LRF e o tripé. O mercado cobrou pela hipótese de ruptura antes de qualquer ato do candidato: o dólar subiu 74% entre a mínima de abril, R$ 2,27, e a máxima de outubro, R$ 3,96.",
-        "Em junho, a Carta ao Povo Brasileiro comprometeu o candidato com o superávit e o respeito aos contratos. Em agosto, o Brasil fechou com o FMI um acordo de cerca de US$ 30 bilhões (na aula, US$ 40 bilhões). O governo eleito cumpriu a carta, subiu a meta de superávit e, em dezembro de 2005, pagou adiantado os US$ 15,5 bilhões que ainda devia ao Fundo, bem mais que os 3 a 4 bilhões lembrados na aula.",
+        "A Lei de Responsabilidade Fiscal não acaba com o risco político, e a eleição de 2002 provou isso. O favorito, Lula, disputava pela quarta vez depois de ter sido contra o Plano Real, as privatizações, a reforma da previdência de Fernando Henrique, a LRF e o tripé. O mercado cobrou pela hipótese de ruptura antes de qualquer ato do candidato: entre abril e outubro, o dólar subiu mais de 60%, e da mínima de abril, R$ 2,27, à máxima de outubro, R$ 3,96, foram 74%.",
+        "O risco-país passou de 2.400 pontos. Com o título americano pagando perto de 3% ao ano, isso queria dizer que o Brasil teria de pagar cerca de 27% para tomar dinheiro lá fora, um custo que dobra uma dívida em menos de três anos. Na prática, captar no exterior ficou inviável.",
+        "Em junho, a Carta ao Povo Brasileiro comprometeu o candidato com o superávit e o respeito aos contratos. Em agosto, o Brasil fechou com o FMI um acordo de cerca de US$ 30 bilhões, um apoio para atravessar a transição, não o socorro a um país quebrado. O governo eleito cumpriu a carta, subiu a meta de superávit e, em dezembro de 2005, pagou adiantado os US$ 15,5 bilhões que ainda devia ao Fundo, um gesto para mostrar que o país não dependia mais dele.",
       ],
     },
     {
@@ -494,7 +498,7 @@ const secao: SecaoDaAula = {
       series: [{ nome: "Anos para dobrar", valores: [23.4, 10.2, 6.1, 2.9] }],
       formato: { sufixo: " anos", casas: 1 },
       ilustrativo: true,
-      nota: "Juros sobre juros, a taxa constante. Os 27% somam os 3% do título americano aos 24 pontos percentuais de risco-país citados na aula para 2002; os 7% são o custo que a aula estima para hoje.",
+      nota: "Juros sobre juros, a taxa constante. Os 27% somam 3% do título americano a 24 pontos percentuais de risco-país, perto do pico de 2002; os 7% são uma estimativa do custo atual, com o juro americano perto de 3,25% e risco-país entre 300 e 400 pontos.",
     },
     {
       tipo: "conceito",
@@ -518,8 +522,8 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Em dezembro de 2001, a China entrou na Organização Mundial do Comércio e passou a década seguinte levando centenas de milhões de pessoas do campo para as cidades. Isso virou demanda por minério de ferro, soja, carne e petróleo, justamente o que o Brasil vende. A aula cita um índice do JP Morgan com alta de 700% entre 2001 e 2007. O índice do Banco Central, que pesa os produtos que importam para o Brasil, mostra um salto menor, mas decisivo: em dólar, quase triplicou entre 2002 e 2011.",
-        "O Brasil já tinha visto esse filme. Campos Salles arrumou as contas e renegociou a dívida externa entre 1898 e 1902 e entregou o governo a Rodrigues Alves em pleno ciclo da borracha. O risco, diz a aula, é a bonança virar licença para gastar. No primeiro governo Lula isso não aconteceu: o superávit ficou acima de 3% do PIB todos os anos e a dívida caiu. A Selic recuou de 25% no fim de 2002 para 10,75% no fim de 2010, e o dólar, que chegara perto de R$ 4, terminou 2010 a R$ 1,67 e tocou R$ 1,53 em julho de 2011.",
+        "Em dezembro de 2001, a China entrou na Organização Mundial do Comércio e passou a década seguinte levando centenas de milhões de pessoas do campo para as cidades. Isso virou demanda por minério de ferro, soja, carne e petróleo, justamente o que o Brasil vende. Pelo índice agregado de commodities do JP Morgan, a alta entre 2001 e 2007 chegou perto de 700%: a mesma cesta passou a render muito mais dólares. O índice do Banco Central mede outra cesta, com o peso que cada produto tem nas vendas brasileiras, e por isso mostra um salto menor, mas decisivo: em dólar, quase triplicou entre 2002 e 2011.",
+        "O Brasil já tinha visto esse filme. Campos Salles arrumou as contas e renegociou a dívida externa entre 1898 e 1902 e entregou o governo a Rodrigues Alves em pleno ciclo da borracha. O risco desses ciclos é a bonança virar licença para gastar. No primeiro governo Lula isso não aconteceu: o superávit ficou acima de 3% do PIB todos os anos e a dívida caiu. A Selic recuou de 25% no fim de 2002 para 10,75% no fim de 2010, e o dólar, que chegara perto de R$ 4, terminou 2010 a R$ 1,67 e tocou R$ 1,53 em julho de 2011.",
       ],
     },
     {
@@ -535,7 +539,7 @@ const secao: SecaoDaAula = {
         { em: "2008", rotulo: "Crise global" },
       ],
       fonte: "Banco Central do Brasil, SGS 29042 (IC-Br em US$)",
-      nota: "Média dos índices mensais. O índice citado na aula, do JP Morgan, mede outra cesta, por isso a variação é outra.",
+      nota: "Média dos índices mensais. O índice de commodities do JP Morgan usa outra cesta e outros pesos, e por isso mostra uma alta bem maior no mesmo período.",
       tempo: "49:14",
     },
     {
@@ -543,7 +547,7 @@ const secao: SecaoDaAula = {
       valor: "−70%",
       legenda:
         "foi a perda de poder de compra, em reais, de quem comprou dólar no fim de 2002 e o deixou parado até o fim de 2010: o dólar caiu 53% e os preços no Brasil subiram 57%.",
-      nota: "PTAX de 31/dez/2002 (R$ 3,5333) e de 31/dez/2010 (R$ 1,6662), BCB SGS 1; IPCA de 2003 a 2010, BCB SGS 433. A conta: o dólar passou a valer 47% do que valia, e cada real passou a comprar 64% do que comprava; 47% de 64% dá 30%. Sem rendimento sobre o dólar. Outra janela daria outro número, e o ponto é esse: dólar parado protege contra a moeda, não contra a inflação.",
+      nota: "PTAX de 31/dez/2002 (R$ 3,5333) e de 31/dez/2010 (R$ 1,6662), BCB SGS 1; IPCA de 2003 a 2010, BCB SGS 433. A conta: o dólar passou a valer 47% do que valia, e cada real passou a comprar 64% do que comprava; 47% de 64% dá 30%. Sem rendimento sobre o dólar. Outra janela daria outro número, e o ponto é esse: dólar parado protege contra a moeda, não contra a inflação. Por isso dolarizar, no sentido deste curso, é ter ativos que rendem lá fora, e não nota de dólar guardada.",
     },
     {
       tipo: "grafico",
@@ -556,13 +560,13 @@ const secao: SecaoDaAula = {
       referencia: { valor: 0, rotulo: "Equilíbrio" },
       faixas: [{ de: "2002", ate: "2008", rotulo: "Acima de 3% do PIB" }],
       fonte: "Banco Central do Brasil, SGS 5793 (NFSP sem desvalorização cambial, primário)",
-      nota: "O Banco Central publica com o sinal ao contrário; aqui, positivo é superávit. O pico foi em 2005, com 3,74% do PIB; a aula cita 3,5%.",
+      nota: "O Banco Central publica com o sinal ao contrário; aqui, positivo é superávit. O pico foi em 2005, o maior da série. O tamanho exato muda com o recorte (só o governo central ou todo o setor público) e com a revisão do PIB usada na conta; aqui, para o setor público consolidado, são 3,74% do PIB.",
       tempo: "51:10",
     },
     {
       tipo: "texto",
       paragrafos: [
-        "A Argentina recebeu o mesmo vento a favor por outro caminho. A saída do peso igual ao dólar veio com o corralito, que limitou saques a partir de dezembro de 2001, com a conversão forçada de depósitos em dólar para pesos e com o maior calote de dívida externa até então. A alta da soja, da carne e do trigo trouxe dólares suficientes para adiar a crise seguinte e, para a aula, tirou do país o incentivo de fazer as reformas que o Brasil foi obrigado a fazer em 1999, sem bonança nenhuma.",
+        "A Argentina recebeu o mesmo vento a favor por outro caminho. A saída do peso igual ao dólar veio com o corralito, que limitou saques a partir de dezembro de 2001, com a conversão forçada de depósitos em dólar para pesos e com o maior calote de dívida externa até então. A alta da soja, da carne e do trigo trouxe dólares suficientes para adiar a crise seguinte e tirou do país o incentivo de fazer as reformas que o Brasil foi obrigado a fazer em 1999, sem bonança nenhuma.",
         "Há também uma lição de aritmética. Se o gasto público cresce 6% ao ano e a economia cresce perto de 8% em reais correntes (inflação de 4,5% mais crescimento de 3,5%), o gasto perde peso. Com inflação de 4% e crescimento de 2%, o mesmo gasto deixa de caber. Com a dívida é igual: o que decide se ela sobe ou cai é a corrida entre o juro real e o crescimento, descontada a economia que o governo faz. Teste no simulador abaixo.",
       ],
       tempo: "52:52",
@@ -589,8 +593,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       paragrafos: [
         "A crise de 2008 nasceu onde menos se esperava: no mercado de imóveis dos Estados Unidos, cujos preços quase só tinham subido por décadas. Famílias tomavam crédito dando a casa como garantia, contando com a valorização, e bancos emprestavam a quem não tinha renda para pagar. Quando os preços caíram, as garantias passaram a valer menos que as dívidas. O credor pedia mais garantia ou tomava a casa, e cada venda forçada derrubava os preços ainda mais.",
-        "A quebra do Lehman Brothers, em setembro de 2008, levou o Congresso americano a aprovar um pacote de US$ 700 bilhões e o Fed, presidido por Ben Bernanke, estudioso da Grande Depressão, a comprar títulos em massa para irrigar o sistema. O mundo rico entrou numa década de juros reais perto de zero ou negativos; a Dinamarca levou parte das taxas para baixo de zero em 2012. Com dinheiro barato, quem tinha patrimônio para dar em garantia tomou crédito e comprou ativos. A aula liga a isso tanto a alta das ações de tecnologia americanas quanto a dificuldade dos mais jovens de comprar imóvel.",
-        "Para o Brasil, a década teve dois tempos. O dinheiro global procurou retorno nos emergentes por alguns anos, mas a desaceleração chinesa e o fim da alta das commodities, a partir de 2011, deixaram o país com despesas subindo e receitas que já não acompanhavam. Com Selic de 14,25% e inflação de 4,5%, os números citados na aula, o juro real brasileiro, perto de 10% ao ano, estava no extremo oposto do juro zero.",
+        "A quebra do Lehman Brothers, em setembro de 2008, levou o Congresso americano a aprovar um pacote de US$ 700 bilhões e o Fed, presidido por Ben Bernanke, estudioso da Grande Depressão, a comprar títulos em massa para irrigar o sistema. O mundo rico entrou numa década de juros reais perto de zero ou negativos; a Dinamarca levou parte das taxas para baixo de zero em 2012. Com dinheiro barato, quem tinha patrimônio para dar em garantia tomou crédito e comprou ativos. Esse dinheiro barato ajuda a explicar tanto a alta das ações de tecnologia americanas quanto a dificuldade dos mais jovens, sem patrimônio para dar em garantia, de comprar imóvel.",
+        "Para o Brasil, a década teve dois tempos. O dinheiro global procurou retorno nos emergentes por alguns anos, mas a desaceleração chinesa e o fim da alta das commodities, a partir de 2011, deixaram o país com despesas subindo e receitas que já não acompanhavam. E o juro brasileiro seguiu no extremo oposto do juro zero: com Selic de 14,25% e inflação de 4,5%, o juro real fica perto de 10% ao ano, entre os mais altos do mundo. É esse juro alto que costuma atrair dólares para o Brasil, e é por isso que, quando ele cai demais, o câmbio sente.",
       ],
     },
     {
@@ -599,7 +603,7 @@ const secao: SecaoDaAula = {
       definicao:
         "Uma aplicação paga 21% num ano em que a inflação foi de 10%. Quanto você ganhou de verdade? A conta de cabeça diz 11%. A certa diz 10%: no fim do ano você tem 121 para comprar o que agora custa 110, e 121 é 10% a mais que 110. Juro real é isso, quanto o seu dinheiro compra a mais, e se acha dividindo, não subtraindo. A diferença é pequena com inflação baixa e cresce com ela. A ideia leva o nome do economista americano Irving Fisher.",
       naPratica:
-        "Com Selic de 14,25% e inflação de 4,5%, o juro real era de 9,33% ao ano, e não os 9,75% da subtração. Na pandemia, Selic de 2% com inflação de 4,5% dava juro real negativo, de −2,4%, e a aula liga essa perda de atrativo à alta do dólar em 2020. A mesma conta vale para o dólar parado: se ele sobe menos que a inflação brasileira, você perde poder de compra em reais, como de 2002 a 2010.",
+        "Com Selic de 14,25% e inflação de 4,5%, a conta de cabeça dá 9,75% de juro real, e a divisão, 9,33% ao ano: com inflação nesse nível, a subtração serve bem como aproximação. Na pandemia, Selic de 2% com inflação de 4,5% dava juro real negativo, de −2,4%, e essa perda de atrativo ajuda a explicar a alta do dólar em 2020. A mesma conta vale para o dólar parado: se ele sobe menos que a inflação brasileira, você perde poder de compra em reais, como de 2002 a 2010.",
       referencia: { autor: "Alexandre Assaf Neto", obra: "Matemática Financeira e suas Aplicações", capitulo: "cap. 4, seções 4.2 e 4.4", ano: 2012 },
       tempo: "1:03:56",
     },
@@ -627,8 +631,8 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "A aula chama o período de grande depressão brasileira: o PIB caiu 3,5% em 2015 e 3,3% em 2016. Num orçamento que, pelas contas da aula, é 94% carimbado ou obrigatório, o ajuste caiu sobre o que dava para cortar: investimento, custeio e regras de benefícios. O seguro-desemprego, por exemplo, passou a exigir 12 meses de trabalho nos 18 anteriores no primeiro pedido.",
-        "Depois do impeachment, a aposta foi em previsibilidade. O teto de gastos, aprovado em dezembro de 2016, limitou por 20 anos o crescimento da despesa federal à inflação, com revisão possível a partir do décimo. No Banco Central, Ilan Goldfajn levou a Selic de 14,25% para 6,5% em março de 2018, e os cortes seguiram até 2% em agosto de 2020. A aula fala em 7% no fim de 2019; a série oficial mostra 7% no fim de 2017 e 4,5% no fim de 2019.",
+        "Foi a grande depressão brasileira: o PIB caiu 3,5% em 2015 e 3,3% em 2016. Num orçamento federal em que perto de 94% da despesa é obrigatória ou corrigida automaticamente, o ajuste caiu sobre o que dava para cortar: investimento, custeio e regras de benefícios. O seguro-desemprego, por exemplo, passou a exigir 12 meses de trabalho nos 18 anteriores no primeiro pedido.",
+        "Depois do impeachment, a aposta foi em previsibilidade. O teto de gastos, aprovado em dezembro de 2016 e em vigor a partir de 2017, limitou por 20 anos o crescimento da despesa federal à inflação, com revisão possível a partir do décimo. No Banco Central, Ilan Goldfajn levou a Selic de 14,25% para 7% no fim de 2017 e 6,5% em março de 2018, com a inflação também em queda. Os cortes seguiram depois dele, até 4,5% no fim de 2019 e 2% em agosto de 2020.",
       ],
     },
     {
@@ -664,7 +668,7 @@ const secao: SecaoDaAula = {
         { rotulo: "Risco-país", valor: 42, formato: { sufixo: " pontos", casas: 0, sinal: true }, nota: "EMBI+, de 258 para 300" },
       ],
       fonte: "B3, via InfoMoney (Ibovespa); Banco Central do Brasil, SGS 1 (PTAX); JP Morgan, via IpeaData (EMBI+)",
-      nota: "Variações sobre 17 de maio de 2017. A aula fala em dólar desvalorizado em 8%; quem perdeu valor foi o real, com o dólar 8,8% mais caro.",
+      nota: "Variações sobre 17 de maio de 2017. Visto do outro lado, o dólar 8,8% mais caro quer dizer que o real perdeu cerca de 8% do valor em dólar num único dia.",
     },
     {
       tipo: "destaque",
@@ -684,9 +688,9 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "A aula chama a pandemia de cisne negro: um evento raro e de impacto enorme. Em março de 2020, a bolsa brasileira interrompeu os pregões várias vezes, as cadeias globais de produção pararam e a falta de chips travou a indústria de carros por anos. Em maio, o chamado orçamento de guerra separou os gastos da emergência do orçamento normal. O setor público fechou 2020 com déficit de 9,2% do PIB, e a dívida bruta chegou a 86,9% do PIB.",
-        "Dois anos depois, a dívida tinha voltado a 71,7% do PIB. Para a aula, boa parte da melhora veio da inflação e do jeito como o Brasil cobra impostos: com a alta dos combustíveis na reabertura, a arrecadação cresceu bem mais depressa que a economia, e o PIB em reais correntes, inflado pelos preços, cresceu mais que a dívida.",
-        "O lado dos juros foi menos feliz. Com a inflação medida em queda no auge do isolamento, num índice que, argumenta a aula, demorou a captar a mudança no que as pessoas compravam, o Banco Central acelerou os cortes e levou a Selic de 4,5% a 2% em agosto de 2020. Com juro real negativo, o Brasil perdeu o principal atrativo para o dinheiro de curto prazo, e o dólar, que começara o ano a R$ 4,02, chegou a R$ 5,94 em maio. A inflação de 2021 fechou em 10,1%, e a Selic voltou a subir a partir de março daquele ano.",
+        "A pandemia foi um cisne negro: um evento raro e de impacto enorme. Em março de 2020, a bolsa brasileira interrompeu os pregões várias vezes, as cadeias globais de produção pararam e a falta de chips travou a indústria de carros por anos. Em maio, o chamado orçamento de guerra separou os gastos da emergência do orçamento normal, e o Brasil ficou entre os países que mais gastaram para compensar o fechamento. O setor público fechou 2020 com déficit primário de 9,2% do PIB, e a dívida bruta chegou a 86,9% do PIB.",
+        "Dois anos depois, a dívida tinha voltado a 71,7% do PIB. Boa parte da melhora veio da inflação e do jeito como o Brasil cobra impostos: com a alta dos combustíveis na reabertura, a arrecadação cresceu bem mais depressa que a economia, e o PIB em reais correntes, inflado pelos preços, cresceu mais que a dívida.",
+        "O lado dos juros foi menos feliz. Com a inflação medida em queda no auge do isolamento, num índice que demorou a captar a mudança no que as pessoas compravam (menos passagem e restaurante, mais delivery), o Banco Central acelerou os cortes e levou a Selic de 4,5% a 2% em agosto de 2020. Com juro real negativo, o Brasil perdeu o principal atrativo para o dinheiro de curto prazo, e o dólar, que começara o ano a R$ 4,02, chegou a R$ 5,94 em maio. A inflação de 2021 fechou em 10,1%, e a Selic voltou a subir a partir de março daquele ano.",
       ],
     },
     {
@@ -712,7 +716,7 @@ const secao: SecaoDaAula = {
     },
     {
       tipo: "linhaDoTempo",
-      titulo: "O dólar em reais e os choques citados na aula",
+      titulo: "O dólar em reais e os choques de trinta anos de real",
       subtitulo: "R$ por US$, média anual",
       eventos: [
         { data: "1999", titulo: "Fim da banda", texto: "Moratória de Minas e câmbio flutuante." },
@@ -731,7 +735,7 @@ const secao: SecaoDaAula = {
       tipo: "numero",
       valor: "6,1×",
       legenda: "foi quanto o dólar médio subiu em reais de 1995 a 2025, perto de 6,2% ao ano.",
-      nota: "Médias anuais do Banco Central (SGS 3698): R$ 0,92 em 1995 e R$ 5,59 em 2025. Sem descontar a diferença de inflação entre os dois países.",
+      nota: "Médias anuais do Banco Central (SGS 3698): R$ 0,92 em 1995 e R$ 5,59 em 2025. Sem descontar a diferença de inflação entre os dois países, que explica só uma parte dessa alta, como mostra o conceito a seguir.",
     },
     {
       tipo: "conceito",
@@ -765,7 +769,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       paragrafos: [
         "Repare no padrão. Em 1999, uma briga entre um governador e a União; em 2002, a incerteza de uma eleição; em 2015, uma recessão que somou erros de política ao fim da bonança; em 2017, uma gravação; em 2020, um vírus e um corte de juros que o próprio Banco Central depois desfez. Nada disso dependia da carteira de quem sofreu as consequências. E em todos os casos câmbio, juros e bolsa reagiram juntos, porque respondiam à mesma causa.",
-        "Por isso a aula usa dolarizar num sentido amplo. Comprar ações europeias, asiáticas ou americanas, ou qualquer ativo fora do Brasil, também é dolarizar: é recorrer à moeda que cumpre melhor as três funções do começo da aula, guardar valor, servir de régua e ser aceita em qualquer mercado. O objetivo não é apostar contra o real, a moeda brasileira mais duradoura desde o réis. É deixar de depender de uma única caneta para tudo o que você planeja. Quanto e como, você vê nos próximos módulos.",
+        "Por isso dolarizar, aqui, tem sentido amplo. Comprar ações europeias, asiáticas ou americanas, ou qualquer ativo fora do Brasil, também é dolarizar: é recorrer à moeda que cumpre melhor as três funções da moeda que a URV separou, guardar valor, servir de régua e ser aceita em qualquer mercado. O objetivo não é apostar contra o real, a moeda brasileira mais duradoura desde o réis. É deixar de depender de uma única caneta para tudo o que você planeja. Quanto e como, você vê nos próximos módulos.",
       ],
     },
     {
@@ -773,7 +777,7 @@ const secao: SecaoDaAula = {
       id: "patrimonio-em-dolar",
       titulo: "O mesmo patrimônio, medido em dólar",
       descricao:
-        "Ponto de partida: dólar a R$ 5,18, cotação de 30 de setembro de 2026. Quanto o real perde por ano é uma hipótese sua, não uma previsão. Para ter uma referência: de 1995 a 2025, a média ficou perto de 6% ao ano, com longos trechos de real se valorizando no meio.",
+        "Ponto de partida: dólar a R$ 5,18, cotação de 30 de setembro de 2026. Quanto o real perde por ano é uma hipótese sua, não uma previsão. Para ter uma referência: os 6,2% de alta anual do dólar de 1995 a 2025 equivalem a o real perder perto de 5,8% ao ano; contando desde o começo do real, a perda média fica entre 5,5% e 6%, conforme o mês de partida e a cotação usada, sempre com longos trechos de real se valorizando no meio.",
       modelo: "cambioPatrimonio",
       parametros: { cambio: { valor: 5.18 }, depreciacao: { valor: 4 } },
     },

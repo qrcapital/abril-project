@@ -17,6 +17,7 @@ import NotebookModulo from "@/app/app/_ui/sala/NotebookModulo";
 import Player from "@/app/app/_ui/sala/Player";
 import Playlist from "@/app/app/_ui/sala/Playlist";
 import Trilha from "@/app/app/_ui/sala/Trilha";
+import VideoFixo from "@/app/app/_ui/sala/VideoFixo";
 import { estadoDoModulo, hrefDoModulo, motivoDaTrava } from "@/app/app/_ui/sala/estado";
 
 export async function generateMetadata({ params }: { params: Promise<{ m: string }> }): Promise<Metadata> {
@@ -140,14 +141,15 @@ export default async function ModuloPage({
           </span>
         </div>
 
-        {/* `id="player"` e `data-player-aula`: o atalho "Na aula, 12:34" do notebook usa os dois
-            (NaAula.tsx), o primeiro como destino do link e o segundo para saber se a aula do bloco
-            é a que está tocando. */}
-        <div className="sl-palco-player" id="player" data-player-aula={aula.pos}>
+        {/* A vaga do player, com `id="player"` e `data-player-aula`: o atalho "Na aula, 12:34" do
+            notebook usa os dois (NaAula.tsx), o primeiro como destino do link e o segundo para saber
+            se a aula do bloco é a que está tocando. Desde 08/out/2026 é o `VideoFixo` que a desenha:
+            rolando a página, o vídeo sai do palco e fica fixo no alto da tela, sem recarregar. */}
+        <VideoFixo aula={aula.pos} titulo={aula.titulo}>
           {/* `key` pela aula: trocar de aula monta um player novo, em vez de reaproveitar um
               iframe do Panda que já bootou medindo o vídeo anterior. */}
           <Player key={aula.id} fonte={fonteDoVideo(aula.video)} titulo={aula.titulo} inicio={segundosDaUrl(sp.t)} />
-        </div>
+        </VideoFixo>
 
         <div className="sl-palco-meta">
           <div>

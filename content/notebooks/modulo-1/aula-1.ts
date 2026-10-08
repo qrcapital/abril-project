@@ -1,6 +1,6 @@
 import type { SecaoDaAula } from "@/lib/notebook";
 
-// Módulo II, aula 1 ("O Tesouro americano, a âncora do mundo"), com Tony Volpon, cerca de 44 min. No
+// Módulo II, aula 1 ("O paradoxo do devedor mais seguro do mundo"), com Tony Volpon, cerca de 44 min. No
 // Panda é o "TONY VOLPON - VÍDEO 01" (ele a chama de "aula número 5", pela numeração global do curso).
 // Seção escrita a partir da transcrição em `transcricoes/modulo-1/aula-1.txt` e do super dossiê
 // (`_referencias-livros/dossie/`, seção "Aula 1" do RANKING-MODULO-II.md). Segue a ordem da fala: o
@@ -17,11 +17,14 @@ import type { SecaoDaAula } from "@/lib/notebook";
 // desde abr/2026, por isso não há gráfico histórico de spread), FMI (COFER, Data Brief de 30/set/2026),
 // CRFB (estimativa do ano fiscal de 2026, de 1º/out/2026), BLS (CPI de ago/2026), BCB (SGS 5727 e
 // 13522), Tesouro Direto (taxas de 5/out/2026, via EuQueroInvestir) e Damodaran (retornos de 2008 e
-// 2022, os mesmos do notebook da aula 3 do Módulo I). Onde a fala difere da fonte, o texto registra os
-// dois com leveza: os US$ 27 trilhões logo depois dos 37, os 59% das reservas (dado do fim de 2020), o
-// FRN que "não é emitido" (é, desde 2014), a LFT "atrelada ao CDI" (é à Selic), o investment grade
-// "entre A e BBB" (vai de AAA a BBB-), a taxa real truncada em "4,05%" (pela conta do slide, 4,45%) e a
-// bolsa com volatilidade de "quase o dobro" (no exemplo, cerca de 15%, mais que o dobro).
+// 2022, os mesmos do notebook da aula 3 do Módulo I). Voz institucional (docs/TOM-DO-NOTEBOOK.md): o
+// texto não narra a fala nem a corrige. Onde fala e fonte diferem, usa o dado da fonte e explica como
+// recorte: a dívida bruta (US$ 37 tri em meados de 2025, mais de 40 em 2026; os "27" da fala ficam de
+// fora), as reservas em dólar (59% no fim de 2020, 56,7% no 2º tri/2026, mesma série do FMI), o FRN
+// (emitido desde 2014, mas cerca de 2% da dívida negociável, como no notebook da aula 3 do Módulo I),
+// a LFT (segue a Selic, que anda junto com o CDI), o investment grade (escala de AAA a BBB-, com a
+// maior parte do mercado em A e BBB), a última taxa real do slide (4,45% pela conta do exemplo) e a
+// volatilidade da bolsa no exemplo de Sharpe (cerca de 15%, hipótese do exercício).
 //
 // ILUSTRATIVO: a escada de taxas reais e o Sharpe vêm do slide da aula (marcados como tal); o gráfico de
 // duration é conta do autor sobre títulos hipotéticos; o simulador de dívida usa premissas declaradas.
@@ -89,16 +92,16 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       capitular: true,
       paragrafos: [
-        "Pense num país que deve mais de US$ 40 trilhões, gasta todo ano bem mais do que arrecada e, mesmo assim, consegue pegar dinheiro emprestado por dez anos pagando pouco mais de 5% ao ano. Agora pense no Brasil, que deve muito menos e paga 13%. Parece injusto. É por aí que Tony Volpon, ex-diretor do Banco Central, abre o módulo.",
-        "Esta é a primeira de três aulas dele. Começa pelo Tesouro americano, segue para o crédito das empresas e termina nas bolsas. A ordem tem razão de ser: a taxa dos títulos do Tesouro americano, as Treasuries, é a régua com que o mundo dá preço a quase tudo o que rende em dólar. Entender essa régua é o primeiro passo para qualquer decisão sobre renda fixa lá fora.",
+        "Pense num país que deve mais de US$ 40 trilhões, gasta todo ano bem mais do que arrecada e, mesmo assim, consegue pegar dinheiro emprestado por dez anos pagando pouco mais de 5% ao ano. Agora pense no Brasil, que deve muito menos e paga 13%. Parece injusto. É por esse paradoxo que começa o módulo de Tony Volpon, ex-diretor do Banco Central.",
+        "São três aulas sobre os Estados Unidos: primeiro o Tesouro americano, depois o crédito das empresas e, por fim, as bolsas. A ordem tem razão de ser: a taxa dos títulos do Tesouro americano, as Treasuries, é a régua com que o mundo dá preço a quase tudo o que rende em dólar. Entender essa régua é o primeiro passo para qualquer decisão sobre renda fixa lá fora.",
       ],
     },
     {
       tipo: "texto",
       tempo: "3:39",
       paragrafos: [
-        "Os números do paradoxo. A dívida bruta do governo americano passou de US$ 40 trilhões em 2026. O déficit, a diferença entre o que o governo gasta e o que arrecada, ficou perto de 6% do PIB no ano fiscal encerrado em setembro, nível alto para um país rico e sem recessão. Ainda assim, quando a aula foi gravada, o título de dez anos do Tesouro rendia entre 4,5% e 4,6%, contra 14% a 16% dos prefixados brasileiros de prazo parecido, nas contas do Tony.",
-        "Na aula, ele fala em US$ 37 trilhões de dívida e, um minuto depois, em US$ 27 trilhões. O primeiro era o patamar de meados de 2025; em 2026, a conta já passou dos 40. Desse total, US$ 32,4 trilhões estão nas mãos do público, isto é, de investidores, bancos, bancos centrais estrangeiros e do próprio Fed. O resto o governo deve a si mesmo, em fundos como o da previdência.",
+        "Os números do paradoxo. A dívida bruta do governo americano passou de US$ 40 trilhões em 2026. O déficit, a diferença entre o que o governo gasta e o que arrecada, ficou perto de 6% do PIB no ano fiscal encerrado em setembro, nível alto para um país rico e sem recessão. Ainda assim, em meados de 2026, o título de dez anos do Tesouro rendia entre 4,5% e 4,6%, contra 14% a 16% dos prefixados brasileiros de prazo parecido.",
+        "A dívida cresce depressa: eram US$ 37 trilhões em meados de 2025 e, em 2026, a conta já passou dos 40. Desse total, US$ 32,4 trilhões estão nas mãos do público, isto é, de investidores, bancos, bancos centrais estrangeiros e do próprio Fed. O resto o governo deve a si mesmo, em fundos como o da previdência. A parte do público é a que importa para o paradoxo: é ela que o mercado precisa comprar e carregar, e é dela que parte o simulador mais adiante.",
         "De lá para cá, os juros americanos subiram e os brasileiros caíram, depois do primeiro turno da eleição. A distância diminuiu, mas o paradoxo continua de pé: quem deve mais paga muito menos.",
       ],
     },
@@ -127,7 +130,7 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Juro, como qualquer preço, sai do encontro entre oferta e procura. O Tesouro americano oferece muitos títulos, é verdade. Mas a procura por eles é de um tipo raro, e o Tony lista quatro razões para ela.",
+        "Juro, como qualquer preço, sai do encontro entre oferta e procura. O Tesouro americano oferece muitos títulos, é verdade. Mas a procura por eles é de um tipo raro, e tem quatro razões.",
         "A primeira é o dólar. Ele é a principal moeda de reserva do planeta, a moeda em que se fatura boa parte do comércio de bens e de commodities e em que se emitem trilhões em dívida fora dos Estados Unidos, o chamado mercado de eurodólar. Uma exportadora brasileira que vende para uma importadora italiana provavelmente vai faturar em dólar, não em reais nem em euros. Tudo isso cria uma procura natural por ativos em dólar.",
         "A segunda é a liquidez: dá para comprar ou vender bilhões em Treasuries sem mexer no preço. A terceira é a regulação. Bancos precisam guardar ativos líquidos e de alta qualidade, fundos de money market compram T-Bills por exigência de segurança e câmaras de compensação aceitam Treasuries como a garantia preferida. A quarta é a capacidade fiscal: uma economia enorme e produtiva, com carga tributária baixa para um país rico e que só se endivida na própria moeda.",
       ],
@@ -149,7 +152,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "8:02",
       paragrafos: [
-        "Na aula, o Tony diz que 59% das reservas cambiais do mundo estão em dólar. Esse era o número do fim de 2020. Pelo dado mais recente do FMI, do segundo trimestre de 2026, a fatia é de 56,7%. A direção é a que ele descreve: o dólar perde espaço devagar, para o euro, para moedas menores e, fora dessa conta, para o ouro. Mas ainda pesa quase três vezes o euro, o segundo colocado.",
+        "As reservas cambiais dos bancos centrais mostram o peso do dólar. Pela série do FMI, a fatia da moeda americana era de 59% no fim de 2020 e de 56,7% no segundo trimestre de 2026, o dado mais recente; o número varia conforme a data do recorte. A direção não muda: o dólar perde espaço devagar, para o euro, para moedas menores e, fora dessa conta, para o ouro. Mas ainda pesa quase três vezes o euro, o segundo colocado.",
+        "Isso importa para o juro porque reserva em dólar, na prática, fica guardada em Treasuries. Cada banco central que mantém dólar no cofre é um comprador fiel do Tesouro americano, e é essa fila de compradores que ajuda a segurar a taxa.",
       ],
     },
     {
@@ -168,7 +172,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "9:57",
       paragrafos: [
-        "Um fundo brasileiro que vai operar derivativos em Chicago precisa deixar uma garantia, a margem. Quase sempre, ela vai em Treasuries. Se ele tentar entregar outro papel, vai precisar de um valor maior, porque o outro é menos líquido e menos seguro. É nesse sentido que o Tony chama a Treasury de \"quase dinheiro\" do sistema financeiro.",
+        "Um fundo brasileiro que vai operar derivativos em Chicago precisa deixar uma garantia, a margem. Quase sempre, ela vai em Treasuries. Se ele tentar entregar outro papel, vai precisar de um valor maior, porque o outro é menos líquido e menos seguro. É nesse sentido que a Treasury é o \"quase dinheiro\" do sistema financeiro.",
         "Isso tem nome técnico: serviços não pecuniários. Quem tem Treasuries recebe a taxa e mais uma série de conveniências que não aparecem no extrato. Pode usá-las como garantia, vender a qualquer hora, cumprir a regra do regulador. Como essas conveniências valem alguma coisa, o investidor aceita uma taxa menor. Parte do juro baixo americano é o preço desse serviço.",
       ],
     },
@@ -176,8 +180,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "12:33",
       paragrafos: [
-        "\"A capacidade fiscal não é perfeição fiscal\", resume o Tony. O mercado aposta que, se for preciso, os Estados Unidos conseguem arrumar as contas, como já fizeram em outros momentos. Mas isso é uma decisão política, não uma garantia. Para ele, os déficits que cresceram na pandemia e não voltaram já empurram os juros longos para cima e ajudam a explicar por que a curva americana opera mais alta do que antes de 2020.",
-        "Os números de 2026 vão na mesma direção. Os juros da dívida custaram cerca de US$ 1,1 trilhão no ano fiscal, 3,4% do PIB, mais do que o orçamento de defesa. Dá para sentir essa aritmética no simulador abaixo, que parte da dívida americana nas mãos do público, perto de 100% do PIB, e de um déficit primário, o que não conta os juros, de cerca de 2,8% do PIB.",
+        "Capacidade fiscal não é perfeição fiscal. O mercado aposta que, se for preciso, os Estados Unidos conseguem arrumar as contas, como já fizeram em outros momentos. Mas isso é uma decisão política, não uma garantia. E os déficits que cresceram na pandemia e não voltaram já empurram os juros longos para cima e ajudam a explicar por que a curva americana opera mais alta do que antes de 2020.",
+        "Os números de 2026 mostram de onde vem essa pressão. Os juros da dívida custaram cerca de US$ 1,1 trilhão no ano fiscal, 3,4% do PIB, mais do que o orçamento de defesa. Juro pago com déficit vira mais dívida, que precisa de mais compradores. Dá para sentir essa aritmética no simulador abaixo, que parte da dívida americana nas mãos do público, perto de 100% do PIB, e de um déficit primário, o que não conta os juros, de cerca de 2,8% do PIB.",
       ],
     },
     {
@@ -221,7 +225,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       paragrafos: [
         "Comece pelo mais simples. O T-Bill é um título de até um ano que não paga juros no caminho. Você compra com desconto e recebe o valor cheio no vencimento: paga 98 hoje, recebe 100 daqui a um ano, e a diferença, pouco mais de 2%, é o seu rendimento. É o mesmo desenho da LTN, o Tesouro Prefixado brasileiro. Como o prazo é curto, o preço quase não oscila. É o lugar natural do caixa.",
-        "Depois vêm os notes, de 2 a 10 anos, e os bonds, de 20 e 30 anos. Os dois pagam juros fixos a cada seis meses, definidos no leilão em que o Tesouro vende os papéis. Cada trecho tem sua clientela. Quem precisa de caixa fica no curto. Bancos centrais que guardam reservas em dólar preferem a faixa do meio: segundo os estudos citados na aula, o prazo médio das carteiras deles fica entre 2 e 5 anos. Seguradoras de vida e fundos de pensão, que têm compromissos para daqui a décadas, compram os bonds.",
+        "Depois vêm os notes, de 2 a 10 anos, e os bonds, de 20 e 30 anos. Os dois pagam juros fixos a cada seis meses, definidos no leilão em que o Tesouro vende os papéis. Cada trecho tem sua clientela. Quem precisa de caixa fica no curto. Bancos centrais que guardam reservas em dólar preferem a faixa do meio: segundo estudos sobre o tema, o prazo médio das carteiras deles fica entre 2 e 5 anos. Seguradoras de vida e fundos de pensão, que têm compromissos para daqui a décadas, compram os bonds.",
       ],
     },
     {
@@ -229,14 +233,15 @@ const secao: SecaoDaAula = {
       tempo: "16:16",
       paragrafos: [
         "O TIPS é o primo americano do Tesouro IPCA+, a NTN-B. O valor do título é corrigido pela inflação ao consumidor, o CPI, e a taxa combinada vem por cima, como juro real. Imagine um TIPS de US$ 1.000 que paga 2% reais ao ano. Se a inflação americana for de 3% num ano, o principal vira US$ 1.030 e os juros passam a ser calculados sobre esse valor maior. O poder de compra em dólar fica protegido. Há TIPS de 5, 10 e 30 anos.",
-        "Por fim, o título de juro flutuante, o FRN, que acompanha a taxa de curto prazo e por isso quase não oscila de preço. É o parente da LFT, o Tesouro Selic. Aqui cabem dois ajustes à fala. O Tony diz que o Tesouro americano não emite FRNs ativamente; na verdade, emite FRNs de 2 anos desde janeiro de 2014, atrelados ao T-Bill de 13 semanas, só que em volume pequeno, cerca de 2% da dívida negociável, contra quase metade da dívida brasileira em LFT. E a LFT segue a Selic, não o CDI; na prática, as duas taxas andam coladas. Quem quer mais papel flutuante em dólar recorre, como ele lembra, a bancos que montam esses títulos a partir de Treasuries e swaps.",
+        "Por fim, o título de juro flutuante, o FRN, que acompanha a taxa de curto prazo e por isso quase não oscila de preço. É o parente da LFT, o Tesouro Selic, que segue a Selic, taxa que anda colada ao CDI. A diferença está no peso. O Tesouro americano emite FRNs de 2 anos desde janeiro de 2014, atrelados ao T-Bill de 13 semanas, mas eles são uma parcela pequena da dívida, cerca de 2% do que é negociável, contra quase metade da dívida brasileira em LFT. Quem quer mais papel flutuante em dólar recorre a bancos que montam esses títulos a partir de Treasuries e swaps, contratos que trocam juro fixo por juro flutuante.",
+        "Para quem está acostumado ao pós-fixado, essa é a diferença que mais pesa: em dólar, quase toda a renda fixa do governo tem taxa travada, e o preço dela oscila com os juros. O capítulo da duration volta a esse ponto.",
       ],
     },
     {
       tipo: "texto",
       tempo: "19:11",
       paragrafos: [
-        "Na aula, o TIPS de 10 anos paga perto de 2% acima da inflação, contra 6% a 8% das NTN-Bs. Os números andaram. Em 5 de outubro de 2026, o TIPS de 10 anos pagava 2,95% reais e o Tesouro IPCA+ com Juros Semestrais 2037, 6,86%, depois de uma queda forte das taxas brasileiras no dia seguinte ao primeiro turno.",
+        "Em meados de 2026, o TIPS de 10 anos pagava perto de 2% acima da inflação, contra 6% a 8% das NTN-Bs. Os números andaram. Em 5 de outubro de 2026, o TIPS de 10 anos pagava 2,95% reais e o Tesouro IPCA+ com Juros Semestrais 2037, 6,86%, depois de uma queda forte das taxas brasileiras no dia seguinte ao primeiro turno.",
         "O gráfico mostra a história mais longa. Antes da pandemia, o juro real americano estava perto de zero. De 2020 até o começo de 2022, ficou negativo, perto de 1% abaixo da inflação: quem comprava um TIPS de 10 anos aceitava perder poder de compra. Depois, subiu junto com os juros do Fed. A linha de cima, a da Treasury nominal, conta a mesma história e volta no capítulo da precificação.",
       ],
     },
@@ -277,7 +282,7 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "A pergunta que o Tony propõe antes de qualquer aplicação é simples: que problema eu estou tentando resolver? Caixa para daqui a seis meses pede uma coisa; um objetivo em dólar daqui a dez anos, outra. Para quem precisa do dinheiro em um ano, o ativo seguro é um título de um ano; para quem tem uma despesa em dólar daqui a cinco, um título de prazo parecido, e não o CDI nem uma Treasury de 30 anos.",
+        "Antes de qualquer aplicação, a pergunta é simples: que problema eu estou tentando resolver? Caixa para daqui a seis meses pede uma coisa; um objetivo em dólar daqui a dez anos, outra. Para quem precisa do dinheiro em um ano, o ativo seguro é um título de um ano; para quem tem uma despesa em dólar daqui a cinco, um título de prazo parecido, e não o CDI nem uma Treasury de 30 anos.",
       ],
     },
 
@@ -294,7 +299,7 @@ const secao: SecaoDaAula = {
       paragrafos: [
         "Ponha num gráfico a taxa de cada título do Tesouro, do mais curto ao mais longo, e você tem a curva de juros. A ponta curta é ancorada pelo Fed, que fixa a taxa dos empréstimos de um dia para o outro entre os bancos. A ponta longa depende do que o mercado espera para os juros nos anos seguintes e de um prêmio a mais pelo prazo.",
         "Normalmente, a curva sobe. Quem empresta por dez anos só recebe a taxa combinada se esperar dez anos, e qualquer mudança nos juros mexe mais no preço desse título do que no de um papel de dois anos. O risco extra é pago com uma taxa maior. Mas a curva pode se inverter, com o curto pagando mais que o longo. Acontece quando o Fed sobe muito os juros e o mercado aposta que ele vai ter de cortá-los adiante. Foi o caso de 2023.",
-        "A curva que o Tony mostra é a de meados de 2026, com a ponta curta um pouco abaixo de 4%. Desde então ela subiu inteira, e mais na ponta longa: o título de 10 anos foi de 4,44% no fim de junho para 5,31% em 5 de outubro.",
+        "Em meados de 2026, a curva subia com o prazo e a ponta curta estava um pouco abaixo de 4%. Desde então ela subiu inteira, e mais na ponta longa: o título de 10 anos foi de 4,44% no fim de junho para 5,31% em 5 de outubro.",
       ],
     },
     {
@@ -310,7 +315,7 @@ const secao: SecaoDaAula = {
       ],
       formato: { sufixo: "%", casas: 2 },
       fonte: "U.S. Department of the Treasury, Daily Treasury Par Yield Curve Rates",
-      nota: "Taxas de fechamento. Na aula, a curva é a de \"mais ou menos o meio deste ano\"; a de 30 de junho serve de referência. O eixo de prazos não é proporcional.",
+      nota: "Taxas de fechamento. A curva de 30 de junho representa o meio de 2026. O eixo de prazos não é proporcional.",
     },
 
     // ---- 5. Precificação sobre a Treasury ----------------------------------------------------------
@@ -325,7 +330,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       paragrafos: [
         "Qualquer título em dólar que não seja do Tesouro americano, de uma empresa, de um banco ou de outro país, paga a taxa da Treasury de prazo parecido e mais um prêmio. O prêmio existe porque o título tem algum risco que a Treasury não tem. É a mesma lógica do risco-país: um título do governo brasileiro em dólar rende a Treasury mais um prêmio, que o mercado acompanha pelo índice EMBI.",
-        "O Tony separa quatro fontes de prêmio. Crédito: a empresa pode não pagar, e o Tesouro, que emite a própria moeda, não corre esse risco. Prazo: quanto mais longo, mais o preço oscila, e isso já vem embutido na própria curva. Liquidez: um título corporativo pode levar dias para achar comprador, e quem o carrega quer ser pago por isso. E as opções embutidas, cláusulas que dão a alguém o direito de mudar as regras no meio do caminho.",
+        "O prêmio tem quatro fontes. Crédito: a empresa pode não pagar, e o Tesouro, que emite a própria moeda, não corre esse risco. Prazo: quanto mais longo, mais o preço oscila, e isso já vem embutido na própria curva. Liquidez: um título corporativo pode levar dias para achar comprador, e quem o carrega quer ser pago por isso. E as opções embutidas, cláusulas que dão a alguém o direito de mudar as regras no meio do caminho.",
       ],
     },
     {
@@ -355,8 +360,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "29:00",
       paragrafos: [
-        "Agora a escada do crédito, um aperitivo da próxima aula. No exemplo do Tony, a Treasury de 10 anos paga 4,55%. Um título investment grade, de empresa com boa nota de crédito, paga 0,8 ponto a mais, e a taxa passa de 5%. No high yield de nota BB, o prêmio vai a 1,9 ponto, acima de 6% no total. E nas notas de B a CCC, a 3,4 pontos, perto de 8%.",
-        "Um ajuste: na aula, o investment grade fica \"entre A e BBB\". Pela régua das agências, ele começa no AAA e termina no BBB-, o último degrau antes do high yield. O gráfico compara os prêmios do slide com os do mercado em 5 de outubro de 2026. Os degraus estão quase iguais. A diferença está no fundo da escada: o grupo CCC e abaixo, que na aula vem junto com o B, pagava sozinho 12 pontos acima da Treasury.",
+        "Agora a escada do crédito, que a próxima aula aprofunda. No exemplo da aula, a Treasury de 10 anos paga 4,55%. Um título investment grade, de empresa com boa nota de crédito, paga 0,8 ponto a mais, e a taxa passa de 5%. No high yield de nota BB, o prêmio vai a 1,9 ponto, acima de 6% no total. E nas notas de B a CCC, a 3,4 pontos, perto de 8%.",
+        "A régua das agências de rating vai do AAA, a nota máxima, ao BBB-, o último degrau do investment grade; abaixo dele começa o high yield. A maior parte do mercado de grau de investimento fica nas notas A e BBB, e é aí que o prêmio do exemplo se apoia. O gráfico compara os prêmios do exemplo com os do mercado em 5 de outubro de 2026. Os degraus estão quase iguais. O ponto de atenção é o fundo da escada: o exemplo junta B e CCC num degrau só, e o grupo CCC e abaixo, sozinho, pagava 12 pontos acima da Treasury. Um degrau só pode esconder riscos muito diferentes.",
       ],
     },
     {
@@ -372,13 +377,13 @@ const secao: SecaoDaAula = {
       formato: { sufixo: " p.p.", casas: 2 },
       fonte:
         "ICE BofA US Corporate, BB e Single-B Option-Adjusted Spreads (BAMLC0A0CM, BAMLH0A1HYBB e BAMLH0A2HYB), via FRED; slide da aula",
-      nota: "Prêmio ajustado pelas opções embutidas, medido contra a curva do Tesouro. Na aula, o último degrau junta B e CCC; o índice CCC e abaixo marcava 12,11 pontos em 5/out/2026.",
+      nota: "Prêmio ajustado pelas opções embutidas, medido contra a curva do Tesouro. No exemplo da aula, o último degrau junta B e CCC; o índice CCC e abaixo marcava 12,11 pontos em 5/out/2026.",
     },
     {
       tipo: "texto",
       tempo: "30:32",
       paragrafos: [
-        "O Tony também mostra como essas taxas andaram desde 2016. A Treasury de 10 anos rodava entre 2% e 3% antes da pandemia. Em 2020, com os cortes de juros, caiu para perto de 1%: a média mensal mais baixa foi de 0,62%, em julho, e no pior dia ficou perto de 0,5%. Quem estava comprado ganhou bastante. Com o surto de inflação da reabertura, a taxa voltou a 4% e, em setembro de 2026, teve média de 4,99%. É a linha de cima do gráfico do capítulo dos instrumentos.",
+        "Desde 2016, essas taxas fizeram um caminho de ida e volta. A Treasury de 10 anos rodava entre 2% e 3% antes da pandemia. Em 2020, com os cortes de juros, caiu para perto de 1%: a média mensal mais baixa foi de 0,62%, em julho, e no pior dia ficou perto de 0,5%. Quem estava comprado ganhou bastante. Com o surto de inflação da reabertura, a taxa voltou a 4% e, em setembro de 2026, teve média de 4,99%. É a linha de cima do gráfico do capítulo dos instrumentos.",
         "Os títulos corporativos seguiram o mesmo desenho, com uma diferença em 2022. Com inflação alta, Fed subindo juros e medo de recessão, o prêmio do high yield sobre a Treasury abriu bem mais do que nos anos anteriores. Recessão é justamente o cenário em que empresas frágeis deixam de pagar. É o assunto da aula 2.",
       ],
     },
@@ -394,9 +399,9 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "No slide da aula, o Tony desconta de cada taxa uma inflação americana de 3,5% ao ano, perto do que se via em 2026: o CPI subiu 3,4% nos 12 meses até agosto. Sobram 0,45% no T-Bill, 1,05% na Treasury de 10 anos, 1,85% no investment grade, 2,95% no high yield BB e 4,45% no grupo de B a CCC.",
-        "O último número sai truncado na fala, como \"4,05%\"; pela conta do próprio slide, 7,95% menos 3,5%, ele é 4,45%. E a subtração é uma aproximação. A conta exata divide uma taxa pela outra em vez de subtrair e dá um pouco menos: 4,55% nominais com 3,5% de inflação são 1,01% reais, não 1,05%.",
-        "Repare como sobra pouco no T-Bill. Não é coisa de 2026. De 1926 a 2012, os T-Bills renderam em média 3,55% ao ano, mas o ganho real médio foi de 0,52%. Seguro, em dólar, não quer dizer rico. E o raciocínio vale para os dois lados: se a inflação cair, quem travou as taxas de hoje ganha; se subir, perde.",
+        "O exemplo da aula desconta de cada taxa uma inflação americana de 3,5% ao ano, perto do que se via em 2026: o CPI subiu 3,4% nos 12 meses até agosto. Sobram 0,45% no T-Bill, 1,05% na Treasury de 10 anos, 1,85% no investment grade, 2,95% no high yield BB e 4,45% no grupo de B a CCC.",
+        "É a conta de bolso, por subtração, a hipótese do exemplo. A conta exata divide uma taxa pela outra e dá um pouco menos: 4,55% nominais com 3,5% de inflação são 1,01% reais, em vez de 1,05%. Com inflação nesse nível, a diferença é pequena e não muda a leitura da escada.",
+        "Repare como sobra pouco no T-Bill. Não é coisa de 2026. De 1926 a 2012, os T-Bills renderam em média 3,55% ao ano, mas o ganho real médio foi de 0,52%. Seguro, em dólar, não quer dizer rico: o T-Bill protege o caixa, mas não é ele que faz o patrimônio crescer. Por isso ele serve de taxa mínima, como mostra o próximo capítulo, e não de destino final. E o raciocínio vale para os dois lados: se a inflação cair, quem travou as taxas de hoje ganha; se subir, perde.",
       ],
     },
     {
@@ -407,18 +412,18 @@ const secao: SecaoDaAula = {
       eixoX: ["T-Bill", "Treasury 10 anos", "Investment grade", "High yield BB", "High yield B a CCC"],
       series: [
         { nome: "Taxa nominal", valores: [3.95, 4.55, 5.35, 6.45, 7.95] },
-        { nome: "Taxa real, pela subtração do slide", valores: [0.45, 1.05, 1.85, 2.95, 4.45], destaque: true },
+        { nome: "Taxa real (nominal menos 3,5%)", valores: [0.45, 1.05, 1.85, 2.95, 4.45], destaque: true },
       ],
       formato: { sufixo: "%", casas: 2 },
       ilustrativo: true,
       fonte: "Slide da aula; taxa nominal do T-Bill deduzida da real",
-      nota: "Corte de um momento de 2026, não média histórica. Na fala, a última taxa real aparece como 4,05%; pela conta do slide, é 4,45%.",
+      nota: "Corte de um momento de 2026, não média histórica. Taxa real pela subtração, como no exemplo da aula.",
     },
     {
       tipo: "texto",
       tempo: "42:17",
       paragrafos: [
-        "Para o investidor brasileiro, nada disso é novidade, como lembra o Tony. Juro real aqui é assunto de mesa de jantar. E juro real negativo também não é coisa só de país emergente: com o surto de inflação de 2021 e 2022, as taxas reais americanas ficaram abaixo de zero.",
+        "Para o investidor brasileiro, nada disso é novidade. Juro real aqui é assunto de mesa de jantar. E juro real negativo também não é coisa só de país emergente: com o surto de inflação de 2021 e 2022, as taxas reais americanas ficaram abaixo de zero.",
         "A diferença está no tamanho. O comparativo abaixo põe lado a lado os dois países no começo de outubro de 2026. Juro real maior aqui não é presente: é a remuneração por emprestar ao Brasil, em reais. A pergunta que importa não é qual paga mais, e sim em que moeda está o seu risco.",
       ],
     },
@@ -452,7 +457,7 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Para o Tony, a renda fixa em dólar é a âncora de qualquer carteira internacional, por três razões. A primeira é a taxa mínima, o que o mercado chama de hurdle rate. O T-Bill não tem risco de crédito, porque é o Tesouro americano, e quase não tem risco de prazo. Qualquer outro investimento em dólar, inclusive outros títulos do Tesouro, carrega mais risco e, por isso, precisa prometer mais.",
+        "A renda fixa em dólar é a âncora de qualquer carteira internacional, por três razões. A primeira é a taxa mínima, o que o mercado chama de hurdle rate. O T-Bill não tem risco de crédito, porque é o Tesouro americano, e quase não tem risco de prazo. Qualquer outro investimento em dólar, inclusive outros títulos do Tesouro, carrega mais risco e, por isso, precisa prometer mais.",
       ],
     },
     {
@@ -474,7 +479,7 @@ const secao: SecaoDaAula = {
       definicao:
         "Responde a uma pergunta: para cada unidade de risco que eu corro, quanto ganho a mais do que ganharia no ativo sem risco? Pegue o retorno esperado, tire a taxa do T-Bill e divida o que sobrar pela volatilidade, a medida de quanto o investimento oscila. Quanto maior o número, melhor a troca entre risco e retorno.",
       naPratica:
-        "No exemplo da aula, o T-Bill paga 3,9% e uma Treasury intermediária, 4,6%, com volatilidade de 6,5% ao ano. O ganho a mais é de 0,7 ponto; dividido por 6,5, dá um Sharpe de 0,11. Na bolsa americana, com retorno esperado de 8,5%, o ganho a mais é de 4,6 pontos e o Sharpe, 0,30. A régua só funciona dentro de uma moeda: Sharpe em dólar usa o T-Bill; em reais, o CDI.",
+        "No exemplo da aula, um exercício com números de mercado, o T-Bill paga 3,9% e uma Treasury intermediária, 4,6%, com volatilidade de 6,5% ao ano. O ganho a mais é de 0,7 ponto; dividido por 6,5, dá um Sharpe de 0,11. Na bolsa americana, com retorno esperado de 8,5%, o ganho a mais é de 4,6 pontos e o Sharpe, 0,30. A régua só funciona dentro de uma moeda: Sharpe em dólar usa o T-Bill; em reais, o CDI.",
       referencia: { autor: "Alexandre Assaf Neto", obra: "Mercado Financeiro", capitulo: "cap. 16, seções 16.7 a 16.10", ano: 2014 },
     },
     {
@@ -493,14 +498,14 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Dois detalhes do exemplo. Para a bolsa chegar a um Sharpe de 0,30 com 8,5% de retorno esperado, a volatilidade dela tem de ser de cerca de 15% ao ano. Na fala, aparece como \"quase o dobro\" da renda fixa; pela conta, é mais que o dobro dos 6,5% da Treasury. E o próprio Tony avisa que é um caso modelo. O que importa é o desenho: a carteira 40/20/40 tem Sharpe maior que qualquer peça sozinha e oscila menos que a bolsa. \"Você acaba dormindo mais tranquilamente à noite.\"",
+        "Nas hipóteses do exemplo, a bolsa oscila bem mais que a renda fixa: para um Sharpe de 0,30 com 8,5% de retorno esperado, a volatilidade dela fica perto de 15% ao ano, contra 6,5% da Treasury intermediária. É um caso modelo, não uma previsão. O que importa é o desenho: a carteira 40/20/40 tem Sharpe maior que qualquer peça sozinha e oscila menos que a bolsa. Em outras palavras, dá para dormir mais tranquilo à noite.",
       ],
     },
     {
       tipo: "texto",
       tempo: "36:10",
       paragrafos: [
-        "A terceira razão é que, em muitas crises, os títulos sobem quando as ações caem. Na crise, o mercado aposta que o Fed vai cortar juros, as taxas caem e o preço dos títulos, sobretudo os mais longos, sobe. Foi o que aconteceu em 2008. Mas não é lei. Em 2022, a crise era de inflação, o Fed subia juros, e títulos e ações caíram juntos. A proteção existe, mas depende de qual é a crise.",
+        "A terceira razão é que, em muitas crises, os títulos sobem quando as ações caem. Na crise, o mercado aposta que o Fed vai cortar juros, as taxas caem e o preço dos títulos, sobretudo os mais longos, sobe. Foi o que aconteceu em 2008. Mas não é lei. Em 2022, a crise era de inflação, o Fed subia juros, e títulos e ações caíram juntos. A proteção existe, mas depende de qual é a crise. Na prática, a Treasury protege melhor contra uma recessão do que contra um surto de inflação.",
       ],
     },
     {
@@ -597,7 +602,7 @@ const secao: SecaoDaAula = {
       tempo: "43:43",
       paragrafos: [
         "Isso não quer dizer fugir do prazo. O prazo paga prêmio, e quem estava comprado em títulos longos quando os juros despencaram em 2020 ganhou bastante. A pergunta, como em tudo, é se o prêmio oferecido naquele momento compensa o risco de preço que você vai carregar.",
-        "Para fechar, as mensagens da aula. A Treasury é a régua do mundo por causa do dólar, da liquidez, da regulação e da capacidade fiscal americana. Cada título do Tesouro resolve um problema. Todo título em dólar é a Treasury mais um prêmio que dá para decompor. O juro real importa lá como importa aqui. E o T-Bill é a taxa mínima de qualquer decisão em dólar. Na próxima aula, o Tony sobe um degrau na escada: o crédito das empresas americanas, onde o prêmio é maior e o risco também.",
+        "Para fechar, as ideias centrais. A Treasury é a régua do mundo por causa do dólar, da liquidez, da regulação e da capacidade fiscal americana. Cada título do Tesouro resolve um problema. Todo título em dólar é a Treasury mais um prêmio que dá para decompor. O juro real importa lá como importa aqui. E o T-Bill é a taxa mínima de qualquer decisão em dólar. A próxima aula sobe um degrau na escada: o crédito das empresas americanas, onde o prêmio é maior e o risco também.",
       ],
     },
     {

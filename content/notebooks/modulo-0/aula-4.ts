@@ -12,15 +12,16 @@ import type { SecaoDaAula } from "@/lib/notebook";
 // J.P. Morgan Asset Management (Guide to Retirement 2026; edição de 2025 e Guide to the Markets 3T/2022
 // em reproduções), SIFMA (Capital Markets Fact Book 2026), Tesouro Nacional, MSCI (factsheets de
 // 30/set/2026), BLS (Consumer Expenditure Survey 2022), IBGE (Projeções 2024) e Census Bureau (2023 e
-// Vintage 2025). Critério: quando a aula cita número diferente da fonte, o texto registra os dois, com
-// a razão provável da diferença (janela, edição, índice com ou sem dividendos), sem tom de errata. O que
-// não deu para conferir na fonte original está dito na nota do bloco. Itens do super dossiê usados:
+// Vintage 2025). Critério: quando a fala e a fonte trazem números diferentes, o texto apresenta os dois
+// como recortes diferentes (janela, edição do estudo, índice, data), nunca como correção. O que não deu
+// para conferir na fonte original está dito na nota do bloco. Itens do super dossiê usados:
 // BKM-043, BKM-074, BKM-057, BKM-064, BKM-045, BKM-029, AMC-065, AMF-053, BMA-020, BMA-021, VAL-016,
 // VAL-014, BKM-076, AMC-051, BKM-072 e BKM-075.
 //
 // TOM (07/out/2026, `docs/TOM-DO-NOTEBOOK.md`): texto reescrito em linguagem de curso, sem fórmulas
 // nos conceitos e sem citação acadêmica no corpo. As fontes ficam no `fonte`, na `nota` e nas
-// `referencias`.
+// `referencias`. VOZ (08/out/2026): institucional, o notebook como parte da aula, sem narrar o
+// professor; cada inserção técnica traz a frase que a liga ao ponto da aula.
 
 // Fim de cada ano, base dez/2009 = 100.
 const anosJanela = ["2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"];
@@ -50,9 +51,9 @@ const secao: SecaoDaAula = {
       capitular: true,
       paragrafos: [
         "Você decidiu ter uma parte do patrimônio em dólar. Fez as contas, entendeu o câmbio, o risco fiscal e a demografia, e está convencido. Aí chega a primeira semana em que tudo cai 15%. É nesse momento, e não na planilha, que a estratégia vive ou morre. Esse é o tema da aula que fecha o Módulo I, a segunda com Rodolfo Bastos.",
-        "Rodolfo parte de David Swensen, que cuidou do dinheiro da Universidade Yale por 36 anos. Swensen dizia que existem três jeitos de buscar resultado: decidir quanto pôr em cada tipo de investimento, acertar a hora de entrar e sair, e escolher a ação A ou o fundo B. O primeiro pesa muito mais que os outros dois. Na conta da aula, 80% do resultado de longo prazo vem do andamento natural dos mercados, e 20%, da hora certa e da escolha do papel.",
-        "Os estudos que deram fama a essa ideia vão até mais longe. Um levantamento clássico com 91 grandes fundos de pensão americanos concluiu que a divisão entre tipos de investimento explicava mais de 90% do sobe e desce de cada fundo ao longo do tempo. Pesquisas seguintes mostraram por quê: quem tenta acertar a hora ou o papel ganha às vezes e perde às vezes, e, depois dos custos, uma coisa tende a anular a outra. O 80/20 da aula é, portanto, uma conta conservadora.",
-        "Daí o conselho prático. Decidiu dolarizar, porque gasta em dólar, porque quer uma reserva em outra moeda ou porque pensa em morar fora? Então converta em janelas: divida o valor em 12 parcelas mensais (ou 5, ou 15) e converta uma por vez, sem tentar adivinhar o dia certo. Quanto dolarizar é decisão de cada um, e zero é uma resposta legítima, insiste Rodolfo. O que importa é decidir com calma, deixar por escrito e respeitar a decisão depois.",
+        "O ponto de partida é David Swensen, que cuidou do dinheiro da Universidade Yale por 36 anos. Swensen dizia que existem três jeitos de buscar resultado: decidir quanto pôr em cada tipo de investimento, acertar a hora de entrar e sair, e escolher a ação A ou o fundo B. O primeiro pesa muito mais que os outros dois. No longo prazo, que se mede em décadas, 80% do resultado vem do andamento natural dos mercados, e 20%, da hora certa e da escolha do papel.",
+        "Os estudos sobre o tema apontam na mesma direção. Um levantamento clássico com 91 grandes fundos de pensão americanos mediu outra coisa, o sobe e desce de cada fundo ao longo do tempo, e concluiu que a divisão entre tipos de investimento explicava mais de 90% dele. Pesquisas seguintes mostraram por quê: quem tenta acertar a hora ou o papel ganha às vezes e perde às vezes, e, depois dos custos, uma coisa tende a anular a outra. Na prática, a primeira decisão, quanto colocar em cada lugar, é a que mais merece o seu tempo.",
+        "Daí o conselho prático. Decidiu dolarizar, porque gasta em dólar, porque quer uma reserva em outra moeda ou porque pensa em morar fora? Então converta em janelas: divida o valor em 12 parcelas mensais (ou 5, ou 15) e converta uma por vez, sem tentar adivinhar o dia certo. Quanto dolarizar é decisão de cada um, e zero é uma resposta legítima. O que importa é decidir com calma, deixar por escrito e respeitar a decisão depois.",
       ],
     },
     {
@@ -103,10 +104,11 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "O J.P. Morgan publica todo ano um gráfico simples e assustador: quanto rende o dinheiro aplicado no S&P 500, o principal índice de ações americano, para quem ficou o tempo todo investido e para quem perdeu os 10, 20 ou 60 melhores dias. Na versão citada em aula, de 1995 a 2022, o índice rendeu perto de 8% ao ano, e quem perdeu os 40 melhores dias terminou perto de zero ou no negativo. Esses 8% não contam os dividendos; com eles reinvestidos, o retorno sobe para perto de 9,8% ao ano.",
+        "O J.P. Morgan publica todo ano um gráfico simples e assustador: quanto rende o dinheiro aplicado no S&P 500, o principal índice de ações americano, para quem ficou o tempo todo investido e para quem perdeu os 10, 20 ou 60 melhores dias. Na edição que cobre 27 anos, de 1995 a 2022, o índice rendeu perto de 8% ao ano, e quem perdeu os 40 melhores dias terminou perto de zero ou no negativo. Esses 8% medem só o preço; com os dividendos reinvestidos, ficam perto de 9,8% ao ano. A lição não muda: em 27 anos, 40 dias decidiram se o investidor ganhou ou não.",
         "Por que tão poucos dias pesam tanto? Porque os maiores dias de alta acontecem no meio das crises, e não depois que elas passam. Na edição de 2025 do gráfico, sete dos dez melhores dias dos 20 anos anteriores vieram até duas semanas depois de um dos dez piores. Em 2020, o segundo pior dia do ano, 12 de março, foi seguido no dia seguinte pelo segundo melhor. Quem vende para \"esperar passar\" quase sempre está fora quando a recuperação começa.",
-        "Rodolfo chama isso de queda forte. Não é a alta de 20% quando você esperava 30%. É a semana em que a carteira perde 10%, 15%, 20%, e o estômago decide no lugar da cabeça.",
-        "Ele compara com o tênis. Roger Federer venceu quase 80% das 1.526 partidas de simples que disputou, mas ganhou só 54% dos pontos, como contou num discurso de formatura em 2024 (na aula, Rodolfo fala em 43% ou 44% de pontos perdidos; foram 46%). Uma carreira vitoriosa feita de quase tantos pontos perdidos quanto ganhos é uma boa imagem para uma carteira de longo prazo.",
+        "A mesma lógica vale fora do mercado, e o tênis dá um bom exemplo. Roger Federer venceu quase 80% das 1.526 partidas de simples que disputou, mas ganhou só 54% dos pontos, como contou num discurso de formatura em 2024. Perdeu, portanto, quase metade dos pontos que jogou. Uma carreira vitoriosa feita de quase tantos pontos perdidos quanto ganhos é uma boa imagem para uma carteira de longo prazo: o que decide é continuar em quadra nos pontos ruins.",
+        "E o ponto ruim, no investimento, é a queda forte. Não é a alta de 20% quando você esperava 30%. É a semana em que a carteira perde 10%, 15%, 20%, e o estômago decide no lugar da cabeça.",
+        "É isso que explica o número a seguir. Em 20 anos, o investidor médio em fundos americanos ganhou 3,6% ao ano, menos que a bolsa, a renda fixa e até a carteira que mistura as duas. Não por ser americano, mas por ser humano: ele escolhe olhando para o passado e, quando a queda chega, decide com o pensamento rápido e emocional, o sistema 1 da aula anterior, e não com o analítico.",
       ],
     },
     {
@@ -121,7 +123,7 @@ const secao: SecaoDaAula = {
       ],
       fonte: "J.P. Morgan Asset Management, Guide to the Markets, 3T/2022, com dados da Dalbar Inc.",
       nota:
-        "Retornos médios por ano de 2002 a 2021, em dólar, conferidos em reproduções do gráfico. Fundos imobiliários americanos (11%) e ações emergentes (10%), citados em aula, estão no mesmo gráfico e não foram conferidos na edição original. Na carteira 60/40 do J.P. Morgan, 60% são ações; a aula descreve o inverso.",
+        "Retornos médios por ano de 2002 a 2021, em dólar, conferidos em reproduções do gráfico. O mesmo gráfico traz fundos imobiliários americanos (11%) e ações emergentes (10%), não conferidos na edição original. Na carteira 60/40 deste gráfico, 60% estão em ações e 40% em títulos.",
     },
     {
       tipo: "conceito",
@@ -129,14 +131,14 @@ const secao: SecaoDaAula = {
       definicao:
         "Imagine um fundo que rendeu 10% ao ano numa década. Esse é o retorno do fundo: o que ganhou quem entrou no primeiro dia e não mexeu mais. Agora pense no investidor que aplicou depois de um ano bom, quando o fundo estava na moda, e resgatou no meio de uma queda. O fundo rendeu 10%, mas ele ganhou bem menos. No mercado, o primeiro número se chama retorno ponderado pelo tempo; o segundo, retorno ponderado pelo dinheiro. A distância entre os dois é o custo do comportamento.",
       naPratica:
-        "É essa distância que o gráfico da Dalbar tenta medir, e o método tem críticos: ele trata todo aporte como se devesse ter sido feito no começo do período, o que pune quem simplesmente poupou aos poucos. Contas mais cuidadosas, como as da Morningstar, encontram uma diferença menor, de um a dois pontos por ano. A lição continua de pé: o retorno que importa é o da sua conta, em reais e com o câmbio do dia de cada aporte, e ele depende do seu comportamento.",
+        "É essa distância que explica os 3,6% do investidor médio. O tamanho dela depende do jeito de medir: a Dalbar, fonte do gráfico, compara o investidor com quem aplicou tudo no começo do período; a Morningstar, que acompanha o dinheiro aporte a aporte, encontra uma diferença de um a dois pontos por ano. Nas duas contas, o investidor fica atrás do próprio fundo. Para você, o retorno que importa é o da sua conta, em reais e com o câmbio do dia de cada aporte, e ele depende do seu comportamento.",
       referencia: { autor: "Zvi Bodie, Alex Kane e Alan J. Marcus", obra: "Investments", capitulo: "cap. 24, retornos ponderados pelo tempo e pelo dinheiro", ano: 2014 },
     },
     {
       tipo: "destaque",
       tempo: "5:15",
       texto: "O segredo não é o market timing, é o time in the market.",
-      fonte: "Frase lembrada por Rodolfo Bastos na aula",
+      fonte: "Máxima do mercado, citada por Rodolfo Bastos",
     },
     {
       tipo: "grafico",
@@ -150,13 +152,13 @@ const secao: SecaoDaAula = {
       referencia: { valor: 10000, rotulo: "Valor aplicado" },
       fonte: "J.P. Morgan Asset Management, Guide to Retirement 2026, \"Impact of being out of the market\" (dados até 31/dez/2025)",
       nota:
-        "S&P 500 com dividendos reinvestidos, sem custos. Retorno por ano em cada caso: 11,0%, 6,6%, 3,8%, 1,6%, −0,3%, −1,9% e −3,4%. A aula usa a edição anterior, de 2005 a 2024: US$ 71.750 para quem ficou investido e US$ 32.871 sem os 10 melhores dias.",
+        "S&P 500 com dividendos reinvestidos, sem custos. Retorno por ano em cada caso: 11,0%, 6,6%, 3,8%, 1,6%, −0,3%, −1,9% e −3,4%. A edição anterior, de 2005 a 2024, trazia US$ 71.750 para quem ficou investido e US$ 32.871 sem os 10 melhores dias.",
     },
     {
       tipo: "texto",
       paragrafos: [
-        "Os números da aula, US$ 10 mil virando US$ 70 mil, US$ 32 mil sem os 10 melhores dias e US$ 12 mil sem os 30, vêm da edição de 2025 desse gráfico. Ela cobre 20 anos, de 2005 a 2024, e cerca de 5.000 pregões (na fala, 25 anos e 6.300 dias). Ou seja: 10 dias são 0,2% do período, e 30 dias, 0,6%. Perder esses 30 dias deixava perto de US$ 13 mil no fim, cerca de 82% a menos do que quem ficou. Na edição de 2026, no gráfico acima, as proporções se repetem.",
-        "Agora, uma ressalva honesta. Ficar investido não elimina o risco, e o tempo não faz ele sumir. Num prazo longo, fica menos provável que a bolsa perca da renda fixa, mas o tamanho do estrago nos piores cenários cresce. Por isso o argumento da aula é de alocação, e não de aposta: a fatia em dólar ou em bolsa deve ser aquela que você consegue carregar na pior semana, porque é nela que a decisão é testada.",
+        "Os números variam pouco de uma edição do estudo para outra, e a proporção não muda. Numa janela de duas décadas e pouco, US$ 10 mil viraram cerca de US$ 70 mil para quem ficou o tempo todo investido. Quem perdeu só os 10 melhores dias terminou com cerca de US$ 32 mil, menos da metade. Sem os 30 melhores, sobravam entre US$ 12 mil e US$ 13 mil, mais de 80% a menos. Conforme a janela, 10 dias são entre 0,15% e 0,2% dos pregões; 30 dias, entre 0,5% e 0,6%. Na edição de 2026, no gráfico acima, as proporções se repetem.",
+        "Uma ressalva completa o raciocínio. Ficar investido não elimina o risco, e o tempo não faz ele sumir. Num prazo longo, fica menos provável que a bolsa perca da renda fixa, mas o tamanho do estrago nos piores cenários cresce. Por isso o argumento é de alocação, e não de aposta: a fatia em dólar ou em bolsa deve ser aquela que você consegue carregar na pior semana, porque é nela que a decisão é testada.",
       ],
     },
 
@@ -171,9 +173,9 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Rodolfo quer tirar a conversa dos juros, 15% aqui contra 3% ou 4% lá, e levar para o tamanho. As empresas listadas nos Estados Unidos valiam US$ 68,9 trilhões no fim de 2025, 43,7% do valor de todas as bolsas do mundo. As da B3 somavam R$ 4,7 trilhões, perto de US$ 0,85 trilhão. É uma proporção de mais de 80 para 1. Na aula, Rodolfo fala em 35 vezes, com números de outra data; pelos dados mais recentes, a diferença é ainda maior. A Nvidia sozinha, com mais de US$ 5 trilhões, vale mais que a bolsa brasileira inteira.",
-        "Na renda fixa, a lógica é a mesma. A aula soma US$ 14 trilhões em títulos de empresas e US$ 34 trilhões em títulos de governo, o que dá 48 trilhões (ele arredonda para 50), contra US$ 2,4 trilhões no Brasil. Pelos dados da SIFMA, a associação dos bancos e corretoras americanos, havia US$ 61,2 trilhões em títulos americanos em circulação em 2025. Só a dívida do governo federal brasileiro era de R$ 8,6 trilhões, cerca de US$ 1,6 trilhão; somando os títulos de empresas, chega-se perto do número da aula.",
-        "E Rodolfo insiste: tamanho não é qualidade. Um mercado maior oferece mais empresas, mais prazos, mais setores e mais liquidez, que é a chance de vender rápido sem derrubar o preço. Ele fala em liquidez 46 vezes maior nos Estados Unidos, número que depende do critério e que não conseguimos reproduzir, mas a direção não está em dúvida. A conclusão é que os dois mercados se completam. Um não substitui o outro.",
+        "A comparação entre os dois mercados costuma ficar presa aos juros, 15% aqui contra 3% ou 4% lá. O que muda a decisão é o tamanho. Na bolsa, a distância vai de cerca de 35 vezes a mais de 80 vezes, conforme a base e a data da medida. Pelos dados do fim de 2025, as empresas listadas nos Estados Unidos valiam US$ 68,9 trilhões, 43,7% do valor de todas as bolsas do mundo, e as da B3 somavam R$ 4,7 trilhões, perto de US$ 0,85 trilhão. Algumas empresas americanas, sozinhas, valem mais que a bolsa brasileira inteira: a Nvidia passou de US$ 5 trilhões.",
+        "Na renda fixa, a lógica é a mesma. Só em títulos de empresas e de governo, são cerca de US$ 14 trilhões e US$ 34 trilhões, perto de US$ 50 trilhões, contra US$ 2,4 trilhões no Brasil: um mercado cerca de 20 vezes maior. Na conta mais ampla da SIFMA, a associação dos bancos e corretoras americanos, que inclui outros tipos de título, eram US$ 61,2 trilhões em circulação em 2025. Do lado brasileiro, só a dívida do governo federal soma R$ 8,6 trilhões, cerca de US$ 1,6 trilhão; com os títulos de empresas, chega-se à casa dos US$ 2,4 trilhões.",
+        "Tamanho, porém, não é qualidade. Um mercado maior oferece mais empresas, mais prazos, mais setores e mais liquidez, que é a chance de vender rápido sem derrubar o preço. Nos Estados Unidos, a liquidez é dezenas de vezes a brasileira; a estimativa de 46 vezes varia conforme o critério de medida, mas a direção é clara. A conclusão é que os dois mercados se completam. Um não substitui o outro.",
       ],
     },
     {
@@ -201,7 +203,7 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Aqui vem a provocação mais original da aula, e ela é sobre uma palavra. O brasileiro chama de renda fixa aquela aplicação atrelada ao CDI que rende um pouquinho todo mês. Rodolfo propõe outra definição: renda fixa é dinheiro que cai na sua conta em datas e valores combinados.",
+        "Aqui vem a provocação mais original do módulo, e ela é sobre uma palavra. O brasileiro chama de renda fixa aquela aplicação atrelada ao CDI que rende um pouquinho todo mês. A proposta é outra definição: renda fixa é dinheiro que cai na sua conta em datas e valores combinados.",
         "Pense num imóvel alugado para um inquilino que nunca atrasa. Aquele aluguel é renda fixa. O cupom semestral de um título prefixado ou de uma NTN-B, o título do Tesouro atrelado à inflação, também. Já o CDI mede um rendimento estável em reais, e não um fluxo de dinheiro, nem quanto você consegue comprar em dólar.",
         "E a ideia vai além. Uma ação americana que aumenta o dividendo há décadas pode cumprir o mesmo papel: se o dividendo paga a escola dos filhos, o aluguel ou o padrão de vida, ela funciona como renda fixa, mesmo que o preço dela suba e desça.",
       ],
@@ -213,7 +215,7 @@ const secao: SecaoDaAula = {
       definicao:
         "Pense num título que você compra por R$ 1.000, que paga R$ 50 a cada seis meses e devolve os R$ 1.000 no vencimento. Esses R$ 50 são o cupom. O que está combinado é o fluxo, não o preço. Se os juros do mercado caem, o título fica mais atraente e passa a valer mais que R$ 1.000; se os juros sobem, passa a valer menos. Esse sobe e desce do preço no caminho é o que se chama de marcação a mercado.",
       naPratica:
-        "É o sentido de renda fixa da aula. Quem leva uma NTN-B com cupom ou um título do Tesouro americano até o vencimento recebe exatamente o combinado; quem vende no meio do caminho recebe o preço do dia. Se você vai precisar do dinheiro numa data, faz sentido ter um título que vença perto dela.",
+        "É esse o sentido de renda fixa proposto aqui. Quem leva uma NTN-B com cupom ou um título do Tesouro americano até o vencimento recebe exatamente o combinado; quem vende no meio do caminho recebe o preço do dia. Se você vai precisar do dinheiro numa data, faz sentido ter um título que vença perto dela.",
       referencia: { autor: "Alexandre Assaf Neto", obra: "Matemática Financeira e suas Aplicações", capitulo: "cap. 11, seções 11.3.3 e 11.3.4", ano: 2012 },
     },
     {
@@ -222,8 +224,8 @@ const secao: SecaoDaAula = {
       titulo: "Reis, aristocratas e um banco que cortou o dividendo",
       colunas: ["Caso", "Critério ou fato", "Situação"],
       linhas: [
-        ["Dividend Aristocrats", "Empresas do S&P 500 que aumentam o dividendo há pelo menos 25 anos seguidos; têm índice oficial, revisto todo ano", "69 empresas em 2025, o número da aula"],
-        ["Dividend Kings", "50 anos ou mais de aumentos seguidos; apelido do mercado, sem índice oficial", "Cerca de 55 em listas independentes (a aula fala em mais de 54)"],
+        ["Dividend Aristocrats", "Empresas do S&P 500 que aumentam o dividendo há pelo menos 25 anos seguidos; têm índice oficial, revisto todo ano", "69 empresas em 2025"],
+        ["Dividend Kings", "50 anos ou mais de aumentos seguidos; apelido do mercado, sem índice oficial", "Mais de 54, cerca de 55 em listas independentes"],
         ["Procter & Gamble", "Aumentou o dividendo pela 70ª vez seguida em abril de 2026; paga dividendos há 136 anos", "King (69 anos na época da gravação)"],
         ["JPMorgan Chase", "Cortou o dividendo trimestral de US$ 0,38 para US$ 0,05 por ação em fevereiro de 2009, para reforçar o caixa na crise", "Fora das duas listas; voltou a aumentar o dividendo a partir de 2011"],
       ],
@@ -234,8 +236,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "12:50",
       paragrafos: [
-        "O exemplo do JPMorgan pede cuidado. Na aula, Rodolfo diz que a ação era King até 2008 e perdeu o título naquele ano, mas manteve os pagamentos. Os registros contam outra história: o banco nunca chegou a 50 anos de aumentos seguidos e, em fevereiro de 2009, cortou o dividendo de US$ 0,38 para US$ 0,05 por ação a cada trimestre, para guardar capital no auge da crise. Quem vivia daquele dividendo viu a renda cair a perto de um oitavo de um trimestre para o outro.",
-        "É aí que o dividendo se separa do cupom. Deixar de pagar o cupom de um título é calote. Já o dividendo é uma decisão do conselho da empresa, que pode reduzi-lo quando o lucro some ou o caixa aperta.",
+        "O JPMorgan mostra as duas faces dessa renda. O banco paga dividendo aos acionistas há décadas, em datas conhecidas, e quem compra a ação na bolsa recebe esses pagamentos. Se o valor sustenta a escola dos filhos, o aluguel ou o padrão de vida, a ação faz o papel de renda fixa, mesmo com o preço oscilando. Mas a crise de 2008 interrompeu a sequência de aumentos: em fevereiro de 2009, o banco reduziu o dividendo de US$ 0,38 para US$ 0,05 por ação a cada trimestre, para guardar capital no auge da crise. Quem vivia daquele dividendo viu a renda cair a perto de um oitavo de um trimestre para o outro.",
+        "É aí que o dividendo se separa do cupom. Deixar de pagar o cupom de um título é calote. Já o dividendo é uma decisão do conselho da empresa, que pode reduzi-lo quando o lucro some ou o caixa aperta, mesmo depois de décadas de pagamentos. A P&G, com 70 aumentos seguidos, e o JPMorgan, com o corte de 2009, contam juntos a história completa: o dividendo pode funcionar como renda fixa, mas não é contrato.",
         "Mais dois detalhes. O dividendo americano pago a quem mora no Brasil tem imposto retido nos Estados Unidos, tema do Módulo III. E uma carteira de boas pagadoras pode, sim, servir de fonte de renda, desde que tenha empresas suficientes para aguentar o corte de uma delas.",
       ],
     },
@@ -260,10 +262,10 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Olhe o que existe dentro de cada bolsa. Pelos números de Rodolfo, em 1990 o S&P 500 tinha 9% em tecnologia e 6% em commodities, e hoje tem 31% em tecnologia. O Ibovespa foi de 24% para 42% em commodities, com tecnologia parada em 4%. Os números de 1990 são difíceis de conferir, porque a classificação de setores usada hoje só foi criada em 1999. O retrato atual, porém, confirma o argumento: no fim de setembro de 2026, tecnologia era 39,5% do índice MSCI das ações americanas e zero no das brasileiras, onde energia e materiais somavam 31,5%, e bancos e financeiras, 39,1%.",
-        "\"Então a bolsa brasileira é antiquada?\", pergunta Rodolfo. Não. A bolsa reflete a economia. O Brasil é o maior exportador de soja e de café do mundo, o segundo produtor de minério de ferro, atrás da Austrália, e um dos grandes produtores de petróleo. Há boas oportunidades nesses setores. Mas comprar Ibovespa não dá exposição a inteligência artificial, semicondutores, software ou à maior parte da saúde.",
-        "Ele dá um exemplo fora do óbvio: os self storages americanos, depósitos alugados por quem se mudou para um apartamento menor e não tem onde guardar a prancha de surfe ou o taco de golfe. Lá, várias empresas desse negócio têm ações na bolsa. Mercado maior também significa nichos que nem existem na bolsa daqui.",
-        "Uma ressalva completa o quadro e reforça o eixo do curso. A bolsa americana também é concentrada: as dez maiores empresas eram 38% do índice em setembro de 2026, quase todas de tecnologia. Em março de 2000, 87% do Nasdaq 100 estava em tecnologia e comunicações, e o índice caiu 64% nos 21 meses seguintes. Trocar uma concentração por outra não é diversificar. O ganho está em combinar as duas.",
+        "Olhe o que existe dentro de cada bolsa, e como isso mudou. Em 1990, o S&P 500 tinha 9% em tecnologia e 6% em commodities; em 2025, a tecnologia já pesava 31%, com Apple, Amazon, Google e, agora, a inteligência artificial. O Ibovespa fez o caminho oposto: as commodities foram de 24% para 42%, e a tecnologia ficou parada em 4%. Os índices da MSCI, que usam a classificação de setores padrão do mercado, mostram a mesma divisão, ainda mais nítida: no fim de setembro de 2026, tecnologia era 39,5% das ações americanas e zero das brasileiras, onde energia e materiais somavam 31,5%, e bancos e financeiras, 39,1%.",
+        "\"Então a bolsa brasileira é antiquada?\" Não. A bolsa reflete a economia. O Brasil é o maior exportador de soja e de café do mundo, o segundo produtor de minério de ferro, atrás da Austrália, e um dos grandes produtores de petróleo. Há boas oportunidades nesses setores. Mas comprar Ibovespa não dá exposição a inteligência artificial, semicondutores, software ou à maior parte da saúde.",
+        "Um exemplo fora do óbvio: os self storages americanos, depósitos alugados por quem se mudou para um apartamento menor e não tem onde guardar a prancha de surfe ou o taco de golfe. Lá, várias empresas desse negócio têm ações na bolsa. Mercado maior também significa nichos que nem existem na bolsa daqui.",
+        "Uma ressalva completa o quadro e reforça o eixo do curso, que é a concentração de risco. A bolsa americana também é concentrada: as dez maiores empresas eram 38% do índice em setembro de 2026, quase todas de tecnologia. Já houve um momento parecido, e ele mostra o custo: em março de 2000, 87% do Nasdaq 100 estava em tecnologia e comunicações, e o índice caiu 64% nos 21 meses seguintes. Trocar uma concentração por outra não é diversificar. O ganho está em combinar as duas.",
       ],
     },
     {
@@ -280,7 +282,7 @@ const secao: SecaoDaAula = {
       formato: { sufixo: "%", casas: 1 },
       fonte: "MSCI, factsheets MSCI Brazil e MSCI USA (USD), 30/set/2026",
       nota:
-        "Setores pela classificação GICS, o padrão do mercado. Energia e materiais somados: 18,42% e 13,12% no Brasil; 3,48% e 1,73% nos EUA. Ficaram de fora industriais, consumo, comunicação e imobiliário. Os números da aula para 1990 não têm série pública comparável.",
+        "Setores pela classificação GICS, o padrão do mercado. Energia e materiais somados: 18,42% e 13,12% no Brasil; 3,48% e 1,73% nos EUA. Ficaram de fora industriais, consumo, comunicação e imobiliário. A classificação GICS foi criada em 1999; para 1990, não há série pública no mesmo padrão.",
     },
 
     // ---- 6. quem vai consumir o quê ------------------------------------------------------------------
@@ -294,9 +296,9 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Agora a pergunta olha para a frente: quais setores ganham conforme a população envelhece? Pense na sua própria vida. Aos 20, o dinheiro vai para estudo e transporte. Dos 30 aos 60, para casa, carro, viagens e consumo em geral. Depois dos 65, saúde, remédios, plano de saúde e bem-estar ganham peso. Nos Estados Unidos, as famílias chefiadas por alguém com menos de 25 anos gastam 2,9% do orçamento com saúde; acima dos 65, 13%.",
-        "O curso já tratou da demografia na aula de Felippe Hermes, pelo lado das contas públicas. Aqui o ângulo é o consumo. Pelas projeções do IBGE, a população brasileira, de 214,2 milhões em 2026, para de crescer em 2041 e cai para 199,2 milhões em 2070, quando 37,8% dos brasileiros terão 60 anos ou mais. A aula usa o corte de 65 anos: 11% hoje e 31% em 2070.",
-        "Os Estados Unidos também envelhecem, mas a população continua crescendo, e o motivo é a imigração. São 341,8 milhões de habitantes, e a fatia com 65 anos ou mais deve passar de 17% em 2022 para 23% em 2050 (a aula fala em 26%, num horizonte mais longo). A imigração decide o resto: em 2100, a população seria de 319 milhões com pouca imigração e de 435 milhões com muita. O Brasil, lembra Rodolfo, exporta gente; os Estados Unidos importam, e junto vêm consumidores entre 30 e 60 anos.",
+        "Agora a pergunta olha para a frente: quais setores ganham conforme a população envelhece? Pense na sua própria vida. Aos 20, o dinheiro vai para estudo e transporte. Dos 30 aos 60, para casa, carro, viagens e consumo em geral. Depois dos 65, saúde, remédios, plano de saúde e bem-estar ganham peso. É um padrão global, e os dados de consumo americanos mostram o tamanho dele: as famílias chefiadas por alguém com menos de 25 anos gastam 2,9% do orçamento com saúde; acima dos 65, 13%.",
+        "A demografia já apareceu na Aula 1, pelo lado das contas públicas. Aqui o ângulo é o consumo. Pelas projeções do IBGE, a população brasileira, de 214,2 milhões em 2026, para de crescer em 2041 e cai para 199,2 milhões em 2070. Os brasileiros com 65 anos ou mais, cerca de 11% hoje, podem chegar a 31%; contando a partir dos 60, serão 37,8%, quase quatro em cada dez.",
+        "Os Estados Unidos também envelhecem, mas menos, e a população continua crescendo. São 341,8 milhões de habitantes, e a fatia com 65 anos ou mais deve passar de 17% em 2022 para 23% em 2050 e chegar perto de 26% num horizonte mais longo, abaixo dos 31% do Brasil. A diferença parece pequena, mas, numa população desse tamanho, cada ponto percentual são mais de 3 milhões de pessoas. O que segura o envelhecimento é a imigração, e ela também decide o tamanho futuro do país: em 2100, a população seria de 319 milhões com pouca imigração e de 435 milhões com muita. O Brasil hoje exporta gente; os Estados Unidos importam, e junto vêm consumidores entre 30 e 60 anos.",
         "Não é questão de melhor ou pior. É saber em que mercado estarão as empresas de saúde, consumo e educação que vão atender essas pessoas nos próximos 30 ou 40 anos, que é o horizonte de quem tem 30 anos hoje.",
       ],
     },
@@ -329,7 +331,7 @@ const secao: SecaoDaAula = {
       ],
       fonte: "IBGE, Projeções da População, revisão 2024, e Estimativas da População 2026; U.S. Census Bureau, 2023 National Population Projections e Vintage 2025",
       nota:
-        "Os dois institutos destacam cortes de idade diferentes, então as linhas de idosos não se comparam diretamente. A aula cita 65 anos ou mais: de 11% para 31% no Brasil e de 17% para 26% nos EUA.",
+        "Os dois institutos destacam cortes de idade diferentes, então as linhas de idosos não se comparam diretamente. No corte de 65 anos ou mais, usado para comparar os dois países, a fatia vai de 11% para 31% no Brasil e de 17% para 26% nos EUA.",
     },
 
     // ---- 7. uma janela favorável --------------------------------------------------------------------
@@ -344,9 +346,9 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "23:18",
       paragrafos: [
-        "Para fechar, Rodolfo faz um comparativo de 16 anos, de janeiro de 2010 a dezembro de 2025, e os números dele batem com as fontes. O IHFA, índice dos fundos multimercados, acumulou 388%, ou 10,4% ao ano. O CDI acumulou 340%, 9,7% ao ano. O Ibovespa subiu 135%, cerca de 5,5% ao ano. Uma carteira americana com 60% em títulos do Tesouro e 40% no S&P 500 rendeu cerca de 204% em dólar, 7,2% ao ano (na aula, 213% e 7,4%, com outro índice de renda fixa).",
-        "Só que essa última está em dólar, e as outras, em reais. Para comparar, é preciso trazer a carteira americana para reais. No período, o dólar foi de R$ 1,74 para R$ 5,50, uma alta de 7,5% ao ano. O ganho em reais é o ganho em dólar somado à alta do dólar, e mais um pouquinho, porque um rende sobre o outro. Resultado: cerca de 15,2% ao ano e 861% no acumulado (a aula fala em 15,4% e 890%).",
-        "Rodolfo faz questão de desmontar a conclusão apressada. A janela foi favorável: começa com o dólar a R$ 1,74, perto das mínimas daquela década, e termina depois de quinze anos de real perdendo valor. Cerca de metade do ganho anual em reais veio do câmbio. Em outras janelas, a conta muda. Quem converteu no fim de 2024, com o dólar acima de R$ 6, chegou ao fim de 2025 praticamente no zero a zero em reais, porque o dólar caiu cerca de 11% e comeu o rendimento.",
+        "Para fechar, um comparativo de 16 anos, de janeiro de 2010 a dezembro de 2025. O IHFA, índice dos fundos multimercados, acumulou 388%, ou 10,4% ao ano. O CDI acumulou 340%, 9,7% ao ano. O Ibovespa subiu 135%, cerca de 5,5% ao ano. Uma carteira americana com 60% em renda fixa e 40% no S&P 500 rendeu entre 204% e 213% em dólar, de 7,2% a 7,4% ao ano, conforme o índice de renda fixa usado.",
+        "Só que essa última está em dólar, e as outras, em reais. Para comparar, é preciso trazer a carteira americana para reais. No período, o dólar foi de R$ 1,74 para R$ 5,50, uma alta de 7,5% ao ano. O ganho em reais é o ganho em dólar somado à alta do dólar, e mais um pouquinho, porque um rende sobre o outro. Resultado: cerca de 15% ao ano, entre 861% e 890% no acumulado, conforme o mesmo índice de renda fixa.",
+        "Isso não quer dizer que investir lá fora seja a melhor estratégia possível. A janela foi favorável: começa com o dólar a R$ 1,74, perto das mínimas daquela década, e termina depois de quinze anos de real perdendo valor. Cerca de metade do ganho anual em reais veio do câmbio. Em outras janelas, a conta muda. Quem converteu no fim de 2024, com o dólar acima de R$ 6, terminou 2025 no vermelho em reais, ainda que por pouco, porque o dólar caiu cerca de 11% e comeu o rendimento.",
         "Nem sempre o exterior vai ganhar. O argumento é outro: espalhar o dinheiro entre moedas e mercados diminui a dependência de uma única economia, e isso continua valendo nos anos em que o Brasil vai melhor.",
       ],
     },
@@ -368,13 +370,13 @@ const secao: SecaoDaAula = {
       fonte:
         "Banco Central do Brasil, SGS 4391 (CDI) e SGS 3696 (PTAX de fim de mês); ANBIMA, IHFA, e B3, Ibovespa, retornos anuais via Mais Retorno; Aswath Damodaran, Historical Returns on Stocks, Bonds and Bills (jan/2026)",
       nota:
-        "Carteira 60/40 como descrita na aula: 60% em títulos de 10 anos do Tesouro americano e 40% no S&P 500 com dividendos, rebalanceada uma vez por ano, sem custos nem impostos. Em dólar, a mesma carteira chega a 304.",
+        "Carteira 60/40 do comparativo: 60% em títulos de 10 anos do Tesouro americano e 40% no S&P 500 com dividendos, rebalanceada uma vez por ano, sem custos nem impostos. Em dólar, a mesma carteira chega a 304.",
     },
     {
       tipo: "tabela",
       tempo: "24:30",
-      titulo: "Os números da aula e a conta conferida, de jan/2010 a dez/2025",
-      colunas: ["Índice", "Na aula", "Conferido, acumulado", "Conferido, ao ano"],
+      titulo: "O comparativo de jan/2010 a dez/2025, em duas contas",
+      colunas: ["Índice", "Valores apresentados", "Pelas séries oficiais, acumulado", "Pelas séries oficiais, ao ano"],
       linhas: [
         ["IHFA (multimercados)", "388%, cerca de 10% a.a.", "388%", "10,4%"],
         ["CDI", "340%, 9,7% a.a.", "340%", "9,7%"],
@@ -384,7 +386,7 @@ const secao: SecaoDaAula = {
         ["Carteira 60/40 em reais", "890%, 15,4% a.a.", "861%", "15,2%"],
       ],
       fonte: "Mesmas fontes do gráfico acima",
-      nota: "A diferença na carteira americana vem do índice de renda fixa: a conferência usa o título de 10 anos do Tesouro americano, da série de Damodaran; a aula não diz qual índice usou.",
+      nota: "Na carteira americana, o resultado depende do índice de renda fixa escolhido. As colunas da direita usam o título de 10 anos do Tesouro americano, da série de Damodaran, e por isso ficam um pouco abaixo dos valores apresentados.",
     },
     {
       tipo: "simulador",
@@ -417,8 +419,8 @@ const secao: SecaoDaAula = {
           {
             texto: "Reserva de emergência, obra, chamada de capital: dinheiro à mão, em reais.",
             explicacao:
-              "A aula é clara: dinheiro que vai ser usado logo não deve ficar exposto ao sobe e desce do dólar e da bolsa americana. Nesse prazo, oscilação é risco, e não diversificação.",
-            marca: "Fora, segundo a aula",
+              "Dinheiro que vai ser usado logo não deve ficar exposto ao sobe e desce do dólar e da bolsa americana. Nesse prazo, oscilação é risco, e não diversificação.",
+            marca: "Não é para dolarizar",
           },
           {
             texto: "Viagem, curso ou compromisso em dólar com data marcada.",
@@ -445,8 +447,8 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "A última recomendação é sobre o destino do dinheiro. Para uma obra, uma chamada de capital ou emergências do dia a dia, Rodolfo não recomenda o exterior: tanto a renda fixa quanto as ações americanas oscilam, e o dólar oscila junto. Dolarizar faz sentido para a parte do patrimônio que pode atravessar anos de sobe e desce sem ser vendida. Retorno e risco importam, mas são o prazo e a necessidade de ter o dinheiro à mão que decidem o que fica em cada lugar.",
-        "O Módulo I termina onde começou, na concentração de risco, agora vista por dentro. A planilha mostra que o mercado americano é maior, mais líquido e mais variado. O comportamento decide se você vai estar lá quando os melhores dias chegarem. Rodolfo chama de inteligência emocional a capacidade de sustentar, nas semanas ruins, uma decisão tomada com calma, e diz que ela é tão importante quanto a análise que veio antes.",
+        "A última recomendação é sobre o destino do dinheiro. Para uma obra, uma chamada de capital ou emergências do dia a dia, o exterior não é o lugar: tanto a renda fixa quanto as ações americanas oscilam, e o dólar oscila junto. Dolarizar faz sentido para a parte do patrimônio que pode atravessar anos de sobe e desce sem ser vendida. Retorno e risco importam, mas são o prazo e a necessidade de ter o dinheiro à mão que decidem o que fica em cada lugar.",
+        "O Módulo I termina onde começou, na concentração de risco, agora vista por dentro. A planilha mostra que o mercado americano é maior, mais líquido e mais variado. O comportamento decide se você vai estar lá quando os melhores dias chegarem. A inteligência emocional, a capacidade de sustentar nas semanas ruins uma decisão tomada com calma, é tão importante quanto a análise que veio antes.",
       ],
     },
     {
@@ -497,7 +499,7 @@ const secao: SecaoDaAula = {
           autor: "J.P. Morgan Asset Management",
           titulo: "Guide to Retirement",
           ano: 2026,
-          nota: "Gráfico \"Impact of being out of the market\", com dados até dez/2025. A edição de 2025 traz os números citados em aula.",
+          nota: "Gráfico \"Impact of being out of the market\", com dados até dez/2025. A edição de 2025 traz a janela de 2005 a 2024.",
         },
       ],
     },

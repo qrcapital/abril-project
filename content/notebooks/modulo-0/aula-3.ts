@@ -7,7 +7,8 @@ import type { SecaoDaAula } from "@/lib/notebook";
 // "Aula 3" do RANKING-POR-AULA.md). Segue a ordem da fala: o mapa do módulo e a apresentação, o
 // tamanho do Brasil no mundo, a crise como regra, Kahneman e os vieses, o home bias, dólar mais
 // S&P contra o CDI, risco de crédito e de mercado, e a carteira 60/40 de 2008 a 2012.
-// Tom reescrito em 07/out/2026 conforme docs/TOM-DO-NOTEBOOK.md (conversa, sem fórmulas no corpo).
+// Tom reescrito em 07/out/2026 conforme docs/TOM-DO-NOTEBOOK.md (conversa, sem fórmulas no corpo) e
+// revisto em 08/out/2026 para a voz institucional: o texto é parte da aula, não narração dela.
 //
 // NÚMEROS CONFERIDOS EM 07/OUT/2026 nas fontes primárias citadas em cada bloco: BCB SGS 3696 (dólar
 // de fim de mês) e 4391 (CDI mensal), retornos anuais do S&P 500 e do Treasury de 10 anos de Aswath
@@ -58,16 +59,16 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       capitular: true,
       paragrafos: [
-        "Rodolfo Bastos se apresenta pela família, antes do currículo, e isso já diz muito sobre a aula. Depois vêm mais de 25 anos sentado diante de investidores: começou na Gap, gestora do Rio de Janeiro, foi para a XP, onde ajudou a montar o Private e comandou a operação nos Estados Unidos, a partir de Miami, e hoje toca a Oyster, que forma profissionais de investimento.",
-        "Nas duas primeiras aulas, Felippe Hermes falou do país: moeda, dívida, juro. Rodolfo fala de você, o investidor. E a pergunta dele é incômoda: se o mundo está cada vez mais global, por que você deixa quase todo o seu dinheiro num país só? A resposta, ele avisa, não está na taxa de juros. Está no jeito como o seu cérebro decide.",
+        "Esta aula e a próxima são de Rodolfo Bastos, que passou mais de 25 anos diante de investidores, na Gap, na XP, onde comandou a operação nos Estados Unidos, e hoje na Oyster.",
+        "As duas primeiras aulas trataram do país: moeda, dívida, juro. Esta trata de você, o investidor. E a pergunta é incômoda: se o mundo está cada vez mais global, por que você deixa quase todo o seu dinheiro num país só? A resposta não está na taxa de juros. Está no jeito como o seu cérebro decide.",
       ],
     },
     {
       tipo: "texto",
       tempo: "4:57",
       paragrafos: [
-        "Comece pelo tamanho. O Brasil responde por menos de 2% do PIB do mundo. Na bolsa, a fatia é ainda menor: tudo o que está listado na B3 vale perto de 0,6% das bolsas do planeta. Na renda fixa, fica na casa de 1%.",
-        "Na aula, o Rodolfo fala em 1,6% do PIB e 0,7% da renda variável. As fontes mais recentes dão números um pouco diferentes, mas contam a mesma história: quem investe só aqui escolhe entre mais ou menos 1% das alternativas do mundo.",
+        "Comece pelo tamanho. O Brasil responde por algo entre 1,6% e 2% do PIB do mundo, conforme a fonte e o câmbio do ano. Na bolsa, a fatia é ainda menor: tudo o que está listado na B3 vale de 0,6% a 0,7% das bolsas do planeta, conforme a data de corte. Na renda fixa, fica perto de 1%.",
+        "Somados, os dois mercados ficam abaixo de 1% das alternativas de investimento do mundo. É esse o número que importa para a aula: quem investe só aqui escolhe dentro dessa fatia e deixa de fora os outros 99%.",
       ],
     },
     {
@@ -82,15 +83,15 @@ const secao: SecaoDaAula = {
       fonte:
         "FMI, World Economic Outlook, abr/2026 (PIB de 2025 em US$ correntes); Tesouro Nacional, Relatório Mensal da Dívida, dez/2025, e SIFMA, Capital Markets Fact Book 2026; levantamento Elos Ayta (B3, fim de 2025) e WFE, FY 2025 Market Highlights; MSCI, factsheet MSCI ACWI, 31/ago/2026",
       nota:
-        "Renda fixa: só a dívida pública federal (R$ 8,64 trilhões, a R$ 5,50 por dólar) contra US$ 160,7 trilhões de títulos no mundo; com os papéis privados, a fatia sobe um pouco. Bolsas: R$ 4,78 trilhões contra US$ 151,9 trilhões. O MSCI ACWI é o índice global de ações mais usado por investidores estrangeiros. Na aula: 1,6% do PIB, menos de 1% da renda fixa e 0,7% da renda variável.",
+        "Renda fixa: só a dívida pública federal (R$ 8,64 trilhões, a R$ 5,50 por dólar) contra US$ 160,7 trilhões de títulos no mundo; com os papéis privados, a fatia sobe um pouco. Bolsas: R$ 4,78 trilhões contra US$ 151,9 trilhões. O MSCI ACWI é o índice global de ações mais usado por investidores estrangeiros. Com outras fontes, anos e câmbios de conversão, o PIB fica entre 1,6% e 2% e a bolsa, entre 0,6% e 0,7%.",
     },
     {
       tipo: "texto",
       tempo: "5:48",
       paragrafos: [
-        "Então por que o brasileiro concentra tanto? O Rodolfo fez essa pergunta em palestras, congressos e pesquisas, e a resposta quase sempre vem em duas partes.",
-        "A primeira é o juro. Para que mandar dinheiro para um país onde o juro já foi zero, se aqui ele passa de 10% ao ano? Em setembro de 2026, a Selic estava em 13,75%; nos Estados Unidos, entre 3,75% e 4%. A segunda é o conforto do pós-fixado: a aplicação que rende todo mês, sem susto no extrato, parece retorno alto e garantido.",
-        "O Rodolfo não compra essa explicação. Para mostrar por quê, ele faz um desvio pelo comportamento humano, porque é ali que, para ele, mora a resposta.",
+        "Então por que o brasileiro concentra tanto? Feita a investidores em palestras, congressos e pesquisas, a pergunta costuma receber uma resposta em duas partes.",
+        "A primeira é o juro. Para que mandar dinheiro para um país onde o juro já foi zero, se aqui ele passa de 10% ao ano? A diferença é real e fácil de ver: em setembro de 2026, a Selic estava em 13,75%; nos Estados Unidos, entre 3,75% e 4%. A segunda é o conforto do pós-fixado: a aplicação que rende todo mês, sem susto no extrato, parece retorno alto e garantido.",
+        "Só que essa não é a explicação. Para chegar à verdadeira, é preciso antes um desvio pelo comportamento humano, porque é ali que mora a resposta.",
       ],
     },
 
@@ -106,9 +107,9 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "7:48",
       paragrafos: [
-        "No papel, a decisão de investir é racional. Você olha o cenário, ouve economistas, separa uma reserva, define quanto risco aguenta e monta a carteira. Aí chega a primeira crise de verdade. E crise, para o Rodolfo, não é a bolsa subir 20% quando você esperava 30%. É cair 30%, 40%, 50%. É ver o patrimônio encolher em dias.",
+        "No papel, a decisão de investir é racional. Você olha o cenário, ouve economistas, separa uma reserva, define quanto risco aguenta e monta a carteira. Aí chega a primeira crise de verdade. E crise, aqui, não é a bolsa subir 20% quando você esperava 30%. É cair 30%, 40%, 50%. É ver o patrimônio encolher em dias.",
         "Nessa hora, quase todo mundo pede o resgate. E pensa em reais perdidos, não no pedaço da carteira que estava em risco.",
-        "O exemplo é de um cliente real. Aos 55 anos, ele vendeu a empresa que tinha construído a vida inteira e, pela primeira vez, ficou com R$ 50 milhões na mão. Pôs uma parte na bolsa, veio uma crise e, em duas semanas, perdeu R$ 1 milhão. \"Perdi em duas semanas o que demorei 30 anos para fazer\", disse ao Rodolfo. Vendeu para \"defender os 49 que sobraram\" e ficou na renda fixa. Quando o mercado voltou e ele quis entrar de novo, a maior parte da alta já tinha passado.",
+        "O caso é real. Aos 55 anos, um cliente vendeu a empresa que tinha construído a vida inteira e, pela primeira vez, ficou com R$ 50 milhões na mão. Pôs uma parte na bolsa, veio uma crise e, em duas semanas, perdeu R$ 1 milhão. \"Perdi em duas semanas o que demorei 30 anos para fazer\", desabafou. Vendeu para \"defender os 49 que sobraram\" e ficou na renda fixa. Quando o mercado voltou e ele quis entrar de novo, a maior parte da alta já tinha passado.",
         "Repare na conta que a cabeça dele fez. R$ 1 milhão era 2% do patrimônio, mas pesou como um milhão inteiro. E perder doeu muito mais do que ganhar teria alegrado. Daniel Kahneman e Amos Tversky mediram isso: uma perda pesa mais que o dobro de um ganho do mesmo tamanho. É a aversão à perda.",
       ],
     },
@@ -135,7 +136,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       paragrafos: [
         "O recado para quem pensa em dolarizar: se a crise vai vir, daqui ou de fora, sem data marcada, não adianta escolher a fatia em dólar pelo \"melhor momento\" do câmbio. A fatia tem de caber no seu estômago. Só quem não vende no fundo do poço pega a volta.",
-        "Ajuda separar duas coisas. Uma é a capacidade de correr risco, que depende de patrimônio, renda e prazo. A outra é a disposição, que é temperamento. O cliente dos R$ 50 milhões tinha capacidade de sobra. Faltou uma carteira que coubesse na disposição dele.",
+        "Esse \"estômago\" tem nome técnico, e ajuda separar duas coisas. Uma é a capacidade de correr risco, que depende de patrimônio, renda e prazo. A outra é a disposição, que é temperamento. O cliente dos R$ 50 milhões tinha capacidade de sobra. Faltou uma carteira que coubesse na disposição dele.",
       ],
     },
 
@@ -150,7 +151,7 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Para explicar a reação do cliente, o Rodolfo chama Daniel Kahneman, psicólogo que ganhou o Nobel de Economia e escreveu \"Rápido e devagar\". Kahneman divide o pensamento em dois sistemas. O sistema 1 é rápido e emocional: é ele que faz você pular para trás quando ouve uma buzina na rua. O sistema 2 é lento e analítico, e muitas vezes só chega depois, para justificar o que o primeiro já decidiu.",
+        "A reação do cliente tem explicação na obra de Daniel Kahneman, psicólogo que ganhou o Nobel de Economia e escreveu \"Rápido e devagar\". Kahneman divide o pensamento em dois sistemas. O sistema 1 é rápido e emocional: é ele que faz você pular para trás quando ouve uma buzina na rua. O sistema 2 é lento e analítico, e muitas vezes só chega depois, para justificar o que o primeiro já decidiu.",
         "Só que investir não é atravessar a rua. Mandar dinheiro para fora ou trazer de volta não é questão de vida ou morte; dá tempo de pensar. Deixe o sistema 1 despertar a curiosidade e o sistema 2 fechar a conta. O erro mais comum, de investidores e de profissionais, é reagir.",
       ],
     },
@@ -170,7 +171,7 @@ const secao: SecaoDaAula = {
       definicao:
         "Um taco e uma bola custam R$ 1,10. O taco custa R$ 1,00 a mais que a bola. Quanto custa a bola? Se você pensou em 10 centavos, está em ótima companhia, e errou. Com a bola a 10 centavos, o taco custaria R$ 1,10 e os dois juntos, R$ 1,20. A conta só fecha com a bola a 5 centavos e o taco a R$ 1,05. Kahneman conta que mais da metade dos alunos de Harvard, MIT e Princeton dá a resposta errada; em universidades menos disputadas, mais de 80%.",
       naPratica:
-        "O Rodolfo admite que ele e colegas que mexem com números o dia inteiro também caem nessa. Se a intuição tropeça numa conta de centavos, imagine numa decisão sobre o seu patrimônio, tomada com medo ou com euforia.",
+        "Até quem mexe com números o dia inteiro no mercado financeiro cai nessa. Se a intuição tropeça numa conta de centavos, imagine numa decisão sobre o seu patrimônio, tomada com medo ou com euforia.",
       referencia: { autor: "Daniel Kahneman", obra: "Rápido e devagar: duas formas de pensar", capitulo: "cap. 3, a partir de Frederick (2005)", ano: 2012 },
     },
     {
@@ -178,15 +179,15 @@ const secao: SecaoDaAula = {
       tempo: "14:16",
       paragrafos: [
         "Agora troque a bola pelo dólar. \"Não vou mandar agora, que está a 5,20; vou esperar voltar a 4,90.\" \"Está a 6, vou esperar 5,70.\" Isso se chama ancoragem: a última cotação que você viu vira a régua do preço justo.",
-        "Num experimento famoso de Kahneman e Tversky, as pessoas giravam uma roleta viciada, que parava no 10 ou no 65, e depois chutavam quantos países da ONU eram africanos. Quem tinha visto o 10 respondia, tipicamente, 25%. Quem tinha visto o 65, 45%. Um número sem nada a ver com a pergunta puxou a resposta.",
-        "O Rodolfo resume numa imagem: temos órgãos sensíveis, o cérebro, o pulmão, o coração e o bolso. E cita Peter Lynch, que ficou famoso gerindo o fundo Magellan, da Fidelity (na aula ele aparece como gestor de hedge fund): \"Todo mundo tem capacidade intelectual para ganhar dinheiro com ações. Nem todo mundo tem estômago.\" Outra leitura que ele recomenda é \"A psicologia financeira\", de Morgan Housel.",
-        "Por fim, ele lista os vieses que vão aparecer no módulo. A tabela traduz cada um para a decisão de dolarizar e inclui um sétimo, a recência, que volta no fim da aula.",
+        "E a âncora não precisa fazer sentido para funcionar. Num experimento famoso de Kahneman e Tversky, as pessoas giravam uma roleta viciada, que parava no 10 ou no 65, e depois chutavam quantos países da ONU eram africanos. Quem tinha visto o 10 respondia, tipicamente, 25%. Quem tinha visto o 65, 45%. Um número sem nada a ver com a pergunta puxou a resposta. Se uma roleta faz isso, imagine a força da cotação de ontem sobre a sua ideia de dólar caro ou barato.",
+        "Uma imagem resume o problema: o ser humano tem órgãos sensíveis, o cérebro, o pulmão, o coração e o bolso. Peter Lynch, um dos gestores mais famosos dos Estados Unidos, que ficou conhecido à frente do fundo Magellan, da Fidelity, disse o mesmo de outro jeito: \"Todo mundo tem capacidade intelectual para ganhar dinheiro com ações. Nem todo mundo tem estômago.\" Sobre essa distância entre saber e conseguir fazer, vale a leitura de \"A psicologia financeira\", de Morgan Housel.",
+        "Seis vieses acompanham o módulo: busca por atalho, ancoragem, manada, aversão à perda, home bias e pico-fim. A tabela traduz cada um para a decisão de dolarizar e inclui um sétimo, a recência, que explica o investidor que troca o pé, no fim da aula.",
       ],
     },
     {
       tipo: "tabela",
       tempo: "14:57",
-      titulo: "Os vieses citados na aula e como eles aparecem na decisão de dolarizar",
+      titulo: "Os vieses do módulo e como eles aparecem na decisão de dolarizar",
       colunas: ["Viés", "O que é", "Como aparece na decisão de dolarizar"],
       linhas: [
         [
@@ -241,7 +242,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       paragrafos: [
         "Home bias é o conforto do conhecido. O dono de uma construtora que vendeu bem tende a pôr o dinheiro em crédito e em ações do setor imobiliário, porque sabe ler aquele balanço. O executivo de uma petroleira faz o mesmo com óleo e gás. Os dois esquecem um detalhe que a aula 1 já apontou: o salário ou o negócio deles já dependem daquele setor e daquele país. A carteira concentrada põe risco em cima de risco.",
-        "O termo nasceu para falar de países. Americanos, japoneses e britânicos guardavam quase todas as ações em empresas de casa, bem acima do peso desses mercados no mundo. E até hoje ninguém achou um custo ou um imposto que explique um viés tão grande e tão teimoso.",
+        "O termo nasceu para falar de países. Americanos, japoneses e britânicos guardavam quase todas as ações em empresas de casa, bem acima do peso desses mercados no mundo. E até hoje ninguém achou um custo ou um imposto que explique um viés tão grande e tão teimoso, o que reforça o ponto da aula: a explicação está no comportamento, não na conta.",
       ],
     },
     {
@@ -257,8 +258,8 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "É aqui que o Rodolfo responde à pergunta do começo. Se a culpa fosse do juro alto, a concentração seria coisa de brasileiro. Não é. Em Bangladesh, Índia, Turquia, Filipinas, Egito, Indonésia, Rússia, China e Arábia Saudita, a população também deixa quase tudo em casa, com juros e moedas bem diferentes. O que todos têm em comum é o home bias, um traço do ser humano, e não do brasileiro.",
-        "Vale até para países ricos e de juro baixo. Em 2008, o americano tinha 77% das ações em empresas americanas, que eram um terço do mercado mundial. O canadense tinha 80% num mercado que pesava menos de 3% do mundo. O brasileiro estava no extremo, com 99%. O viés vem caindo devagar: pelos cálculos mais recentes da Vanguard, o canadense já está perto de 50% em casa.",
+        "É aqui que aparece a resposta à pergunta do começo. Se a culpa fosse do juro alto, a concentração seria coisa de brasileiro. Não é. Em Bangladesh, Índia, Turquia, Filipinas, Egito, Indonésia, Rússia, China e Arábia Saudita, a população também deixa quase tudo em casa, com juros e moedas bem diferentes. O que todos têm em comum é o home bias, um traço do ser humano, e não do brasileiro.",
+        "Vale até para países ricos e de juro baixo. Em 2008, o americano tinha 77% das ações em empresas americanas, que eram um terço do mercado mundial. O canadense tinha 80% num mercado que pesava menos de 3% do mundo. O brasileiro estava no extremo, com 99%. O viés vem caindo devagar, sinal de que não é destino: pelos cálculos mais recentes da Vanguard, o canadense já está perto de 50% em casa.",
       ],
     },
     {
@@ -290,9 +291,9 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "18:48",
       paragrafos: [
-        "Se a explicação não é o juro, falta mostrar que lá fora também tem retorno. O Rodolfo monta a conta em duas camadas.",
-        "A primeira é o câmbio. Desde o Plano Real, o dólar subiu em média entre 5% e 6% ao ano contra o real; nos 15 anos até 2025, mais de 8%. Nunca em linha reta: \"vai 10, cai 8, sobe 5\". Os números da aula e os do Banco Central diferem um pouco por causa da data de corte, e o gráfico mostra os dois.",
-        "Quem leva o dinheiro e deixa parado numa conta americana fica só com essa camada. Mas ninguém precisa deixar parado. A segunda camada é quanto o dinheiro rende lá, e o Rodolfo escolhe o S&P 500, o índice das maiores empresas americanas, por um motivo cultural: o americano vive na bolsa. Somando ações e fundos, que em boa parte também são de ações, passa de 70% do dinheiro aplicado pelas famílias americanas.",
+        "Se a explicação não é o juro, falta mostrar que lá fora também tem retorno. A conta tem duas camadas.",
+        "A primeira é o câmbio. Desde o Plano Real, o dólar subiu em média entre 5% e 6% ao ano contra o real; nos 15 anos até 2025, mais de 8%. Nunca em linha reta: \"vai 10, cai 8, sobe 5\". As médias variam com a data de corte e com a série usada, porque no câmbio um mês a mais ou a menos muda bastante a conta; o gráfico traz a leitura da aula e a da série do Banco Central fechada em dezembro de 2025.",
+        "Quem leva o dinheiro e deixa parado numa conta americana fica só com essa camada. Mas ninguém precisa deixar parado. A segunda camada é quanto o dinheiro rende lá. A referência é o S&P 500, o índice das maiores empresas americanas, e a escolha tem um motivo cultural: o americano vive na bolsa. Somando ações e fundos, que em boa parte também são de ações, passa de 70% do dinheiro aplicado pelas famílias americanas.",
       ],
     },
     {
@@ -314,8 +315,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "21:37",
       paragrafos: [
-        "Agora a bolsa. Na aula, o S&P rende de 6% a 11% ao ano em dólar, conforme a janela. Com os dividendos incluídos, a base do professor Aswath Damodaran, da NYU, dá números maiores, de 8% a quase 15%. A diferença vem quase toda daí: sem os dividendos, a conta desde 1994 bate exatamente com os 9,1% da aula.",
-        "Some as duas camadas e você chega à conclusão do Rodolfo: uns 4,5% do câmbio mais uns 9% da bolsa dão algo entre 13% e 15% ao ano em reais. É a mesma régua do CDI com que o brasileiro está acostumado.",
+        "Agora a bolsa. Em dólar, o S&P 500 rende algo entre 6% e 15% ao ano, conforme a janela e o recorte. Sem os dividendos e com as datas de corte da aula, a faixa vai de 6% a 11%; com os dividendos reinvestidos, como na base de Aswath Damodaran, professor da NYU, fechada em dezembro de 2025, vai de 8% a quase 15%. Desde 1994, sem os dividendos, a conta dá 9,1% ao ano. Para quem investe, a versão com dividendos é a que mais se aproxima do que um fundo de índice entrega.",
+        "Some as duas camadas e você chega à conclusão central desta parte: uns 4,5% do câmbio mais uns 9% da bolsa dão algo entre 13% e 15% ao ano em reais. É a mesma régua do CDI com que o brasileiro está acostumado.",
       ],
     },
     {
@@ -397,9 +398,9 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "\"Legal, Rodolfo, mas lá fora tem risco e aqui não.\" Calma. A palavra risco mistura duas coisas. Risco de mercado é a oscilação: o preço de uma ação, do dólar ou de um título prefixado sobe e desce todo dia. Risco de crédito é a chance de quem emitiu o título não pagar, ou de o mercado passar a duvidar e derrubar o preço do papel.",
+        "\"Legal, mas lá fora tem risco e aqui não.\" Calma. A palavra risco mistura duas coisas. Risco de mercado é a oscilação: o preço de uma ação, do dólar ou de um título prefixado sobe e desce todo dia. Risco de crédito é a chance de quem emitiu o título não pagar, ou de o mercado passar a duvidar e derrubar o preço do papel.",
         "O pós-fixado brasileiro quase não oscila, é verdade. Mas tem risco de crédito, seja do governo, do banco ou da empresa. Não existe aplicação sem risco. Existe a escolha de qual risco carregar, e em que dose.",
-        "O Rodolfo faz questão da ressalva: ele não diz que um risco é melhor que o outro, nem que investir lá fora é melhor que investir aqui. Diz que diversificar além de 1% das alternativas do mundo é saudável, e que o retorno não precisa ser menor. O erro é comparar 15% com 4% como se os dois números medissem a mesma coisa.",
+        "Vale a ressalva: não se trata de dizer que um risco é melhor que o outro, nem que investir lá fora é melhor que investir aqui. O ponto é que diversificar além de 1% das alternativas do mundo é saudável, e que o retorno não precisa ser menor. O erro é comparar 15% com 4% como se os dois números medissem a mesma coisa.",
       ],
     },
     {
@@ -425,7 +426,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "20:26",
       paragrafos: [
-        "Mais cedo na aula, o Rodolfo disse que o pós-fixado, com seu \"1% ao mês\" constante, só existe no Brasil. Vale um ajuste fino. Os Estados Unidos também têm títulos que acompanham o juro de curto prazo e fundos parecidos com os nossos fundos DI. O que muda é o tamanho: quase metade da dívida pública brasileira segue a Selic; na americana, pouco mais de 2%.",
+        "O pós-fixado, com seu \"1% ao mês\" constante, é uma marca do Brasil. Os Estados Unidos até têm títulos que acompanham o juro de curto prazo e fundos parecidos com os nossos fundos DI, mas numa escala que não se compara: quase metade da dívida pública brasileira segue a Selic; na americana, pouco mais de 2%.",
         "Por isso a renda fixa de lá oscila. O americano compra títulos e fundos cujo preço muda todo dia, e vê isso no extrato. Em 2022, o título de 10 anos do Tesouro americano perdeu quase 18%, praticamente o mesmo que a bolsa. Se as duas oscilam e a bolsa costuma render mais no longo prazo, faz sentido ele ter se acostumado com ações.",
         "Aqui, parte dessa oscilação fica escondida. O Tesouro Direto mostra o sobe e desce dos títulos todos os dias, mas o CDB levado ao vencimento costuma aparecer no extrato \"pela curva\", subindo devagar como se o mercado não tivesse mudado.",
       ],
@@ -463,9 +464,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       paragrafos: [
         "A última parte volta à ancoragem com a pergunta que todo investidor se faz: qual é a hora certa? Mando agora? Espero o dólar cair, a eleição passar, a guerra acabar? E a dúvida não é só de quem vai dolarizar; aparece em qualquer decisão de pôr mais ou menos risco na carteira.",
-        "Para mostrar quanto ela custa, o Rodolfo usa índices americanos: o S&P 500 como bolsa, o título de 10 anos do Tesouro como renda fixa e uma carteira moderada com os dois. Índices, e não fundos, para que a habilidade de nenhum gestor entre na conta.",
-        "Imagine janeiro de 2009. Você recebeu um bônus ou vendeu um imóvel e decidiu montar uma carteira moderada. Aí olha para trás. Em 2008, a bolsa caiu 37% e a moderada, 14%, enquanto a renda fixa subiu 20%. Ancorado nisso, você vai para a renda fixa, \"só até a bolsa melhorar\". \"Normal, gente, eu já fiz isso, todo mundo já fez isso\", diz o Rodolfo.",
-        "Um detalhe: na fala, a moderada aparece como 60% em renda fixa e 40% em ações, mas os números mostrados (−14% em 2008, +11% em 2009) são os da combinação inversa, com 60% em ações, que é o \"60/40\" clássico do mercado americano. Os gráficos usam essa versão.",
+        "Para mostrar quanto ela custa, o exercício usa índices americanos: o S&P 500 como bolsa, o título de 10 anos do Tesouro como renda fixa e uma carteira moderada com os dois. Índices, e não fundos, para que a habilidade de nenhum gestor entre na conta.",
+        "Imagine janeiro de 2009. Você recebeu um bônus ou vendeu um imóvel e decidiu montar uma carteira moderada. Aí olha para trás. Em 2008, a bolsa caiu 37% e a moderada, 14%, enquanto a renda fixa subiu 20%. Ancorado nisso, você vai para a renda fixa, \"só até a bolsa melhorar\". É uma reação normal, que quase todo investidor, profissional ou não, já teve.",
       ],
     },
     {
@@ -478,12 +478,12 @@ const secao: SecaoDaAula = {
       series: [
         { nome: "S&P 500, com dividendos", valores: sp0712 },
         { nome: "Treasury de 10 anos", valores: tb0712 },
-        { nome: "Carteira 60/40 (60% em ações)", valores: c6040, destaque: true },
+        { nome: "Carteira moderada", valores: c6040, destaque: true },
       ],
       formato: { sufixo: "%", casas: 1 },
       marcos: [{ em: "2009", rotulo: "Decisão em jan/2009" }],
       fonte: "Aswath Damodaran, NYU Stern, Historical Returns on Stocks, Bonds and Bills",
-      nota: "Carteira rebalanceada para 60% em S&P 500 e 40% em Treasury de 10 anos no início de cada ano. Com 60% em Treasury, como descrito na fala, ela teria caído cerca de 2,6% em 2008.",
+      nota: "Carteira moderada no modelo 60/40 do mercado americano (60% em S&P 500 e 40% em Treasury de 10 anos), rebalanceada no início de cada ano.",
     },
     {
       tipo: "texto",
@@ -491,7 +491,7 @@ const secao: SecaoDaAula = {
       paragrafos: [
         "Daí em diante, é uma troca atrás da outra. Em 2009, a renda fixa perde 11% e a bolsa sobe 26%; você respira fundo e espera. Em 2010, renda fixa mais 8%, bolsa mais 15%. Com a bolsa perto de 40% acima em dois anos, você decide que chegou a hora e vai para as ações em 2011, justo o ano em que elas sobem 2% e a renda fixa, 16%. \"Não sou de renda variável\", você conclui, e volta para a renda fixa em 2012, quando ela rende 3% e a bolsa, 16%.",
         "Resultado: quem aplicou R$ 100 em janeiro de 2009 e foi trocando o pé terminou 2012 com uns R$ 101. A carteira moderada, sem nenhuma decisão além de rebalancear uma vez por ano, chegou a R$ 149. Você não escolheu a pior classe. Escolheu, todo ano, a que tinha acabado de ganhar, e ficou com o pior das duas. Isso tem nome: viés de recência, dar peso demais ao que acabou de acontecer.",
-        "Na próxima aula, o Rodolfo volta ao tema por outro lado: quanto custa tentar acertar a hora de entrar e de sair.",
+        "A próxima aula retoma o tema por outro lado: quanto custa tentar acertar a hora de entrar e de sair.",
       ],
     },
     {
@@ -502,7 +502,7 @@ const secao: SecaoDaAula = {
       eixoX: marcos0912,
       series: [
         { nome: "Trocando o pé", valores: [100, 88.9, 96.4, 98.4, 101.3], destaque: true },
-        { nome: "Carteira 60/40", valores: [100, 111.1, 124.8, 134.3, 148.7] },
+        { nome: "Carteira moderada", valores: [100, 111.1, 124.8, 134.3, 148.7] },
         { nome: "Só S&P 500", valores: [100, 125.9, 144.6, 147.6, 171.1] },
         { nome: "Só Treasury de 10 anos", valores: [100, 88.9, 96.4, 111.9, 115.2] },
       ],
@@ -587,7 +587,7 @@ const secao: SecaoDaAula = {
           autor: "Aswath Damodaran (NYU Stern)",
           titulo: "Historical Returns on Stocks, Bonds and Bills: 1928 a 2025",
           ano: 2026,
-          nota: "Retornos anuais do S&P 500 com dividendos e do Treasury de 10 anos. Base dos gráficos de janelas e da carteira 60/40.",
+          nota: "Retornos anuais do S&P 500 com dividendos e do Treasury de 10 anos. Base dos gráficos de janelas e da carteira moderada.",
         },
         {
           autor: "Banco Central do Brasil, Tesouro Nacional, SIFMA e WFE",

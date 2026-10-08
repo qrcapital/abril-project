@@ -108,8 +108,11 @@
    celular. O topo e o rodapé (chrome-top/foot.html) e a home (screens/home.html) usam as
    mesmas variáveis no style inline, com box-sizing:border-box (lá o padrão é content-box e o
    respiro somava por fora da largura). */
-:root { --sl-coluna: 1280px; --sl-margem: 28px }
+:root { --sl-coluna: 1280px; --sl-margem: 28px; --sl-topo: 64px }
 @media (max-width: 600px) { :root { --sl-margem: 18px } }
+/* `--sl-topo` é a altura da barra do topo da área, que gruda no alto da janela (chrome-top.html):
+   12px + o avatar de 36px com a borda de 1.5px dos dois lados + 12px + o filete de 1px (08/out/2026).
+   O vídeo fixo da sala se encosta nela, e o `VideoFixo.tsx` lê o número daqui. */
 .sl-wrap, .sl-wrap-largo { max-width: calc(var(--sl-coluna) + 2 * var(--sl-margem)); margin: 0 auto; padding: 0 var(--sl-margem) }
 
 .sl-so-leitor {
@@ -474,7 +477,11 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 .sl-palco-fim-titulo { margin-top: 6px; font-weight: 500; font-size: 21px; line-height: 1.3; color: var(--sl-creme) }
 .sl-palco-fim p + p { margin-top: 6px; font-size: 15px; line-height: 1.55; color: rgba(253, 250, 245, .72) }
 
-.sl-palco-player { max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 0 auto; border-radius: 14px; overflow: hidden; box-shadow: 0 40px 90px rgba(0, 0, 0, .55); border: 1px solid rgba(253, 250, 245, .08) }
+/* A vaga do player: reserva o 16:9 no palco mesmo quando o vídeo sai dela para ficar fixo (ver
+   "vídeo fixo ao rolar", logo abaixo). O desenho do vídeo (cantos, sombra, filete) está na caixa de
+   dentro, que é a que se move; o filete virou anel de sombra para não somar 2px à altura da caixa. */
+.sl-palco-player { max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 0 auto; aspect-ratio: 16 / 9; scroll-margin-top: calc(var(--sl-topo) + 16px) }
+.sl-vf-caixa { border-radius: 14px; overflow: hidden; box-shadow: 0 40px 90px rgba(0, 0, 0, .55), 0 0 0 1px rgba(253, 250, 245, .08) }
 .sl-palco-meta { max-width: min(var(--sl-coluna), calc(100% - 2 * var(--sl-margem))); margin: 32px auto 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 40px; align-items: end }
 .sl-palco-meta h1 { margin-top: 12px; font-weight: 500; font-size: clamp(30px, 3.3vw, 44px); line-height: 1.1; letter-spacing: -.018em; color: var(--sl-creme); max-width: 26ch }
 .sl-palco-desc { margin-top: 14px; max-width: 68ch; font-size: 16.5px; line-height: 1.65; color: rgba(253, 250, 245, .72) }
@@ -483,6 +490,51 @@ a.sl-lista-item:hover { background: var(--sl-creme) }
 .sl-palco-migalha a:hover { color: var(--sl-creme) !important }
 .sl-palco-acoes { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; align-items: center }
 .sl-palco-trava { font-size: 13px; color: rgba(253, 250, 245, .7); max-width: 26ch; text-align: right }
+
+/* ---- vídeo fixo ao rolar ------------------------------------------------- */
+
+/* Pedido do dono em 08/out/2026: rolando o notebook, a aula fica à vista para ler enquanto escuta.
+   Quando a vaga sai da tela, a caixa do player ganha `position: fixed` (só a classe muda: o iframe
+   não sai do lugar no DOM e não recarrega). No desktop é um mini player no alto, à direita, logo
+   abaixo da barra do topo, sobre a margem que a coluna de leitura de 760px deixa livre (em telas
+   menores que ~1700px ele cobre a ponta direita das primeiras linhas, que rolam por baixo). No
+   celular ocupa a largura toda, colado na barra, e a leitura rola por baixo dele.
+   A barra de cima (aula e os dois botões) só existe no modo fixo. A camada fica abaixo da barra
+   do topo (90) e do balão do glossário (140). */
+.sl-vf-caixa.is-fixo {
+  position: fixed; z-index: 80; top: calc(var(--sl-topo) + 16px); right: var(--sl-margem);
+  width: clamp(380px, 30vw, 440px);
+  display: flex; flex-direction: column;
+  border-radius: 12px; background: var(--sl-palco);
+  box-shadow: 0 28px 64px rgba(26, 24, 21, .32), 0 6px 18px rgba(26, 24, 21, .18), 0 0 0 1px rgba(253, 250, 245, .1);
+  animation: sl-vf-entra .26s cubic-bezier(.2, .7, .2, 1) both;
+}
+.sl-vf-caixa.is-saindo { animation: sl-vf-sai .2s ease both }
+.sl-vf-caixa.is-volta { animation: sl-vf-volta .22s ease both }
+@keyframes sl-vf-entra { from { opacity: 0; transform: translateY(-10px) scale(.97) } }
+@keyframes sl-vf-sai { to { opacity: 0; transform: translateY(-8px) scale(.97) } }
+@keyframes sl-vf-volta { from { opacity: .4 } }
+
+.sl-vf-barra { order: -1; display: flex; align-items: center; gap: 4px; padding: 5px 6px 5px 14px; color: rgba(253, 250, 245, .72) }
+.sl-vf-titulo { flex: 1; min-width: 0; font-size: 12.5px; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.sl-vf-titulo .sl-num { font-weight: 600; color: var(--sl-palha) }
+.sl-vf-botao {
+  flex: none; display: grid; place-items: center; width: 30px; height: 30px; padding: 0;
+  border: 0; border-radius: 50%; background: transparent; color: rgba(253, 250, 245, .78); cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
+}
+.sl-vf-botao:hover { background: rgba(253, 250, 245, .12); color: var(--sl-creme) }
+.sl .sl-vf-botao:focus-visible { outline-color: var(--sl-palha); outline-offset: 1px; border-radius: 50% }
+
+@media (max-width: 760px) {
+  /* Celular: largura toda, sem cantos, colado na barra do topo. Os botões flutuam no canto do
+     vídeo, sem faixa própria, para não roubar mais altura da leitura. */
+  .sl-vf-caixa.is-fixo { top: var(--sl-topo); left: 0; right: 0; width: auto; border-radius: 0; box-shadow: 0 12px 28px rgba(26, 24, 21, .28) }
+  .sl-vf-barra { position: absolute; top: 8px; right: 8px; z-index: 2; gap: 6px; padding: 0 }
+  .sl-vf-titulo { display: none }
+  .sl-vf-botao { width: 34px; height: 34px; background: rgba(20, 18, 15, .66); color: var(--sl-creme) }
+  .sl-vf-botao:hover { background: rgba(20, 18, 15, .86) }
+}
 
 /* O botão de concluir herda a pílula de vidro de `.sl-btn-vidro` (ver "botões").
    Concluída, o verde da casa no ícone e no texto, com um vidro esverdeado. */
@@ -608,8 +660,14 @@ a.sl-pl-item:hover {
 .sl-nb-corpo { min-width: 0; position: relative }
 
 .sl-nb-canvas { min-width: 0; display: flex; flex-direction: column; gap: 96px }
-/* Âncora do índice não pode cair embaixo da topbar fixa. */
-.sl-nb-canvas [id] { scroll-margin-top: 90px }
+/* Âncora do índice não pode cair embaixo da topbar fixa. No celular, também não embaixo do vídeo
+   fixo, que ocupa a largura toda (08/out/2026): a folga conta com ele sempre que a página tem vídeo e
+   o aluno não o fechou, porque o salto até a âncora é o que tira o palco da tela e fixa o vídeo. No
+   desktop o vídeo fixo fica à direita e o título da seção, à esquerda. */
+.sl-nbm, .sl-nb-canvas [id] { scroll-margin-top: 90px }
+@media (max-width: 760px) {
+  .sl:has([data-video]:not([data-video="dispensado"])) :is(.sl-nbm, .sl-nb-canvas [id]) { scroll-margin-top: calc(var(--sl-topo) + 56.25vw + 20px) }
+}
 
 /* Seção de uma aula: filete de tinta, a linha de meta (rótulo "Aula 03", duração, assistir) e o
    título da aula, o maior texto do notebook. */

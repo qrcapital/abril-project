@@ -24,14 +24,16 @@ import type { SecaoDaAula } from "@/lib/notebook";
 // como aproximação do MSCI EAFE (ChartRow); Banco Central do Brasil (SGS 3696, dólar de fim de mês,
 // e SGS 7845, Ibovespa até 2018) e fechamentos anuais da B3 de 2019 a 2025; SIFMA (Fact Book 2026).
 //
-// DIVERGÊNCIAS ENTRE A FALA E AS FONTES, registradas com leveza no texto: os 6,6% são retorno real
-// (a aula também os chama de nominal); US$ 107.409 e US$ 67 são valores nominais; os prêmios de 4,7 e
-// 3,4 pontos fecham com a carteira mundial, não com a americana (6,1 e 4,9); Nixon renunciou antes
-// da votação do impeachment; houve quedas perto de 50% também em 1937-38 e 1973-74; nos EUA o
-// dividendo qualificado paga a mesma alíquota do ganho de capital de longo prazo, e a vantagem da
-// recompra é sobretudo adiar o imposto; "retorno real, então leva em conta dividendos" mistura retorno
-// real com retorno total; o S&P 500 contra o Ibovespa dá 8,7% contra 5,4% ao ano em dólar de 2001 a
-// 2025 (na aula, 8,8 e 6,6).
+// DIVERGÊNCIAS ENTRE A FALA E AS FONTES. Revisão de voz institucional em 08/out/2026 (ver
+// `docs/TOM-DO-NOTEBOOK.md`): o texto não corrige a fala; apresenta cada caso como recorte ou fonte
+// diferente. Para quem mantém: os 6,6% são retorno real de 1900 a 2024 (a fala também os chama de
+// nominal); US$ 107.409 e US$ 67 são valores nominais; os prêmios de 4,7 e 3,4 pontos são os da
+// carteira mundial no mesmo anuário (para os EUA, 6,1 e 4,9); Nixon renunciou em ago/1974, em meio ao
+// processo de impeachment, antes da votação na Câmara; houve quedas perto de 50% também em 1937-38 e
+// 1973-74; nos EUA o dividendo qualificado paga a mesma alíquota do ganho de capital de longo prazo, e
+// a vantagem da recompra é sobretudo adiar o imposto; a fala chama de "retorno real" uma comparação
+// em retorno total; o S&P 500 contra o Ibovespa dá 8,7% contra 5,4% ao ano em dólar de 2001 a 2025
+// nesta base (na fala, 8,8 e 6,6, com outra base).
 //
 // ITENS DO SUPER DOSSIÊ USADOS (RANKING-MODULO-II.md, seção "Aula 3"): VAL-020, BMA-028, BMA-025,
 // BKM-026, VAL-021, BMA-029, VAL-030, VAL-032, BMA-016, VAL-049, VAL-012, VAL-013, VAL-014,
@@ -106,7 +108,7 @@ const secao: SecaoDaAula = {
       paragrafos: [
         "Pense nas cinco empresas que você mais usa num dia comum: o celular, o buscador, a loja online, a rede social, o programa do trabalho. É provável que quase todas tenham ações negociadas em Nova York. Esta aula é sobre essa bolsa, a maior do planeta, e sobre como ela paga quem fica nela.",
         "Ela vale por duas. O módulo foi planejado com uma aula sobre comprar ações nos Estados Unidos e outra sobre dividendos e crescimento, e Tony Volpon, ex-diretor do Banco Central, juntou as duas numa gravação só. Por isso o notebook também tem duas partes: a primeira sobre o mercado americano e o que ele pagou em 125 anos; a segunda sobre os estilos de investir dentro dele, crescimento e valor, e sobre o que a empresa faz com o lucro.",
-        "A tese de Tony aparece logo no começo. Num histórico longo, a bolsa americana entregou retornos maiores e mais consistentes que as outras, reflexo da maior economia do mundo e da liderança em tecnologia. Houve exceções, e ele mesmo lembra a principal: no começo dos anos 2000, os emergentes, inclusive o Brasil, foram melhor. Ainda assim, para ele, qualquer carteira montada fora do Brasil deve ter uma fatia relevante em ações americanas.",
+        "A tese de partida é simples. Num histórico longo, a bolsa americana entregou retornos maiores e mais consistentes que as outras, reflexo da maior economia do mundo e da liderança em tecnologia. Houve exceções, e a principal está no começo dos anos 2000, quando os emergentes, inclusive o Brasil, foram melhor. Ainda assim, qualquer carteira montada fora do Brasil deve ter uma fatia relevante em ações americanas.",
       ],
     },
     {
@@ -115,19 +117,19 @@ const secao: SecaoDaAula = {
       titulo: "Um mercado gigante, e concentrado",
       itens: [
         { rotulo: "Ações listadas nos EUA", valor: 68.9, formato: { prefixo: "US$ ", sufixo: " tri", casas: 1 }, nota: "fim de 2025, 43,7% do mundo" },
-        { rotulo: "As sete maiores no S&P 500", valor: 34.9, formato: { sufixo: "%", casas: 1 }, destaque: true, nota: "5/out/2026; na aula, 32%" },
+        { rotulo: "As sete maiores no S&P 500", valor: 34.9, formato: { sufixo: "%", casas: 1 }, destaque: true, nota: "5/out/2026; perto de um terço, conforme o dia" },
         { rotulo: "As dez maiores no S&P 500", valor: 39.3, formato: { sufixo: "%", casas: 1 }, nota: "5/out/2026" },
-        { rotulo: "Dividendo do índice", valor: 1.1, formato: { sufixo: "% a.a.", casas: 1 }, nota: "MSCI USA, set/2026; na aula, 1,2%" },
+        { rotulo: "Dividendo do índice", valor: 1.1, formato: { sufixo: "% a.a.", casas: 1 }, nota: "MSCI USA, set/2026; 1,1% a 1,2%, conforme índice e data" },
       ],
       fonte: "SIFMA, Capital Markets Fact Book 2026; carteira do SPDR S&P 500 ETF (SPY) em 5/out/2026, via Business Quant; MSCI USA, factsheet de 30/set/2026",
-      nota: "As sete: Nvidia, Apple, Microsoft, Amazon, Alphabet (duas classes de ação), Meta e Tesla. Na aula, Tony fala em cerca de US$ 75 trilhões para o mercado todo, número de outra data; o valor muda todo dia.",
+      nota: "As sete: Nvidia, Apple, Microsoft, Amazon, Alphabet (duas classes de ação), Meta e Tesla. O valor do mercado todo muda a cada pregão: conforme a data e a medida, fica entre US$ 69 e 75 trilhões, quase metade das bolsas do mundo.",
     },
     {
       tipo: "texto",
       tempo: "4:30",
       paragrafos: [
         "Antes do prêmio, a pergunta básica: o que você compra quando compra uma ação? Imagine uma padaria que fatura R$ 1 milhão por ano. Desse dinheiro saem os salários, os impostos, a farinha, a energia e os juros do empréstimo do forno. Só o que sobra depois de pagar todo mundo é do dono. O acionista é esse dono: o último da fila, que fica com o resto.",
-        "Daí vêm as diferenças para a renda fixa que você viu nas aulas anteriores. Um título tem vencimento e cupom combinados. A ação não tem nem um nem outro. Ela pode render muito quando a padaria prospera e pode valer quase nada quando as dívidas engolem o lucro. Esse sobe e desce é o risco que o mercado paga para você carregar, e é ele que a primeira parte da aula tenta medir.",
+        "Daí vêm as diferenças para a renda fixa que você viu nas aulas anteriores. Um título tem vencimento e cupom combinados. A ação não tem nem um nem outro. Ela pode render muito quando a padaria prospera e pode valer quase nada quando as dívidas engolem o lucro. Esse sobe e desce é o risco que o mercado paga para você carregar, e é ele que a primeira parte desta aula mede.",
       ],
     },
     {
@@ -142,7 +144,7 @@ const secao: SecaoDaAula = {
         ["Para quem mora no Brasil e investe lá", "Não se aplica", "Retenção de 30% na fonte sobre dividendos; ganho na venda segue a regra brasileira (Módulo III)"],
       ],
       fonte: "Lei 6.404/1976 (Lei das S.A.), art. 202; IRS, Topic 404 (Dividends) e Topic 409 (Capital Gains); IRS, Publication 515",
-      nota: "Na aula, Tony diz que nos EUA o ganho de capital paga menos imposto que o dividendo. Para o dividendo qualificado, as alíquotas são iguais; a vantagem da recompra está em adiar o imposto até a venda, e em quem não vende não pagar nada naquele ano.",
+      nota: "Nos EUA, o imposto favorece a recompra. Ela só gera imposto quando o acionista vende, o que permite adiá-lo, e quem não vende não paga nada naquele ano. O dividendo é tributado no ano em que cai na conta: o qualificado, pelas alíquotas do ganho de longo prazo; o não qualificado, pela tabela comum do imposto de renda, mais alta.",
     },
     {
       tipo: "conceito",
@@ -150,7 +152,7 @@ const secao: SecaoDaAula = {
       definicao:
         "Imagine uma empresa com 100 ações e US$ 1.000 de lucro sobrando. Ela pode pagar US$ 10 a cada ação, como dividendo, ou usar os US$ 1.000 para comprar 10 ações de volta na bolsa e cancelá-las. No segundo caso, você não recebe nada na conta, mas passa a ser dono de um pedaço maior da mesma empresa: o lucro agora se divide por 90 ações, e não por 100. É a recompra.",
       naPratica:
-        "Nos EUA, a fatia das empresas listadas que pagam dividendo caiu de 66,5% em 1978 para 20,8% em 1999, e a recompra ocupou o espaço. Num mundo sem impostos e sem custos, as duas saídas valem o mesmo, e quem precisa de renda pode vender um pouco das ações. Por isso o dividendo baixo do S&P 500 não quer dizer que as empresas devolvam pouco: elas devolvem mais por recompra do que por dividendo. Para o investidor brasileiro, a forma importa por causa do imposto retido lá fora sobre o dividendo, tema do Módulo III.",
+        "É isso que explica tanta empresa americana grande sem dividendo. Nos EUA, a fatia das empresas listadas que pagam dividendo caiu de 66,5% em 1978 para 20,8% em 1999, e a recompra ocupou o espaço. Num mundo sem impostos e sem custos, as duas saídas valem o mesmo, e quem precisa de renda pode vender um pouco das ações. Por isso o dividendo baixo do S&P 500 não quer dizer que as empresas devolvam pouco: elas devolvem mais por recompra do que por dividendo, como mostram os números abaixo. Para o investidor brasileiro, a forma importa por causa do imposto retido lá fora sobre o dividendo, tema do Módulo III.",
       referencia: { autor: "Richard A. Brealey, Stewart C. Myers e Franklin Allen", obra: "Princípios de Finanças Corporativas", capitulo: "cap. 16, seções 16.1, 16.2, 16.5 e 16.7" },
     },
     {
@@ -176,8 +178,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       paragrafos: [
         "Volte à padaria. Ela lucra R$ 100 mil por ano e alguém paga R$ 1,5 milhão por ela: 15 vezes o lucro. Esse 15 é o P/L, o preço sobre o lucro. Daqui a cinco anos, o seu ganho pode vir de três lugares. Do dinheiro que ela distribuiu no caminho. Do lucro que cresceu, digamos para R$ 150 mil. E do humor do comprador seguinte, que pode pagar 20 vezes o lucro, ou só 10.",
-        "Esses são os três motores de Tony. O primeiro, no S&P 500, é pequeno: o dividendo anda perto de 1% ao ano. O terceiro, o múltiplo, sobe e desce com o otimismo do mercado e costuma voltar para perto da média com o tempo. Sobra o do meio. \"O que entrega realmente o retorno é o crescimento do lucro\", resume ele.",
-        "Para quem mora no Brasil existe um quarto motor, que Tony retoma mais adiante: o câmbio. Você mede a vida em reais, e a ação americana está em dólar.",
+        "Esses são os três motores do retorno de uma ação. O primeiro, no S&P 500, é pequeno: o dividendo anda perto de 1% ao ano, e o gráfico abaixo mostra que já foi de 7%; a troca do dividendo pela recompra explica boa parte da queda. O terceiro, o múltiplo, sobe e desce com o otimismo do mercado e costuma voltar para perto da média com o tempo. Sobra o do meio, e é ele que entrega o retorno no longo prazo: o crescimento do lucro.",
+        "Para quem mora no Brasil existe um quarto motor, que volta mais adiante nesta aula: o câmbio. Você mede a vida em reais, e a ação americana está em dólar.",
       ],
     },
     {
@@ -221,9 +223,9 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "8:23",
       paragrafos: [
-        "Agora, o que o índice esconde. O S&P 500 troca de empresas o tempo todo. Quem encolhe ou quebra sai, e no lugar entra quem cresceu. O gráfico do índice é, por construção, a história dos que deram certo. Quem comprou cada empresa separada sentiu também as perdas das que saíram pelo caminho. Isso tem nome: viés de sobrevivência.",
-        "O mesmo raciocínio vale para países. Em 1900, as ferrovias eram 63% do valor da bolsa americana; tecnologia, saúde e energia como as conhecemos praticamente não existiam. E os Estados Unidos foram o país que deu certo no século XX. Bolsas como a da Rússia, em 1917, e a da China, em 1949, simplesmente zeraram para quem tinha ações. Estudar só a bolsa americana é estudar o vencedor.",
-        "Tony aponta ainda o efeito da ponderação por valor: o índice dá mais peso a quem já ficou grande, ou seja, a quem já subiu. Comprar o índice é comprar mais do que está caro e menos do que está barato. A segunda parte da aula volta a esse ponto.",
+        "Agora, o que o índice esconde. O S&P 500 troca de empresas o tempo todo. Quem encolhe ou quebra sai, e no lugar entra quem cresceu. O gráfico do índice é, por construção, a história dos que deram certo. Quem comprou cada empresa separada sentiu também as perdas das que saíram pelo caminho. Isso tem nome: viés de sobrevivência. A troca, em um século, é quase total: em 1900, as ferrovias eram 63% do valor da bolsa americana, e tecnologia, saúde e energia como as conhecemos praticamente não existiam.",
+        "O mesmo raciocínio vale para países, e ele pesa na leitura dos 125 anos que vêm a seguir. Os Estados Unidos foram o país que deu certo no século XX. Bolsas como a da Rússia, em 1917, e a da China, em 1949, simplesmente zeraram para quem tinha ações. Estudar só a bolsa americana é estudar o vencedor.",
+        "Há ainda o efeito da ponderação por valor: o índice dá mais peso a quem já ficou grande, ou seja, a quem já subiu. Comprar o índice é comprar mais do que está caro e menos do que está barato. A segunda parte da aula volta a esse ponto.",
       ],
     },
     {
@@ -232,7 +234,7 @@ const secao: SecaoDaAula = {
       definicao:
         "Imagine que você estuda os restaurantes de uma rua famosa olhando só os que estão abertos hoje. Vai concluir que abrir restaurante ali é ótimo negócio, porque os que fecharam sumiram da amostra. Com bolsas acontece o mesmo: os índices descartam as empresas que fracassaram, e as séries históricas mais longas e mais citadas são justamente as dos países que prosperaram.",
       naPratica:
-        "Os 125 anos da bolsa americana são um dado excepcional, e não uma lei da natureza. Num estudo com 17 países desde 1900, os Estados Unidos ficam perto da média do prêmio, e não no topo. A lição para o investidor é dupla: a ação existe para pagar um prêmio no longo prazo, em quase todo lugar; e não convém apostar tudo que um único país vai repetir o próprio passado, nem o Brasil, nem os Estados Unidos.",
+        "Os 125 anos da bolsa americana são um dado excepcional, e não uma lei da natureza. Num estudo com 17 países desde 1900, a ação pagou prêmio sobre o caixa em todos eles, e os Estados Unidos não estão sozinhos entre os bons resultados. A lição para o investidor é dupla: a ação existe para pagar um prêmio no longo prazo, em quase todo lugar; e não convém apostar tudo que um único país vai repetir o próprio passado, nem o Brasil, nem os Estados Unidos.",
       referencia: { autor: "Richard A. Brealey, Stewart C. Myers e Franklin Allen", obra: "Princípios de Finanças Corporativas", capitulo: "cap. 7, seção 7.1" },
     },
 
@@ -254,7 +256,7 @@ const secao: SecaoDaAula = {
         { rotulo: "Ações do mundo todo", valor: 5.2, formato: { sufixo: "% a.a.", casas: 1 }, nota: "real, carteira mundial" },
       ],
       fonte: "UBS Global Investment Returns Yearbook 2025, resumo público (Elroy Dimson, Paul Marsh e Mike Staunton); Cambridge Judge Business School, 7/mar/2025",
-      nota: "Retornos reais derivados dos nominais e da inflação média de 2,9% ao ano. A aula cita 4,3% para as ações fora dos EUA, número da edição completa do anuário, que não está no resumo público.",
+      nota: "Retornos reais derivados dos nominais e da inflação média de 2,9% ao ano. Só as ações fora dos EUA renderam 4,3% reais ao ano, pela edição completa do anuário.",
     },
     {
       tipo: "tabela",
@@ -272,9 +274,10 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "O prêmio de risco é o quanto a ação pagou acima da aplicação sem risco, o T-Bill, o título curtíssimo do Tesouro americano, parente da nossa LFT, que você viu na aula 1 deste módulo (na fala, Tony diz \"aula 4\"). Ele foi positivo em todos os mercados estudados ao longo de 125 anos.",
-        "Alguns números da aula pedem uma leitura cuidadosa, e ela não muda a mensagem. Os 6,6% ao ano são retorno real, já descontada a inflação, como Tony diz na maior parte da fala (em um momento ele os chama de nominais). Já os US$ 107.409 e os US$ 67 são valores nominais; descontada a inflação, US$ 1 de 1900 vira algo como US$ 2.900 em ações e menos de US$ 2 em T-Bills. E os prêmios de 4,7 pontos sobre o T-Bill e 3,4 sobre os títulos longos fecham com a carteira mundial de ações, que rendeu 5,2% reais. Para a bolsa americana, o prêmio foi maior: cerca de 6,1 pontos sobre o T-Bill e 4,9 sobre os títulos longos.",
-        "E por que o mercado paga esse prêmio? Porque a ação oscila muito. Tony fala em volatilidade de 15% a 16% ao ano, o dobro do crédito privado e o triplo dos títulos longos do Tesouro. E porque, de vez em quando, ela cai pela metade.",
+        "O prêmio de risco é o quanto a ação pagou acima da aplicação sem risco, o T-Bill, o título curtíssimo do Tesouro americano que você viu na aula 1 deste módulo. Ele faz lá o papel de caixa que o Tesouro Selic, a LFT, faz aqui. Em 125 anos de dados, o prêmio foi positivo em todos os mercados estudados. Nos Estados Unidos, de 1900 a 2024, as ações renderam 6,6% ao ano acima da inflação.",
+        "Parece pouco, até entrar o tempo. Um dólar aplicado em ações americanas em 1900 virou US$ 107.409 no fim de 2024, em valor nominal; descontada a inflação, algo como US$ 2.900 em dinheiro de 1900. No T-Bill, o mesmo dólar virou US$ 67, menos de US$ 2 em dinheiro de 1900. Essa é a força dos juros compostos sobre um prêmio de alguns pontos ao ano.",
+        "No mesmo anuário, a carteira mundial de ações rendeu 5,2% reais e pagou 4,7 pontos ao ano acima do T-Bill e 3,4 acima dos títulos longos. A bolsa americana pagou mais: cerca de 6,1 pontos sobre o T-Bill e 4,9 sobre os títulos longos. É a primeira resposta à pergunta desta aula: o mercado americano pagou mais que os outros, e por muito tempo.",
+        "E por que o mercado paga esse prêmio? Porque a ação oscila muito: de 15% a 16% ao ano, em média, o dobro do crédito privado e o triplo dos títulos longos do Tesouro. E porque, de vez em quando, ela cai pela metade.",
       ],
     },
     {
@@ -283,13 +286,13 @@ const secao: SecaoDaAula = {
       definicao:
         "Pense em duas aplicações. Uma rende 4% ao ano, garantidos. A outra rende, em média, 10%, mas num ano pode cair 40%. Ninguém escolheria a segunda se ela rendesse os mesmos 4%. A diferença que o mercado exige para aceitar o susto, aqui 6 pontos, é o prêmio de risco. Ele é medido olhando para trás, mas o que interessa é o prêmio que se pode esperar daqui para a frente.",
       naPratica:
-        "O prêmio não é constante. Quando a bolsa está cara, o prêmio que ela promete daqui para a frente tende a ser menor, porque você paga mais pelo mesmo lucro. Use a média histórica como Tony sugere, como ponto de referência, e não como promessa: com uma volatilidade tão grande, até um século de dados deixa uma margem de erro de alguns pontos para cima ou para baixo.",
+        "O prêmio não é constante. Quando a bolsa está cara, o prêmio que ela promete daqui para a frente tende a ser menor, porque você paga mais pelo mesmo lucro. Use a média histórica como ponto de referência, e não como promessa: com uma volatilidade tão grande, até um século de dados deixa uma margem de erro de alguns pontos para cima ou para baixo.",
       referencia: { autor: "Zvi Bodie, Alex Kane e Alan J. Marcus", obra: "Investments", capitulo: "cap. 5, seção 5.4, e cap. 6, seção 6.6" },
     },
     {
       tipo: "grafico",
       tempo: "10:46",
-      titulo: "Quedas perto de 50% aconteceram cinco vezes, e não três",
+      titulo: "Perder metade do valor acontece, até na bolsa americana",
       subtitulo: "Maiores quedas do S&P 500, do pico ao fundo, em % (preço, em dólar nominal)",
       forma: "barra",
       eixoX: ["1929 a 1932", "1937 a 1938", "1973 a 1974", "2000 a 2002", "2007 a 2009", "2020", "2022"],
@@ -297,7 +300,7 @@ const secao: SecaoDaAula = {
       formato: { sufixo: "%", casas: 1 },
       referencia: { valor: -50, rotulo: "Metade do valor" },
       fonte: "Yardeni Research, S&P 500 Bull and Bear Market Tables; S&P Dow Jones Indices",
-      nota: "Na aula, Tony cita três quedas de 50% (1929, 2000 e 2008). As de 1937-38 e 1973-74 chegaram perto disso; descontada a inflação dos anos 70, a de 1973-74 passou de 50%.",
+      nota: "As três grandes crises do século, o crash de 1929, o estouro da bolha da internet e a crise de 2008, levaram a bolsa a perder metade do valor ou mais. As quedas de 1937-38 e 1973-74 ficaram no mesmo patamar; descontada a inflação dos anos 70, a de 1973-74 passou de 50%.",
     },
     {
       tipo: "destaque",
@@ -308,14 +311,14 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "O prêmio não chega em fatias iguais, ano após ano. Ele se concentra em poucos anos muito bons, e quem sai na hora errada perde justamente esses anos. Você viu a versão mais extrema disso com o Rodolfo, na aula 4 do Módulo I: perder os 10 melhores dias de duas décadas cortava o patrimônio final pela metade.",
+        "O prêmio não chega em fatias iguais, ano após ano. Ele se concentra em poucos anos muito bons, e quem sai na hora errada perde justamente esses anos. Você viu a versão mais extrema disso na aula 4 do Módulo I: perder os 10 melhores dias de 20 anos de S&P 500 cortava o patrimônio final pela metade. Para colher a média de 6,6%, é preciso estar investido nos anos bons, e eles não avisam quando chegam.",
       ],
     },
     {
       tipo: "texto",
       tempo: "12:30",
       paragrafos: [
-        "E vem o quarto motor. A ação americana é um investimento em dólar, e você faz a contabilidade em reais. Dá para proteger a carteira do câmbio com hedge, um contrato que neutraliza a variação da moeda, mas proteger ou não é uma decisão sobre a carteira inteira, e não sobre uma ação. Tony não diz qual é a resposta certa; diz que a pergunta precisa ser feita.",
+        "E vem o quarto motor. A ação americana é um investimento em dólar, e você faz a contabilidade em reais. Dá para proteger a carteira do câmbio com hedge, um contrato que neutraliza a variação da moeda, mas proteger ou não é uma decisão sobre a carteira inteira, e não sobre uma ação. Não há uma resposta certa para todos; a pergunta é que precisa ser feita. O simulador abaixo separa quanto do resultado vem da ação e quanto vem do câmbio.",
       ],
     },
     {
@@ -354,14 +357,14 @@ const secao: SecaoDaAula = {
       formato: { sufixo: "%", casas: 1 },
       referencia: { valor: 0, rotulo: "Zero real" },
       fonte: "Aswath Damodaran, Historical Returns on Stocks, Bonds and Bills (NYU Stern, jan/2026); inflação de 2024 e 2025 pelo BLS (CPI, dezembro a dezembro)",
-      nota: "Média composta de cada década, de janeiro a dezembro. A aula cita quase 17% nos anos 50, −1,4% nos anos 70, 11,2% nos anos 2010 e cerca de 10% de 2020 a 2025; a diferença nos anos 2010 vem da base de dados.",
+      nota: "Média composta de cada década, de janeiro a dezembro. Com outras bases, os anos 2010 aparecem com 11,2% e o período de 2020 a 2025 com cerca de 10%; a diferença vem da série usada, e o desenho das décadas é o mesmo.",
     },
     {
       tipo: "texto",
       paragrafos: [
-        "Os anos 50 foram a melhor década da amostra, com quase 17% ao ano acima da inflação. Os anos 70 foram o oposto. Dois choques do petróleo, gasto público expansionista, inflação alta e crescimento fraco. A bolsa até subiu em dólares correntes, mas perdeu da inflação: −1,4% ao ano em termos reais. Foi também uma década de turbulência política, com o caso Watergate (Nixon renunciou em agosto de 1974, antes de a Câmara votar o impeachment que Tony menciona).",
+        "Os anos 50 foram a melhor década da amostra, com quase 17% ao ano acima da inflação. Os anos 70 foram o oposto. Dois choques do petróleo, gasto público expansionista, inflação alta e crescimento fraco. A bolsa até subiu em dólares correntes, mas perdeu da inflação: −1,4% ao ano em termos reais. Foi também uma década de turbulência política, com o caso Watergate e a renúncia de Nixon, em agosto de 1974, em meio ao processo de impeachment.",
         "Quem entrou no fim de 1968 chegou a ficar no azul em 1972, voltou ao vermelho com a crise de 1973-74 e só deixou o prejuízo para trás, de vez, em 1983. Foram mais de dez anos parados, descontada a inflação.",
-        "Os anos 2000 foram ainda piores, −3,4% ao ano, e por outro motivo. A economia não ia mal, e o lucro das empresas cresceu. O problema foi o preço de entrada: a bolha da internet tinha levado os múltiplos a recordes, e eles desabaram. Quem comprou no começo de 2000 só recuperou o poder de compra perto de 2013. No meio do caminho vieram duas recessões, o 11 de setembro e a crise de 2008. E, como Tony lembrou na abertura, foi a década em que os emergentes, Brasil incluído, deram de goleada.",
+        "Os anos 2000 foram ainda piores, −3,4% ao ano, e por outro motivo. A economia não ia mal, e o lucro das empresas cresceu. O problema foi o preço de entrada: a bolha da internet tinha levado os múltiplos a recordes, e eles desabaram. No meio do caminho vieram duas recessões, o 11 de setembro e a crise de 2008. Quem comprou no começo de 2000 viu a carteira chegar perto do ponto de partida em 2007, perdeu de novo em 2008 e só deixou o prejuízo para trás, de vez, perto de 2013, descontada a inflação. Foi também a década em que os emergentes, Brasil incluído, deram de goleada: a exceção lembrada na abertura desta aula.",
       ],
     },
     {
@@ -394,12 +397,12 @@ const secao: SecaoDaAula = {
         ["Preço mais dividendos, descontada a inflação", "−0,8%", "−0,7%"],
       ],
       fonte: "S&P 500 de 103,86 pontos (31/dez/1968) e 140,64 (31/dez/1982); retorno com dividendos e inflação de Aswath Damodaran, Historical Returns on Stocks, Bonds and Bills",
-      nota: "Quatorze anos, de dezembro de 1968 a dezembro de 1982. Os números da aula fecham com a fonte.",
+      nota: "Quatorze anos, de dezembro de 1968 a dezembro de 1982. A conta da aula e a das fontes coincidem, com um décimo de diferença na última linha.",
     },
     {
       tipo: "texto",
       paragrafos: [
-        "A tabela acima é a frase de Tony em números: os dividendos, que nos anos 70 rendiam de 3% a 5% ao ano, quase compensaram a inflação, mas não compensaram de todo. Quem vivia de dividendo viu o poder de compra cair por uma década e meia.",
+        "A tabela acima põe a regra em números: dividendo, normalmente, não paga a inflação. Nos anos 70, os dividendos rendiam de 3% a 5% ao ano e quase compensaram a alta de preços, mas não de todo. Quem vivia de dividendo viu o poder de compra cair por uma década e meia.",
         "Sobre os anos 2000, a lição é sobre o terceiro motor. O lucro fez a parte dele; o múltiplo andou para trás. É por isso que o CAPE de hoje, perto do recorde de 2000, aparece em toda discussão sobre o que esperar da bolsa americana. Não é sinal de venda nem data marcada. É a lembrança de que, partindo de múltiplo alto, o lucro precisa crescer mais para entregar a mesma coisa.",
       ],
     },
@@ -416,12 +419,12 @@ const secao: SecaoDaAula = {
       tipo: "kpis",
       titulo: "Quanto da bolsa americana é tecnologia",
       itens: [
-        { rotulo: "Setor de tecnologia, MSCI USA", valor: 39.5, formato: { sufixo: "%", casas: 1 }, destaque: true, nota: "set/2026; na aula, 34% no S&P 500" },
+        { rotulo: "Setor de tecnologia, MSCI USA", valor: 39.5, formato: { sufixo: "%", casas: 1 }, destaque: true, nota: "set/2026; no S&P 500, um terço ou mais, conforme a data" },
         { rotulo: "Alphabet, Meta, Amazon e Tesla", valor: 13.2, formato: { sufixo: "%", casas: 1 }, nota: "no S&P 500, fora do setor oficial" },
         { rotulo: "Tecnologia nos outros desenvolvidos", valor: 11.0, formato: { sufixo: "%", casas: 1 }, nota: "MSCI World ex USA, set/2026" },
       ],
       fonte: "MSCI, factsheets MSCI USA e MSCI World ex USA, 30/set/2026; carteira do SPDR S&P 500 ETF (SPY) em 5/out/2026, via Business Quant",
-      nota: "Alphabet e Meta estão em serviços de comunicação; Amazon e Tesla, em consumo. Na aula, a soma com essas quatro chega a 45%; pelos dados de set/out/2026, passa de 50%.",
+      nota: "Alphabet e Meta estão em serviços de comunicação; Amazon e Tesla, em consumo. Somando essas quatro ao setor oficial, a tecnologia vai de 45% a mais de 50% do índice, conforme a data; com os dados de set/out/2026, passa de 50%.",
     },
     {
       tipo: "linhaDoTempo",
@@ -437,13 +440,13 @@ const secao: SecaoDaAula = {
         { data: "2026", titulo: "Perto de 39%", texto: "Acima de qualquer pico anterior de um setor." },
       ],
       fonte: "CME Group, OpenMarkets, \"What Past Sector Concentrations Tell Us About Today's Tech-Heavy S&P 500\" (28/jul/2026); First Trust, com dados da Bloomberg (ago/2022)",
-      nota: "Na aula, Tony fala em abaixo de 10% antes de 1995, 35% no auge da bolha e cerca de 15% depois do estouro. A ordem de grandeza é a mesma.",
+      nota: "Os números variam um pouco com a fonte e a data de corte: abaixo de 10% antes de 1995, entre 33% e 35% no auge da bolha e perto de 15% depois do estouro. O desenho é o mesmo em todas.",
     },
     {
       tipo: "texto",
       paragrafos: [
-        "A conclusão de Tony é direta: quem compra o S&P 500 hoje está fazendo, principalmente, um investimento no setor de tecnologia americano, espalhado por vários setores oficiais. A concentração de agora é comparável à da bolha de 2000. Ele faz questão de separar as duas coisas, porém. Concentração igual não quer dizer bolha igual. Há analistas que veem bolha hoje; Tony diz que, na opinião dele, não há.",
-        "Você já viu com o Rodolfo, na aula 4 do Módulo I, o que aconteceu com o Nasdaq depois de 2000. A diferença que Tony sublinha é que lá a concentração veio com múltiplos absurdos e lucros que não existiam; hoje, as maiores empresas lucram muito. Isso não elimina o risco. Muda a pergunta: o crescimento que o preço embute vai mesmo acontecer?",
+        "A conclusão é direta: quem compra o S&P 500 hoje está fazendo, principalmente, um investimento no setor de tecnologia americano, espalhado por vários setores oficiais. A concentração de agora é comparável à da bolha de 2000. Mas concentração igual não quer dizer bolha igual. Há analistas que veem bolha hoje; a leitura desta aula é que não há, e que o que se repete é o nível de concentração, e não necessariamente o desfecho.",
+        "Você viu na aula 4 do Módulo I o que aconteceu com o Nasdaq depois de 2000. A diferença é que lá a concentração veio com múltiplos absurdos e lucros que não existiam; hoje, as maiores empresas lucram muito. Isso não elimina o risco. Muda a pergunta: o crescimento que o preço embute vai mesmo acontecer?",
       ],
     },
     {
@@ -477,8 +480,8 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Por que a virada? Tony aponta o setor de tecnologia. Pense em Nvidia, Microsoft, Alphabet e Meta: não há empresas equivalentes na Europa ou no Japão. Existem gigantes importantes, como a holandesa ASML, que fabrica as máquinas que fazem os chips, e várias empresas em Taiwan e no resto da Ásia, mas nada do tamanho do conjunto americano. A ASML, a maior empresa do MSCI World ex USA, pesa 2,9% daquele índice; a Nvidia sozinha pesa 8% do índice americano.",
-        "E não foi só preço. Pelos números de Tony, desde 2008 o lucro das empresas americanas cresceu quatro vezes mais rápido que o das outras bolsas desenvolvidas, um cálculo que não conseguimos reproduzir com dado público, mas cuja direção é inquestionável. O múltiplo também subiu: o P/L do S&P 500 foi de 12,8 para acima de 21 vezes, segundo a aula. Os dois motores ajudaram juntos.",
+        "Por que a virada? A grande razão, de novo, é o setor de tecnologia. Pense em Nvidia, Microsoft, Alphabet e Meta: não há empresas equivalentes na Europa ou no Japão. Existem gigantes importantes, como a holandesa ASML, que fabrica as máquinas que fazem os chips, e várias empresas em Taiwan e no resto da Ásia, mas nada do tamanho do conjunto americano. Os pesos mostram a distância: a ASML, a maior empresa do MSCI World ex USA, pesa 2,9% daquele índice; a Nvidia sozinha pesa 8% do índice americano.",
+        "E não foi só preço. Desde 2008, o lucro das empresas americanas cresceu quatro vezes mais rápido que o das outras bolsas desenvolvidas. O múltiplo também subiu: o P/L do S&P 500 foi de 12,8 para acima de 21 vezes. Os dois motores ajudaram juntos, e é isso que separa esta fase de uma simples alta de preço.",
         "O detalhe mais interessante está no que os preços dizem hoje. As outras bolsas estão mais baratas pelo lucro que entregam. Se o mercado achasse que essa diferença de lucro ia acabar, os múltiplos já teriam se aproximado. Não se aproximaram: o mercado aposta que a vantagem americana continua. Essa aposta pode estar certa, mas é uma aposta, e está no preço.",
       ],
     },
@@ -506,7 +509,7 @@ const secao: SecaoDaAula = {
       definicao:
         "Duas empresas lucram US$ 1 por ação. Uma custa US$ 25, a outra US$ 17. A de US$ 17 está mais barata? Só se as duas tiverem o mesmo futuro. Se a primeira vai dobrar o lucro em cinco anos e a segunda vai ficar parada, os US$ 25 podem ser a pechincha. Entre países vale o mesmo, com mais camadas: setores diferentes, regras contábeis diferentes, juros e riscos diferentes.",
       naPratica:
-        "O P/L menor da Europa e do Japão reflete, em boa parte, a mistura de setores: mais bancos, indústria e energia, menos tecnologia. Comparar a bolsa americana com as outras pede a pergunta de Tony: o crescimento de lucro que justifica a diferença vai continuar? Ter alguma convicção sobre isso, e sobre o ciclo da tecnologia, ajuda a decidir quanto da parte internacional fica nos EUA.",
+        "O P/L menor da Europa e do Japão reflete, em boa parte, a mistura de setores: mais bancos, indústria e energia, menos tecnologia. Comparar a bolsa americana com as outras pede a pergunta central deste capítulo: o crescimento de lucro que justifica a diferença vai continuar? Ter alguma convicção sobre isso, e sobre o ciclo da tecnologia, ajuda a decidir quanto da parte internacional fica nos EUA.",
       referencia: { autor: "John D. Stowe, Thomas R. Robinson, Jerald E. Pinto e Dennis W. McLeavey", obra: "Analysis of Equity Investments: Valuation", capitulo: "cap. 4, seções 3.2 e 3.3" },
     },
 
@@ -527,7 +530,7 @@ const secao: SecaoDaAula = {
       capitular: true,
       paragrafos: [
         "Compare duas empresas. A primeira vende chips para inteligência artificial, dobra a receita em dois anos, quase não paga dividendo e custa 33 vezes o lucro. A segunda é um banco grande: lucro que cresce devagar, dividendo gordo, 12 vezes o lucro. A primeira é o que o mercado chama de ação de crescimento; a segunda, de valor. Em inglês, growth e value.",
-        "Tony descreve os dois grupos assim. As de crescimento aumentam receita e lucro rapidamente e operam com múltiplos esticados, porque o mercado já está pagando pelo futuro. As de valor são mais tradicionais, crescem menos, oscilam um pouco menos, costumam pagar dividendos e têm múltiplos menores. Bancos, empresas de commodities e do setor imobiliário caem quase sempre do lado do valor. Banco, diz ele, é um negócio mais careta, fora das bolhas.",
+        "As de crescimento aumentam receita e lucro rapidamente e operam com múltiplos esticados, porque o mercado já está pagando pelo futuro. As de valor são mais tradicionais, crescem menos, oscilam um pouco menos, costumam pagar dividendos e têm múltiplos menores. Bancos, empresas de commodities e do setor imobiliário caem quase sempre do lado do valor. Banco, fora dos momentos de bolha, é um negócio mais careta: nos anos que antecederam 2008 os bancos cresceram depressa, e aquilo não se sustentou.",
         "Um detalhe curioso mostra que o rótulo vem de números, e não da fama. No índice de valor da MSCI, em set/2026, a maior empresa era a Microsoft, com 11% do peso, e a Meta vinha em segundo. Pelas métricas de preço sobre lucro esperado e sobre patrimônio, elas tinham ficado relativamente baratas. No índice de crescimento, Nvidia e Apple somavam quase 30%.",
       ],
     },
@@ -565,7 +568,7 @@ const secao: SecaoDaAula = {
             texto: "Lidera. Anos 90 e de 2009 a 2021; de novo desde 2023, com a inteligência artificial.",
             explicacao:
               "Quando o lucro das empresas de tecnologia cresce rápido e a economia ajuda, o mercado aceita pagar múltiplos ainda maiores. Num índice concentrado em tecnologia, como o americano, isso puxa o índice inteiro.",
-            marca: "Onde estamos, segundo a aula",
+            marca: "Onde a bolsa está hoje",
           },
           {
             texto: "Sobe, mas fica para trás. Bancos e commodities crescem sem explodir.",
@@ -624,14 +627,14 @@ const secao: SecaoDaAula = {
       definicao:
         "No começo dos anos 70, cerca de 50 grandes empresas americanas de crescimento, o Nifty Fifty, eram vistas como ações para comprar a qualquer preço e nunca vender. No fim de 1972, custavam em média 37 vezes o lucro, contra 18 do S&P 500. Até o fim de 1974, o índice caiu 46%, e as estrelas caíram mais: Disney, 91%; Coca-Cola, 67%; Kodak, 59%. As empresas continuaram boas. O preço é que não cabia em nenhum futuro razoável.",
       naPratica:
-        "Crescimento é uma ótima qualidade, e o mercado sabe disso, por isso cobra por ela. O risco do estilo não está na empresa, está no múltiplo. Quem compra crescimento caro precisa que o futuro seja ainda melhor do que o preço já supõe. Por isso Tony fala em diversificação contínua e dinâmica, e não em escolher um lado para sempre.",
+        "Crescimento é uma ótima qualidade, e o mercado sabe disso, por isso cobra por ela. O risco do estilo não está na empresa, está no múltiplo. Quem compra crescimento caro precisa que o futuro seja ainda melhor do que o preço já supõe. É o mesmo começo caro dos anos 70 que aparece no gráfico do CAPE. Por isso a escolha entre estilos pede uma diversificação contínua e dinâmica, e não um lado para sempre.",
       referencia: { autor: "John D. Stowe, Thomas R. Robinson, Jerald E. Pinto e Dennis W. McLeavey", obra: "Analysis of Equity Investments: Valuation", capitulo: "Prefácio, p. xv" },
     },
     {
       tipo: "conceito",
       termo: "O fator valor",
       definicao:
-        "Na academia, valor virou um fator: uma fonte de retorno que se mede separando as ações baratas das caras, por patrimônio ou por lucro, e comparando as duas carteiras. Num histórico longo, as baratas renderam mais. Mas o prêmio pode ficar negativo por décadas: o anuário da UBS mostra prêmios de fator negativos por décadas inteiras, e nos Estados Unidos o de valor ficou negativo na maior parte dos anos 2010.",
+        "O debate sobre qual estilo vai melhor tem uma versão acadêmica. Ali, valor virou um fator: uma fonte de retorno que se mede separando as ações baratas das caras, por patrimônio ou por lucro, e comparando as duas carteiras. Num histórico longo, as baratas renderam mais. Mas o prêmio pode ficar negativo por décadas: o anuário da UBS mostra prêmios de fator negativos por décadas inteiras, e nos Estados Unidos o de valor ficou negativo na maior parte dos anos 2010.",
       naPratica:
         "Fundos e ETFs de valor ou de crescimento são exposições a estilos, e não talento de gestor. Antes de pagar por um deles, vale perguntar se você quer mudar o perfil da carteira ou só está correndo atrás do estilo que foi melhor nos últimos anos, que é o jeito mais comum de entrar tarde.",
       referencia: { autor: "Zvi Bodie, Alex Kane e Alan J. Marcus", obra: "Investments", capitulo: "cap. 10, modelo de três fatores de Fama e French" },
@@ -648,9 +651,9 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Na hora da correção, diz Tony, as empresas de valor vão melhor e pagam mais dividendos. Isso leva à pergunta que dava nome à aula planejada: vale mais a pena buscar dividendos ou crescimento?",
+        "Na hora da correção, as empresas de valor vão melhor e pagam mais dividendos. Isso leva à pergunta que dava nome à aula planejada: vale mais a pena buscar dividendos ou crescimento?",
         "Comece pelo que a empresa faz com o lucro. Ela pode reinvestir tudo, se tem onde aplicar o dinheiro a um retorno alto. Pode devolver aos acionistas, por dividendo ou recompra. Ou pode fazer um pouco de cada. Uma empresa jovem, com muitas oportunidades, costuma reter; uma madura, que já ocupou o mercado dela, costuma distribuir. O dividendo conta mais sobre a fase da empresa do que sobre a qualidade dela.",
-        "As listas de empresas que aumentam o dividendo há décadas, os Aristocrats e Kings, você viu com o Rodolfo, na aula 4 do Módulo I, junto com o lembrete de que o conselho pode cortar o dividendo quando o caixa aperta. Aqui o ângulo é outro: o que muda para o seu retorno total.",
+        "As listas de empresas que aumentam o dividendo há décadas, os Aristocrats e Kings, você viu na aula 4 do Módulo I, junto com o lembrete de que o conselho pode cortar o dividendo quando o caixa aperta. Aqui o ângulo é outro: o que muda para o seu retorno total.",
       ],
     },
     {
@@ -687,7 +690,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       paragrafos: [
         "O S&P 500 dá a cada empresa um peso proporcional ao valor dela na bolsa. A Nvidia pesa cerca de 8%; a menor das 500, uma fração de 0,01%. Existe outro jeito: dar o mesmo peso a todas, cerca de 0,2% para cada uma, e reequilibrar de tempos em tempos. Na prática, isso significa vender um pouco do que subiu e comprar um pouco do que caiu.",
-        "Tony explica a consequência. Quando o crescimento está concentrado em poucas empresas, como agora com a inteligência artificial, o índice por valor vai melhor, porque essas empresas pesam cada vez mais dentro dele. Quando há correção, ou a liderança passa para outros setores, o de pesos iguais tende a ir melhor. Desde 2020, os dois índices passaram a andar menos juntos: a correlação dos retornos diários, que costumava ficar acima de 0,95, tem rondado 0,8.",
+        "A consequência é direta. Quando o crescimento está concentrado em poucas empresas, como agora com a inteligência artificial, o índice por valor vai melhor, porque essas empresas pesam cada vez mais dentro dele. Quando há correção, ou a liderança passa para outros setores, o de pesos iguais tende a ir melhor. A concentração de hoje aparece até na forma como os dois andam: desde 2020, a correlação dos retornos diários, que costumava ficar acima de 0,95, tem rondado 0,8. Os dois índices ficaram menos parecidos, e escolher entre eles passou a fazer mais diferença.",
       ],
     },
     {
@@ -722,7 +725,7 @@ const secao: SecaoDaAula = {
       definicao:
         "Em vez de escolher ações, você compra o índice inteiro, por um fundo ou ETF que copia a carteira dele. Não tenta bater o mercado: aceita o resultado médio, a um custo baixo. Um fundo de índice amplo nos EUA cobra frações de 0,1% ao ano; um fundo ativo típico já cobrou perto de 1%. A diferença de custo é certa; a vantagem de escolher ações, para quem não tem uma análise muito superior, é incerta.",
       naPratica:
-        "Comprar o S&P 500 é uma decisão ativa disfarçada, como Tony mostra: você aceita a regra de pesos por valor e, hoje, uma aposta grande em tecnologia. Isso pode ser exatamente o que você quer. Só não é neutro. Saber o que está dentro do índice faz parte da diversificação, e o papel de um bom assessor é mais adaptar a carteira à sua vida do que prometer bater o mercado.",
+        "Comprar o S&P 500 é uma decisão ativa disfarçada, como mostram os pesos deste capítulo: você aceita a regra de pesos por valor e, hoje, uma aposta grande em tecnologia. Isso pode ser exatamente o que você quer. Só não é neutro. Saber o que está dentro do índice faz parte da diversificação, e o papel de um bom assessor é mais adaptar a carteira à sua vida do que prometer bater o mercado.",
       referencia: { autor: "Zvi Bodie, Alex Kane e Alan J. Marcus", obra: "Investments", capitulo: "cap. 11, gestão ativa e passiva" },
     },
 
@@ -737,8 +740,8 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Aqui Tony é honesto sobre um dilema. Diversificar demais dentro da bolsa pode deixar você de fora das empresas que lideram o ciclo tecnológico. Diversificar de menos deixa a carteira na mão de um tema só. A saída que ele propõe é pensar em duas camadas.",
-        "A primeira é dentro de cada classe: quantas ações, de quais setores, por quais pesos. A segunda é entre classes: quanto em renda variável e quanto em renda fixa. As duas conversam. Dá para montar, diz ele, uma parte de ações até mais concentrada em inteligência artificial que o S&P 500, desde que a carteira tenha uma parcela relevante em renda fixa para amortecer uma correção. O exemplo é de como pensar, e não de quanto pôr em cada lugar.",
+        "Aqui existe um dilema, e ele merece ser dito com honestidade. Diversificar demais dentro da bolsa pode deixar você de fora das empresas que lideram o ciclo tecnológico. Diversificar de menos deixa a carteira na mão de um tema só. A saída é pensar em duas camadas.",
+        "A primeira é dentro de cada classe: quantas ações, de quais setores, por quais pesos. A segunda é entre classes: quanto em renda variável e quanto em renda fixa. As duas conversam. Dá para montar uma parte de ações até mais concentrada em inteligência artificial que o S&P 500, desde que a carteira tenha uma parcela relevante em renda fixa para amortecer uma correção, já que a renda fixa costuma subir quando a bolsa cai. O exemplo é de como pensar, e não de quanto pôr em cada lugar.",
       ],
     },
     {
@@ -757,7 +760,7 @@ const secao: SecaoDaAula = {
       colunas: ["Classe", "O que você carrega", "O que costuma pagar", "Relação com as ações"],
       linhas: [
         ["T-Bills", "Quase nenhum risco; é o caixa", "Retorno real pequeno, mas positivo: 0,5% ao ano desde 1900", "Neutra"],
-        ["Treasuries longas", "Sem risco de crédito, com risco de prazo (o preço oscila com os juros)", "Prêmio sobre o T-Bill: 1,6% real ao ano desde 1900", "Muitas vezes negativa, mas não sempre"],
+        ["Treasuries longas", "Sem risco de crédito, com risco de prazo (o preço oscila com os juros)", "Mais que o T-Bill: 1,6% real ao ano desde 1900", "Muitas vezes negativa, mas não sempre"],
         ["Crédito com grau de investimento", "Risco de prazo e de calote, baixo", "Prêmio sobre as Treasuries", "Positiva, mais fraca"],
         ["High yield", "Calote mais provável; mistura de bolsa e renda fixa", "Prêmio adicional", "Mais próxima das ações"],
         ["Ações", "Último da fila; oscilação de 15% a 20% ao ano", "6,6% real ao ano desde 1900", "n/d"],
@@ -781,8 +784,8 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "É o grande debate que Tony traz. Durante duas décadas, quando a bolsa caía, as Treasuries subiam: em 2008, o título de 10 anos rendeu 20% enquanto o S&P 500 perdia 37%. Essa proteção natural é o motivo de tanta gente ter ações e títulos americanos na mesma carteira. Em 2022, com a inflação alta e os juros subindo rápido, os dois caíram quase 18%.",
-        "Parte do mercado acha que os grandes déficits do governo americano estão tirando das Treasuries o papel de proteção: com muita dívida para vender, o título longo passaria a cair justamente quando o mundo fica nervoso. Tony não crava a resposta. Ele lembra que, ao montar a carteira, você toma uma posição nesse debate, conscientemente ou não, e que vale levar essa conversa ao seu assessor.",
+        "É um dos grandes debates do mercado hoje. Durante duas décadas, quando a bolsa caía, as Treasuries subiam: em 2008, o título de 10 anos rendeu 20% enquanto o S&P 500 perdia 37%. Essa proteção natural é o motivo de tanta gente ter ações e títulos americanos na mesma carteira. Em 2022, com a inflação alta e os juros subindo rápido, os dois caíram quase 18%.",
+        "Parte do mercado acha que os grandes déficits do governo americano estão tirando das Treasuries o papel de proteção: com muita dívida para vender, o título longo passaria a cair justamente quando o mundo fica nervoso. Não há resposta fechada. Mas, ao montar a carteira, você toma uma posição nesse debate, conscientemente ou não, e vale levar essa conversa ao seu assessor.",
       ],
     },
 
@@ -813,7 +816,7 @@ const secao: SecaoDaAula = {
         { em: "2015", rotulo: "Fundo: −73% desde 2010" },
       ],
       fonte: "Aswath Damodaran, Historical Returns on Stocks, Bonds and Bills (jan/2026); Banco Central do Brasil, SGS 7845 (Ibovespa, até 2018) e SGS 3696 (dólar de fim de mês); B3, fechamentos anuais do Ibovespa de 2019 a 2025",
-      nota: "Fim de cada ano, em dólar nominal. O Ibovespa já reinveste os proventos das empresas. Na aula, Tony lê no gráfico US$ 800 e US$ 500; a diferença vem da base de dados usada.",
+      nota: "Fim de cada ano, em dólar nominal. O Ibovespa já reinveste os proventos das empresas. O ponto de chegada varia com a série e a data de corte: com outra base, os US$ 100 viram perto de US$ 800 e US$ 500. A vantagem americana aparece em todas.",
     },
     {
       tipo: "tabela",
@@ -827,13 +830,13 @@ const secao: SecaoDaAula = {
         ["2001 a 2025, descontada a inflação americana", "+6,1%", "+2,8%", "EUA"],
       ],
       fonte: "Mesmas fontes do gráfico acima; inflação americana de Damodaran e BLS",
-      nota: "Na aula, 8,8% contra 6,6% ao ano, de 2001 a 2025, com outra base. Tony chama esses números de retorno real e diz que, por isso, incluem dividendos; são duas coisas diferentes. Retorno real desconta a inflação; retorno total inclui os dividendos. Aqui, as linhas de cima são retorno total em dólar nominal, e a última é retorno total real.",
+      nota: "Os números variam com a série e a data de corte: com outra base, a comparação de 2001 a 2025 fica perto de 8,8% contra 6,6% ao ano. Todas as linhas são retorno total, com dividendos. As de cima estão em dólar nominal; a última desconta também a inflação americana, o que dá o retorno real.",
     },
     {
       tipo: "texto",
       paragrafos: [
-        "A leitura de Tony bate com os dados. De 2000 a 2007, o Brasil surfou o boom das commodities puxado pela China, com um primeiro governo Lula bem avaliado pelo mercado, e deu uma surra na bolsa americana. Atravessou até a crise de 2008 em vantagem. A partir de 2011, a relação se inverteu: queda das commodities, desaceleração chinesa e, na opinião de Tony, a má gestão econômica do primeiro mandato de Dilma Rousseff.",
-        "No período inteiro, a diferença não parece enorme. Só que 3 pontos ao ano, compostos por 25 anos, viram mais que o dobro de patrimônio no fim. E o que o número médio esconde é o caminho: a bolsa brasileira em dólar oscilou três vezes mais.",
+        "A aula 4 do Módulo I mostrou o que existe dentro de cada bolsa: tecnologia de um lado, commodities e bancos do outro. Aqui a pergunta é quanto cada uma rendeu em dólar, e a resposta vem em duas eras. De 2000 a 2007, o Brasil surfou o boom das commodities puxado pela China, com um primeiro governo Lula bem avaliado pelo mercado, e deu uma surra na bolsa americana. Atravessou até a crise de 2008 em vantagem. A partir de 2011, a relação se inverteu: queda das commodities, desaceleração chinesa e, numa avaliação comum no mercado, a má gestão econômica do primeiro mandato de Dilma Rousseff.",
+        "No período inteiro, a diferença não parece enorme. Só que 2 a 3 pontos ao ano, conforme a série, compostos por 25 anos, abrem uma distância grande no fim: no gráfico acima, mais que o dobro de patrimônio. E o que o número médio esconde é o caminho: a bolsa brasileira em dólar oscilou três vezes mais.",
       ],
     },
     {
@@ -861,7 +864,7 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Você tem R$ 100 mil. A carteira cai 50% e vira R$ 50 mil. Quanto ela precisa subir para voltar aos R$ 100 mil? Não são 50%: 50% de R$ 50 mil são R$ 25 mil, e você chega a R$ 75 mil. Precisa dobrar, subir 100%. Essa é a assimetria que Tony chama de cruel e que, segundo ele, muitos investidores, e até assessores, não entendem bem.",
+        "Você tem R$ 100 mil. A carteira cai 50% e vira R$ 50 mil. Quanto ela precisa subir para voltar aos R$ 100 mil? Não são 50%: 50% de R$ 50 mil são R$ 25 mil, e você chega a R$ 75 mil. Precisa dobrar, subir 100%. Essa é a matemática cruel das quedas, uma assimetria que muitos investidores, e até assessores, não entendem bem.",
         "Quanto maior a queda, mais a conta piora. Uma perda de 10% pede 11% de alta; uma de 30%, 43%; uma de 73%, como a do Ibovespa em dólar entre 2010 e 2015, pede 270%. No fim de 2025, dez anos depois do fundo, o Ibovespa em dólar ainda estava 30% abaixo do pico de 2010.",
       ],
     },
@@ -899,7 +902,7 @@ const secao: SecaoDaAula = {
       definicao:
         "Duas carteiras rendem, em média, 10% ao ano. A primeira sobe 10% todo ano. A segunda sobe 60% num ano e cai 40% no outro: média de 10%, mas R$ 100 viram R$ 160 e depois R$ 96. Perdeu dinheiro. Quanto mais a carteira oscila, maior a distância entre a média dos anos e o que você de fato acumula. É o arrasto da volatilidade.",
       naPratica:
-        "Por isso Tony insiste na volatilidade quando compara as duas bolsas. Um mercado que oscila muito, como o brasileiro em dólar, pode ter anos espetaculares e, ainda assim, entregar pouco no fim. E a oscilação cobra também na cabeça: quanto mais a bolsa cai, maior a disciplina para não vender no fundo. Na bolsa americana, a disciplina exigida é menor, porque, fora as grandes crises, ela cai menos.",
+        "Por isso a volatilidade pesa tanto na comparação entre as duas bolsas. Um mercado que oscila muito, como o brasileiro em dólar, pode ter anos espetaculares e, ainda assim, entregar pouco no fim. E a oscilação cobra também na cabeça: quanto mais a bolsa cai, maior a disciplina para não vender no fundo. Na bolsa americana, a disciplina exigida é menor, porque, fora as grandes crises, ela cai menos.",
       referencia: { autor: "Zvi Bodie, Alex Kane e Alan J. Marcus", obra: "Investments", capitulo: "cap. 5, seção 5.5" },
     },
     {
@@ -909,15 +912,15 @@ const secao: SecaoDaAula = {
       definicao:
         "Perder R$ 1.000 dói mais do que ganhar R$ 1.000 alegra. Os psicólogos Daniel Kahneman e Amos Tversky mediram isso: para a maioria das pessoas, a dor da perda pesa cerca de duas vezes o prazer do ganho do mesmo tamanho. Além disso, cada um mede o resultado a partir do preço que pagou, e não do valor de hoje, o que leva a segurar perdedoras esperando voltar ao preço e a vender vencedoras cedo demais.",
       naPratica:
-        "A matemática das quedas e a psicologia das perdas trabalham juntas contra o investidor. A queda pede uma alta desproporcional para voltar, e o medo empurra para vender justamente antes dela. Tony chama de cristalizar a perda. A defesa é decidir antes, com calma, quanto da carteira você aguenta ver cair, e deixar a regra escrita para as semanas ruins.",
+        "A matemática das quedas e a psicologia das perdas trabalham juntas contra o investidor. A queda pede uma alta desproporcional para voltar, e o medo empurra para vender justamente antes dela. É o que se chama de cristalizar a perda: vender no fundo e transformar uma queda passageira em prejuízo definitivo. A defesa é decidir antes, com calma, quanto da carteira você aguenta ver cair, e deixar a regra escrita para as semanas ruins.",
       referencia: { autor: "Richard A. Brealey, Stewart C. Myers e Franklin Allen", obra: "Princípios de Finanças Corporativas", capitulo: "cap. 13, seção 13.4" },
     },
     {
       tipo: "texto",
       tempo: "43:28",
       paragrafos: [
-        "Tony fecha com cinco mensagens. Entenda o que é uma ação, principalmente em comparação com a renda fixa. A bolsa americana pagou um bom prêmio, perto de 6,6% ao ano acima da inflação, e essa média serve de referência, sabendo que o prêmio muda muito conforme o momento. Há eras, e algumas são de decepção. A vantagem americana desde 2008 veio do lucro e também do múltiplo. E o Ibovespa não foi tão pior assim, quando se contam os bons anos do começo do século, mas com uma volatilidade muito maior.",
-        "Para quem monta uma carteira fora do Brasil, a lição prática é ter alguma tese sobre o momento, em especial sobre o ciclo da tecnologia, para decidir quanto da parte internacional fica na bolsa americana. E manter as duas camadas de diversificação conversando: dentro da bolsa e entre bolsa e renda fixa. Esta é a última aula de Tony no curso; com ela, você tem material para uma conversa mais concreta com quem cuida dos seus investimentos.",
+        "Ficam cinco mensagens. Entenda o que é uma ação, principalmente em comparação com a renda fixa. A bolsa americana pagou um bom prêmio, perto de 6,6% ao ano acima da inflação, e essa média serve de referência, sabendo que o prêmio muda muito conforme o momento. Há eras, e algumas são de decepção. A vantagem americana desde 2008 veio do lucro e também do múltiplo. E o Ibovespa não foi tão pior assim, quando se contam os bons anos do começo do século, mas com uma volatilidade muito maior.",
+        "Para quem monta uma carteira fora do Brasil, a lição prática é ter alguma tese sobre o momento, em especial sobre o ciclo da tecnologia, para decidir quanto da parte internacional fica na bolsa americana. E manter as duas camadas de diversificação conversando: dentro da bolsa e entre bolsa e renda fixa. Esta aula fecha o Módulo II; com a renda fixa das aulas 1 e 2 e as ações desta, você tem material para uma conversa mais concreta com quem cuida dos seus investimentos.",
       ],
     },
     {

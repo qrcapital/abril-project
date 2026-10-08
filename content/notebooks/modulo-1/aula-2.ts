@@ -34,14 +34,15 @@ import type { SecaoDaAula } from "@/lib/notebook";
 //   1º/out/2024; BB, BB e Ba1 no prospecto do Tesouro na SEC de abr/2026); AAA só para Microsoft e
 //   Johnson & Johnson na S&P; Apple Aaa na Moody's e AA+ na S&P.
 //
-// ONDE A FALA DIFERE DA FONTE (registrado com leveza no texto): o Brasil perdeu o grau em 2015 na S&P
-// e na Fitch e só em 2016 na Moody's; o default do high yield passou de 10% em 1991, 2001 e 2009, e
-// não "4%, 5% em anos de crise"; "25% de 50 é 25%" é 12,5%; só duas empresas AAA na S&P, e a Apple
-// não é uma delas; a emissão de 1,5 a 2 tri é bruta, não líquida; chip da NVIDIA de 50 a 100 mil (a
-// unidade custa de 25 a 40 mil; os valores maiores são de módulos e servidores); spread do IG "perto
-// de zero" (o piso histórico fica perto de meio ponto); o spread do IG abriu em 2022, e a perda veio
-// sobretudo da Treasury; a carteira 50/30/25 soma 105%; a fórmula é probabilidade vezes (1 menos a
-// recuperação).
+// ONDE A FALA E A FONTE TRAZEM RECORTES DIFERENTES (no texto, como informação, sem apontar a fala;
+// voz institucional de 08/out/2026): o Brasil perdeu o grau entre 2015 (S&P e Fitch) e 2016 (Moody's,
+// quando a perda ficou completa); default do high yield com média perto de 4% e picos acima de 10% em
+// 1991, 2001 e 2009; o exemplo de 25% de chance e 50% de recuperação aparece com a conta certa
+// (12,5%); AAA depende da agência (Apple Aaa na Moody's, AA+ na S&P); emissão bruta; preço de chip
+// como faixa por tipo de equipamento (unidade de 25 a 40 mil, módulos e servidores acima); o piso do
+// prêmio do IG perto de meio ponto; em 2022 o prêmio do IG subiu bem menos que a Treasury; a segunda
+// carteira do exercício de Sharpe aparece como metade em bolsa e metade dividida entre IG e high
+// yield; a fórmula é probabilidade vezes (1 menos a recuperação).
 //
 // ILUSTRATIVO: a perda esperada por nota (conta do autor sobre médias da S&P e prêmios do dia, com
 // recuperação de 40%) e o exemplo de 3% de default com 40% de recuperação, que é o da aula.
@@ -110,7 +111,7 @@ const secao: SecaoDaAula = {
       capitular: true,
       paragrafos: [
         "Imagine que você tem US$ 10 mil e duas propostas. A primeira é emprestar ao governo americano por sete anos, a pouco mais de 5% ao ano. A segunda é emprestar a uma empresa grande e conhecida, pelo mesmo prazo, a 6%. Um ponto a mais parece um bom negócio. A pergunta desta aula é o que você está aceitando em troca desse ponto.",
-        "Na aula anterior, o Tony mostrou que toda taxa em dólar começa na Treasury e que cada degrau abaixo na qualidade do emissor paga um prêmio. Agora ele desce a escada. O crédito das empresas americanas, diz ele, tem tanta variedade quanto a bolsa: setores diferentes, riscos diferentes, estruturas diferentes. Só que, em vez de virar sócio, você vira credor.",
+        "A aula anterior mostrou que toda taxa em dólar começa na Treasury e que cada degrau abaixo na qualidade do emissor paga um prêmio. Agora é hora de descer a escada. O crédito das empresas americanas tem tanta variedade quanto a bolsa: setores diferentes, riscos diferentes, estruturas diferentes. Só que, em vez de virar sócio, você vira credor.",
       ],
     },
     {
@@ -118,7 +119,7 @@ const secao: SecaoDaAula = {
       tempo: "1:04",
       paragrafos: [
         "A primeira divisão do mercado é entre investment grade, o grau de investimento, e high yield, o alto rendimento. Antigamente, o segundo grupo se chamava junk bonds, títulos lixo. O nome não ajudava a vender, e a indústria trocou o rótulo. O risco continuou o mesmo.",
-        "Quem decide de que lado cada empresa fica são as agências de rating, como S&P, Moody's e Fitch. E aqui vem o primeiro aviso do Tony: nota não substitui entender o que se compra. Antes de 2008, as agências deram notas máximas a pacotes de hipotecas americanas de baixa qualidade. Parte do problema era de incentivo: quem paga a agência é quem emite o título. Nem empresas grandes escaparam. A Enron tinha grau de investimento dois meses antes de quebrar, em 2001, e a Lehman Brothers, o maior calote de 2008 na conta da S&P, com US$ 144 bilhões em dívidas, ainda tinha nota da faixa A às vésperas da falência.",
+        "Quem decide de que lado cada empresa fica são as agências de rating, como S&P, Moody's e Fitch. E aqui vem o primeiro aviso: nota não substitui entender o que se compra. Antes de 2008, as agências deram notas máximas a pacotes de hipotecas americanas de baixa qualidade. Parte do problema era de incentivo: quem paga a agência é quem emite o título. Com empresas, a falha foi menor, mas a nota costuma andar atrás dos fatos, e por isso o aviso vale também para elas. A Enron tinha grau de investimento dois meses antes de quebrar, em 2001, e a Lehman Brothers, o maior calote de 2008 na conta da S&P, com US$ 144 bilhões em dívidas, ainda tinha nota da faixa A às vésperas da falência.",
       ],
     },
 
@@ -133,7 +134,7 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "Na aula, o Tony fala em cerca de US$ 7 trilhões em títulos investment grade e US$ 1,4 trilhão em high yield. São os tamanhos dos índices que o mercado usa para acompanhar cada grupo. A conta da SIFMA, a associação americana de bancos e corretoras, é mais larga, porque inclui todo título de empresa em circulação, de bancos e financeiras a papéis pequenos que não entram nos índices: US$ 12,1 trilhões no meio de 2026. Para comparar, é mais de cinco vezes o PIB do Brasil.",
+        "Pelos índices que o mercado usa para acompanhar cada grupo, são cerca de US$ 7 trilhões em títulos investment grade e US$ 1,4 trilhão em high yield. A conta da SIFMA, a associação americana de bancos e corretoras, é mais larga, porque inclui todo título de empresa em circulação, de bancos e financeiras a papéis pequenos que não entram nos índices: US$ 12,1 trilhões no meio de 2026. São dois recortes do mesmo mercado, e qualquer um deles mostra a escala: o maior passa de cinco vezes o PIB do Brasil.",
         "O ritmo de emissão também impressiona. As empresas americanas venderam US$ 2,2 trilhões em títulos em 2025, o segundo maior volume da série, atrás só de 2020. Em 2026, até setembro, o volume já estava praticamente igual ao de 2025 inteiro. E mais de 80% disso é investment grade.",
       ],
     },
@@ -159,7 +160,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "4:02",
       paragrafos: [
-        "Dentro do investment grade, o Tony chama atenção para um detalhe: metade do mercado está nos degraus de baixo. O índice mais usado do grupo, o ICE BofA US Corporate, tem 45% em títulos de nota A e 44% em BBB, o último andar antes do high yield. Só 10% estão nas duas notas mais altas.",
+        "Dentro do investment grade, um detalhe pesa muito: perto de metade do mercado está nos degraus de baixo. O índice mais usado do grupo, o ICE BofA US Corporate, tem 45% em títulos de nota A e 44% em BBB, o último andar antes do high yield. Só 10% estão nas duas notas mais altas.",
         "Isso importa porque é no BBB que mora o risco de queda de andar. Quando a economia desacelera, as empresas da fronteira podem não aguentar o ajuste e cair para o high yield. Um capítulo adiante mostra o que acontece com o preço quando isso ocorre.",
       ],
     },
@@ -172,7 +173,7 @@ const secao: SecaoDaAula = {
       series: [{ nome: "Fatia do índice", valores: [0.61, 9.72, 45.07, 44.42], destaque: true }],
       formato: { sufixo: "%", casas: 1 },
       fonte: "iShares (BlackRock), página do ETF USIG, que replica o ICE BofA US Corporate Index, posição de 6/out/2026",
-      nota: "Pesos por valor de mercado. Na aula, o Tony fala em cerca de 50% abaixo da nota A.",
+      nota: "Pesos por valor de mercado, que mudam um pouco de mês a mês. O BBB fica perto de metade do índice.",
     },
 
     // ---- 3. Por que emprestar a empresas --------------------------------------------------------------
@@ -194,8 +195,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "9:27",
       paragrafos: [
-        "Quando o pior acontece, quase nunca você perde tudo. Há uma reestruturação, a empresa pode mudar de dono, e o credor costuma receber um título novo que vale uma fração do antigo. Essa fração é a taxa de recuperação. Para títulos sem garantia real, os mais comuns, o Tony fala em cerca de 40% do valor de face. A S&P dá 40,4% como média de longo prazo para títulos americanos.",
-        "Mas a média esconde muito. Depende de onde você está na fila: quem tem garantia ou empréstimo bancário recupera bem mais; quem tem dívida subordinada, bem menos. E depende do momento: em 2025, até setembro, a recuperação média dos títulos americanos caiu para 21,3%, a mais baixa desde 2001, segundo a S&P. Por isso o Tony pede que o número sirva só de ponto de partida, nunca de premissa.",
+        "Quando o pior acontece, quase nunca você perde tudo. Há uma reestruturação, a empresa pode mudar de dono, e o credor costuma receber um título novo que vale uma fração do antigo. Essa fração é a taxa de recuperação. Para títulos sem garantia real, os mais comuns, a referência é algo perto de 40% do valor de face: a S&P dá 40,4% como média de longo prazo para títulos americanos.",
+        "Mas a média esconde muito. Depende de onde você está na fila: quem tem garantia ou empréstimo bancário recupera bem mais; quem tem dívida subordinada, bem menos. E depende do momento: em 2025, até setembro, a recuperação média dos títulos americanos caiu para 21,3%, a mais baixa desde 2001, segundo a S&P. Por isso os 40% servem só de ponto de partida, nunca de premissa.",
       ],
     },
     {
@@ -206,7 +207,7 @@ const secao: SecaoDaAula = {
       eixoX: ["Empréstimo bancário", "Título com garantia", "Título sem garantia", "Título subordinado"],
       series: [{ nome: "Recuperação média", valores: [82, 65, 38, 15], destaque: true }],
       formato: { sufixo: "%", casas: 0 },
-      referencia: { valor: 40, rotulo: "Média citada na aula" },
+      referencia: { valor: 40, rotulo: "Referência de mercado, perto de 40%" },
       fonte: "Richard Brealey, Stewart Myers e Franklin Allen, Princípios de Finanças Corporativas, Figura 24.1",
       nota: "Títulos sênior com e sem garantia real e títulos subordinados. Pela S&P, a média de longo prazo dos títulos americanos é de 40,4%, e a de 2025 até setembro, 21,3%.",
     },
@@ -247,8 +248,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "22:52",
       paragrafos: [
-        "Dois ajustes à fala. O Tony cita a Apple entre as empresas AAA e, logo depois, diz que só duas empresas americanas têm essa nota. A segunda parte está certa: na S&P, são a Microsoft e a Johnson & Johnson. A Apple tem a nota máxima só na Moody's; na S&P, é AA+, um degrau abaixo. Vale lembrar que o próprio governo americano é AA+ na S&P.",
-        "No topo da escada também ficam emissores quase soberanos, como as agências de hipotecas apoiadas pelo governo americano e o Banco Mundial. Do outro lado, no B e no CCC, o Tony é direto: são empresas de altíssimo risco, e é preciso muito dever de casa para não comprar algo mal precificado.",
+        "No topo, o AAA é quase um soberano: um grupo pequeno de empresas grandes, antigas e de balanço muito sólido, cujos títulos andam colados nas Treasuries. Quem entra nesse grupo depende da agência. Na S&P, só duas empresas americanas têm a nota máxima, a Microsoft e a Johnson & Johnson. A Apple é Aaa na Moody's e AA+ na S&P, um degrau abaixo, a mesma nota que a S&P dá ao próprio governo americano.",
+        "Também ficam no topo emissores quase soberanos, como as agências de hipotecas apoiadas pelo governo americano e o Banco Mundial. Do outro lado, no B e no CCC, estão empresas de altíssimo risco, e é preciso muito dever de casa para não comprar algo mal precificado.",
       ],
     },
 
@@ -263,15 +264,15 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "O investment grade, diz o Tony, é uma \"Treasury plus\": quase a mesma segurança, uma taxa um pouco maior. O calote histórico fica abaixo de meio por cento ao ano, com um porém: a empresa que vai mal costuma cair primeiro para o high yield, e o eventual default entra na conta do outro grupo. O prazo médio é mais longo, com duration, a medida de quanto o preço reage aos juros, de 5 a 7 anos. No índice da ICE, pelo ETF que o replica, eram 6 anos em outubro de 2026.",
-        "Por isso o risco principal do investment grade é o mesmo da Treasury: juros subindo. E, por isso, o Tony diz que ele melhora a relação entre retorno e oscilação da carteira, o Sharpe que você viu na aula 1, sem trazer muito risco novo.",
+        "O investment grade funciona como uma \"Treasury plus\": quase a mesma segurança, uma taxa um pouco maior. O calote histórico fica abaixo de meio por cento ao ano, com um porém: a empresa que vai mal costuma cair primeiro para o high yield, e o eventual default entra na conta do outro grupo. O prazo médio é mais longo, com duration, a medida de quanto o preço reage aos juros, de 5 a 7 anos. No índice da ICE, medido pelo ETF que o replica, eram 6 anos em outubro de 2026, bem no meio dessa faixa.",
+        "Por isso o risco principal do investment grade é o mesmo da Treasury: juros subindo. E, por isso, ele melhora a relação entre retorno e oscilação da carteira, o Sharpe que você viu na aula 1, sem trazer muito risco novo.",
       ],
     },
     {
       tipo: "texto",
       tempo: "14:16",
       paragrafos: [
-        "O high yield é quase o contrário. Empresas menores, mais endividadas, de setores que sofrem mais com o ciclo, como petróleo. O prazo é mais curto, com duration perto de 3 anos, e o risco que pesa é o de crédito. Na prática, diz o Tony, o título passa a seguir a ação da própria empresa.",
+        "O high yield é quase o contrário. Empresas menores, mais endividadas, de setores que sofrem mais com o ciclo, como petróleo. O prazo é mais curto, com duration perto de 3 anos, e o risco que pesa é o de crédito. Na prática, o título passa a seguir a ação da própria empresa.",
         "Há uma razão de fundo para isso. Quando uma empresa está muito endividada, o credor está, na prática, vendendo um seguro aos acionistas: se o negócio afundar, eles entregam a empresa e o prejuízo fica com quem emprestou. Quanto mais frágil a empresa, mais o título reage às mesmas notícias que movem a ação.",
       ],
     },
@@ -297,7 +298,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "15:29",
       paragrafos: [
-        "Sobre o calote do high yield, o Tony dá uma média de 4% ao ano, de 2% a 3% nos anos bons e de 4% a 5% nas crises. A média bate com a da S&P para os Estados Unidos desde 1981: 4,1%. As crises, porém, foram mais duras do que a fala sugere. Em 1991, 2001 e 2009, mais de 10% das empresas do grupo deram calote no ano. O próprio Tony avisa que a distribuição não é normal: os calotes vêm em ondas, concentrados nas recessões.",
+        "O calote no high yield fica, em média, perto de 4% ao ano: pela S&P, 4,1% nos Estados Unidos desde 1981. Mas a média esconde o essencial, porque a distribuição não é normal. Nos anos bons, a taxa fica em 2% a 3%; nas recessões, sobe, e nas três grandes crises das últimas décadas, em 1991, 2001 e 2009, passou de 10% das empresas do grupo. Os calotes vêm em ondas, concentrados justamente quando a economia vai mal.",
       ],
     },
     {
@@ -322,7 +323,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "25:16",
       paragrafos: [
-        "Outra forma de ver a diferença é decompor a taxa. No dia em que o Tony gravou, um título investment grade pagava perto de 5,3%, uns 0,9 ponto acima da Treasury: cerca de 80% da taxa vinha da Treasury e 20% do prêmio de crédito. No high yield, diz ele, a proporção não chega a inverter, mas o prêmio pesa muito mais.",
+        "Outra forma de ver a diferença é decompor a taxa. Quando a aula foi gravada, um título investment grade pagava perto de 5,3%, uns 0,9 ponto acima da Treasury: cerca de 80% da taxa vinha da Treasury e 20% do prêmio de crédito. No high yield, a proporção não chega a inverter, mas o prêmio pesa muito mais.",
         "Com os números de 5 de outubro de 2026, o desenho é o mesmo, com tudo um pouco mais alto, porque a Treasury subiu. No investment grade, o prêmio era 14% da taxa. No high yield, 38%.",
       ],
     },
@@ -344,8 +345,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "10:18",
       paragrafos: [
-        "Quem emite investment grade? Bancos, grandes empresas e, cada vez mais, as big techs. Durante anos elas quase não precisaram de dívida, porque sobrava caixa. Com a corrida pela inteligência artificial, isso mudou. No começo, a construção de data centers saiu do caixa próprio; desde 2025, sai também de dívida. A Oracle vendeu US$ 18 bilhões em títulos em setembro de 2025, e a Meta, US$ 30 bilhões em outubro, com pedidos de cerca de US$ 125 bilhões. O Tony vê nessa nova procura por dinheiro uma das razões para os juros americanos mais altos.",
-        "Os bancos e as financeiras continuam sendo o maior setor do investment grade, porque balanço grande de um lado pede muita dívida do outro: o Tony fala em 28%; no índice da ICE, pela carteira do ETF que o replica, bancos, seguradoras e fundos imobiliários somavam perto de 31% em outubro de 2026. Tecnologia, diz ele, deve virar em breve o segundo maior setor.",
+        "Quem emite investment grade? Bancos, grandes empresas e, cada vez mais, as big techs. Durante anos elas quase não precisaram de dívida, porque sobrava caixa. Com a corrida pela inteligência artificial, isso mudou. No começo, a construção de data centers saiu do caixa próprio; desde 2025, sai também de dívida. Duas emissões dão a escala da virada: a Oracle vendeu US$ 18 bilhões em títulos em setembro de 2025, e a Meta, US$ 30 bilhões em outubro, com pedidos de cerca de US$ 125 bilhões. Essa nova procura por dinheiro ajuda a explicar os juros americanos mais altos: há um grande tomador a mais disputando a mesma poupança.",
+        "Os bancos e as financeiras continuam sendo o maior setor do investment grade, porque balanço grande de um lado pede muita dívida do outro. Pesam entre 28% e 31% do grupo, conforme o índice e o que se conta como financeiro; na carteira do ETF que replica o índice da ICE, bancos, seguradoras e fundos imobiliários somavam perto de 31% em outubro de 2026. Com a dívida para a IA, tecnologia deve virar em breve o segundo maior setor.",
       ],
     },
     {
@@ -368,8 +369,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "38:50",
       paragrafos: [
-        "Na aula, a emissão aparece como líquida. É bruta: a SIFMA soma tudo o que foi vendido, sem descontar o que venceu. O pico de 2020 tem explicação simples: com juros perto de zero, as empresas aproveitaram para alongar dívida barata, e acertaram. O de 2025 e 2026 tem outra: não é o juro baixo, que não está, mas a necessidade de financiar a IA.",
-        "Daí vem também a novidade que o Tony chama de \"nova mania\": dívida com garantia em chips. A CoreWeave, que aluga capacidade de processamento, levantou US$ 2,3 bilhões em 2023 dando como garantia seus processadores H100 da NVIDIA, e repetiu a fórmula em escala maior depois. Um ajuste de valor: na aula, cada chip vale de 50 mil a 100 mil dólares. A unidade de um H100 ou de um B200 sai por algo entre 25 mil e 40 mil; os valores maiores são de módulos e servidores que juntam vários deles. A lição é a de sempre: olhe o que está na garantia, como ela se deprecia e que opções o título carrega.",
+        "O gráfico mostra a emissão bruta, que soma tudo o que foi vendido no ano, sem descontar o que venceu. O patamar normal fica perto de US$ 1,5 trilhão por ano, com dois saltos acima de US$ 2 trilhões. O pico de 2020 tem explicação simples: com juros perto de zero, as empresas aproveitaram para alongar dívida barata, e acertaram. O de 2025 e 2026 tem outra: não é o juro baixo, que não está, mas a necessidade de financiar a IA.",
+        "Daí vem também a nova mania do mercado americano: dívida com garantia em chips. Funciona porque os chips da NVIDIA são bens caros, e o preço varia com o tipo de equipamento: uma unidade de H100 ou de B200 sai por algo entre US$ 25 mil e US$ 40 mil, e os módulos e servidores que juntam várias delas chegam a 50 mil, 100 mil dólares ou mais. A CoreWeave, que aluga capacidade de processamento, mostra como funciona: levantou US$ 2,3 bilhões em 2023 dando como garantia seus processadores H100, e repetiu a fórmula em escala maior depois. A lição é a de sempre: olhe o que está na garantia, como ela se deprecia e que opções o título carrega.",
       ],
     },
 
@@ -390,7 +391,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       paragrafos: [
         "Seguradoras, fundos de pensão e fundos patrimoniais de universidades costumam ter uma regra no mandato: só podem comprar investment grade. Isso cria compradores cativos, que não têm alternativa, e comprador cativo derruba a taxa. Bancos pagam mais capital regulatório para carregar high yield, o que reforça a separação.",
-        "Agora imagine uma empresa com nota BBB- que é rebaixada para BB+. Num dia, todos esses compradores passam a ser obrigados a vender. Pode haver um prazo de enquadramento, mas a venda vai acontecer. O preço cai mais do que o risco da empresa mudou de verdade. Por isso, diz o Tony, essa fronteira não é um rótulo simbólico: é um salto de preço e de taxa. Quem cai dela ganha um apelido, fallen angel, o anjo caído.",
+        "Agora imagine uma empresa com nota BBB- que é rebaixada para BB+. Num dia, todos esses compradores passam a ser obrigados a vender. Pode haver um prazo de enquadramento, mas a venda vai acontecer. O preço cai mais do que o risco da empresa mudou de verdade. Por isso essa fronteira não é um rótulo simbólico: é um salto de preço e de taxa. Quem cai dela ganha um apelido, fallen angel, o anjo caído.",
       ],
     },
     {
@@ -412,7 +413,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "5:03",
       paragrafos: [
-        "O Brasil é o exemplo que o Tony usa. Uma correção de data: o país perdeu o grau de investimento em 2015, não em 2016. Primeiro na S&P, em setembro de 2015; depois na Fitch, em dezembro. A Moody's foi a última, em fevereiro de 2016. Desde então, o Brasil vive na fronteira: caiu mais um pouco, subiu de novo e hoje está a um degrau do grau de investimento na Moody's e a dois na S&P e na Fitch. Não desceu ao CCC ou ao D, como a Argentina e a Venezuela.",
+        "O Brasil passou exatamente por isso. O país perdeu o grau de investimento em etapas, entre 2015 e 2016: primeiro na S&P, em setembro de 2015; depois na Fitch, em dezembro. A Moody's foi a última, em fevereiro de 2016, e só então a perda ficou completa. Desde então, o Brasil vive na fronteira: caiu mais um pouco, subiu de novo e hoje está a um degrau do grau de investimento na Moody's e a dois na S&P e na Fitch. Não desceu ao CCC ou ao D, como a Argentina e a Venezuela.",
       ],
     },
     {
@@ -434,8 +435,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "26:37",
       paragrafos: [
-        "O BB é a antessala do investment grade. E aqui o mercado de empresas tem uma vantagem sobre o Brasil: muitas que caem acabam voltando. Fazem uma reestruturação, atravessam o pior do ciclo, reforçam o balanço e sobem de novo. O anjo volta ao céu, e quem comprou o título com desconto ganha com a valorização. O Tony vê na fronteira uma oportunidade recorrente, porque recessões americanas costumam ser curtas e a política econômica costuma reagir.",
-        "Mais abaixo, do B para baixo, \"tem algo de errado\", nas palavras dele. Às vezes é a alavancagem: empresas compradas por fundos de private equity com muita dívida, uma operação que turbina o retorno do comprador e deixa a empresa bem mais frágil. Às vezes é o setor, que sofre demais com recessão. Nos dois casos, o prêmio tem de pagar por isso.",
+        "O BB é a antessala do investment grade. E aqui o mercado de empresas tem uma vantagem sobre o Brasil: muitas que caem acabam voltando. Fazem uma reestruturação, atravessam o pior do ciclo, reforçam o balanço e sobem de novo. O anjo volta ao céu, e quem comprou o título com desconto ganha com a valorização. Por isso a fronteira oferece uma oportunidade recorrente: recessões americanas tendem a ser curtas, e a política econômica costuma reagir.",
+        "Mais abaixo, do B para baixo, quase sempre há algo de errado, algo que exige um prêmio. Às vezes é a alavancagem: empresas compradas por fundos de private equity com muita dívida, uma operação que turbina o retorno do comprador e deixa a empresa bem mais frágil. Às vezes é o setor, que sofre demais com recessão. Nos dois casos, o prêmio tem de pagar por isso.",
       ],
     },
 
@@ -461,7 +462,7 @@ const secao: SecaoDaAula = {
       definicao:
         "É a chance de calote multiplicada pelo que se perde quando ele acontece, isto é, a parte do valor que não se recupera. Com 3% de chance e 40% de recuperação, a perda esperada é de 3% vezes 60%, ou 1,8% ao ano. Sempre por ano, porque a chance de calote também é anual.",
       naPratica:
-        "Antes de comprar, pergunte se o prêmio paga essa perda e ainda sobra. Num exemplo de um manual clássico de finanças, o título de uma empresa com 20% de chance de calote promete 17,3% ao ano, mas o retorno esperado é de só 5%. Na aula, há um segundo exemplo, com 25% de chance e 50% de recuperação; a conta dá 12,5% de perda esperada, e não 25%, como sai na fala. E se o calote vier, a perda aparece antes: o preço do título cai assim que o mercado começa a precificar a reestruturação.",
+        "Antes de comprar, pergunte se o prêmio paga essa perda e ainda sobra. Num caso extremo, com 25% de chance de calote e 50% de recuperação, a perda esperada é de 25% vezes 50%, ou 12,5% ao ano: o título precisa pagar mais de 12 pontos acima de um papel sem risco só para empatar. A distância entre a taxa prometida e o retorno esperado pode ser enorme: num exemplo de um manual clássico de finanças, o título de uma empresa com 20% de chance de calote promete 17,3% ao ano, mas o retorno esperado é de só 5%. E se o calote vier, a perda aparece antes: o preço do título cai assim que o mercado começa a precificar a reestruturação.",
       referencia: { autor: "Richard Brealey, Stewart Myers e Franklin Allen", obra: "Princípios de Finanças Corporativas", capitulo: "cap. 23, seção 23.1, retornos sobre a dívida corporativa", ano: 2013 },
     },
     {
@@ -469,7 +470,7 @@ const secao: SecaoDaAula = {
       tempo: "30:00",
       paragrafos: [
         "O gráfico abaixo faz essa conta para cada degrau da escada, com o calote médio da S&P desde 1981, recuperação de 40% e o prêmio pago em 5 de outubro de 2026. Do A ao B, o prêmio cobre com folga a perda média. No CCC, a perda média de um ano passa do prêmio do dia. Não é previsão: em ano bom, a perda é bem menor que a média; em ano de crise, várias vezes maior.",
-        "É por isso que o Tony insiste em olhar o papel, e não a média. Recuperação depende da estrutura, das garantias, do setor e do ciclo. E o balanço da empresa precisa ser lido com lupa. Um caso clássico é o da Livent, produtora de teatro americana: pelos números que divulgava, a dívida equivalia a 1,7 ano de geração de caixa; ajustada a contabilidade, eram 5,5 anos. A empresa quebrou em 1998.",
+        "É por isso que o que conta é o papel, e não a média. Recuperação depende da estrutura, das garantias, do setor e do ciclo. Uma boa análise do balanço e do histórico do setor permite desenhar o cenário ruim e estimar quanto volta nele, mas o balanço precisa ser lido com lupa, porque o número divulgado pode enganar. Um caso clássico é o da Livent, produtora de teatro americana: pelos números que divulgava, a dívida equivalia a 1,7 ano de geração de caixa, um risco moderado; ajustada a contabilidade, eram 5,5 anos. A empresa quebrou em 1998.",
       ],
     },
     {
@@ -491,8 +492,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "42:46",
       paragrafos: [
-        "Se o prêmio cobre a perda média e ainda sobra, o que é essa sobra? O Tony responde que o spread paga três coisas ao mesmo tempo. A perda que se espera. O medo de que ela seja maior que o esperado, porque calote vem em onda e chega justamente quando tudo vai mal. E a dificuldade de sair na hora errada: título de empresa é bem menos líquido que Treasury, e numa recessão, com as taxas abertas, vender é cristalizar a perda.",
-        "Por isso ele recomenda manter liquidez suficiente no resto da carteira para nunca ser obrigado a vender high yield no meio de uma crise. Liquidez, aliás, é um dos pontos que nem os bons manuais de finanças sabem precificar direito: ela some quando mais se precisa dela.",
+        "Se o prêmio cobre a perda média e ainda sobra, o que é essa sobra? O spread paga três coisas ao mesmo tempo. A perda que se espera. O medo de que ela seja maior que o esperado, porque calote vem em onda e chega justamente quando tudo vai mal. E a dificuldade de sair na hora errada: título de empresa é bem menos líquido que Treasury, e numa recessão, com as taxas abertas, vender é cristalizar a perda.",
+        "Daí a importância de manter liquidez suficiente no resto da carteira para nunca ser obrigado a vender high yield no meio de uma crise. E essa terceira parte do prêmio é a mais difícil de medir: nem os bons manuais de finanças sabem precificar liquidez direito, porque ela some justamente quando mais se precisa dela.",
       ],
     },
     {
@@ -519,7 +520,7 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       paragrafos: [
         "Juntando as peças: o investment grade tem mais prazo e menos risco de crédito; o high yield, o contrário. Eles reagem a cenários opostos. Numa economia forte demais, com inflação e Banco Central subindo juros, a Treasury cai, e o investment grade cai junto. O high yield sofre menos, porque o prazo é curto e as empresas vão bem. Numa recessão, o Fed corta juros, a Treasury sobe, e o investment grade acompanha. O high yield sofre, porque os calotes aumentam e o prêmio dispara.",
-        "Foi o que aconteceu em 2022, com o surto de inflação: o índice de investment grade perdeu 15,8% e o de high yield, 11,2%. E em 2008, quando a Treasury de 10 anos subiu 20% no ano, como você viu na aula anterior, enquanto o prêmio do high yield passava de 21 pontos.",
+        "Foi o que aconteceu em 2022, com o surto de inflação: o índice de investment grade perdeu 15,8% e o de high yield, 11,2%. Em 2008, foi o contrário: a Treasury de 10 anos rendeu 20% no ano, como você viu na aula anterior, enquanto o prêmio do high yield passava de 21 pontos.",
       ],
     },
     {
@@ -535,7 +536,7 @@ const secao: SecaoDaAula = {
           {
             texto: "Sofre",
             marca: "Risco de prazo",
-            explicacao: "Em 2022, o índice caiu 15,8%. A Treasury de 10 anos perdeu quase 18% e levou o investment grade junto; o prêmio de crédito mudou pouco.",
+            explicacao: "Em 2022, o índice caiu 15,8%. A Treasury de 10 anos perdeu quase 18% e levou o investment grade junto; o prêmio de crédito subiu bem menos que os juros.",
           },
           {
             texto: "Tende a resistir",
@@ -575,8 +576,8 @@ const secao: SecaoDaAula = {
       tipo: "texto",
       tempo: "40:03",
       paragrafos: [
-        "O Tony mostra também como os prêmios andaram nos últimos 20 anos. O desenho é sempre o mesmo: sobem de repente nas crises e voltam devagar quando o governo e o Banco Central entram. Em 2008, o prêmio do investment grade foi de cerca de 1 ponto para mais de 6. No high yield, de cerca de 2,4 pontos, em 2007, para mais de 21. Na pandemia, houve um pico menor e mais curto.",
-        "Dois ajustes. Na aula, o prêmio do investment grade aparece podendo chegar \"muito perto de zero\". Nunca chegou: o piso histórico fica entre meio ponto e 0,7, e o mínimo dos últimos três anos foi 0,73, em 2026. E, segundo a fala, em 2022 o prêmio do investment grade ficou estável ou até caiu. Ele abriu: no índice da ICE, foi de perto de 0,9 ponto no fim de 2021 para perto de 1,6 em outubro de 2022. A conclusão do Tony continua de pé, porque o que derrubou quem tinha investment grade longo foi a alta da Treasury, bem maior que a do prêmio.",
+        "Nos últimos 20 anos, os prêmios seguiram sempre o mesmo desenho: sobem de repente nas crises e voltam devagar quando o governo e o Banco Central entram. Em 2008, o prêmio do investment grade foi de cerca de 1 ponto para mais de 6. No high yield, de cerca de 2,4 pontos, em 2007, para mais de 21. Na pandemia, houve um pico menor e mais curto.",
+        "Nos tempos calmos, o prêmio do investment grade fica muito apertado: o piso histórico gira entre meio ponto e 0,7, e o mínimo dos últimos três anos foi 0,73, em 2026. Em 2022, com o surto de inflação, o prêmio subiu pouco perto do que subiram os juros: no índice da ICE, foi de perto de 0,9 ponto no fim de 2021 para perto de 1,6 em outubro de 2022. O que derrubou quem tinha investment grade longo foi a alta da Treasury, a base da taxa, e não o crédito. É o risco de prazo agindo sozinho.",
       ],
     },
     {
@@ -626,7 +627,7 @@ const secao: SecaoDaAula = {
     {
       tipo: "texto",
       paragrafos: [
-        "O Tony retoma a pergunta da aula anterior: eu uso o quê, para quê? Na renda fixa americana, o T-Bill é caixa e a Treasury de 10 anos é a proteção contra a desaceleração. O crédito entra em três papéis diferentes, resumidos abaixo.",
+        "A pergunta da aula anterior volta aqui: eu uso o quê, para quê? Na renda fixa americana, o T-Bill é caixa e a Treasury de 10 anos é a proteção contra a desaceleração. O crédito entra em três papéis diferentes, resumidos abaixo.",
       ],
     },
     {
@@ -650,7 +651,7 @@ const secao: SecaoDaAula = {
       tempo: "44:09",
       paragrafos: [
         "A gente costuma pensar que renda fixa protege da bolsa. No high yield, nem tanto: o título anda muito junto com a ação da própria empresa. Oscila menos, e o credor recebe antes do acionista num calote, mas, para diversificar uma carteira que já tem ações, o efeito é pequeno. O mesmo vale, do outro lado, para o investment grade em relação à Treasury: você ganha o prêmio a mais, mas pouca diversificação nova.",
-        "No exercício de Sharpe da aula, montado com números hipotéticos, o Tony compara carteiras. Uma com 60% em S&P 500 e 40% em investment grade chega ao mesmo Sharpe de outra com bolsa, investment grade e high yield, e as duas superam a carteira só de ações. A explicação é a correlação alta entre high yield e bolsa: acrescentar high yield a quem já tem ações não muda muito o jogo. Um detalhe: a segunda carteira aparece na fala como 50% em S&P 500, 30% em investment grade e 25% em high yield, o que soma 105%. Vale a ideia, não a proporção.",
+        "O exercício de Sharpe da aula, montado com números hipotéticos, mostra isso na prática. Uma carteira com 60% em S&P 500 e 40% em investment grade chega ao mesmo Sharpe de outra com metade em S&P 500 e a outra metade dividida entre investment grade e high yield, e as duas superam a carteira só de ações. A explicação é a correlação alta entre high yield e bolsa: acrescentar high yield a quem já tem ações não muda muito o jogo. É um caso modelo, para mostrar o mecanismo, e não uma sugestão de proporção.",
       ],
     },
     {
@@ -658,7 +659,7 @@ const secao: SecaoDaAula = {
       tempo: "47:25",
       paragrafos: [
         "As cinco mensagens da aula. Crédito corporativo é a empresa tomando dinheiro direto do investidor. Investment grade e high yield são dois mundos, separados por uma fronteira, entre o BBB- e o BB+, onde há um salto de preço e, muitas vezes, oportunidade. O investment grade carrega mais risco de prazo e segue a Treasury; o high yield carrega risco de crédito e segue a bolsa. Os prêmios mudam muito com o momento econômico. E, numa crise, os dois abrem enquanto a Treasury fecha: o resultado depende de qual força ganha.",
-        "Em todos os casos, o prêmio é pagamento por um risco que existe, e não um presente. Na próxima aula, o Tony sai da renda fixa e vai para as ações americanas.",
+        "Em todos os casos, o prêmio é pagamento por um risco que existe, e não um presente. A próxima aula sai da renda fixa e vai para as ações americanas.",
       ],
     },
     {
