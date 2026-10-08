@@ -143,19 +143,22 @@ export const rotuloNoCurso = (n: { modulo: number; aula: number; tempo?: string 
   (segundosDe(n.tempo) !== null ? ` · ${n.tempo}` : "");
 
 /**
- * As cores das categorias da linha do tempo. Tons quentes e baixos, tirados da paleta de papel e
- * tinta: o ouro da casa, o vermelho só para as crises (é o assunto que pede alarme), e o resto em
- * tons terrosos que leem como cor sem virar arco-íris. Todos passam de 4,5:1 sobre o papel
- * (#f7f4ee), porque também pintam o rótulo da categoria.
+ * As cores das categorias da linha do tempo. Revistas em 08/out/2026: a primeira paleta tinha um
+ * azul e um roxo vivos demais ao lado do papel. Agora são sete tons de tinta envelhecida, todos na
+ * mesma altura de valor: ouro velho (a casa), musgo, vinho (as crises, o único que puxa para o
+ * vermelho), ardósia, grafite, ameixa e cobre. A cor não pinta mais bolinha nenhuma: aparece no fio
+ * da borda dos chips, no anel do marco e no rótulo da categoria. Todos passam de 5,5:1 sobre o
+ * papel (#f7f4ee) e sobre o creme (#fdfbf6), porque pintam texto pequeno e servem de fundo para o
+ * texto creme do chip ativo.
  */
 export const COR_DA_LINHA: Record<CategoriaLinha, string> = {
-  "Dinheiro e dólar": "#7e6836",
-  Brasil: "#3f6b4e",
-  Crises: "#b0101c",
-  Investimentos: "#2f5a73",
-  "Tecnologia e internet": "#575a63",
-  "Inteligência artificial": "#6e4a7a",
-  Cripto: "#9a5418",
+  "Dinheiro e dólar": "#745d2d",
+  Brasil: "#4c5d3b",
+  Crises: "#962029",
+  Investimentos: "#3d5263",
+  "Tecnologia e internet": "#57534c",
+  "Inteligência artificial": "#66465e",
+  Cripto: "#8e4f28",
 };
 
 /**

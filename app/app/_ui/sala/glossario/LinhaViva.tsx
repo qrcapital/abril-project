@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
 import { COR_DA_LINHA, ERAS, eraDe, urlDoVerbete, type CategoriaLinha } from "@/lib/glossario";
 
@@ -25,19 +25,46 @@ export type ItemLinha = {
 /** Quantos marcos a home mostra antes do "Ver a linha do tempo inteira". */
 const LIMITE = 12;
 
-type Luz = { i: number; linhagem: Set<number>; arcos: { d: string; cor: string }[] };
+/** A folga, em ms, entre sair de um marco e apagar a linhagem. */
+const ESPERA = 90;
+
+/** A pilha da régua: até `CAMADAS` traços, um a cada `PASSO` px (o CSS desenha o traço nesse passo). */
+const CAMADAS = 6;
+const PASSO = 8;
+
+/** Quantos antecedentes diretos a linhagem desenha, no máximo. */
+const ARCOS = 3;
+
+/**
+ * O marco aceso. `origem` diz onde o mouse (ou o foco) está: só a lista desenha arcos e esmaece;
+ * a régua só pinta os traços. Os arcos guardam as duas pontas para o degradê de cada um.
+ */
+type Luz = {
+  i: number;
+  origem: "lista" | "regua";
+  linhagem: Set<number>;
+  arcos: { d: string; a: { x: number; y: number }; b: { x: number; y: number } }[];
+};
 
 /**
  * O cliente da linha do tempo da home (07/out/2026). Ver `LinhaDoTempoHome.tsx` para o porquê.
  *
- * A LINHAGEM. Ao parar o mouse num marco (ou focá-lo pelo teclado), a linha calcula o fecho dos
- * antecedentes dele (os que levaram a ele, os que levaram a esses, e assim por diante), pinta os
- * pontos dessa cadeia, desenha um arco entre cada par ligado e esmaece o resto. O mesmo acende na
- * régua de anos, no alto. A medida dos pontos é feita no próprio evento, e não num efeito: o
- * desenho só depende de onde os pontos estão naquele instante.
+ * A LINHAGEM. Ao parar o mouse num marco (ou focá-lo pelo teclado), a linha desenha um arco até
+ * cada antecedente DIRETO dele (um nível só, no máximo `ARCOS`) e esmaece de leve o resto. Até
+ * 07/out/2026 ela seguia o fecho inteiro, recursivo, com arcos na cor de cada categoria e também
+ * na régua; num marco de 2022 isso dava uma dúzia de linhas cruzando a tela, e o Marcelo pediu
+ * para limpar (08/out/2026). Agora os arcos são de tinta, finos, baixos, só na lista, e mais
+ * fortes perto do marco em foco do que perto da origem. A régua só pinta os traços da mesma
+ * linhagem. A linhagem completa continua a um clique: os chips de "Origens" de cada marco levam ao
+ * antecedente, que mostra os dele. A medida dos pontos é feita no próprio evento, e não num efeito:
+ * o desenho só depende de onde os pontos estão naquele instante.
+ *
+ * SEM TREMOR. Sair de um marco não apaga na hora: o apagar espera `ESPERA` ms e é cancelado se o
+ * mouse entra em outro marco nesse meio tempo. Assim, ao descer a lista (ou cruzar o cabeçalho de
+ * uma era), a luz passa de um marco ao outro sem piscar o papel inteiro.
  *
  * A HOME NÃO PODE VIRAR UMA PAREDE. São perto de 90 marcos: a lista abre com os primeiros
- * `LIMITE` e um botão para o resto; a régua mostra a linha inteira de uma vez, e um clique num ponto
+ * `LIMITE` e um botão para o resto; a régua mostra a linha inteira de uma vez, e um clique num traço
  * dela abre a lista naquele marco. Os antecedentes vêm sempre antes, então a linhagem de um marco
  * visível nunca depende de um marco escondido. Com uma categoria escolhida, a lista mostra só os
  * marcos dela, todos; os antecedentes de outras categorias continuam nos chips de "Origens".
@@ -59,28 +86,21 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
     [filtro, inteira, itens],
   );
 
-  const linhagem = useCallback(
-    (i: number) => {
-      const vistos = new Set<number>();
-      const pilha = [i];
-      while (pilha.length) {
-        const x = pilha.pop()!;
-        if (vistos.has(x)) continue;
-        vistos.add(x);
-        for (const p of itens[x].antecedentes) pilha.push(p);
-      }
-      return vistos;
-    },
-    [itens],
-  );
+  // O id do degradê vai dentro de um `url(#...)`: só letras, números, hífen e sublinhado.
+  const gradiente = `lt-arco${useId().replace(/[^\w-]/g, "")}`;
+  const timer = useRef<number | undefined>(undefined);
+
+  /** O marco e os antecedentes diretos dele (na ordem do arquivo, no máximo `ARCOS`). */
+  const diretos = useCallback((i: number) => itens[i].antecedentes.slice(0, ARCOS), [itens]);
 
   const acender = useCallback(
-    (i: number | null) => {
+    (i: number | null, origem: Luz["origem"] = "lista") => {
+      window.clearTimeout(timer.current);
       if (i === null) return setLuz(null);
-      const lin = linhagem(i);
+      const ant = diretos(i);
       const arcos: Luz["arcos"] = [];
       const c = corpo.current;
-      if (c) {
+      if (origem === "lista" && c) {
         const base = c.getBoundingClientRect();
         const centro = (k: number) => {
           const el = pontos.current[k];
@@ -88,24 +108,28 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
           const r = el.getBoundingClientRect();
           return { x: r.left - base.left + r.width / 2, y: r.top - base.top + r.height / 2 };
         };
-        for (const x of lin)
-          for (const p of itens[x].antecedentes) {
-            if (!lin.has(p)) continue;
-            const a = centro(x);
+        const a = centro(i);
+        if (a)
+          for (const p of ant) {
             const b = centro(p);
-            if (!a || !b) continue;
-            const dy = Math.abs(a.y - b.y);
-            const bojo = Math.min(76, 18 + dy * 0.05);
-            arcos.push({
-              d: `M ${a.x} ${a.y} Q ${a.x - bojo} ${(a.y + b.y) / 2} ${b.x} ${b.y}`,
-              cor: COR_DA_LINHA[itens[x].categoria],
-            });
+            if (!b) continue;
+            // Um colchete suave para a esquerda do fio: as duas alças saem na horizontal, e o bojo
+            // cresce devagar com a distância (no máximo uns 40 px), para o arco não invadir a calha.
+            const k = Math.min(54, 16 + Math.abs(a.y - b.y) * 0.035);
+            arcos.push({ d: `M ${a.x} ${a.y} C ${a.x - k} ${a.y} ${b.x - k} ${b.y} ${b.x} ${b.y}`, a, b });
           }
       }
-      setLuz({ i, linhagem: lin, arcos });
+      setLuz({ i, origem, linhagem: new Set([i, ...ant]), arcos });
     },
-    [itens, linhagem],
+    [diretos],
   );
+
+  /** Apaga com uma folga, cancelada se o mouse entra em outro marco antes (ver SEM TREMOR). */
+  const apagar = useCallback(() => {
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setLuz(null), ESPERA);
+  }, []);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
 
   const alternar = (i: number) => {
     setAbertos((s) => {
@@ -116,7 +140,7 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
     });
     // Abrir um marco empurra os de baixo: com a linhagem acesa, os arcos são medidos de novo depois
     // da pintura.
-    if (luz) {
+    if (luz?.origem === "lista") {
       const aceso = luz.i;
       requestAnimationFrame(() => acender(aceso));
     }
@@ -193,11 +217,11 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
           </p>
         </div>
         <p className="sl-lt-dica">
-          Passe o mouse num marco para acender o caminho que levou até ele. Clique para abrir.
+          Passe o mouse num marco para ver o que levou a ele. Clique para abrir.
         </p>
       </header>
 
-      <Regua itens={itens} luz={luz} acender={acender} irPara={irPara} filtro={filtro} />
+      <Regua itens={itens} luz={luz} acender={acender} apagar={apagar} irPara={irPara} filtro={filtro} />
 
       <div className="sl-lt-chips" role="group" aria-label="Filtrar a linha do tempo por assunto">
         <button type="button" className="sl-gl-chip" aria-pressed={filtro === null} onClick={() => setFiltro(null)}>
@@ -215,16 +239,32 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
               setFiltro(filtro === c ? null : c);
             }}
           >
-            <i aria-hidden="true" />
             {c} <span>{contagem.get(c) ?? 0}</span>
           </button>
         ))}
       </div>
 
-      <div className={`sl-lt-corpo${luz ? " is-aceso" : ""}`} ref={corpo}>
+      <div className="sl-lt-corpo" ref={corpo}>
         <svg className="sl-lt-arcos" aria-hidden="true">
+          {/* Cada arco é um degradê de tinta: mais firme no marco em foco, quase some na origem. */}
+          <defs>
+            {luz?.arcos.map((a, k) => (
+              <linearGradient
+                key={`${luz.i}-${k}`}
+                id={`${gradiente}-${k}`}
+                gradientUnits="userSpaceOnUse"
+                x1={a.a.x}
+                y1={a.a.y}
+                x2={a.b.x}
+                y2={a.b.y}
+              >
+                <stop offset="0" stopOpacity=".5" />
+                <stop offset="1" stopOpacity=".2" />
+              </linearGradient>
+            ))}
+          </defs>
           {luz?.arcos.map((a, k) => (
-            <path key={`${luz.i}-${k}`} d={a.d} stroke={a.cor} pathLength={1} />
+            <path key={`${luz.i}-${k}`} d={a.d} stroke={`url(#${gradiente}-${k})`} pathLength={1} />
           ))}
         </svg>
         <span className="sl-lt-fio" aria-hidden="true" />
@@ -242,12 +282,13 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
                 {daEra.map((i) => {
                   const x = itens[i];
                   const aberto = abertos.has(i);
-                  const naLuz = luz?.linhagem.has(i) ?? false;
+                  // A régua acesa não mexe na lista: só o marco da própria lista esmaece o resto.
+                  const daLista = luz?.origem === "lista" ? luz : null;
                   const cls = [
                     "sl-lt-marco",
                     aberto && "is-aberto",
-                    luz && (naLuz ? "is-linhagem" : "is-apagado"),
-                    luz?.i === i && "is-foco",
+                    daLista && (daLista.linhagem.has(i) ? "is-linhagem" : "is-apagado"),
+                    daLista?.i === i && "is-foco",
                   ]
                     .filter(Boolean)
                     .join(" ");
@@ -259,12 +300,12 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
                       className={cls}
                       style={{ "--c": COR_DA_LINHA[x.categoria] } as React.CSSProperties}
                       onPointerEnter={(e) => e.pointerType === "mouse" && acender(i)}
-                      onPointerLeave={(e) => e.pointerType === "mouse" && acender(null)}
+                      onPointerLeave={(e) => e.pointerType === "mouse" && apagar()}
                       onFocus={(e) => {
                         if ((e.target as HTMLElement).matches(":focus-visible") && luz?.i !== i) acender(i);
                       }}
                       onBlur={(e) => {
-                        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) acender(null);
+                        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) apagar();
                       }}
                       onClick={(e) => {
                         // O marco inteiro abre e fecha com o mouse; links e botões de dentro seguem o deles.
@@ -343,7 +384,6 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
                                 style={{ "--c": COR_DA_LINHA[itens[p].categoria] } as React.CSSProperties}
                                 onClick={() => irPara(p)}
                               >
-                                <i aria-hidden="true" />
                                 {itens[p].ano} · {itens[p].titulo}
                               </button>
                             ))}
@@ -372,23 +412,30 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
 }
 
 /**
- * A régua de anos (desktop): a linha inteira numa faixa só, um ponto por marco, na cor da categoria.
+ * A régua de anos (desktop): a linha inteira numa faixa só, um traço vertical fino por marco.
  * O eixo é por era, e não linear: cada era ganha largura pelo número de marcos (com um mínimo), e
  * dentro dela os anos correm em escala linear. Linear de ponta a ponta, os séculos antes de 1944
- * comeriam a régua e as décadas de 2008 em diante, as mais cheias, virariam um borrão.
+ * comeriam a régua e as décadas de 2008 em diante, as mais cheias, virariam um borrão. Marcos que
+ * cairiam no mesmo lugar empilham traços, e a pilha lê como densidade.
  *
- * Os pontos não entram no Tab (seriam 90 paradas): quem usa teclado percorre a lista, que tem tudo.
+ * Desde 08/out/2026 os traços são de tinta neutra (antes eram pontos coloridos, um confete). A cor
+ * da categoria só aparece quando ela diz alguma coisa: no traço sob o mouse, nos da categoria
+ * filtrada e nos da linhagem acesa. A régua não desenha arcos; quem desenha é a lista.
+ *
+ * Os traços não entram no Tab (seriam 90 paradas): quem usa teclado percorre a lista, que tem tudo.
  */
 function Regua({
   itens,
   luz,
   acender,
+  apagar,
   irPara,
   filtro,
 }: {
   itens: ItemLinha[];
   luz: Luz | null;
-  acender: (i: number | null) => void;
+  acender: (i: number | null, origem?: Luz["origem"]) => void;
+  apagar: () => void;
   irPara: (i: number) => void;
   filtro: CategoriaLinha | null;
 }) {
@@ -412,12 +459,12 @@ function Regua({
       faixas.push({ ini, fim: ini + largura, rotulo: x.era.faixa });
       ini += largura;
     });
-    // Pontos que cairiam um sobre o outro sobem uma camada (até quatro).
+    // Traços que cairiam um sobre o outro sobem uma camada (até seis).
     const camadas: number[] = [];
     const ultimoNaCamada: number[] = [];
     itens.forEach((_, i) => {
       let c = 0;
-      while (c < 3 && ultimoNaCamada[c] !== undefined && xs[i] - ultimoNaCamada[c] < 0.95) c++;
+      while (c < CAMADAS - 1 && ultimoNaCamada[c] !== undefined && xs[i] - ultimoNaCamada[c] < 0.6) c++;
       camadas[i] = c;
       ultimoNaCamada[c] = xs[i];
     });
@@ -425,31 +472,9 @@ function Regua({
   }, [itens]);
 
   const { xs, camadas, faixas } = desenho;
-  const Y = 64; // linha de base, no viewBox de 1000 x 80
-  const y = (i: number) => Y - camadas[i] * 9;
 
   return (
-    <div className="sl-lt-regua" aria-hidden="true" onPointerLeave={() => acender(null)}>
-      <svg className="sl-lt-regua-arcos" viewBox="0 0 1000 80" preserveAspectRatio="none">
-        {luz &&
-          [...luz.linhagem].flatMap((x) =>
-            itens[x].antecedentes
-              .filter((p) => luz.linhagem.has(p))
-              .map((p) => {
-                const a = xs[x] * 10;
-                const b = xs[p] * 10;
-                const h = Math.min(58, 10 + Math.abs(a - b) * 0.16);
-                return (
-                  <path
-                    key={`${x}-${p}`}
-                    d={`M ${a} ${y(x)} Q ${(a + b) / 2} ${Math.min(y(x), y(p)) - h} ${b} ${y(p)}`}
-                    stroke={COR_DA_LINHA[itens[x].categoria]}
-                    pathLength={1}
-                  />
-                );
-              }),
-          )}
-      </svg>
+    <div className="sl-lt-regua" aria-hidden="true" onPointerLeave={apagar}>
       <span className="sl-lt-regua-base" />
       {faixas.map((f, k) => (
         <span key={f.rotulo} className="sl-lt-regua-faixa" style={{ left: `${f.ini}%`, width: `${f.fim - f.ini}%` }}>
@@ -457,30 +482,43 @@ function Regua({
           <span>{f.rotulo}</span>
         </span>
       ))}
-      {itens.map((x, i) => {
-        const apagado = (luz && !luz.linhagem.has(i)) || (filtro && x.categoria !== filtro);
-        return (
-          <button
-            type="button"
-            tabIndex={-1}
-            key={x.slug}
-            className={`sl-lt-regua-ponto${apagado ? " is-apagado" : ""}${luz?.linhagem.has(i) ? " is-linhagem" : ""}`}
-            style={
-              {
-                left: `${xs[i]}%`,
-                top: `${(y(i) / 80) * 100}%`,
-                "--c": COR_DA_LINHA[x.categoria],
-              } as React.CSSProperties
-            }
-            onPointerEnter={(e) => e.pointerType === "mouse" && acender(i)}
-            onClick={() => irPara(i)}
-          >
-            <span className="sl-lt-regua-dica">
-              <b>{x.ano}</b> {x.titulo}
-            </span>
-          </button>
-        );
-      })}
+      <div className="sl-lt-regua-tracos">
+        {itens.map((x, i) => {
+          const naLuz = luz?.linhagem.has(i) ?? false;
+          const doFiltro = filtro === x.categoria;
+          const apagado = luz ? !naLuz : filtro !== null && !doFiltro;
+          const cls = [
+            "sl-lt-regua-traco",
+            (naLuz || (!luz && doFiltro)) && "is-cor",
+            luz?.i === i && "is-foco",
+            apagado && "is-apagado",
+          ]
+            .filter(Boolean)
+            .join(" ");
+          return (
+            <button
+              type="button"
+              tabIndex={-1}
+              key={x.slug}
+              className={cls}
+              style={
+                {
+                  left: `${xs[i]}%`,
+                  bottom: `${camadas[i] * PASSO}px`,
+                  "--c": COR_DA_LINHA[x.categoria],
+                } as React.CSSProperties
+              }
+              onPointerEnter={(e) => e.pointerType === "mouse" && acender(i, "regua")}
+              onPointerLeave={(e) => e.pointerType === "mouse" && apagar()}
+              onClick={() => irPara(i)}
+            >
+              <span className="sl-lt-regua-dica">
+                <b>{x.ano}</b> {x.titulo}
+              </span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -162,6 +162,17 @@ export function fillHome(
       out = `${out.slice(0, abre)}<div class="mcard" data-certificado="${certificado}"${out.slice(abre + '<div class="mcard"'.length)}`;
   }
 
+  // O card do certificado sai da home (08/out/2026, decisão do Marcelo): o certificado vem depois, no
+  // fim da formação, e a home não é lugar de cobrar as 16 aulas. O bloco inteiro de marcos
+  // (`.milestones`, que só tinha esse card) é removido; a tela /app/certificado continua existindo.
+  {
+    const ms = out.indexOf('<div class="milestones"');
+    if (ms >= 0) {
+      const { end } = innerOfDiv(out, ms);
+      out = out.slice(0, ms) + out.slice(end + "</div>".length);
+    }
+  }
+
   // regenera os cards da prateleira "A Formação"
   const railIdx = out.indexOf('class="rail"');
   if (railIdx >= 0) {
