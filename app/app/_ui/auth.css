@@ -274,3 +274,14 @@
   .au-lock-tr { height: 31px }
   .au-lock-curso { font-size: 10.5px; letter-spacing: .13em }
 }
+
+/* Página de obrigado (08/out/2026): os três passos depois da compra */
+.au-passos { list-style: none; margin: 22px 0 26px; padding: 0; border-top: 1px solid var(--au-linha) }
+.au-passos li { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--au-linha) }
+.au-passo-n {
+  flex: 0 0 26px; height: 26px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--au-fundo); color: var(--au-papel); font-size: 12px; font-weight: 700;
+}
+.au-passos b { display: block; font-size: 14.5px; font-weight: 600; color: var(--au-tinta); line-height: 1.35 }
+.au-passos p { margin: 3px 0 0; font-size: 13px; color: var(--au-tinta-2); line-height: 1.5 }
