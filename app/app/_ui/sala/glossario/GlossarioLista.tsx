@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { letraDe, slugificar, urlDoVerbete } from "@/lib/glossario";
 import { dobrar } from "@/lib/glossario-links";
+import { colarNumeros } from "@/lib/notebook";
 
 export type ItemGlossario = {
   slug: string;
@@ -236,7 +237,7 @@ export default function GlossarioLista({
                       </span>
                       <span className="sl-gl-item-corpo">
                         <span className="sl-eyebrow">{v.categoria}</span>
-                        <span className="sl-gl-item-resumo">{v.resumo}</span>
+                        <span className="sl-gl-item-resumo">{colarNumeros(v.resumo)}</span>
                       </span>
                       <svg className="sl-gl-seta" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                         <path d="M3 8h9.5M8.5 4l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

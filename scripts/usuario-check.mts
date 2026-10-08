@@ -66,6 +66,9 @@ const semNome = preencherUsuario(ler("screens/conta.html"), {
   email: "x@y.com",
 } as never);
 assert.ok(!semNome.includes("Pedro"), "sem nome, a conta voltou ao texto do design");
+// E sem a vírgula do vocativo pendurada ("Olá," sem ninguém depois).
+const topoSemNome = preencherUsuario(ler("chrome-top.html"), { email: "x@y.com" } as never);
+assert.ok(!/Olá,\s*<span/.test(topoSemNome), "sem nome, a topbar ficou com \"Olá,\" pendurado");
 
 // Nome com caractere de HTML não pode escapar do texto para o markup.
 const perigoso = preencherUsuario(ler("screens/conta.html"), {

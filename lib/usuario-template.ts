@@ -44,6 +44,9 @@ export function preencherUsuario(
   const inicial = (primeiro[0] ?? "").toUpperCase();
 
   let out = html;
+  // Sem nome, sai também a vírgula do vocativo (08/out/2026): "Olá," e "Bem-vindo de volta," ficavam
+  // pendurados, com a vírgula apontando para um nome que não veio.
+  if (!primeiro) out = out.replace(/,(\s*<[a-z]+[^>]*\sdata-u="first")/g, "$1");
   out = trocar(out, 'data-u="full"', completo);
   out = trocar(out, 'data-u="first"', primeiro);
   out = trocar(out, 'data-u="initial"', inicial);

@@ -82,8 +82,8 @@ const CAR = 6.6;
  * Quebra os rótulos do eixo X em até três linhas que caibam na largura dada. Devolve `null` se
  * algum não couber (uma palavra mais larga que a banda, ou mais de três linhas).
  */
-function quebrarRotulos(rotulos: string[], largura: number): string[][] | null {
-  const cabe = Math.floor(largura / CAR);
+function quebrarRotulos(rotulos: string[], largura: number, car = CAR): string[][] | null {
+  const cabe = Math.floor(largura / car);
   if (cabe < 3) return null;
   const out: string[][] = [];
   for (const r of rotulos) {
@@ -234,24 +234,36 @@ export default function Grafico(props: PropsGrafico) {
     topo: 0,
     base: inclinacao ? 14 : 30,
   };
-  const PW = Math.max(40, W - M.esq - M.dir);
-  const banda = PW / Math.max(1, n);
-  const xPonto = (i: number) =>
-    barras ? M.esq + banda * i + banda / 2 : M.esq + (n > 1 ? (PW * i) / (n - 1) : PW / 2);
-  const xSlope = (i: number) => M.esq + PW * (i === 0 ? 0.3 : 0.7);
-  const x = inclinacao ? xSlope : xPonto;
+  let PW = Math.max(40, W - M.esq - M.dir);
+  let banda = PW / Math.max(1, n);
 
   // ---- rótulos do eixo X (08/out/2026) -------------------------------------------------------
   // Barra de categoria (país, setor, faixa de nota: rótulo sem algarismo) mostra TODO rótulo: pular
   // deixava barra sem nome, com "Tecnologia da informação" e "Materiais" separados por barras mudas.
-  // Primeiro tenta quebrar em até três linhas na largura da banda; se nem assim cabe (o celular,
-  // com sete setores), o rótulo inclina. Série no tempo continua pulando rótulo, ver `pularX`.
+  // Primeiro tenta quebrar em até três linhas na largura da banda (a conta de largura aqui é a média
+  // das minúsculas do Jost, um pouco mais estreita que a dos algarismos); se nem assim cabe (o
+  // celular, com sete setores), o rótulo inclina, e a margem esquerda cresce o que for preciso para
+  // o primeiro rótulo inclinado não sair da caixa. Série no tempo continua pulando rótulo, ver `pularX`.
   const categorias = barras && eixoX.some((r) => !/\d/.test(r));
-  const linhasX = categorias ? quebrarRotulos(eixoX, banda - 4) : null;
+  const linhasX = categorias ? quebrarRotulos(eixoX, banda - 2, 6.1) : null;
   const inclinarX = categorias && !linhasX;
   const maxRotuloX = Math.max(1, ...eixoX.map((r) => r.length));
+  const COS_INCL = Math.cos((35 * Math.PI) / 180);
   if (linhasX) M.base = 30 + (Math.max(1, ...linhasX.map((l) => l.length)) - 1) * 13;
-  else if (inclinarX) M.base = Math.round(Math.min(120, 22 + maxRotuloX * CAR * 0.57));
+  else if (inclinarX) {
+    M.base = Math.round(Math.min(130, 24 + maxRotuloX * 6.1 * 0.57));
+    const falta = Math.ceil((eixoX[0]?.length ?? 0) * 6.1 * COS_INCL - (M.esq + banda / 2) + 4);
+    if (falta > 0) {
+      M.esq += falta;
+      PW = Math.max(40, W - M.esq - M.dir);
+      banda = PW / Math.max(1, n);
+    }
+  }
+
+  const xPonto = (i: number) =>
+    barras ? M.esq + banda * i + banda / 2 : M.esq + (n > 1 ? (PW * i) / (n - 1) : PW / 2);
+  const xSlope = (i: number) => M.esq + PW * (i === 0 ? 0.3 : 0.7);
+  const x = inclinacao ? xSlope : xPonto;
 
   // Cada rótulo vai na primeira linha (de três) onde não encosta no anterior.
   const fimPorLinha = [-Infinity, -Infinity, -Infinity];

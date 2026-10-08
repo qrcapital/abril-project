@@ -6,6 +6,7 @@ import { GLOSSARIO, verbete } from "@/content/glossario";
 import { LINHA_DO_TEMPO } from "@/content/linha-do-tempo";
 import { getCurriculo } from "@/lib/curriculo";
 import { hrefNoCurso, rotuloDoAno, rotuloNoCurso, slugificar, urlDoVerbete } from "@/lib/glossario";
+import { colarNumeros } from "@/lib/notebook";
 import Balao from "@/app/app/_ui/sala/glossario/Balao";
 import { criarLigador } from "@/app/app/_ui/sala/glossario/texto";
 
@@ -75,7 +76,7 @@ export default async function VerbetePage({ params }: Params) {
               </span>
             )}
           </h1>
-          <p className="sl-vb-resumo">{v.resumo}</p>
+          <p className="sl-vb-resumo">{colarNumeros(v.resumo)}</p>
         </header>
 
         <Balao className="sl-vb-grade">
@@ -166,7 +167,7 @@ export default async function VerbetePage({ params }: Params) {
                       {r.termo}
                       {r.sigla && r.sigla !== r.termo && <span className="sl-gl-sigla">{r.sigla}</span>}
                     </span>
-                    <span className="sl-vb-card-resumo">{r.resumo}</span>
+                    <span className="sl-vb-card-resumo">{colarNumeros(r.resumo)}</span>
                   </Link>
                 </li>
               ))}

@@ -9,7 +9,7 @@ import type { Curriculo } from "./curso";
 import { esc, innerOfDiv } from "./html-slice.ts";
 
 const BADGE_BASE =
-  "position:absolute;top:10px;left:10px;z-index:3;font-size:8px;font-weight:600;letter-spacing:.07em;font-family:'Jost',sans-serif;border-radius:4px;padding:3px 7px";
+  "position:absolute;top:10px;left:10px;z-index:3;font-size:10px;font-weight:600;letter-spacing:.07em;font-family:'Jost',sans-serif;border-radius:4px;padding:3px 7px";
 // Capa do módulo, desenhada em HTML e CSS (07/out/2026). Substitui as imagens geradas no gpt-image
 // em 06/out, que o Marcelo achou fracas e despadronizadas: cada numeral romano tinha um tamanho
 // (I estreito, III largo) e cada título outro corpo. Aqui as quatro capas são o mesmo molde:
@@ -86,17 +86,20 @@ function card(
         : esc(`APÓS O ${espera.rotulo.toUpperCase()}`)
     : emAndamento
       ? "EM ANDAMENTO"
-      : "AULAS";
+      : "DISPONÍVEL";
   const badge = travado ? BADGE_TRAVADO : emAndamento ? BADGE_ATIVO : BADGE_NEUTRO;
   // Título e docente vêm do banco e o admin edita os dois: sem `esc()` é XSS armazenado.
-  const label = esc((m.docente ? `${m.label} · ${m.docente}` : m.label).toUpperCase());
+  // Só o módulo no rótulo do pé (08/out/2026): o docente já está na capa, logo acima, e o rótulo com
+  // os dois nomes ("MÓDULO I · FELIPPE HERMES E RODOLFO BASTOS") só cabia em 8,5px. O selo do módulo
+  // aberto e ainda não começado dizia "AULAS", que não é estado; agora diz "DISPONÍVEL".
+  const label = esc(m.label.toUpperCase());
   const pct = total === 0 ? 0 : Math.round((done / total) * 100);
   const count = done === total ? `${done}/${total} ✓` : `${done}/${total}`;
   const countColor = done > 0 ? "#7E6836" : "#6f6860";
   const aulasTxt = total === 1 ? "1 aula" : `${total} aulas`;
 
   const trava = travado ? "opacity:.72;cursor:default" : "cursor:pointer";
-  return `<div class="mcard"${travado ? ' data-travado="1"' : ""} style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;${trava};position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(72,60,42,.05)"><span style="${badge}">${badgeText}</span><div style="position:relative;aspect-ratio:2/3;flex:0 0 auto;background:#F7F3EC">${capaModulo(m.idx, m.titulo, m.docente ?? null)}</div><div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1"><span style="font-size:8.5px;letter-spacing:.07em;color:#7E6836;font-weight:600;font-family:'Jost',sans-serif">${label}</span><h3 style="font-family:'Jost',sans-serif;font-size:16px;font-weight:500;margin:3px 0 9px;line-height:1.2;color:#1a1815">${esc(m.titulo)}</h3><div style="height:4px;border-radius:2px;background:#EDE6DD;overflow:hidden"><i style="display:block;height:100%;width:${pct}%;background:#C1121F;border-radius:2px"></i></div><div style="display:flex;justify-content:space-between;font-size:9.5px;color:#6f6860;margin-top:7px"><span>${aulasTxt}</span><span style="color:${countColor};font-weight:600">${count}</span></div></div></div>`;
+  return `<div class="mcard"${travado ? ' data-travado="1"' : ""} style="background:#fff;border:1px solid #E4DACC;border-radius:13px;overflow:hidden;${trava};position:relative;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(72,60,42,.05)"><span style="${badge}">${badgeText}</span><div style="position:relative;aspect-ratio:2/3;flex:0 0 auto;background:#F7F3EC">${capaModulo(m.idx, m.titulo, m.docente ?? null)}</div><div style="padding:13px 15px 15px;display:flex;flex-direction:column;flex:1"><span style="font-size:11px;letter-spacing:.07em;color:#7E6836;font-weight:600;font-family:'Jost',sans-serif">${label}</span><h3 style="font-family:'Jost',sans-serif;font-size:16px;font-weight:500;margin:3px 0 9px;line-height:1.2;color:#1a1815">${esc(m.titulo)}</h3><div style="height:4px;border-radius:2px;background:#EDE6DD;overflow:hidden"><i style="display:block;height:100%;width:${pct}%;background:#C1121F;border-radius:2px"></i></div><div style="display:flex;justify-content:space-between;font-size:12px;color:#6f6860;margin-top:8px"><span>${aulasTxt}</span><span style="color:${countColor};font-weight:600">${count}</span></div></div></div>`;
 }
 
 /**
