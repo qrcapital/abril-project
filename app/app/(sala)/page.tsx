@@ -11,7 +11,6 @@ import { getCalendario } from "@/lib/calendario";
 import { dataLonga, diasAteData } from "@/lib/liberacao";
 import { getUsuario } from "@/lib/usuario";
 import { preencherUsuario } from "@/lib/usuario-template";
-import Trilha from "@/app/app/_ui/sala/Trilha";
 import LinhaDoTempoHome from "@/app/app/_ui/sala/glossario/LinhaDoTempoHome";
 import { hrefDoModulo } from "@/app/app/_ui/sala/estado";
 
@@ -73,25 +72,12 @@ export default async function HomePage({
       }
     : undefined;
 
-  // O miolo da home (29/set/2026): a trilha, entre o banner e a prateleira, no marcador do
-  // home.html. Até 05/out/2026 vinha antes dela o cartão "Comece por aqui" do Módulo 0, que deixou
-  // de existir: o Módulo I aparece na trilha como qualquer outro módulo.
-  const meio = calendario ? (
-    <div className="sl sl-embutido">
-      <div className="sl-wrap">
-        <section className="sl-home-trilha" aria-labelledby="home-trilha-titulo">
-          <div className="sl-home-trilha-cabeca">
-            <h2 id="home-trilha-titulo">Sua trilha</h2>
-          </div>
-          <Trilha modulos={calendario.modulos} />
-        </section>
-      </div>
-    </div>
-  ) : null;
+  // A trilha saiu da home em 08/out/2026 (decisão do Marcelo): repetia o que os cards dos módulos,
+  // logo abaixo, já dizem (ordem, estado e data de abertura). A home fica com o banner, os cards e a
+  // linha do tempo. A trilha segue na página de módulo fechado.
 
   return (
     <HomeClient
-      meio={meio}
       // A linha do tempo, depois dos módulos (07/out/2026). Os marcos são conteúdo estático
       // (`content/linha-do-tempo.ts`); só o filtro, a linhagem e os cartões descem para o cliente.
       depois={<LinhaDoTempoHome />}
