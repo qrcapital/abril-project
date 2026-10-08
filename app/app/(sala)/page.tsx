@@ -80,7 +80,11 @@ export default async function HomePage({
     <HomeClient
       // A linha do tempo, depois dos módulos (07/out/2026). Os marcos são conteúdo estático
       // (`content/linha-do-tempo.ts`); só o filtro, a linhagem e os cartões descem para o cliente.
-      depois={<LinhaDoTempoHome />}
+      depois={
+        <LinhaDoTempoHome
+          titulos={Object.fromEntries(curriculo.aulas.map((a) => [`${a.modulo}-${a.pos}`, a.titulo]))}
+        />
+      }
       html={preencherUsuario(
         fillHome(template, curriculo, concluidas, travados, certificado ? "emitido" : "pendente"),
         user,

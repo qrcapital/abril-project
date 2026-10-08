@@ -20,7 +20,7 @@ export type ItemLinha = {
   verbetes: { slug: string; termo: string }[];
   /** Posições, na lista, dos marcos que levaram a este. Sempre menores que a dele. */
   antecedentes: number[];
-  aula: { href: string; rotulo: string } | null;
+  aula: { href: string; rotulo: string; numero: number; titulo: string | null } | null;
   fonte?: string;
 };
 
@@ -368,27 +368,28 @@ export default function LinhaViva({ itens, categorias }: { itens: ItemLinha[]; c
                           </button>
                         </h3>
                         <p className="sl-lt-resumo">{x.resumo}</p>
+                        {x.aula && (
+                          <Link className="sl-lt-naaula" href={x.aula.href} prefetch={false}>
+                            <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
+                              <path d="M3 1.8v8.4L10 6z" fill="currentColor" />
+                            </svg>
+                            Você vê isso na aula {x.aula.numero}
+                            {x.aula.titulo && <span className="sl-lt-naaula-titulo"> · {x.aula.titulo}</span>}
+                          </Link>
+                        )}
 
                         <div className="sl-lt-painel" id={painel} hidden={!aberto}>
                           {x.data && <p className="sl-lt-data">{x.data}</p>}
                           {x.texto.map((p, k) => (
                             <p key={k}>{p}</p>
                           ))}
-                          {(x.verbetes.length > 0 || x.aula) && (
+                          {x.verbetes.length > 0 && (
                             <div className="sl-lt-ir">
                               {x.verbetes.map((v) => (
                                 <Link key={v.slug} className="sl-lt-verbete" href={urlDoVerbete(v.slug)} prefetch={false}>
                                   {v.termo}
                                 </Link>
                               ))}
-                              {x.aula && (
-                                <Link className="sl-naaula" href={x.aula.href} prefetch={false}>
-                                  <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true">
-                                    <path d="M3 1.8v8.4L10 6z" fill="currentColor" />
-                                  </svg>
-                                  Na aula: {x.aula.rotulo}
-                                </Link>
-                              )}
                             </div>
                           )}
                           {x.fonte && (

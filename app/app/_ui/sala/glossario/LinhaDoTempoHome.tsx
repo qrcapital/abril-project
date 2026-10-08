@@ -17,7 +17,7 @@ import LinhaViva, { type ItemLinha } from "./LinhaViva";
  *
  * Sem marco nenhum, a seção não aparece: uma linha do tempo vazia na home seria só ruído.
  */
-export default function LinhaDoTempoHome() {
+export default function LinhaDoTempoHome({ titulos = {} }: { titulos?: Record<string, string> }) {
   const marcos = LINHA_DO_TEMPO.map((m, ordem) => ({ m, ordem }))
     .sort((a, b) => a.m.ano - b.m.ano || a.ordem - b.ordem)
     .map((x) => x.m);
@@ -41,7 +41,16 @@ export default function LinhaDoTempoHome() {
     antecedentes: (m.antecedentes ?? [])
       .map((s) => pos.get(s))
       .filter((p): p is number => p !== undefined && p < i),
-    aula: m.noCurso ? { href: hrefNoCurso(m.noCurso), rotulo: rotuloNoCurso(m.noCurso) } : null,
+    // Todo marco aponta para uma aula (08/out/2026, pedido do Marcelo: "você pode ver isso na aula
+    // tal"). O título vem do banco, pela página; sem ele, fica só o número da aula.
+    aula: m.noCurso
+      ? {
+          href: hrefNoCurso(m.noCurso),
+          rotulo: rotuloNoCurso(m.noCurso),
+          numero: m.noCurso.aula,
+          titulo: titulos[`${m.noCurso.modulo}-${m.noCurso.aula}`] ?? null,
+        }
+      : null,
     fonte: m.fonte,
   }));
   const categorias = CATEGORIAS_LINHA.filter((c) => marcos.some((m) => m.categoria === c));

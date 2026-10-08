@@ -26,6 +26,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
       "No Brasil colônia, conta o Museu de Valores do Banco Central, pau-brasil, açúcar, fumo, pano de algodão e o zimbo, uma concha, fizeram o mesmo papel. A lição atravessa a linha inteira: dinheiro é o que as pessoas aceitam como dinheiro.",
     ],
     verbetes: ["funcoes-da-moeda"],
+    noCurso: { modulo: 0, aula: 2, tempo: "11:02" },
     fonte: "British Museum; Museu de Valores do Banco Central, Dinheiro no Brasil",
   },
   {
@@ -41,6 +42,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["juro-nominal", "funcoes-da-moeda"],
     antecedentes: ["antes-da-moeda-sal-conchas-e-gado"],
+    noCurso: { modulo: 0, aula: 2, tempo: "10:07" },
     fonte: "Código de Hamurabi; British Museum",
   },
   {
@@ -56,6 +58,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["funcoes-da-moeda", "senhoriagem"],
     antecedentes: ["1754-ac-prata-cevada-e-as-primeiras-dividas"],
+    noCurso: { modulo: 0, aula: 2, tempo: "11:02" },
     fonte: "British Museum",
   },
   {
@@ -71,6 +74,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["moeda-de-reserva"],
     antecedentes: ["600-ac-a-primeira-moeda-na-lidia"],
+    noCurso: { modulo: 0, aula: 1, tempo: "4:33" },
     fonte: "British Museum",
   },
   {
@@ -87,6 +91,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["inflacao", "senhoriagem", "imposto-inflacionario"],
     antecedentes: ["211-ac-o-denario-romano"],
+    noCurso: { modulo: 0, aula: 2, tempo: "2:56" },
     fonte: "British Museum; Édito de Preços Máximos de Diocleciano",
   },
   {
@@ -102,6 +107,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["inflacao", "hiperinflacao"],
     antecedentes: ["600-ac-a-primeira-moeda-na-lidia"],
+    noCurso: { modulo: 0, aula: 2, tempo: "11:02" },
     fonte: "Deutsche Bundesbank, coleção de cédulas; British Museum",
   },
   {
@@ -117,6 +123,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["cambio", "remessa"],
     antecedentes: ["211-ac-o-denario-romano"],
+    noCurso: { modulo: 0, aula: 1, tempo: "4:33" },
     fonte: "Coleções numismáticas do British Museum; história do Banco Medici",
   },
   {
@@ -132,6 +139,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["inflacao"],
     antecedentes: ["600-ac-a-primeira-moeda-na-lidia"],
+    noCurso: { modulo: 0, aula: 2, tempo: "11:02" },
     fonte: "Casa Nacional de Moneda de Potosí; American Numismatic Society",
   },
   {
@@ -147,6 +155,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["inflacao", "default", "poder-de-compra"],
     antecedentes: ["1545-potosi-a-montanha-de-prata"],
+    noCurso: { modulo: 0, aula: 2, tempo: "47:14" },
     fonte: "Earl J. Hamilton, American Treasure and the Price Revolution in Spain",
   },
   {
@@ -162,6 +171,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["moeda-de-reserva", "cambio"],
     antecedentes: ["1545-potosi-a-montanha-de-prata", "1024-a-china-inventa-o-papel-moeda"],
+    noCurso: { modulo: 0, aula: 1, tempo: "4:33" },
     fonte: "Museu de Valores do Banco Central, Dinheiro no Brasil; Coinage Act de 1857",
   },
   {
@@ -177,6 +187,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["banco-central", "divida-publica"],
     antecedentes: ["1252-o-florim-e-os-banqueiros-de-florenca"],
+    noCurso: { modulo: 0, aula: 2, tempo: "45:15" },
     fonte: "Bank of England Museum",
   },
   {
@@ -191,6 +202,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["cambio"],
     antecedentes: ["1571-o-peso-espanhol-moeda-global"],
+    noCurso: { modulo: 0, aula: 2, tempo: "5:02" },
     fonte: "Journals of the Continental Congress, 6 de julho de 1785",
   },
   // ---- Do dólar em diante -------------------------------------------------------------------
@@ -208,6 +220,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["cambio", "padrao-ouro"],
     antecedentes: ["1785-os-americanos-escolhem-o-dolar", "1571-o-peso-espanhol-moeda-global"],
+    noCurso: { modulo: 0, aula: 2, tempo: "5:02" },
     fonte: "Coinage Act de 1792; U.S. Mint",
   },
   {
@@ -224,6 +237,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["sp-500", "diversificacao"],
     antecedentes: ["1792-nasce-o-dolar"],
+    noCurso: { modulo: 0, aula: 4, tempo: "8:05" },
     fonte: "NYSE; Buttonwood Agreement",
   },
   {
@@ -240,6 +254,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["sp-500", "gestao-passiva"],
     antecedentes: ["1792-acordo-de-buttonwood"],
+    noCurso: { modulo: 0, aula: 4, tempo: "14:31" },
     fonte: "S&P Dow Jones Indices",
   },
   {
@@ -256,6 +271,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["padrao-ouro", "inflacao"],
     antecedentes: ["1792-nasce-o-dolar"],
+    noCurso: { modulo: 0, aula: 2, tempo: "12:06" },
     fonte: "Gold Standard Act de 1900; Federal Reserve History",
   },
   {
@@ -272,6 +288,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["banco-central", "treasury"],
     antecedentes: ["1900-padrao-ouro-nos-eua", "1694-nasce-o-banco-da-inglaterra"],
+    noCurso: { modulo: 0, aula: 2, tempo: "1:00:29" },
     fonte: "Federal Reserve Act; Federal Reserve History",
   },
   {
@@ -288,6 +305,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["volatilidade", "diversificacao", "market-timing"],
     antecedentes: ["1896-indice-dow-jones", "1913-nasce-o-fed"],
+    noCurso: { modulo: 0, aula: 2, tempo: "1:01:20" },
     fonte: "S&P Dow Jones Indices; Federal Reserve History",
   },
   {
@@ -304,6 +322,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["padrao-ouro", "banco-central"],
     antecedentes: ["1929-crash-de-nova-york", "1913-nasce-o-fed"],
+    noCurso: { modulo: 0, aula: 1, tempo: "22:12" },
     fonte: "Executive Order 6102; Gold Reserve Act de 1934",
   },
   {
@@ -320,6 +339,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["etf", "sp-500"],
     antecedentes: ["1929-crash-de-nova-york"],
+    noCurso: { modulo: 0, aula: 1, tempo: "37:38" },
     fonte: "Securities Exchange Act de 1934; SEC",
   },
   {
@@ -368,6 +388,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
       "Por que importa hoje: a tecnologia virou o maior setor da bolsa americana e quase não existe na brasileira. Quem fica só no Brasil fica de fora da cadeia que nasceu ali.",
     ],
     verbetes: ["internet", "sp-500"],
+    noCurso: { modulo: 0, aula: 1, tempo: "17:05" },
     fonte: "Nokia Bell Labs; Fundação Nobel",
   },
   {
@@ -383,6 +404,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
       "Por que importa hoje: a inteligência artificial é hoje um dos motores da bolsa americana. Entender que a ideia tem mais de 70 anos ajuda a separar a tecnologia de longo prazo da euforia de cada ciclo.",
     ],
     verbetes: ["inteligencia-artificial"],
+    noCurso: { modulo: 0, aula: 1, tempo: "17:05" },
     fonte: "A. M. Turing, Computing Machinery and Intelligence, Mind",
   },
   {
@@ -399,6 +421,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["diversificacao", "carteira-60-40", "volatilidade"],
     antecedentes: ["1929-crash-de-nova-york"],
+    noCurso: { modulo: 0, aula: 1, tempo: "9:00" },
     fonte: "H. Markowitz, Portfolio Selection, Journal of Finance; Fundação Nobel",
   },
   {
@@ -415,6 +438,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["inteligencia-artificial"],
     antecedentes: ["1950-teste-de-turing"],
+    noCurso: { modulo: 0, aula: 1, tempo: "17:05" },
     fonte: "Proposta do Dartmouth Summer Research Project on Artificial Intelligence",
   },
   {
@@ -448,6 +472,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["internet", "diversificacao"],
     antecedentes: ["1947-transistor"],
+    noCurso: { modulo: 0, aula: 1, tempo: "17:05" },
     fonte: "Texas Instruments; Computer History Museum",
   },
   {
@@ -463,6 +488,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["bretton-woods", "treasury", "divida-publica"],
     antecedentes: ["1944-bretton-woods"],
+    noCurso: { modulo: 0, aula: 1, tempo: "3:49" },
     fonte: "R. Triffin, Gold and the Dollar Crisis",
   },
   {
@@ -479,6 +505,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["banco-central", "inflacao", "divida-publica"],
     antecedentes: ["1942-nasce-o-cruzeiro", "1913-nasce-o-fed", "1694-nasce-o-banco-da-inglaterra"],
+    noCurso: { modulo: 0, aula: 2, tempo: "48:14" },
     fonte: "Lei 4.595/1964; Lei 4.357/1964; Banco Central do Brasil",
   },
   {
@@ -528,6 +555,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["internet"],
     antecedentes: ["1958-circuito-integrado"],
+    noCurso: { modulo: 0, aula: 4, tempo: "14:31" },
     fonte: "UCLA; Computer History Museum",
   },
   {
@@ -544,6 +572,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["bretton-woods", "padrao-ouro", "cambio", "banco-central"],
     antecedentes: ["1944-bretton-woods", "1960-dilema-de-triffin"],
+    noCurso: { modulo: 0, aula: 2, tempo: "12:06" },
     fonte: "Federal Reserve History",
   },
   {
@@ -560,6 +589,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["internet", "sp-500"],
     antecedentes: ["1958-circuito-integrado"],
+    noCurso: { modulo: 0, aula: 1, tempo: "17:05" },
     fonte: "Intel; Computer History Museum",
   },
   {
@@ -576,6 +606,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["inflacao", "divida-publica", "risco-cambial"],
     antecedentes: ["1971-fim-do-padrao-dolar-ouro"],
+    noCurso: { modulo: 0, aula: 2, tempo: "4:02" },
     fonte: "Federal Reserve History, Oil Shock of 1973-74",
   },
   {
@@ -592,6 +623,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["etf", "gestao-passiva"],
     antecedentes: ["1934-nasce-a-sec", "1792-acordo-de-buttonwood"],
+    noCurso: { modulo: 0, aula: 1, tempo: "1:13" },
     fonte: "SEC",
   },
   {
@@ -608,6 +640,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["gestao-passiva", "sp-500", "etf"],
     antecedentes: ["1957-nasce-o-sp-500", "1952-markowitz-e-a-diversificacao"],
+    noCurso: { modulo: 0, aula: 4, tempo: "0:12" },
     fonte: "Vanguard",
   },
   {
@@ -658,6 +691,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["internet"],
     antecedentes: ["1969-arpanet"],
+    noCurso: { modulo: 0, aula: 4, tempo: "14:31" },
     fonte: "Internet Society",
   },
   {
@@ -674,6 +708,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["cambio", "risco-cambial", "market-timing"],
     antecedentes: ["1979-choque-volcker"],
+    noCurso: { modulo: 0, aula: 1, tempo: "2:00" },
     fonte: "Federal Reserve History; Departamento do Tesouro dos EUA",
   },
   {
@@ -775,6 +810,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["internet"],
     antecedentes: ["1983-tcp-ip"],
+    noCurso: { modulo: 0, aula: 4, tempo: "14:31" },
     fonte: "CERN",
   },
   {
@@ -791,6 +827,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["etf", "gestao-passiva", "sp-500"],
     antecedentes: ["1976-primeiro-fundo-de-indice", "1957-nasce-o-sp-500"],
+    noCurso: { modulo: 0, aula: 1, tempo: "15:28" },
     fonte: "State Street Global Advisors",
   },
   {
@@ -807,6 +844,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["bitcoin", "blockchain"],
     antecedentes: ["1983-tcp-ip"],
+    noCurso: { modulo: 0, aula: 1, tempo: "2:00" },
     fonte: "E. Hughes, A Cypherpunk's Manifesto; W. Diffie e M. Hellman, New Directions in Cryptography",
   },
   {
@@ -874,6 +912,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["internet", "volatilidade"],
     antecedentes: ["1991-world-wide-web"],
+    noCurso: { modulo: 0, aula: 4, tempo: "14:31" },
     fonte: "Computer History Museum; registros da Nasdaq",
   },
   {
@@ -890,6 +929,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["inteligencia-artificial"],
     antecedentes: ["1956-conferencia-de-dartmouth", "1971-microprocessador"],
+    noCurso: { modulo: 0, aula: 1, tempo: "17:05" },
     fonte: "IBM",
   },
   {
@@ -906,6 +946,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["cambio", "risco-pais", "risco-cambial"],
     antecedentes: ["1994-crise-do-mexico"],
+    noCurso: { modulo: 0, aula: 2, tempo: "19:31" },
     fonte: "FMI; Federal Reserve History",
   },
   {
@@ -939,6 +980,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["cambio", "banco-central", "diversificacao"],
     antecedentes: ["1971-fim-do-padrao-dolar-ouro", "1985-acordo-do-plaza"],
+    noCurso: { modulo: 0, aula: 2, tempo: "1:02:16" },
     fonte: "Banco Central Europeu",
   },
   {
@@ -989,6 +1031,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["volatilidade", "diversificacao", "market-timing"],
     antecedentes: ["1995-ipo-da-netscape", "1987-segunda-feira-negra"],
+    noCurso: { modulo: 0, aula: 4, tempo: "14:31" },
     fonte: "Nasdaq",
   },
   {
@@ -1073,6 +1116,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["internet", "sp-500"],
     antecedentes: ["1995-ipo-da-netscape"],
+    noCurso: { modulo: 0, aula: 4, tempo: "15:30" },
     fonte: "Amazon Web Services",
   },
   {
@@ -1106,6 +1150,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["risco-pais", "divida-publica", "tripe-macroeconomico"],
     antecedentes: ["2002-crise-de-confianca", "2000-lei-de-responsabilidade-fiscal", "2001-china-na-omc"],
+    noCurso: { modulo: 0, aula: 2, tempo: "51:10" },
     fonte: "S&P Global Ratings",
   },
   {
@@ -1139,6 +1184,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["bitcoin", "blockchain"],
     antecedentes: ["1993-manifesto-cypherpunk", "2008-quebra-do-lehman"],
+    noCurso: { modulo: 0, aula: 2, tempo: "56:28" },
     fonte: "S. Nakamoto, Bitcoin: A Peer-to-Peer Electronic Cash System",
   },
   {
@@ -1172,6 +1218,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["bitcoin", "blockchain"],
     antecedentes: ["2008-whitepaper-do-bitcoin", "2008-juro-zero-e-qe"],
+    noCurso: { modulo: 0, aula: 2, tempo: "1:00:29" },
     fonte: "Blockchain do Bitcoin, bloco 0",
   },
   {
@@ -1188,6 +1235,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["divida-publica", "risco-pais", "banco-central"],
     antecedentes: ["1999-nasce-o-euro", "2008-quebra-do-lehman"],
+    noCurso: { modulo: 0, aula: 2, tempo: "1:02:16" },
     fonte: "Comissão Europeia; Banco Central Europeu",
   },
   {
@@ -1204,6 +1252,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["bitcoin", "volatilidade"],
     antecedentes: ["2009-bloco-genese"],
+    noCurso: { modulo: 0, aula: 2, tempo: "10:07" },
     fonte: "Fórum Bitcointalk",
   },
   {
@@ -1220,6 +1269,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["inteligencia-artificial"],
     antecedentes: ["1997-deep-blue", "1956-conferencia-de-dartmouth"],
+    noCurso: { modulo: 0, aula: 1, tempo: "17:05" },
     fonte: "Krizhevsky, Sutskever e Hinton; resultados do ImageNet Challenge 2012",
   },
   {
@@ -1236,6 +1286,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["stablecoin", "blockchain", "cambio"],
     antecedentes: ["2009-bloco-genese"],
+    noCurso: { modulo: 0, aula: 2, tempo: "13:06" },
     fonte: "Tether",
   },
   {
@@ -1252,6 +1303,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["blockchain", "tokenizacao", "stablecoin"],
     antecedentes: ["2009-bloco-genese"],
+    noCurso: { modulo: 0, aula: 1, tempo: "2:00" },
     fonte: "Ethereum Foundation",
   },
   {
@@ -1285,6 +1337,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["inteligencia-artificial"],
     antecedentes: ["2012-alexnet"],
+    noCurso: { modulo: 0, aula: 1, tempo: "17:05" },
     fonte: "Google DeepMind",
   },
   {
@@ -1335,6 +1388,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["inteligencia-artificial"],
     antecedentes: ["2012-alexnet"],
+    noCurso: { modulo: 0, aula: 1, tempo: "17:05" },
     fonte: "Ashish Vaswani e outros, Attention Is All You Need, arXiv",
   },
   {
@@ -1351,6 +1405,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["conta-global", "etf", "iof"],
     antecedentes: ["2007-iphone", "1975-fim-da-corretagem-fixa"],
+    noCurso: { modulo: 0, aula: 1, tempo: "1:13" },
     fonte: "Charles Schwab, comunicado de 1º/out/2019",
   },
   {
@@ -1383,6 +1438,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["blockchain", "stablecoin", "volatilidade"],
     antecedentes: ["2015-ethereum", "2014-primeira-stablecoin"],
+    noCurso: { modulo: 0, aula: 1, tempo: "2:00" },
     fonte: "Ethereum Foundation",
   },
   {
@@ -1416,6 +1472,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["banco-central", "conta-global"],
     antecedentes: ["2007-iphone", "1964-nasce-o-banco-central"],
+    noCurso: { modulo: 0, aula: 1, tempo: "18:01" },
     fonte: "Banco Central do Brasil",
   },
   {
@@ -1432,6 +1489,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["cambio", "banco-central", "diversificacao"],
     antecedentes: ["1944-bretton-woods", "1971-fim-do-padrao-dolar-ouro"],
+    noCurso: { modulo: 0, aula: 2, tempo: "26:37" },
     fonte: "Departamento do Tesouro dos EUA; FMI",
   },
   {
@@ -1465,6 +1523,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["blockchain"],
     antecedentes: ["2015-ethereum"],
+    noCurso: { modulo: 0, aula: 1, tempo: "2:00" },
     fonte: "Ethereum Foundation",
   },
   {
@@ -1481,6 +1540,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["stablecoin", "bitcoin", "volatilidade"],
     antecedentes: ["2020-defi", "2014-primeira-stablecoin"],
+    noCurso: { modulo: 0, aula: 3, tempo: "23:44" },
     fonte: "Tribunal de falências de Delaware; SEC",
   },
   {
@@ -1497,6 +1557,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["inteligencia-artificial", "sp-500"],
     antecedentes: ["2017-transformer", "2006-computacao-em-nuvem"],
+    noCurso: { modulo: 0, aula: 4, tempo: "15:30" },
     fonte: "OpenAI",
   },
   {
@@ -1513,6 +1574,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["bitcoin", "stablecoin", "banco-central"],
     antecedentes: ["2022-colapso-da-ftx"],
+    noCurso: { modulo: 0, aula: 1, tempo: "5:57" },
     fonte: "Lei 14.478/2022; Decreto 11.563/2023; Resoluções BCB 519, 520 e 521/2025",
   },
   {
@@ -1546,6 +1608,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["treasury", "volatilidade", "conta-global"],
     antecedentes: ["2022-inflacao-e-alta-de-juros"],
+    noCurso: { modulo: 0, aula: 3, tempo: "23:44" },
     fonte: "FDIC; Federal Reserve",
   },
   {
@@ -1579,6 +1642,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["bitcoin", "etf", "volatilidade"],
     antecedentes: ["2009-bloco-genese", "1993-primeiro-etf", "2022-colapso-da-ftx"],
+    noCurso: { modulo: 0, aula: 1, tempo: "15:28" },
     fonte: "SEC, aprovação de 10/jan/2024",
   },
   {
@@ -1595,6 +1659,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["tokenizacao", "treasury", "blockchain"],
     antecedentes: ["2015-ethereum", "2014-primeira-stablecoin"],
+    noCurso: { modulo: 0, aula: 4, tempo: "9:28" },
     fonte: "BlackRock, comunicado de março de 2024",
   },
   {
@@ -1628,6 +1693,7 @@ export const LINHA_DO_TEMPO: Marco[] = [
     ],
     verbetes: ["stablecoin", "treasury", "tokenizacao"],
     antecedentes: ["2014-primeira-stablecoin", "2022-colapso-da-ftx"],
+    noCurso: { modulo: 0, aula: 2, tempo: "13:06" },
     fonte: "GENIUS Act; Casa Branca",
   },
   {
