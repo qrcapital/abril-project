@@ -14,6 +14,33 @@ import Origem from "./Origem";
  *
  * O número que o leitor de tela lê é sempre o final: a contagem é só visual (`aria-hidden`).
  */
+/**
+ * Separa o valor formatado em moeda, número e unidade ("US$ 1,57 tri" vira "US$", "1,57" e "tri").
+ * O número fica no corpo grande; a moeda e a unidade, menores, ao lado (08/out/2026). Com tudo no
+ * mesmo corpo de 40px e sem quebra, "19,5% do PIB" e "13,75% a.a." passavam da coluna e se
+ * sobrepunham ao KPI vizinho. O "%", o "×" e o sinal ficam no número: são parte dele.
+ */
+function partes(texto: string): { moeda: string; numero: string; unidade: string } {
+  const m = texto.match(/^([−+]?)([^\d]*?)([\d.,]+[%×x]?)(.*)$/);
+  if (!m) return { moeda: "", numero: texto, unidade: "" };
+  const moeda = m[2].trim();
+  // O sinal vai antes da moeda, como o `formatar` escreve: "−R$ 1,20".
+  return { moeda: moeda ? m[1] + moeda : "", numero: (moeda ? "" : m[1]) + m[3], unidade: m[4].trim() };
+}
+
+function Valor({ texto }: { texto: string }) {
+  const { moeda, numero, unidade } = partes(texto);
+  return (
+    <>
+      {moeda && <span className="sl-kpi-unid">{moeda}</span>}
+      {moeda && " "}
+      <span className="sl-kpi-num">{numero}</span>
+      {unidade && " "}
+      {unidade && <span className="sl-kpi-unid">{unidade}</span>}
+    </>
+  );
+}
+
 export default function Kpis({ titulo, itens, origem }: { titulo?: string; itens: Kpi[]; origem: TipoOrigem }) {
   // Fração da contagem, de 0 a 1. Começa em 1: o HTML do servidor já sai com o número certo.
   const [t, setT] = useState(1);
@@ -49,7 +76,9 @@ export default function Kpis({ titulo, itens, origem }: { titulo?: string; itens
             <div key={k.rotulo} className={`sl-kpi${k.destaque ? " is-destaque" : ""}`}>
               <dt>{k.rotulo}</dt>
               <dd className="sl-kpi-valor">
-                <span aria-hidden="true">{t >= 1 ? final : formatar(k.valor * t, f)}</span>
+                <span aria-hidden="true">
+                  <Valor texto={t >= 1 ? final : formatar(k.valor * t, f)} />
+                </span>
                 <span className="sl-so-leitor">{final}</span>
               </dd>
               {var_ && fv && (

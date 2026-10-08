@@ -75,6 +75,31 @@ function afastar(ys: number[], minimo: number, topo: number, base: number): numb
   return out;
 }
 
+/** Largura média de um caractere do Jost a 12px, em px: a conta de quanto rótulo cabe. */
+const CAR = 6.6;
+
+/**
+ * Quebra os rótulos do eixo X em até três linhas que caibam na largura dada. Devolve `null` se
+ * algum não couber (uma palavra mais larga que a banda, ou mais de três linhas).
+ */
+function quebrarRotulos(rotulos: string[], largura: number): string[][] | null {
+  const cabe = Math.floor(largura / CAR);
+  if (cabe < 3) return null;
+  const out: string[][] = [];
+  for (const r of rotulos) {
+    const linhas: string[] = [];
+    for (const palavra of r.split(/\s+/).filter(Boolean)) {
+      if (palavra.length > cabe) return null;
+      const ult = linhas[linhas.length - 1];
+      if (ult !== undefined && ult.length + 1 + palavra.length <= cabe) linhas[linhas.length - 1] = `${ult} ${palavra}`;
+      else linhas.push(palavra);
+    }
+    if (linhas.length > 3) return null;
+    out.push(linhas.length ? linhas : [r]);
+  }
+  return out;
+}
+
 /** Largura da caixa, medida. Começa no padrão para o HTML do servidor. */
 export function useLargura(padrao: number) {
   const ref = useRef<HTMLDivElement>(null);
@@ -216,6 +241,18 @@ export default function Grafico(props: PropsGrafico) {
   const xSlope = (i: number) => M.esq + PW * (i === 0 ? 0.3 : 0.7);
   const x = inclinacao ? xSlope : xPonto;
 
+  // ---- rótulos do eixo X (08/out/2026) -------------------------------------------------------
+  // Barra de categoria (país, setor, faixa de nota: rótulo sem algarismo) mostra TODO rótulo: pular
+  // deixava barra sem nome, com "Tecnologia da informação" e "Materiais" separados por barras mudas.
+  // Primeiro tenta quebrar em até três linhas na largura da banda; se nem assim cabe (o celular,
+  // com sete setores), o rótulo inclina. Série no tempo continua pulando rótulo, ver `pularX`.
+  const categorias = barras && eixoX.some((r) => !/\d/.test(r));
+  const linhasX = categorias ? quebrarRotulos(eixoX, banda - 4) : null;
+  const inclinarX = categorias && !linhasX;
+  const maxRotuloX = Math.max(1, ...eixoX.map((r) => r.length));
+  if (linhasX) M.base = 30 + (Math.max(1, ...linhasX.map((l) => l.length)) - 1) * 13;
+  else if (inclinarX) M.base = Math.round(Math.min(120, 22 + maxRotuloX * CAR * 0.57));
+
   // Cada rótulo vai na primeira linha (de três) onde não encosta no anterior.
   const fimPorLinha = [-Infinity, -Infinity, -Infinity];
   for (const m of marcosOk) {
@@ -290,7 +327,11 @@ export default function Grafico(props: PropsGrafico) {
   const Titulo = (`h${nivel}` as "h3" | "h4" | "h5");
 
   // ---- desenho ------------------------------------------------------------------------------
-  const pularX = Math.max(1, Math.ceil(n / Math.max(2, Math.floor(PW / (Math.max(...eixoX.map((r) => r.length)) * 7 + 18)))));
+  const pularX = categorias ? 1 : Math.max(1, Math.ceil(n / Math.max(2, Math.floor(PW / (maxRotuloX * 7 + 18)))));
+  // O último ponto sempre tem rótulo (é o dado mais recente), e o rótulo da grade que ficaria a
+  // menos de um passo dele sai, em vez de encostar nele: antes saía "2024 2026" colado, ou "Ano 12
+  // Ano 15" um por cima do outro.
+  const mostrarX = (i: number) => i === n - 1 || (i % pularX === 0 && n - 1 - i >= pularX);
   const caminho = (valores: (number | null)[]) => {
     let d = "";
     let caneta = false;
@@ -314,9 +355,17 @@ export default function Grafico(props: PropsGrafico) {
       )
     : [];
 
-  const poucasBarras = forma === "barra" && n * visiveis.length <= 10;
   const grupo = banda * (visiveis.length > 1 ? 0.74 : 0.56);
   const largBarra = empilhada ? Math.min(56, banda * 0.56) : Math.min(44, grupo / Math.max(1, visiveis.length));
+  // Valor no topo da barra só quando cabe na vaga dela (08/out/2026): com duas séries, "0,84 p.p." e
+  // "0,80 p.p." se atropelavam. Se o valor completo não cabe, sai sem a unidade, que o eixo já diz;
+  // se nem o número cabe, a barra fica sem rótulo e o valor segue na dica e na tabela.
+  const vagaValor = visiveis.length > 1 ? largBarra + 6 : banda - 6;
+  const valoresBarra = visiveis.flatMap(({ s }) => s.valores.filter((v): v is number => v !== null && Number.isFinite(v)));
+  const cabeValor = (fn: (v: number) => string) => valoresBarra.every((v) => fn(v).length * (CAR + 0.4) <= vagaValor);
+  const fmtCurto = (v: number) => formatar(v, { ...f, prefixo: undefined, sufixo: undefined });
+  const fmtBarra = cabeValor(fmt) ? fmt : cabeValor(fmtCurto) ? fmtCurto : null;
+  const poucasBarras = forma === "barra" && n * visiveis.length <= 10 && fmtBarra !== null;
 
   // Dica: lado oposto ao do ponto, para não cobrir a série.
   const dicaX = marcado !== null && ativo !== null ? x(ativo) : 0;
@@ -405,13 +454,31 @@ export default function Grafico(props: PropsGrafico) {
                   </text>
                 </g>
               ))
-            : eixoX.map((rotulo, i) =>
-                i % pularX === 0 || (i === n - 1 && (n - 1) % pularX > pularX / 2) ? (
+            : eixoX.map((rotulo, i) => {
+                if (!mostrarX(i)) return null;
+                const yx = H - M.base + 20;
+                if (linhasX)
+                  return (
+                    <text key={rotulo + i} className="sl-g-x" x={x(i)} y={yx} textAnchor="middle">
+                      {linhasX[i].map((l, k) => (
+                        <tspan key={k} x={x(i)} dy={k ? 13 : 0}>
+                          {l}
+                        </tspan>
+                      ))}
+                    </text>
+                  );
+                if (inclinarX)
+                  return (
+                    <text key={rotulo + i} className="sl-g-x" x={x(i) + 4} y={yx - 6} textAnchor="end" transform={`rotate(-35 ${x(i) + 4} ${yx - 6})`}>
+                      {rotulo}
+                    </text>
+                  );
+                return (
                   <text key={rotulo + i} className="sl-g-x" x={x(i)} y={H - 10} textAnchor={!barras && i === 0 ? "start" : !barras && i === n - 1 ? "end" : "middle"}>
                     {rotulo}
                   </text>
-                ) : null,
-              )}
+                );
+              })}
 
           {/* banda do ponto ativo, em barras */}
           {barras && marcado !== null && (
@@ -523,7 +590,7 @@ export default function Grafico(props: PropsGrafico) {
                     textAnchor="middle"
                     fill={COR_TEXTO[cores[k]] ?? (cores[k] === "cinzaPalido" ? "#8f877c" : COR[cores[k]])}
                   >
-                    {fmt(v)}
+                    {fmtBarra!(v)}
                   </text>
                 ),
               ),

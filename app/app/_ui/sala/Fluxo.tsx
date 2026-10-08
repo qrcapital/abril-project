@@ -27,7 +27,10 @@ export default function Fluxo({
   origem: TipoOrigem;
 }) {
   return (
-    <Entrada como="figure" className="sl-fluxo">
+    // Cinco etapas ou mais correm de cima para baixo também no desktop (08/out/2026): na coluna de
+    // 760px, cinco caixas lado a lado ficavam com 95px, o título quebrava palavra por palavra e o verbo
+    // da seta ("concentra-se na") invadia a caixa vizinha.
+    <Entrada como="figure" className={`sl-fluxo${nos.length >= 5 ? " is-vertical" : ""}`}>
       {(titulo || subtitulo) && (
         <figcaption className="sl-fig-cabeca">
           {titulo && <h4 className="sl-fig-titulo">{titulo}</h4>}

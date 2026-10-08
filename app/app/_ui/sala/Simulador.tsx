@@ -6,6 +6,7 @@ import {
   CHAVES_MODELO,
   PARAMETROS_PADRAO,
   cambioPatrimonio,
+  colarNumeros,
   fatiaDeMenorVolatilidade,
   formatar,
   jurosDuasMoedas,
@@ -264,7 +265,7 @@ export default function Simulador({ bloco }: { bloco: BlocoSimulador }) {
                       setValores((atual) => ({ ...atual, [k]: x }));
                     }}
                   />
-                  {c.ajuda && <small>{c.ajuda}</small>}
+                  {c.ajuda && <small>{colarNumeros(c.ajuda)}</small>}
                 </div>
               );
             })}

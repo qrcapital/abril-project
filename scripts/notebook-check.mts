@@ -31,11 +31,11 @@ register("./notebook-alias.mjs", import.meta.url);
 const perto = (a: number, b: number, msg: string, tol = 1e-9) => assert.ok(Math.abs(a - b) <= tol, `${msg}: ${a} != ${b}`);
 
 // --- formatação ---
-assert.equal(formatar(-1.2, "brl"), "−R$ 1,20", "negativo com menos tipográfico antes do prefixo");
+assert.equal(formatar(-1.2, "brl"), "−R$\u00a01,20", "negativo com menos tipográfico antes do prefixo");
 assert.equal(formatar(3.456, "pct"), "3,5%");
-assert.equal(formatar(1.5, { base: "pp", sinal: true }), "+1,5 p.p.");
+assert.equal(formatar(1.5, { base: "pp", sinal: true }), "+1,5\u00a0p.p.");
 assert.equal(formatar(-0.04, "pct"), "0,0%", "zero arredondado não leva sinal");
-assert.equal(formatar(1_250_000, { base: "brl", casas: 0, compacto: true }), "R$ 1,3 mi");
+assert.equal(formatar(1_250_000, { base: "brl", casas: 0, compacto: true }), "R$\u00a01,3\u00a0mi");
 assert.equal(formatar(5.5, "multiplo"), "5,5×");
 
 // --- tempo da aula ---

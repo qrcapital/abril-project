@@ -1,5 +1,6 @@
 import { GLOSSARIO, verbete } from "@/content/glossario";
 import { urlDoVerbete } from "@/lib/glossario";
+import { colarNumeros } from "@/lib/notebook";
 import { montarIndice, segmentar } from "@/lib/glossario-links";
 
 /**
@@ -25,7 +26,8 @@ export type Ligador = (texto: string) => React.ReactNode;
 export function criarLigador(excluir?: string): Ligador {
   const vistos = new Set<string>();
   const fora = excluir ? new Set([excluir]) : undefined;
-  return (texto) => {
+  return (cru) => {
+    const texto = colarNumeros(cru);
     const pedacos = segmentar(texto, INDICE, { vistos, excluir: fora });
     if (pedacos.length === 1 && !pedacos[0].slug) return texto;
     return pedacos.map((p, i) => {

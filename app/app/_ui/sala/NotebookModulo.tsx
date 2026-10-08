@@ -189,8 +189,10 @@ function UmBloco({ bloco: b, ligado }: { bloco: Bloco; ligado?: Ligado }) {
         </blockquote>
       );
     case "numero":
+      // Número comprido ("2,75 quatrilhões") empilha: lado a lado, ele tomava a linha e espremia a
+      // legenda numa coluna de três palavras (08/out/2026).
       return (
-        <div className="sl-numero">
+        <div className={`sl-numero${b.valor.length > 9 ? " is-longo" : ""}`}>
           <span className="sl-numero-valor">{b.valor}</span>
           <div>
             <p className="sl-numero-legenda">{b.legenda}</p>
@@ -243,17 +245,20 @@ function UmBloco({ bloco: b, ligado }: { bloco: Bloco; ligado?: Ligado }) {
       return <Simulador bloco={deComparador(b)} />;
     case "conceito":
       return (
+        // As duas colunas começam no alto do bloco, com os dois rótulos na mesma linha (08/out/2026).
+        // Antes o rótulo "Teoria" e o termo ficavam por cima da grade, e o "Na prática" começava na
+        // altura da definição: solto no meio do bloco, como se estivesse centralizado.
         <aside className="sl-conceito" aria-label={`Conceito: ${b.termo}`}>
-          <p className="sl-eyebrow">Teoria</p>
-          <h4 className="sl-conceito-termo">{b.termo}</h4>
           <div className="sl-conceito-grade">
-            <div>
-              <p>{ligado?.definicao ?? b.definicao}</p>
+            <div className="sl-conceito-teoria">
+              <p className="sl-eyebrow">Teoria</p>
+              <h4 className="sl-conceito-termo">{b.termo}</h4>
+              <p className="sl-conceito-texto">{ligado?.definicao ?? b.definicao}</p>
               {b.formula && <p className="sl-conceito-formula">{b.formula}</p>}
             </div>
             <div className="sl-conceito-pratica">
-              <p className="sl-eyebrow sl-conceito-sub">Na prática</p>
-              <p>{ligado?.naPratica ?? b.naPratica}</p>
+              <p className="sl-eyebrow">Na prática</p>
+              <p className="sl-conceito-texto">{ligado?.naPratica ?? b.naPratica}</p>
             </div>
           </div>
           {b.referencia && (

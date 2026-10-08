@@ -77,7 +77,20 @@ export function formatar(v: number, formato?: FormatoDe): string {
   // Zero arredondado não leva sinal: "−0,0%" é ruído.
   const zero = Number(abs.toFixed(casas)) === 0;
   const sinal = v < 0 && !zero ? "−" : f.sinal && v > 0 && !zero ? "+" : "";
-  return `${sinal}${f.prefixo ?? ""}${num}${escala}${f.sufixo ?? ""}`;
+  // Espaço inseparável entre o número e a moeda ou a unidade (08/out/2026): a quebra de linha
+  // separava "R$" de "5,15" e "2,0" de "p.p." nas notas estreitas do simulador e da tabela.
+  const colar = (t?: string) => (t ?? "").replace(/ /g, "\u00a0");
+  return `${sinal}${colar(f.prefixo)}${num}${colar(escala)}${colar(f.sufixo)}`;
+}
+
+/**
+ * O mesmo espaço inseparável no texto escrito à mão (08/out/2026): "R$ 5,15", "US$ 1,57 tri",
+ * "2,0 p.p." e "13,75% a.a." não quebram no meio. Vale no texto corrido, nas notas e nas legendas.
+ */
+export function colarNumeros(texto: string): string {
+  return texto
+    .replace(/(R\$|US\$|€|£)\s(?=[\d−-])/g, "$1\u00a0")
+    .replace(/(\d%?)\s(p\.p\.|a\.a\.|tri|bi|mi)(?=[\s.,;:)]|$)/g, "$1\u00a0$2");
 }
 
 // ---- origem: fonte ou ilustrativo --------------------------------------------------------------

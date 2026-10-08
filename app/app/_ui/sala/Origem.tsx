@@ -1,4 +1,4 @@
-import type { Origem as TipoOrigem } from "@/lib/notebook";
+import { colarNumeros, type Origem as TipoOrigem } from "@/lib/notebook";
 
 /**
  * A linha de origem sob toda figura do notebook: "Fonte: ..." ou "Ilustrativo: ...", seguida da
@@ -18,10 +18,10 @@ export default function Origem({ origem, id }: { origem: TipoOrigem; id?: string
       {rotulo && (
         <>
           <span className={ilustrativo ? "sl-origem-ilus" : undefined}>{rotulo}</span>
-          {fonte ? `: ${fonte.replace(/\.\s*$/, "")}.` : "."}
+          {fonte ? `: ${colarNumeros(fonte.replace(/\.\s*$/, ""))}.` : "."}
         </>
       )}
-      {nota && <> {nota}</>}
+      {nota && <> {colarNumeros(nota)}</>}
     </p>
   );
 }

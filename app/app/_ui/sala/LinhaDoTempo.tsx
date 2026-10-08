@@ -41,7 +41,9 @@ export default function LinhaDoTempo({
   const HG = serie ? 150 : 0; // altura do gráfico
   const FIO = 30; // faixa dos fios
   const H = HG + FIO;
-  const xCartao = (i: number) => ((i + 0.5) * w) / n;
+  // O fio chega ao cartão na altura da data, alinhado à esquerda como o texto (08/out/2026). Antes
+  // descia no meio da coluna, e o ponto ficava solto sobre um texto que começa na borda.
+  const xCartao = (i: number) => (i * w) / n + 4;
 
   // Série: eixo próprio, sem zero obrigatório (é contexto, não comparação de tamanho).
   const m = serie?.eixoX.length ?? 0;
@@ -83,7 +85,7 @@ export default function LinhaDoTempo({
   const pAtivo = ativo !== null ? pontos[ativo] : null;
 
   return (
-    <figure className="sl-tempo" ref={ref}>
+    <figure className="sl-tempo" ref={ref} data-denso={n >= 7 ? "" : undefined}>
       <figcaption className="sl-fig-cabeca">
         <h4 className="sl-fig-titulo">{titulo}</h4>
         {subtitulo && <p className="sl-fig-sub">{subtitulo}</p>}
