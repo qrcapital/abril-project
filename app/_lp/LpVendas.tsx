@@ -14,6 +14,7 @@ import CarrosselDots from "./CarrosselDots";
 import VslMount from "./VslMount";
 import GraficoEntrada from "./GraficoEntrada";
 import DolarVivo from "./DolarVivo";
+import BarraCompra from "./BarraCompra";
 
 // Design real da LP: markup e CSS em app/_lp, assets em /public/lp. Renderizado
 // como página estática. Nasceu de um bundle do Claude Design portado por
@@ -72,6 +73,7 @@ export default function LpVendas() {
       <VslMount />
       <GraficoEntrada />
       <DolarVivo />
+      <BarraCompra />
     </>
   );
 }
