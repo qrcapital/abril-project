@@ -780,13 +780,15 @@ footer :where(a, button, input, select, textarea):focus-visible{outline-color:#F
   .prof-grid-5{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:16px!important}
   .prof-grid-5 > .prof > div:last-child{padding:18px 18px 22px!important}
   .prof-grid-5 h3{font-size:19px!important}
+  .prof-grid-5 .chip-modulo{letter-spacing:.13em!important}
   /* a credencial cabe em duas linhas em quatro dos cinco cards: reservar as duas em todos alinha as bios */
   .prof-grid-5 > .prof > div:last-child > div:first-of-type{min-height:2.8em;line-height:1.4}
   .prof-grid-5 [style*="gap:17px"]{gap:12px!important}
 }
 @media (min-width:761px) and (max-width:1100px){
   .prof-grid-5{display:flex!important;flex-wrap:wrap;justify-content:center}
-  .prof-grid-5 > .prof{flex:0 0 calc((100% - 36px)/3)}
+  .prof-grid-5 > .prof{flex:0 0 calc((100% - 37px)/3);min-width:0;box-sizing:border-box}
+  .prof-grid-5 .chip-modulo{letter-spacing:.12em!important}
 }
 
 /* Por dentro: telas reais da área do aluno */
