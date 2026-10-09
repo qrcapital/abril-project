@@ -1025,6 +1025,8 @@ footer :where(a, button, input, select, textarea):focus-visible{outline-color:#F
 .of-pag{gap:8px!important;flex-wrap:wrap}
 .of-band{display:inline-flex;align-items:center;justify-content:center;gap:5px;height:30px;min-width:46px;padding:0 9px;border:1px solid #E6DDD1;border-radius:7px;background:#fff}
 .of-band svg{height:17px;width:auto;fill:#4E4840;display:block}
-.of-band[title="Visa"] svg{height:22px}
-.of-band[title="American Express"] svg{height:20px}
+.of-band[title="Visa"] svg{height:11px}
+.of-band[title="Mastercard"] svg{height:17px}
 .of-band i{font-style:normal;font-size:11.5px;font-weight:700;color:#4E4840;letter-spacing:.02em}
+
+.of-band i.amex{font-size:11px;font-weight:800;letter-spacing:.12em;color:#4E4840}
