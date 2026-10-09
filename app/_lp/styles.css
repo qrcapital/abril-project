@@ -1056,8 +1056,8 @@ footer :where(a, button, input, select, textarea):focus-visible{outline-color:#F
 /* iPad: à frente, à esquerda, invadindo o Mac */
 .dv-ipad{position:absolute;left:0;bottom:3%;width:33%;aspect-ratio:820/1180;box-sizing:content-box;padding:2.1%;background:#141210;border-radius:22px;box-shadow:0 0 0 1px #3b3633,0 28px 54px rgba(48,30,20,.34),0 6px 14px rgba(48,30,20,.2)}
 .dv-ipad img{border-radius:9px}
-/* iPhone: à frente, à direita */
-.dv-iphone{position:absolute;right:5%;bottom:0;width:17%;aspect-ratio:390/844;box-sizing:content-box;padding:1.15%;background:#141210;border-radius:26px;box-shadow:0 0 0 1px #3b3633,0 28px 50px rgba(48,30,20,.36),0 6px 14px rgba(48,30,20,.22)}
+/* iPhone: colado no iPad, encostando na borda dele (10/out/2026: antes ficava longe, à direita) */
+.dv-iphone{position:absolute;left:31%;bottom:0;width:17%;aspect-ratio:390/844;box-sizing:content-box;padding:1.15%;background:#141210;border-radius:26px;box-shadow:0 0 0 1px #3b3633,0 28px 50px rgba(48,30,20,.36),0 6px 14px rgba(48,30,20,.22)}
 .dv-iphone img{border-radius:20px}
 .dv-ilha{position:absolute;top:2.6%;left:50%;width:30%;height:2.6%;transform:translateX(-50%);background:#141210;border-radius:999px;z-index:1}
 @media (max-width:1000px){
