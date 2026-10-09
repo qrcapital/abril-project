@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import DadosEditaveis from "./DadosEditaveis";
 import LimparModulo from "./LimparModulo";
 import ReenviarAcesso from "./ReenviarAcesso";
+import LinkAcesso from "./LinkAcesso";
 
 import {
   Cabecalho,
@@ -18,6 +19,7 @@ import {
 import { ROTULO_ESTADO, estadoDaMatricula } from "@/lib/matricula-estado";
 import { rotuloModulo } from "@/lib/curso";
 import { exigirAdmin } from "@/lib/admin-guarda";
+import { situacaoEntrega, type EventoGravado } from "@/lib/ses-eventos";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = { title: "Aluno" };
@@ -44,7 +46,22 @@ export const metadata: Metadata = { title: "Aluno" };
  * é agregação; o resto vem do PostgREST direto, porque é uma linha por tabela para um aluno só, e
  * função nova para isso seria SQL a mais para manter sem ganho. O e-mail vem do Admin API
  * (`getUserById`), que é o único jeito de alcançar `auth.users` sem função nova.
+ *
+ * **E-mails recentes com a entrega** entrou em 09/out/2026 (migration 0033): os últimos envios do
+ * `email_log` e, para cada um, o que o SES ouviu do servidor do destinatário (`email_eventos`).
  */
+
+/** Uma linha do `email_log`. `ses_message_id` só existe depois da 0033, por isso opcional. */
+type EmailLog = {
+  id: string;
+  template: string;
+  sent_at: string;
+  status: string | null;
+  ses_message_id?: string | null;
+};
+
+/** Quantos e-mails a tela mostra. O histórico inteiro fica na tela de E-mails. */
+const EMAILS_NA_TELA = 10;
 
 type Modulo = {
   ord: number;
@@ -79,7 +96,7 @@ export default async function Aluno({
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   const db = createAdminClient();
-  const [conta, perfil, matriculas, modulos, certificado, politicas] = await Promise.all([
+  const [conta, perfil, matriculas, modulos, certificado, politicas, emails] = await Promise.all([
     db.auth.admin.getUserById(id),
     db.from("profiles").select("nome, telefone, guru_customer_id, is_admin, is_master").eq("id", id).maybeSingle(),
     db
@@ -90,6 +107,14 @@ export default async function Aluno({
     db.rpc("aluno_modulos", { alvo: id }),
     db.from("certificates").select("codigo, issued_at").eq("user_id", id).maybeSingle(),
     db.from("release_policies").select("id, nome, ativa").order("created_at"),
+    // `*` e não a lista de colunas: antes da 0033 rodar, pedir `ses_message_id` derrubaria a
+    // consulta inteira, e a tela perderia os e-mails por causa de uma coluna.
+    db
+      .from("email_log")
+      .select("*")
+      .eq("user_id", id)
+      .order("sent_at", { ascending: false })
+      .limit(EMAILS_NA_TELA),
   ]);
 
   const user = conta.data?.user;
@@ -101,6 +126,21 @@ export default async function Aluno({
 
   const mods = (modulos.data ?? []) as Modulo[];
   const cert = certificado.data as { codigo: string; issued_at: string } | null;
+
+  // Eventos de entrega do SES para os e-mails acima (0033, via /api/webhooks/ses). Sem a tabela, o
+  // erro é ignorado e cada linha mostra "sem retorno": a tela não depende do rastreio para abrir.
+  const logs = (emails.data ?? []) as EmailLog[];
+  const idsSes = logs.map((l) => l.ses_message_id).filter((v): v is string => Boolean(v));
+  const eventosPorId = new Map<string, EventoGravado[]>();
+  if (idsSes.length) {
+    const { data: eventos } = await db
+      .from("email_eventos")
+      .select("ses_message_id, tipo, detalhe, ocorrido_em")
+      .in("ses_message_id", idsSes);
+    for (const e of (eventos ?? []) as (EventoGravado & { ses_message_id: string })[]) {
+      eventosPorId.set(e.ses_message_id, [...(eventosPorId.get(e.ses_message_id) ?? []), e]);
+    }
+  }
 
   const gate = mods.filter((m) => m.conta_no_gate);
   const feitasGate = gate.reduce((s, m) => s + m.concluidas, 0);
@@ -144,6 +184,7 @@ export default async function Aluno({
                 conta, e não na tela de E-mails, porque quem chega aqui chega pelo nome da pessoa, e
                 quando o e-mail nunca saiu não existe linha no log para clicar. */}
             {user.email && <ReenviarAcesso userId={user.id} email={user.email} />}
+            {user.email && <LinkAcesso userId={user.id} />}
             {/* Mensagens das ações que ainda navegam (progresso, política, reenviar acesso). A
                 edição dos dados não passa por aqui: ela avisa no próprio editor, sem recarregar. */}
             {ok && MENSAGENS[ok] && <span className="text-[12px] text-sucesso">{MENSAGENS[ok]}</span>}
@@ -258,6 +299,56 @@ export default async function Aluno({
                     </td>
                   </Linha>
                 ))}
+              </tbody>
+            </table>
+          </Quadro>
+        )}
+      </section>
+
+      {/* E-mails recentes, com a entrega segundo o servidor do destinatário. "enviado" no log é só a
+          API do SES aceitando; a coluna Entrega é o que o SES ouviu depois (docs/SES-RASTREIO.md).
+          Responde o "não recebi" do suporte sem abrir o console da AWS. */}
+      <section className="mb-8">
+        <h2 className="mb-3 text-[15px] text-tinta">E-mails recentes</h2>
+        {logs.length === 0 ? (
+          <Vazio>Nenhum e-mail registrado para esta conta.</Vazio>
+        ) : (
+          <Quadro>
+            <table className="w-full min-w-[620px] border-collapse text-left">
+              <Cabecalho colunas={["Quando", "E-mail", "Envio", "Entrega"]} />
+              <tbody>
+                {logs.map((l) => {
+                  const enviado = l.status === "enviado";
+                  const s = enviado
+                    ? situacaoEntrega(
+                        eventosPorId.get(l.ses_message_id ?? "") ?? [],
+                        Boolean(l.ses_message_id),
+                      )
+                    : null;
+                  return (
+                    <Linha key={l.id}>
+                      <td className="px-4 py-3 text-[12px] whitespace-nowrap text-medio">{data(l.sent_at)}</td>
+                      <td className="px-4 py-3 text-[13px] text-grafite">{l.template}</td>
+                      <td className="px-4 py-3 text-[12px] text-medio">{l.status ?? "sem status"}</td>
+                      <td className="px-4 py-3 text-[12px]">
+                        {s ? (
+                          <>
+                            <span title={s.detalhe ?? undefined}>
+                              <Selo tom={s.tom}>{s.rotulo}</Selo>
+                            </span>
+                            {s.detalhe && s.tom !== "ok" && (
+                              <span className="mt-1 block max-w-[360px] truncate text-[11px] text-pedra" title={s.detalhe}>
+                                {s.detalhe}
+                              </span>
+                            )}
+                          </>
+                        ) : (
+                          <span className="text-pedra">não saiu</span>
+                        )}
+                      </td>
+                    </Linha>
+                  );
+                })}
               </tbody>
             </table>
           </Quadro>

@@ -194,6 +194,10 @@ HTTP, sem dependência nova, e o registro em `email_log`) e a tabela `email_temp
   matrícula duplicada. Toda tentativa vira linha no log, inclusive as falhas e os testes.
 - **Os de pagamento não são nossos.** PIX, boleto, cartão recusado e carrinho saem pelo Guru.
 - Sem `RESEND_API_KEY` no ambiente, tudo funciona menos a entrega, e o log registra o motivo.
+- **"enviado" no log é só a API do SES aceitando** (09/out/2026, migration 0033). O que o servidor
+  do destinatário fez depois (entregou, adiou, devolveu) chega pelo SNS em `/api/webhooks/ses` e
+  mora em `email_eventos`, ligado ao `email_log` por `ses_message_id`. A assinatura do SNS é
+  conferida em `lib/sns.ts` (`check:sns`). Configuração da AWS em `docs/SES-RASTREIO.md`.
 
 ## Certificado
 

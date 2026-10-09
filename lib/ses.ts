@@ -148,6 +148,22 @@ export function corpoSesV2(m: {
   };
 }
 
+/**
+ * O `MessageId` da resposta do `SendEmail` (`{"MessageId":"0100..."}`), ou `null`.
+ *
+ * É a chave que liga a linha do `email_log` aos eventos de entrega que o SES publica depois
+ * (`email_eventos`, via SNS). Nunca lança: resposta 200 com corpo estranho continua sendo envio
+ * aceito, só fica sem rastreio.
+ */
+export function messageIdDaResposta(bruto: string): string | null {
+  try {
+    const id = (JSON.parse(bruto) as { MessageId?: unknown } | null)?.MessageId;
+    return typeof id === "string" && id.trim() ? id.trim().slice(0, 200) : null;
+  } catch {
+    return null;
+  }
+}
+
 /** O endereço da API v2 do SES na região. */
 export const endpointSes = (regiao: string) =>
   `https://email.${regiao}.amazonaws.com/v2/email/outbound-emails`;

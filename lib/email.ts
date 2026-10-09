@@ -31,7 +31,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { linkUtilizavel, renderizar, type Dados, type Template } from "./email-render.ts";
-import { assinarSigV4, corpoSesV2, endpointSes } from "./ses.ts";
+import { assinarSigV4, corpoSesV2, endpointSes, messageIdDaResposta } from "./ses.ts";
 
 const ENDPOINT_RESEND = "https://api.resend.com/emails";
 /**
@@ -53,17 +53,21 @@ export type Resultado = { ok: boolean; status: string };
 
 type Mensagem = { para: string; assunto: string; html: string; texto: string };
 
+/**
+ * O que cada `enviar` devolve: `erro` nulo no sucesso, o motivo curto na falha (vira a coluna
+ * `status` do log). `id` é o `MessageId` do SES, a chave que liga a linha do `email_log` aos
+ * eventos de entrega em `email_eventos` (docs/SES-RASTREIO.md). O Resend não tem esse rastreio.
+ */
+type Envio = { erro: string | null; id?: string | null };
+
 type Provedor =
-  | { nome: "ses"; enviar: (m: Mensagem) => Promise<string | null> }
-  | { nome: "resend"; enviar: (m: Mensagem) => Promise<string | null> }
+  | { nome: "ses"; enviar: (m: Mensagem) => Promise<Envio> }
+  | { nome: "resend"; enviar: (m: Mensagem) => Promise<Envio> }
   | { nome: "nenhum"; motivo: string };
 
 const env = (nome: string) => process.env[nome]?.trim() || "";
 
-/**
- * Qual provedor este ambiente usa. Cada `enviar` devolve `null` no sucesso e o motivo na falha,
- * curto, porque vira a coluna `status` do log.
- */
+/** Qual provedor este ambiente usa. */
 function escolherProvedor(): Provedor {
   const pedido = env("EMAIL_PROVIDER").toLowerCase();
   const temSes = Boolean(env("SES_ACCESS_KEY_ID") && env("SES_SECRET_ACCESS_KEY"));
@@ -83,7 +87,7 @@ function escolherProvedor(): Provedor {
   return { nome: "nenhum", motivo: "nenhum provedor: faltam SES_ACCESS_KEY_ID/SES_SECRET_ACCESS_KEY" };
 }
 
-async function enviarPeloSes(m: Mensagem): Promise<string | null> {
+async function enviarPeloSes(m: Mensagem): Promise<Envio> {
   const regiao = env("SES_REGION") || "sa-east-1";
   const url = endpointSes(regiao);
   const corpo = JSON.stringify(
@@ -94,6 +98,8 @@ async function enviarPeloSes(m: Mensagem): Promise<string | null> {
       assunto: m.assunto,
       html: m.html,
       texto: m.texto,
+      // Com o configuration set, o SES publica Send, Delivery, Bounce, DeliveryDelay etc. no
+      // tópico SNS que chama `/api/webhooks/ses`. Sem a variável, o envio segue igual e sem rastreio.
       configuracao: env("SES_CONFIGURATION_SET") || null,
     }),
   );
@@ -115,7 +121,11 @@ async function enviarPeloSes(m: Mensagem): Promise<string | null> {
     body: corpo,
     signal: AbortSignal.timeout(TEMPO_MAXIMO_MS),
   });
-  if (resposta.ok) return null;
+  if (resposta.ok) {
+    // `{"MessageId": "..."}`. Ler o corpo não pode transformar envio aceito em falha.
+    const bruto = await resposta.text().catch(() => "");
+    return { erro: null, id: messageIdDaResposta(bruto) };
+  }
 
   // O SES responde `{"message": "..."}`. É ele que diz "Email address is not verified" no sandbox,
   // que é o erro mais provável do primeiro dia, então vai inteiro para o log até o teto da coluna.
@@ -126,10 +136,10 @@ async function enviarPeloSes(m: Mensagem): Promise<string | null> {
   } catch {
     /* corpo não era JSON: fica o texto cru */
   }
-  return `ses ${resposta.status} ${mensagem}`.slice(0, 110);
+  return { erro: `ses ${resposta.status} ${mensagem}`.slice(0, 110) };
 }
 
-async function enviarPeloResend(m: Mensagem): Promise<string | null> {
+async function enviarPeloResend(m: Mensagem): Promise<Envio> {
   const resposta = await fetch(ENDPOINT_RESEND, {
     method: "POST",
     headers: {
@@ -146,9 +156,9 @@ async function enviarPeloResend(m: Mensagem): Promise<string | null> {
     }),
     signal: AbortSignal.timeout(TEMPO_MAXIMO_MS),
   });
-  if (resposta.ok) return null;
+  if (resposta.ok) return { erro: null };
   const corpo = await resposta.text().catch(() => "");
-  return `resend ${resposta.status} ${corpo.slice(0, 80)}`;
+  return { erro: `resend ${resposta.status} ${corpo.slice(0, 80)}` };
 }
 
 /**
@@ -176,10 +186,17 @@ export async function enviarEmail(
 ): Promise<Resultado> {
   const rotuloLog = teste ? `${chave} (teste)` : chave;
 
-  const registrar = async (status: string) => {
-    const { error } = await db
+  const registrar = async (status: string, sesMessageId: string | null = null) => {
+    const linha: Record<string, string | null> = { user_id: userId ?? null, template: rotuloLog, status };
+    let { error } = await db
       .from("email_log")
-      .insert({ user_id: userId ?? null, template: rotuloLog, status });
+      .insert(sesMessageId ? { ...linha, ses_message_id: sesMessageId } : linha);
+    // A coluna `ses_message_id` nasce na 0033. Se o deploy chegar antes da migration, o insert
+    // com ela é recusado, e perder a linha do log seria pior que perder o id: grava sem ele.
+    if (error && sesMessageId && colunaAusente(error)) {
+      console.warn("[email] email_log sem ses_message_id (rodar a 0033): gravando sem o id.");
+      ({ error } = await db.from("email_log").insert(linha));
+    }
     // O log falhar não pode derrubar o envio nem o gatilho. Sobra o log do servidor.
     if (error) console.error(`[email] nao deu para registrar ${rotuloLog}:`, error.message);
   };
@@ -214,14 +231,15 @@ export async function enviarEmail(
 
   const { assunto, html, texto } = renderizar(template, dados);
 
+  let envio: Envio;
   try {
-    const erro = await provedor.enviar({ para, assunto, html, texto });
-    if (erro) return falhar(erro);
+    envio = await provedor.enviar({ para, assunto, html, texto });
   } catch (e) {
     return falhar(`${provedor.nome}: ${e instanceof Error ? e.message : "erro de rede"}`);
   }
+  if (envio.erro) return falhar(envio.erro);
 
-  await registrar("enviado");
+  await registrar("enviado", envio.id ?? null);
   return { ok: true, status: "enviado" };
 }
 
@@ -265,6 +283,18 @@ async function gerarLinkDeSenha(
     ultimoErro = error?.message ?? "sem hash";
   }
   return { erro: ultimoErro };
+}
+
+/**
+ * Link de criação de senha para o ADMIN entregar por outro canal (WhatsApp), quando o e-mail do
+ * aluno não chega (caso real: caixa @outlook.com que reteve as duas mensagens, 09/out/2026).
+ * Mesmo link do e-mail de boas-vindas, gerado na hora; o anterior deixa de valer.
+ */
+export async function linkDeAcesso(db: SupabaseClient, email: string): Promise<{ link: string } | { erro: string }> {
+  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "").trim().replace(/\/+$/, "");
+  if (!base) return { erro: "NEXT_PUBLIC_SITE_URL ausente" };
+  const r = await gerarLinkDeSenha(db, email, base, true);
+  return "erro" in r ? { erro: r.erro } : { link: r.link };
 }
 
 const primeiroNome = (nome?: string | null) => (nome ?? "").trim().split(/\s+/)[0] ?? "";
@@ -335,6 +365,13 @@ export async function enviarRedefinicao(
     dados: { nome: primeiroNome(r.nome), link: r.link },
   });
 }
+
+/**
+ * O erro do PostgREST para coluna que não existe: `PGRST204` quando o cache de schema não a
+ * conhece, `42703` quando chega ao Postgres.
+ */
+const colunaAusente = (e: { code?: string; message?: string }) =>
+  e.code === "PGRST204" || e.code === "42703" || /ses_message_id/.test(e.message ?? "");
 
 /** O template do banco. Separado para a tela de pré-visualização reusar sem enviar nada. */
 export async function carregarTemplate(

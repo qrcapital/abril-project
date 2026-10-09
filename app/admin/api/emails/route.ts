@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { papelAtual } from "@/lib/admin";
 import { origemValida } from "@/lib/admin-guarda";
 import contato from "@/lib/contato.json";
-import { carregarTemplate, enviarAcesso, enviarEmail } from "@/lib/email";
+import { carregarTemplate, enviarAcesso, enviarEmail, linkDeAcesso } from "@/lib/email";
 import { BANNER, DESCRICOES, renderizar, variaveisInvalidas, VARIAVEIS } from "@/lib/email-render";
 import { esc } from "@/lib/html-slice";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -266,6 +266,17 @@ export async function POST(req: NextRequest) {
       return r.ok
         ? voltar(req, { ok: "acesso", para: `/admin/alunos/${alvo}` })
         : voltar(req, { erro: `O e-mail não saiu (${r.status}).`, para: `/admin/alunos/${alvo}` });
+    }
+
+    case "link-acesso": {
+      // Devolve o link em JSON para o admin copiar e mandar por WhatsApp. Nada é enviado por e-mail.
+      const alvo = texto("userId");
+      if (!UUID.test(alvo)) return NextResponse.json({ erro: "Pedido inválido." }, { status: 400 });
+      const { data: conta, error: erroConta } = await db.auth.admin.getUserById(alvo);
+      if (erroConta || !conta?.user?.email) return NextResponse.json({ erro: "Não achei essa conta." }, { status: 404 });
+      const r = await linkDeAcesso(db, conta.user.email);
+      if ("erro" in r) return NextResponse.json({ erro: `Não consegui gerar o link (${r.erro}).` }, { status: 500 });
+      return NextResponse.json({ link: r.link }, { headers: { "Cache-Control": "no-store" } });
     }
 
     default:

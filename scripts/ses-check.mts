@@ -16,6 +16,7 @@ import {
   corpoSesV2,
   endpointSes,
   enderecoMime,
+  messageIdDaResposta,
 } from "../lib/ses.ts";
 
 const SEGREDO = "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY";
@@ -177,6 +178,28 @@ assert.equal(carimboAmz(QUANDO), "20150830T123600Z");
   assert.equal(c.Content.Simple.Body.Html.Charset, "UTF-8", "sem charset o acento chega quebrado");
   assert.ok(!("ConfigurationSetName" in c), "configuration set vazio nao vai no corpo");
   assert.ok(c.FromEmailAddress.startsWith("=?UTF-8?B?"));
+
+  // Com SES_CONFIGURATION_SET, o nome vai no corpo: é ele que faz o SES publicar os eventos de
+  // entrega no tópico SNS (docs/SES-RASTREIO.md).
+  const comSet = corpoSesV2({
+    de: "a@b.com",
+    para: "c@d.com",
+    assunto: "x",
+    html: "x",
+    texto: "x",
+    configuracao: "estrategia-transacional",
+  });
+  assert.equal(comSet.ConfigurationSetName, "estrategia-transacional");
+}
+
+// --- 9. o MessageId da resposta, que liga o email_log aos eventos de entrega ---
+{
+  assert.equal(messageIdDaResposta('{"MessageId":"0100019abc-def-000000"}'), "0100019abc-def-000000");
+  assert.equal(messageIdDaResposta("{}"), null);
+  assert.equal(messageIdDaResposta('{"MessageId":""}'), null);
+  assert.equal(messageIdDaResposta('{"MessageId":42}'), null);
+  assert.equal(messageIdDaResposta("null"), null);
+  assert.equal(messageIdDaResposta("nao e json"), null, "corpo estranho nao lanca");
 }
 
 console.log("ses-check: ok");
