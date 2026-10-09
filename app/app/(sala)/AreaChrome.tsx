@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { emTrabalho } from "@/app/app/_ui/feedback";
 
 import contato from "@/lib/contato.json";
+import Html from "@/app/app/_ui/Html";
 
 const WHATSAPP = contato.whatsapp;
 
@@ -162,9 +163,9 @@ export default function AreaChrome({
           ficava preso a este invólucro, da altura da própria barra, e a barra rolava junto com a
           página. Sem caixa própria, o topo gruda no alto da janela como o DESIGN.md pede, e o
           vídeo fixo da sala e o índice do notebook se alinham logo abaixo dele (`--sl-topo`). */}
-      <div style={{ display: "contents" }} dangerouslySetInnerHTML={{ __html: topo }} />
+      <Html style={{ display: "contents" }} html={topo} />
       {children}
-      <div dangerouslySetInnerHTML={{ __html: foot }} />
+      <Html html={foot} />
     </div>
   );
 }

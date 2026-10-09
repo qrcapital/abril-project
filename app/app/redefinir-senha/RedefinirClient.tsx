@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { definirSenha } from "./actions";
 import { validarSenha } from "@/lib/senha";
 import { emTrabalho, ligarExigencias, pintarCaixa } from "@/app/app/_ui/feedback";
+import Html from "@/app/app/_ui/Html";
 
 /**
  * Formulário da senha nova. A conferência de "as duas iguais" é local, porque é erro de
@@ -93,7 +94,7 @@ export default function RedefinirClient({
 
   return (
     <form onSubmit={onSubmit} noValidate>
-      <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />
+      <Html ref={ref} html={html} />
     </form>
   );
 }

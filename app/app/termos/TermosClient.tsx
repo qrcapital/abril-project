@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { aceitarDocumentos } from "./actions";
 import { emTrabalho, pintarCaixa } from "@/app/app/_ui/feedback";
+import Html from "@/app/app/_ui/Html";
 
 /**
  * O formulário da tela de aceite. Mesmo desenho do `RedefinirClient`: o HTML vem montado do
@@ -50,7 +51,7 @@ export default function TermosClient({ html }: { html: string }) {
 
   return (
     <form onSubmit={onSubmit} noValidate>
-      <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />
+      <Html ref={ref} html={html} />
     </form>
   );
 }

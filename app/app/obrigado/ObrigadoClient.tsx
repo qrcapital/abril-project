@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import AcessoClient from "../acesso/AcessoClient";
+import Html from "@/app/app/_ui/Html";
 
 /**
  * A página de compra aprovada, com o acesso direto (10/out/2026).
@@ -128,8 +129,8 @@ export default function ObrigadoClient({
   }, []);
 
   if (tela === "lendo") return null;
-  if (tela === "preparando") return <div dangerouslySetInnerHTML={{ __html: preparando }} />;
-  if (tela === "demorando") return <div dangerouslySetInnerHTML={{ __html: demorando }} />;
+  if (tela === "preparando") return <Html html={preparando} />;
+  if (tela === "demorando") return <Html html={demorando} />;
   if (tela === "ja-entrou") return <AcessoClient html={jaEntrou} />;
   return <AcessoClient html={padrao} />;
 }

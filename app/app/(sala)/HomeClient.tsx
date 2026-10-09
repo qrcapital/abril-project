@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Html from "@/app/app/_ui/Html";
 
 /** Onde o `home.html` é partido para o React pôr o miolo (ver a prop `meio`). */
 const MEIO = "<!-- sala:meio -->";
@@ -178,12 +179,12 @@ export default function HomeClient({
       <div ref={ref}>
         {meio && html.includes(MEIO) ? (
           <>
-            <div dangerouslySetInnerHTML={{ __html: html.slice(0, html.indexOf(MEIO)) }} />
+            <Html html={html.slice(0, html.indexOf(MEIO))} />
             {meio}
-            <div dangerouslySetInnerHTML={{ __html: html.slice(html.indexOf(MEIO) + MEIO.length) }} />
+            <Html html={html.slice(html.indexOf(MEIO) + MEIO.length)} />
           </>
         ) : (
-          <div dangerouslySetInnerHTML={{ __html: html }} />
+          <Html html={html} />
         )}
       </div>
       {depois}

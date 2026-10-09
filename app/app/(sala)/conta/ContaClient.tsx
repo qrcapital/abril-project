@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import contato from "@/lib/contato.json";
 import { emTrabalho, ligarExigencias, pintarCaixa } from "@/app/app/_ui/feedback";
 import { trocarSenha } from "./actions";
+import Html from "@/app/app/_ui/Html";
 
 const WHATSAPP = contato.whatsapp;
 
@@ -146,5 +147,5 @@ export default function ContaClient({ html }: { html: string }) {
     return () => ac.abort();
   }, []);
 
-  return <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />;
+  return <Html ref={ref} html={html} />;
 }

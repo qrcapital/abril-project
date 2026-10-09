@@ -9,6 +9,7 @@ import { validarSenha } from "@/lib/senha";
 import { emTrabalho, ligarExigencias, pintarCaixa } from "@/app/app/_ui/feedback";
 
 import contato from "@/lib/contato.json";
+import Html from "@/app/app/_ui/Html";
 
 const WHATSAPP = contato.whatsapp;
 
@@ -204,7 +205,7 @@ export default function LoginClient({
 
   return (
     <>
-      <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />
+      <Html ref={ref} html={html} />
       {/* A barra "Teste (homolog)" que ficava fixa no pé desta tela saiu em 30/set/2026, a
           pedido do Marcelo: a tela é a do domínio público. As variantes continuam acessíveis
           por URL (`?s=erro`, `?s=pendente`, `?s=primeiro`) para quem precisar conferir. */}

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { pedirReset } from "./actions";
 import { emTrabalho, pintarCaixa } from "@/app/app/_ui/feedback";
+import Html from "@/app/app/_ui/Html";
 
 const SUCESSO =
   "Se existir conta com esse e-mail, o link chega em poucos minutos. Vale olhar o spam.";
@@ -56,7 +57,7 @@ export default function RecuperarClient({
 
   return (
     <form onSubmit={onSubmit} noValidate>
-      <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />
+      <Html ref={ref} html={html} />
     </form>
   );
 }

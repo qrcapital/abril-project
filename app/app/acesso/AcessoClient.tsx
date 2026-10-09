@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 
 import contato from "@/lib/contato.json";
 import { emTrabalho } from "@/app/app/_ui/feedback";
+import Html from "@/app/app/_ui/Html";
 
 const WHATSAPP = contato.whatsapp;
 
@@ -60,5 +61,5 @@ export default function AcessoClient({ html }: { html: string }) {
     return () => ac.abort();
   }, [router]);
 
-  return <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />;
+  return <Html ref={ref} html={html} />;
 }
