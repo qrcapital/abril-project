@@ -1177,3 +1177,7 @@ footer :where(a, button, input, select, textarea):focus-visible{outline-color:#F
   .lk-escuro i{height:24px}
   .lk-escuro span{font-size:11px}
 }
+/* Ficha: o "4 em 1" ganha a coluna mais larga para o rótulo caber em duas linhas */
+@media (min-width:821px){
+  .ft-faixa{grid-template-columns:minmax(0,.9fr) minmax(0,.9fr) minmax(0,.9fr) minmax(0,1.45fr) minmax(0,1.15fr)}
+}
