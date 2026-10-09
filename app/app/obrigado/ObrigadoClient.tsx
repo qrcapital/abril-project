@@ -115,12 +115,13 @@ export default function ObrigadoClient({
         /* rede caiu: tenta de novo */
       }
       if (!vivo) return;
-      if (passou > 45_000) setTela("demorando");
+      if (passou > 20_000) setTela("demorando");
       if (passou > PRAZO_MS) {
         setTela("padrao");
         return;
       }
-      setTimeout(tentar, passou < 60_000 ? 3000 : 5000);
+      // Com a API do Guru (09/out), o normal é resolver na primeira ou segunda tentativa.
+      setTimeout(tentar, passou < 20_000 ? 1500 : passou < 60_000 ? 3000 : 5000);
     };
     tentar();
     return () => {

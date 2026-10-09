@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { TEXTO_ACEITE_CHECKOUT, registrarConsentimento } from "@/lib/consentimento";
-import { enviarAcesso } from "@/lib/email";
 import {
   listaDeProdutos,
   normalizarGuru,
@@ -10,6 +8,7 @@ import {
   tokenConfere,
   type EventoGuru,
 } from "@/lib/guru";
+import { provisionAccess, registrarAceiteDoCheckout, revokeAccess } from "@/lib/guru-acesso";
 import { emProducao } from "@/lib/seguranca";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -35,8 +34,6 @@ export const runtime = "nodejs";
  * porque repetir não conserta; 500 e 503 fazem o Guru reentregar, e o processamento é
  * idempotente por `guru_order_id`, então reentrega é segura.
  */
-
-const ACCESS_YEARS = 1;
 
 type Db = ReturnType<typeof createAdminClient>;
 
@@ -180,106 +177,5 @@ async function registrarEvento(
   return data.id as string;
 }
 
-/** Cria/ativa o acesso. Idempotente por guru_order_id. Devolve o dono da matrícula. */
-async function provisionAccess(db: Db, event: EventoGuru): Promise<string> {
-  // Dedupe: já existe matrícula para esta ordem?
-  const { data: existing, error: dedupeErr } = await db
-    .from("enrollments")
-    .select("user_id")
-    .eq("guru_order_id", event.transacaoId!)
-    .maybeSingle();
-  // Erro na consulta NÃO pode ser lido como "não existe": seguiria para criar de novo.
-  if (dedupeErr) throw dedupeErr;
-  if (existing) return existing.user_id as string; // reentrega: nada a fazer
-
-  if (!event.email) throw new Error("evento aprovado sem e-mail");
-
-  const userId = await findOrCreateUser(db, event);
-
-  const expiresAt = new Date();
-  expiresAt.setFullYear(expiresAt.getFullYear() + ACCESS_YEARS);
-
-  const { error: enrollErr } = await db.from("enrollments").insert({
-    user_id: userId,
-    status: "active",
-    guru_order_id: event.transacaoId,
-    expires_at: expiresAt.toISOString(),
-  });
-  // Corrida de reentrega simultânea: a unique constraint protege, e a outra entrega manda o e-mail.
-  if (enrollErr) {
-    if (enrollErr.code === "23505" || enrollErr.message.includes("duplicate")) return userId;
-    throw enrollErr;
-  }
-
-  // Nunca lança (ver `lib/email.ts`): e-mail que falha fica no log e o admin reenvia.
-  await enviarAcesso(db, { email: event.email, userId, nome: event.nome });
-  return userId;
-}
-
-/** Revoga acesso por ordem (reembolso/chargeback). */
-async function revokeAccess(db: Db, orderId: string) {
-  const { error } = await db
-    .from("enrollments")
-    .update({ status: "revoked" })
-    .eq("guru_order_id", orderId);
-  // Antes o erro era descartado e a rota respondia 200: um reembolso que não revogou nada, sem
-  // reentrega e sem rastro. Lançar aqui vira 500, e o Guru tenta de novo.
-  if (error) throw error;
-}
-
-/** Acha o usuário pelo e-mail ou cria um novo. */
-async function findOrCreateUser(db: Db, event: EventoGuru): Promise<string> {
-  const { data: created, error } = await db.auth.admin.createUser({
-    email: event.email!,
-    email_confirm: true,
-    user_metadata: {
-      nome: event.nome,
-      telefone: event.telefone,
-      guru_customer_id: event.contatoId,
-    },
-  });
-  if (created?.user) return created.user.id;
-
-  // Já existe (recompra, ou conta criada antes): localiza pelo e-mail, por igualdade, no banco.
-  // O `listUsers()` que estava aqui trazia só a primeira página, e a partir do 51º aluno a
-  // recompra falhava para sempre (migration 0025).
-  const { data: id, error: buscaErr } = await db.rpc("usuario_por_email", { p_email: event.email });
-  if (buscaErr) throw buscaErr;
-  if (typeof id === "string" && id) return id;
-  throw error ?? new Error("não foi possível criar nem localizar o usuário");
-}
-
-/**
- * O aceite dos documentos que acontece no checkout do Guru, amarrado ao pedido.
- *
- * MELHOR ESFORÇO: nada aqui derruba o webhook (regra do topo de `lib/consentimento.ts`). Uma linha
- * por pedido: a reentrega do mesmo evento, ou o `completed` que chega depois do `approved`, não
- * duplica o registro.
- */
-async function registrarAceiteDoCheckout(db: Db, event: EventoGuru, userId: string) {
-  // Consentimento sem o e-mail do titular não identifica ninguém; melhor não gravar.
-  if (!event.email) return;
-  try {
-    const { data: ja, error } = await db
-      .from("consents")
-      .select("id")
-      .eq("guru_order_id", event.transacaoId!)
-      .eq("origem", "checkout-guru")
-      .limit(1);
-    if (error) throw error;
-    if (ja && ja.length > 0) return;
-
-    await registrarConsentimento(db, {
-      email: event.email,
-      nome: event.nome,
-      origem: "checkout-guru",
-      userId,
-      guruOrderId: event.transacaoId,
-      texto: TEXTO_ACEITE_CHECKOUT,
-      // O IP desta requisição é o do servidor do Guru, não o do comprador.
-      daRequisicao: false,
-    });
-  } catch (e) {
-    console.error("[guru] aceite do checkout nao registrado:", e instanceof Error ? e.message : e);
-  }
-}
+// `provisionAccess`, `revokeAccess` e `registrarAceiteDoCheckout` moram em `lib/guru-acesso.ts` desde
+// 09/out/2026: a página de compra aprovada também os chama (ver lá).

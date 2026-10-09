@@ -4,6 +4,9 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { origemValida } from "@/lib/admin-guarda";
+import { listaDeProdutos, normalizarGuru, produtoPermitido, semToken } from "@/lib/guru";
+import { provisionAccess, registrarAceiteDoCheckout } from "@/lib/guru-acesso";
+import { buscarVendaNoGuru } from "@/lib/guru-api";
 import { consumirLimite } from "@/lib/limite";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -100,6 +103,58 @@ async function acharVenda(db: SupabaseClient, v: string): Promise<string | null 
   return null;
 }
 
+/**
+ * Busca a venda na API do Guru e faz o mesmo que o webhook faria: registra em `guru_events`
+ * (origem marcada em `request_id`), cria conta e matrícula, manda o e-mail e grava o aceite. Devolve
+ * o `transaction_id`, ou null se a API não confirmou uma venda aprovada de um produto nosso.
+ */
+async function provisionarPelaApi(db: ReturnType<typeof createAdminClient>, v: string): Promise<string | null> {
+  const { transacao, tentativas } = await buscarVendaNoGuru(v);
+  if (!transacao) {
+    console.info(`[acesso/compra] API do Guru sem a venda ${mascara(v)}: ${JSON.stringify(tentativas)}`);
+    return null;
+  }
+  const evento = normalizarGuru(transacao);
+  if (evento.acao !== "aprovado" || !evento.transacaoId) return null;
+  if (!produtoPermitido(evento.produtos, listaDeProdutos(process.env.GURU_PRODUCT_IDS))) {
+    console.warn(`[acesso/compra] venda ${mascara(v)} é de outro produto`);
+    return null;
+  }
+
+  const { data: linha } = await db
+    .from("guru_events")
+    .insert({
+      request_id: "obrigado-api-guru",
+      transaction_id: evento.transacaoId,
+      status: evento.status,
+      webhook_type: evento.webhookType,
+      email: evento.email,
+      payload: semToken(transacao) ?? {},
+    })
+    .select("id")
+    .single();
+  const concluir = async (resultado: string, erro: string | null = null) => {
+    if (!linha?.id) return;
+    await db
+      .from("guru_events")
+      .update({ processed_at: new Date().toISOString(), resultado, erro })
+      .eq("id", linha.id);
+  };
+
+  try {
+    const userId = await provisionAccess(db, evento);
+    await registrarAceiteDoCheckout(db, evento, userId);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error("[acesso/compra] provisionamento pela API falhou:", msg);
+    await concluir("erro", msg.slice(0, 500));
+    return null;
+  }
+  await concluir("processado");
+  console.info(`[acesso/compra] acesso criado pela API do Guru, sem esperar o webhook (${mascara(v)})`);
+  return evento.transacaoId;
+}
+
 export async function POST(req: NextRequest) {
   if (!origemValida(req)) return resposta("invalido", 403);
 
@@ -120,8 +175,11 @@ export async function POST(req: NextRequest) {
   if (!(await consumirLimite(db, `compra:v:${chaveV}`, 150, 600))) return resposta("limite", 429);
   if (!(await consumirLimite(db, `compra:ip:${ip}`, 400, 600))) return resposta("limite", 429);
 
-  const transacao = await acharVenda(db, v);
+  let transacao = await acharVenda(db, v);
   if (transacao === "erro") return resposta("erro", 500);
+  // O webhook ainda não chegou (leva de 25 s a 2 min): busca a venda direto na API do Guru e cria
+  // o acesso agora. Ver `lib/guru-api.ts`.
+  if (!transacao) transacao = await provisionarPelaApi(db, v);
   if (!transacao) return resposta("aguardando");
   const evento = { transaction_id: transacao };
 
