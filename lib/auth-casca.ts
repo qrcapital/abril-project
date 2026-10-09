@@ -26,12 +26,6 @@ export const esc = (s: string) =>
 /** O olho do hero da LP. Ver o comentário de `.au-olho` no CSS sobre por que este e não o do bundle. */
 const OLHO = "/lp/f2070b29-906c-48d8-92c7-0948fe19573b.webp";
 
-/**
- * A frase do painel. Veio do bundle original, já com a correção de gênero de 18/ago/2026
- * ("do BlockTrends", porque BlockTrends é masculino).
- */
-const CITACAO = "O rigor jornalístico da VEJA Negócios, a autoridade em finanças do BlockTrends.";
-
 /** Monta a tela inteira em volta do miolo da coluna do formulário. */
 export function casca(miolo: string): string {
   return (
@@ -56,10 +50,6 @@ export function casca(miolo: string): string {
     `<div class="au-marca">` +
     `<div class="au-globo" aria-hidden="true"><img src="/marca/globo-dourado.svg" alt=""></div>` +
     `<img class="au-olho" src="${OLHO}" alt="" aria-hidden="true">` +
-    `<blockquote class="au-citacao">` +
-    `<span class="au-aspas" aria-hidden="true">“</span>` +
-    `<p>${esc(CITACAO)}</p>` +
-    `</blockquote>` +
     `<div class="au-powered"><span>Powered by</span>` +
     `<img src="/marca/blocktrends-branco.svg" alt="BlockTrends"></div>` +
     `</div>` +

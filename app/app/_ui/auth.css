@@ -232,25 +232,11 @@
   pointer-events: none;
 }
 
-.au-citacao { position: relative; z-index: 2; margin: 0; max-width: 440px }
-.au-aspas {
-  display: block;
-  margin-bottom: 14px;
-  font-family: var(--au-serifa);
-  font-size: 64px; line-height: .5;
-  color: rgba(232, 217, 181, .6);
-}
-.au-citacao p {
-  margin: 0;
-  font-family: var(--au-serifa);
-  font-style: italic; font-size: clamp(20px, 1.7vw, 25px); line-height: 1.35;
-  color: var(--au-creme);
-}
-
+/* A citação do painel saiu em 09/out/2026 (pedido do Marcelo). Sobra só o "Powered by". */
 .au-powered {
   position: relative; z-index: 2;
   display: flex; align-items: center; gap: 8px;
-  margin-top: 32px;
+  margin-top: 0;
   font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
   font-weight: 600; color: rgba(253, 250, 245, .7);
 }

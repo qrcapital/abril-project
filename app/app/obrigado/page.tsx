@@ -47,6 +47,19 @@ const preparando = casca(
     `<div class="au-carregando" role="status" aria-live="polite"><span></span><span></span><span></span></div>`,
 );
 
+/**
+ * Depois de 45 s sem o webhook. O Guru já mandou a pessoa para cá, mas a confirmação dele para o
+ * nosso servidor pode levar uns minutos (na compra de teste de 09/out levou 2). A tela segue
+ * tentando sozinha; o texto existe para ninguém fechar a aba achando que travou.
+ */
+const demorando = casca(
+  eyebrow("Compra aprovada") +
+    titulo("Quase lá") +
+    lead("O pagamento foi aprovado e o processador está confirmando a compra com a plataforma. Isso pode levar até dois minutos. Deixe esta página aberta: assim que a confirmação chegar, você vai direto para a criação da senha.") +
+    `<div class="au-carregando" role="status" aria-live="polite"><span></span><span></span><span></span></div>` +
+    rodape("O e-mail com o acesso também está a caminho, como reforço."),
+);
+
 /** O id da venda já foi usado: a conta existe e já entrou uma vez. */
 const jaEntrou = casca(
   eyebrow("Compra aprovada") +
@@ -57,5 +70,5 @@ const jaEntrou = casca(
 );
 
 export default function ObrigadoPage() {
-  return <ObrigadoClient padrao={html} preparando={preparando} jaEntrou={jaEntrou} />;
+  return <ObrigadoClient padrao={html} preparando={preparando} demorando={demorando} jaEntrou={jaEntrou} />;
 }
