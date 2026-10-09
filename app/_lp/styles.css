@@ -1118,3 +1118,62 @@ footer :where(a, button, input, select, textarea):focus-visible{outline-color:#F
   .dc-bio{font-size:12.5px}
   .dc-logos{gap:12px}
 }
+
+/* ============ Revisão do Marcelo (10/out/2026) ============ */
+/* Tese: os números sobem para o lado do título (sem zona morta à direita), e o gráfico e a frase de
+   fecho viram um quadro só, para a frase não ficar solta embaixo. */
+.ts-topo{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:56px;align-items:end;margin-bottom:40px}
+.ts-topo .ts-cab{max-width:none;margin:0}
+.ts-topo .ts-num{margin:0;grid-template-columns:1fr}
+.ts-topo .ts-num li{display:grid;grid-template-columns:128px minmax(0,1fr);align-items:center;gap:18px;padding:18px 22px}
+.ts-topo .ts-num b{font-size:28px}
+.ts-topo .ts-num span{margin:0}
+.ts-quadro{background:#fff;border:1px solid rgba(26,24,21,.1);border-radius:18px;padding:36px 40px 0;overflow:hidden;box-shadow:0 18px 44px rgba(72,60,42,.08)}
+.ts-quadro .ts-fecho{max-width:none;margin:30px -40px 0;padding:24px 40px 26px;border-top:1px solid rgba(26,24,21,.09);background:#FAF6EF;font-size:17px}
+@media (max-width:1000px){
+  .ts-topo{grid-template-columns:1fr;gap:28px;align-items:start}
+}
+@media (max-width:640px){
+  .ts-topo .ts-num li{grid-template-columns:1fr;gap:6px;padding:16px 18px}
+  .ts-quadro{padding:24px 18px 0;border-radius:14px}
+  .ts-quadro .ts-fecho{margin:22px -18px 0;padding:20px 18px 22px;font-size:16px}
+}
+
+/* Professores: título em duas linhas */
+.dc-cab{max-width:1000px}
+.dc-h2{font-size:clamp(28px,3.3vw,42px)}
+
+/* Programa: os três números sem caixa branca, no ritmo dos módulos ao lado */
+.pg-fatos{margin:30px 0 4px;border:0;border-top:1px solid #DCCFC3;border-bottom:1px solid #DCCFC3;border-radius:0;background:none}
+.pg-fatos li{padding:20px 0 18px 22px;border-left:1px solid #E6DDD1}
+.pg-fatos li:first-child{padding-left:0}
+.pg-fatos b{font-family:'Jost',var(--lp-sf);font-size:38px;font-weight:400;letter-spacing:-.01em}
+.pg-fatos span{margin-top:8px;font-family:'Jost',var(--lp-sf);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;color:#8A8279}
+
+/* Por dentro: Mac à esquerda, iPad à direita (onde ficava o iPhone) e o iPhone por cima do iPad,
+   entre ele e o Mac */
+.dv-mac{right:auto;left:0}
+.dv-ipad{left:auto;right:0}
+.dv-iphone{left:auto;right:31%;z-index:2}
+.pd-chip{display:inline-block;margin-left:8px;padding:3px 8px 2px;border-radius:999px;background:#8E1522;color:#FDFBF6;font-family:var(--lp-sf);font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;vertical-align:3px}
+
+/* Lockup do CTA final e do rodapé: o mesmo do topo (VEJA Negócios, filete, Jost) */
+.lk{display:inline-flex;align-items:center;gap:18px;text-decoration:none}
+.lk img{height:40px;width:auto;display:block;flex:0 0 auto}
+.lk i{width:1px;height:44px;display:block;flex:0 0 auto}
+.lk span{font-family:'Jost',var(--lp-sf);font-size:17px;font-weight:400;letter-spacing:.17em;text-transform:uppercase;line-height:1.22;white-space:nowrap;text-align:left}
+.lk-claro{margin:0 0 30px}
+.lk-claro i{background:rgba(142,21,34,.3)}
+.lk-claro span{color:#8E1522}
+.lk-escuro img{height:26px}
+.lk-escuro i{height:28px;background:rgba(247,244,238,.34)}
+.lk-escuro span{font-size:12px;color:#F7F4EE}
+@media (max-width:560px){
+  .lk{gap:12px}
+  .lk img{height:30px}
+  .lk i{height:32px}
+  .lk span{font-size:13px;letter-spacing:.14em}
+  .lk-escuro img{height:22px}
+  .lk-escuro i{height:24px}
+  .lk-escuro span{font-size:11px}
+}
