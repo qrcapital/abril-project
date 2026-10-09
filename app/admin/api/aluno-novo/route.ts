@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 
+import { redirecionar303 } from "@/lib/redirecionar";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { papelAtual } from "@/lib/admin";
@@ -28,7 +29,7 @@ const MOLDE_EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 function voltar(req: NextRequest, params: Record<string, string>) {
   const url = new URL(DESTINO, req.url);
   for (const [k, v] of Object.entries(params)) if (v) url.searchParams.set(k, v);
-  return NextResponse.redirect(url, 303);
+  return redirecionar303(url);
 }
 
 export async function POST(req: NextRequest) {

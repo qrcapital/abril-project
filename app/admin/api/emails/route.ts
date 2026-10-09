@@ -1,3 +1,4 @@
+import { redirecionar303 } from "@/lib/redirecionar";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { papelAtual } from "@/lib/admin";
@@ -84,7 +85,7 @@ function voltar(req: NextRequest, params: Record<string, string>) {
   for (const [k, v] of Object.entries(params)) if (v && k !== "para") url.searchParams.set(k, v);
   // 303: o POST vira GET na volta, senão recarregar a tela repete a ação. Numa rota que manda
   // e-mail, repetir por recarregar significa mandar de novo.
-  return NextResponse.redirect(url, 303);
+  return redirecionar303(url);
 }
 
 /**

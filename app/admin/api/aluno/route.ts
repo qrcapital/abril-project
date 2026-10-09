@@ -1,3 +1,4 @@
+import { redirecionar303 } from "@/lib/redirecionar";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { papelAtual } from "@/lib/admin";
@@ -38,7 +39,7 @@ function voltar(req: NextRequest, alvo: string, params: Record<string, string>) 
   const url = new URL(`/admin/alunos/${alvo}`, req.url);
   for (const [k, v] of Object.entries(params)) if (v) url.searchParams.set(k, v);
   // 303: o POST vira GET na volta, senão recarregar a tela repete a gravação.
-  return NextResponse.redirect(url, 303);
+  return redirecionar303(url);
 }
 
 /**

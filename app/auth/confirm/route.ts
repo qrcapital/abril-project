@@ -1,3 +1,4 @@
+import { redirecionar303 } from "@/lib/redirecionar";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { vaiAoPainel } from "@/lib/acesso-painel";
@@ -48,7 +49,7 @@ const DESTINO_PADRAO = "/app/redefinir-senha";
 
 const paraRecuperar = (req: NextRequest, estado: string) =>
   // 303: depois de um POST, o navegador segue com GET.
-  NextResponse.redirect(new URL(`/app/recuperar-senha?estado=${estado}`, req.nextUrl.origin), 303);
+  redirecionar303(`/app/recuperar-senha?estado=${estado}`);
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
@@ -64,7 +65,7 @@ export async function GET(req: NextRequest) {
   destino.searchParams.set("token_hash", tokenHash);
   destino.searchParams.set("type", tipo);
   destino.searchParams.set("next", next);
-  const r = NextResponse.redirect(destino, 303);
+  const r = redirecionar303(destino);
   r.headers.set("Cache-Control", "no-store");
   r.headers.set("Referrer-Policy", "no-referrer");
   return r;
@@ -113,9 +114,9 @@ export async function POST(req: NextRequest) {
     // Link de entrada: admin e observador caem no painel, aluno na sala. Mesma regra do login com
     // senha (`lib/acesso-painel.ts`).
     const painel = await vaiAoPainel(supabase);
-    return NextResponse.redirect(new URL(painel ? "/admin" : "/app", req.nextUrl.origin), 303);
+    return redirecionar303(painel ? "/admin" : "/app");
   }
 
   const destino = destinoSeguro(String(form?.get("next") ?? ""), DESTINO_PADRAO);
-  return NextResponse.redirect(new URL(destino, req.nextUrl.origin), 303);
+  return redirecionar303(destino);
 }
