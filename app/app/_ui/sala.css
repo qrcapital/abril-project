@@ -1531,6 +1531,110 @@ a.sl-pl-item:hover {
   .sl-lt-painel { padding: 16px 16px 18px }
 }
 
+/* ---- perguntar à sua IA (PerguntarIa.tsx) ---------------------------------- */
+
+/* Três peças, todas fixas na janela e acima do notebook (09/out/2026):
+   - o BOTÃO FIXO, no canto de baixo à direita, alinhado à borda da coluna da área. É o único canto
+     que o vídeo fixo não ocupa em nenhuma largura: acima de 1471px ele fica no alto à direita, de 961
+     a 1471px no pé da coluna do índice, à esquerda, e abaixo de 960px no topo. Aparece só com o
+     notebook na tela (`data-visivel`), e some sem tirar o lugar de ninguém;
+   - o MINI BOTÃO sobre o trecho selecionado, em tinta, como o balão do glossário;
+   - o MENU, em vidro claro: branco translúcido com desfoque, cantos de 14px, sombra em camadas,
+     itens de 40px. A posição vem do cliente por `left`/`top`, e a entrada anima escala e opacidade
+     a partir do ponto de onde ele sai (`transform-origin`, também do cliente).
+   Camadas: o botão fica abaixo do vídeo fixo (80) e da barra do topo (90); o mini botão e o menu,
+   acima do balão do glossário (140). Com movimento reduzido, a regra geral da sala apaga as
+   animações e transições daqui também. */
+.sl-ia-botao {
+  position: fixed; z-index: 75;
+  right: max(var(--sl-margem), (100vw - var(--sl-coluna)) / 2);
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px 0 13px;
+  border: 0; border-radius: 999px; cursor: pointer;
+  font: 500 14px/1 var(--sl-sans); letter-spacing: .005em; color: var(--sl-tinta);
+  background: rgba(255, 255, 255, .8);
+  -webkit-backdrop-filter: saturate(180%) blur(18px); backdrop-filter: saturate(180%) blur(18px);
+  box-shadow: 0 0 0 .5px rgba(26, 24, 21, .14), 0 1px 2px rgba(26, 24, 21, .06), 0 6px 18px rgba(26, 24, 21, .1), 0 14px 36px rgba(26, 24, 21, .08);
+  transition: opacity .2s ease, transform .2s ease, visibility 0s linear 0s, background-color .2s ease, box-shadow .2s ease;
+}
+.sl-ia-botao[data-visivel="nao"] {
+  opacity: 0; transform: translateY(8px); visibility: hidden; pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease, visibility 0s linear .2s;
+}
+.sl-ia-botao:hover, .sl-ia-botao[aria-expanded="true"] {
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 0 0 .5px rgba(26, 24, 21, .16), 0 1px 2px rgba(26, 24, 21, .06), 0 8px 22px rgba(26, 24, 21, .13), 0 18px 44px rgba(26, 24, 21, .1);
+}
+.sl-ia-botao:active { transform: scale(.98) }
+.sl-ia-botao .sl-ia-brilho { color: var(--sl-fundo) }
+.sl .sl-ia-botao:focus-visible { border-radius: 999px; outline-offset: 2px }
+
+.sl-ia-mini {
+  position: fixed; left: 0; top: 0; z-index: 145;
+  display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 13px 0 11px;
+  border: 0; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  font: 500 13.5px/1 var(--sl-sans); color: var(--sl-creme);
+  background: rgba(26, 24, 21, .92);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  box-shadow: 0 0 0 .5px rgba(253, 250, 245, .08), 0 4px 12px rgba(26, 24, 21, .18), 0 12px 28px rgba(26, 24, 21, .16);
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  animation: sl-ia-entra .16s cubic-bezier(.2, .7, .2, 1) both;
+  transition: background-color .15s ease;
+}
+.sl-ia-mini:hover { background: var(--sl-tinta) }
+.sl-ia-mini .sl-ia-brilho { color: var(--sl-palha) }
+.sl .sl-ia-mini:focus-visible { border-radius: 999px; outline-color: var(--sl-acento); outline-offset: 2px }
+
+.sl-ia-menu {
+  position: fixed; left: 0; top: 0; z-index: 150;
+  width: 248px; max-width: calc(100vw - 20px); padding: 5px;
+  border-radius: 14px; color: var(--sl-tinta);
+  background: rgba(255, 255, 255, .78);
+  -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px);
+  box-shadow: 0 0 0 .5px rgba(26, 24, 21, .12), 0 2px 6px rgba(26, 24, 21, .06), 0 10px 28px rgba(26, 24, 21, .12), 0 24px 56px rgba(26, 24, 21, .1);
+  -webkit-user-select: none; user-select: none;
+  animation: sl-ia-entra .16s cubic-bezier(.2, .7, .2, 1) both;
+}
+/* Sem desfoque (navegador antigo ou economia de energia), o vidro vira papel opaco. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .sl-ia-menu, .sl-ia-botao { background: #fff }
+}
+@keyframes sl-ia-entra { from { opacity: 0; transform: scale(.95) } }
+
+.sl-ia-cabeca {
+  padding: 7px 11px 6px; font-size: 12px; line-height: 1.35; color: var(--sl-tinta-3);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sl-ia-sep { height: 1px; margin: 3px 8px 4px; background: rgba(26, 24, 21, .1) }
+.sl-ia-item {
+  display: flex; align-items: center; gap: 11px; width: 100%; height: 40px; padding: 0 11px;
+  border: 0; border-radius: 9px; background: transparent; cursor: pointer; text-align: left;
+  font: 400 15px/1 var(--sl-sans); color: var(--sl-tinta);
+  transition: background-color .12s ease;
+}
+.sl-ia-item:hover, .sl-ia-item:focus { background: rgba(26, 24, 21, .06); outline: none }
+.sl-ia-item:active { background: rgba(26, 24, 21, .1) }
+.sl .sl-ia-item:focus-visible { outline: 2px solid var(--sl-acento); outline-offset: -2px; border-radius: 9px }
+.sl-ia-logo { flex: none; width: 18px; height: 18px; color: var(--sl-tinta) }
+.sl-ia-nome { flex: 1; min-width: 0 }
+.sl-ia-dica { flex: none; font-size: 12px; color: var(--sl-tinta-3) }
+
+.sl-ia-aviso {
+  position: fixed; z-index: 160; left: 50%; bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%); max-width: calc(100vw - 32px);
+  padding: 11px 16px; border-radius: 12px;
+  font-size: 14px; line-height: 1.4; color: var(--sl-creme); text-align: center;
+  background: rgba(26, 24, 21, .92);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(26, 24, 21, .22);
+  animation: sl-ia-aviso .2s ease both;
+}
+@keyframes sl-ia-aviso { from { opacity: 0; transform: translate(-50%, 6px) } }
+
+@media (max-width: 600px) {
+  .sl-ia-botao { bottom: calc(16px + env(safe-area-inset-bottom, 0px)) }
+}
+
 /* ---- movimento reduzido --------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {

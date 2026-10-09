@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { href, type Aula } from "@/lib/curso";
+import { href, rotuloModulo, type Aula } from "@/lib/curso";
 import { ancoraDaAula, deComparador, secaoDaAula, type Bloco, type Notebook } from "@/lib/notebook";
 
 import { GLOSSARIO } from "@/content/glossario";
@@ -13,6 +13,7 @@ import LinhaDoTempo from "./LinhaDoTempo";
 import Matriz from "./Matriz";
 import NaAula from "./NaAula";
 import Origem from "./Origem";
+import PerguntarIa, { type AulaParaIa } from "./PerguntarIa";
 import { minutos } from "./Playlist";
 import Simulador from "./Simulador";
 import Balao from "./glossario/Balao";
@@ -44,6 +45,12 @@ import { criarLigador, type Ligador } from "./glossario/texto";
  * regras em `lib/glossario-links.ts`). O ligador é um por seção, e os textos são ligados ANTES do
  * JSX, na ordem do documento, para "a primeira ocorrência" ser a primeira que o aluno lê.
  *
+ * "PERGUNTAR À SUA IA" (09/out/2026, `PerguntarIa.tsx`): um botão fixo no canto de baixo à direita,
+ * visível só com o notebook na tela, e um mini botão sobre o trecho que o aluno selecionar no miolo.
+ * Os dois abrem o mesmo menu (ChatGPT, Claude, Gemini) com a pergunta já escrita. A seção de cada
+ * aula leva `data-aula` com a posição, para o componente saber de qual aula é o trecho; o resumo que
+ * vai na pergunta é a descrição da aula no banco ou, sem ela, os capítulos da seção.
+ *
  * Componente de servidor; gráficos, KPIs, linha do tempo, matriz, simulador, o atalho de tempo e o
  * balão do glossário descem para o cliente.
  */
@@ -59,6 +66,12 @@ export default function NotebookModulo({
   atual: number;
 }) {
   const demo = notebook?.demo ?? false;
+  const paraIa: AulaParaIa[] = aulas.map((a) => {
+    const capitulos = secaoDaAula(notebook, a.pos)
+      ?.blocos.flatMap((b) => (b.tipo === "capitulo" ? [b.titulo] : []))
+      .join("; ");
+    return { pos: a.pos, titulo: a.titulo, resumo: a.descricao?.trim() || (capitulos ? `Tópicos: ${capitulos}.` : undefined) };
+  });
   return (
     <section className="sl-nbm" id="notebook" aria-labelledby="nb-titulo">
       <header className="sl-nbm-cabeca">
@@ -114,7 +127,7 @@ export default function NotebookModulo({
               const ancora = ancoraDaAula(a.pos);
               const tocando = a.pos === atual;
               return (
-                <section key={a.id} className="sl-nb-secao" id={ancora} aria-labelledby={`${ancora}-titulo`}>
+                <section key={a.id} className="sl-nb-secao" id={ancora} data-aula={a.pos} aria-labelledby={`${ancora}-titulo`}>
                   <header className="sl-nb-secao-cabeca">
                     <p className="sl-nb-secao-meta">
                       <span className="sl-eyebrow">Aula {String(a.pos).padStart(2, "0")}</span>
@@ -146,6 +159,8 @@ export default function NotebookModulo({
           </div>
         </Balao>
       </div>
+
+      {aulas.length > 0 && <PerguntarIa modulo={rotuloModulo(aulas[0].modulo)} aulas={paraIa} atual={atual} />}
     </section>
   );
 }

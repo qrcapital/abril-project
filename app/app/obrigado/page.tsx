@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { botao, casca, esc, eyebrow, lead, link, rodape, titulo } from "@/lib/auth-casca";
 import AcessoClient from "../acesso/AcessoClient";
 
-export const metadata: Metadata = { title: "Inscrição recebida" };
+export const metadata: Metadata = { title: "Compra aprovada" };
 
 /**
  * Página de obrigado (08/out/2026): o destino do redirect do checkout do Guru depois do pagamento.
@@ -18,8 +18,8 @@ export const metadata: Metadata = { title: "Inscrição recebida" };
  * que ecoa parâmetro vira vitrine para quem quiser montar um link falso.
  */
 const PASSOS = [
-  ["1", "Confira o e-mail da compra", "O acesso chega com o assunto “Seu acesso à Estratégia Internacional está pronto”. No cartão e no Pix, em poucos minutos."],
-  ["2", "Crie a sua senha", "O botão do e-mail leva para a tela de primeiro acesso. Lá você cria a senha e aceita os termos."],
+  ["1", "Abra o e-mail da compra", "Chega em instantes, com o assunto “Compra confirmada: seu acesso à Estratégia Internacional”, enviado por contato@blocktrends.com.br."],
+  ["2", "Crie a sua senha", "O botão do e-mail leva para a tela de primeiro acesso. Lá você cria a senha e entra na plataforma."],
   ["3", "Comece pelo Módulo I", "Ele já está liberado. Os módulos II, III e IV chegam um por semana."],
 ] as const;
 
@@ -31,12 +31,12 @@ const passos =
   `</ol>`;
 
 const html = casca(
-  eyebrow("Inscrição recebida") +
+  eyebrow("Compra aprovada") +
     titulo("Bem-vindo à Estratégia Internacional") +
-    lead("Assim que o pagamento é confirmado, o seu acesso chega no e-mail que você usou na compra.") +
+    lead("Sua compra foi aprovada. O e-mail com o seu acesso chega em instantes no endereço que você usou na compra, e é por ele que você faz o primeiro login.") +
     passos +
     botao("FALAR COM O SUPORTE", "button") +
-    rodape(`O e-mail não chegou em 15 minutos? Olhe o spam ou ${link("/app/recuperar-senha", "peça um novo link")}.`),
+    rodape(`O e-mail não chegou em alguns minutos? Olhe o spam e a aba Promoções, ou ${link("/app/recuperar-senha", "peça um novo link")}.`),
 );
 
 export default function ObrigadoPage() {
