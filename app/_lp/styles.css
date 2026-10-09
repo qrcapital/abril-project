@@ -1104,3 +1104,17 @@ footer :where(a, button, input, select, textarea):focus-visible{outline-color:#F
   .of-lock i{height:32px}
 }
 .of-valor{font-family:'Jost',var(--lp-sf)!important;font-weight:500!important}
+
+/* Professores numa fileira só de cinco no desktop (09/out/2026) */
+@media (min-width:1101px){
+  .dc-wrap{max-width:1320px}
+  .dc-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:18px}
+  .dc-card,.dc-card:nth-child(4),.dc-card:nth-child(5){grid-column:auto}
+  .dc-id{left:16px;right:16px;bottom:14px}
+  .dc-id h3{font-size:19px}
+  .dc-id p{font-size:9.5px;letter-spacing:.1em}
+  .dc-mod{top:12px;left:12px;font-size:9.5px;padding:5px 9px}
+  .dc-corpo{padding:16px 16px 18px;gap:14px}
+  .dc-bio{font-size:12.5px}
+  .dc-logos{gap:12px}
+}
