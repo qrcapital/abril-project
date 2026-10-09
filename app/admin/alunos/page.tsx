@@ -54,12 +54,12 @@ const FILTROS: { valor: string; rotulo: string }[] = [
 export default async function Alunos({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; st?: string }>;
+  searchParams: Promise<{ q?: string; st?: string; novo?: string; erro?: string }>;
 }) {
   // Antes de qualquer leitura com a service role: layout e página rodam em paralelo, e a guarda
   // do layout não segura a consulta daqui (ver `lib/admin-guarda.ts`).
   await exigirAdmin();
-  const { q = "", st = "" } = await searchParams;
+  const { q = "", st = "", novo = "", erro = "" } = await searchParams;
   const termo = q.trim();
 
   const db = createAdminClient();
@@ -87,6 +87,48 @@ export default async function Alunos({
           {total_gate} aulas que valem para o certificado, que sai quando o aluno conclui todas.
         </p>
       </header>
+
+      {/* Adicionar aluno (09/out/2026): mesmo caminho da compra aprovada, ver `app/admin/api/aluno-novo`. */}
+      <section className="mb-6 rounded-lg border border-areia bg-white p-4">
+        <h2 className="text-[15px] text-tinta">Adicionar aluno</h2>
+        <p className="mt-1 max-w-2xl text-[12px] text-medio">
+          Igual a uma compra aprovada: cria a conta, libera o acesso por 1 ano e envia o e-mail
+          &ldquo;Compra confirmada&rdquo; com o link para a pessoa criar a senha.
+        </p>
+        {novo === "ok" && (
+          <p role="status" className="mt-3 rounded-md border border-areia bg-offwhite px-3 py-2 text-[12px] text-grafite">
+            Aluno criado e e-mail de acesso enviado para {q}. Ele já aparece na lista abaixo.
+          </p>
+        )}
+        {novo === "erro" && erro && (
+          <p role="alert" className="mt-3 rounded-md border border-acento px-3 py-2 text-[12px] text-acento">
+            {erro}
+          </p>
+        )}
+        <form method="post" action="/admin/api/aluno-novo" className="mt-3 flex flex-wrap items-center gap-2">
+          <input
+            type="text"
+            name="nome"
+            placeholder="Nome (opcional)"
+            aria-label="Nome do aluno"
+            className="min-w-0 flex-1 basis-48 rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-acento focus:outline-none"
+          />
+          <input
+            type="email"
+            name="email"
+            required
+            placeholder="e-mail do aluno"
+            aria-label="E-mail do aluno"
+            className="min-w-0 flex-1 basis-64 rounded-md border border-areia bg-white px-3 py-2 text-[13px] text-grafite placeholder:text-pedra focus:border-acento focus:outline-none"
+          />
+          <button
+            type="submit"
+            className="rounded-md bg-acento px-4 py-2 text-[13px] font-semibold text-offwhite hover:bg-acento-fundo"
+          >
+            Criar e enviar acesso
+          </button>
+        </form>
+      </section>
 
       <form method="get" className="mb-5 flex flex-wrap items-center gap-2">
         <input
