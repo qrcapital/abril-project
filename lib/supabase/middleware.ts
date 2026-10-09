@@ -63,6 +63,8 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/app/primeiro-acesso") ||
     path.startsWith("/app/recuperar-senha") ||
     path.startsWith("/app/redefinir-senha") ||
+    // O "falta um clique" do link do e-mail: quem chega aqui ainda não tem sessão.
+    path.startsWith("/app/continuar") ||
     // A página de compra aprovada recebe quem acabou de pagar e ainda não tem sessão.
     path.startsWith("/app/obrigado");
 

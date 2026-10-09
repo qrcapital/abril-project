@@ -2,7 +2,6 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { vaiAoPainel } from "@/lib/acesso-painel";
 import { origemValida } from "@/lib/admin-guarda";
-import { esc } from "@/lib/auth-casca";
 import { destinoSeguro } from "@/lib/seguranca";
 import { createClient } from "@/lib/supabase/server";
 
@@ -20,7 +19,7 @@ import { createClient } from "@/lib/supabase/server";
  * │ pessoa, para ver se é malicioso. Esse robô gastava o token, e o aluno clicava num link que já │
  * │ tinha "expirado" sem nunca ter sido usado por ele.                                            │
  * │                                                                                               │
- * │ Agora o GET só mostra uma tela com o botão "Continuar", que manda o token por POST. Robô de   │
+ * │ Agora o GET só leva à tela `/app/continuar`, com o botão que manda o token por POST. Robô de  │
  * │ varredura faz GET e não envia formulário; gente clica. A tela não tem JS que se envie sozinho │
  * │ de propósito: alguns desses robôs executam JS.                                               │
  * └───────────────────────────────────────────────────────────────────────────────────────────────┘
@@ -59,15 +58,16 @@ export async function GET(req: NextRequest) {
 
   const next = destinoSeguro(searchParams.get("next"), ENTRADA.has(tipo) ? "/app" : DESTINO_PADRAO);
 
-  return new NextResponse(pagina({ tokenHash, tipo, next }), {
-    headers: {
-      "Content-Type": "text/html; charset=utf-8",
-      // O token está no HTML: nada de cache, nem no navegador nem na borda.
-      "Cache-Control": "no-store",
-      "Referrer-Policy": "no-referrer",
-      "X-Robots-Tag": "noindex, nofollow",
-    },
-  });
+  // A tela do botão mora em `/app/continuar` (09/out/2026), com a casca das telas de acesso. Aqui
+  // só se confere o básico e se repassa; o token continua sem ser consumido no GET.
+  const destino = new URL("/app/continuar", req.nextUrl.origin);
+  destino.searchParams.set("token_hash", tokenHash);
+  destino.searchParams.set("type", tipo);
+  destino.searchParams.set("next", next);
+  const r = NextResponse.redirect(destino, 303);
+  r.headers.set("Cache-Control", "no-store");
+  r.headers.set("Referrer-Policy", "no-referrer");
+  return r;
 }
 
 export async function POST(req: NextRequest) {
@@ -118,47 +118,4 @@ export async function POST(req: NextRequest) {
 
   const destino = destinoSeguro(String(form?.get("next") ?? ""), DESTINO_PADRAO);
   return NextResponse.redirect(new URL(destino, req.nextUrl.origin), 303);
-}
-
-/**
- * A tela do botão. HTML próprio e autocontido, e não a casca das telas de acesso
- * (`lib/auth-casca.ts`): aquela depende do `auth.css`, que só o layout de `/app` injeta, e esta
- * rota mora em `/auth`. As cores são as mesmas (creme, tinta, vermelho da campanha).
- */
-function pagina({ tokenHash, tipo, next }: { tokenHash: string; tipo: string; next: string }) {
-  return `<!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
-<title>Continuar | Estratégia Internacional</title>
-<style>
-  *{box-sizing:border-box}
-  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
-    background:#f7f4ee;color:#1a1815;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif}
-  .cartao{width:100%;max-width:440px;background:#fdfbf6;border:1px solid #e2dacd;border-radius:16px;overflow:hidden}
-  .faixa{background:#8E1522;color:#f7f4ee;padding:14px 28px;font-size:11px;font-weight:700;letter-spacing:.16em}
-  .miolo{padding:28px}
-  h1{margin:0 0 10px;font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:24px;line-height:1.3}
-  p{margin:0 0 22px;font-size:15px;line-height:1.6;color:#6b655c}
-  button{width:100%;border:0;border-radius:14px;padding:15px 20px;background:#C1121F;color:#f7f4ee;
-    font-family:inherit;font-weight:700;font-size:15px;line-height:1;cursor:pointer}
-  button:hover{background:#A01827}
-  button:focus-visible{outline:3px solid #1a1815;outline-offset:3px}
-</style></head>
-<body>
-<main class="cartao">
-  <div class="faixa">VEJA NEGÓCIOS&nbsp;&nbsp;|&nbsp;&nbsp;ESTRATÉGIA INTERNACIONAL</div>
-  <div class="miolo">
-    <h1>Falta um clique</h1>
-    <p>${ENTRADA.has(tipo) ? "Continue para entrar na sua conta." : "Continue para criar sua senha."} O link do e-mail vale uma vez só, e por isso ele só é usado quando você clica no botão.</p>
-    <form method="post" action="/auth/confirm">
-      <input type="hidden" name="token_hash" value="${esc(tokenHash)}">
-      <input type="hidden" name="type" value="${esc(tipo)}">
-      <input type="hidden" name="next" value="${esc(next)}">
-      <button type="submit">Continuar</button>
-    </form>
-  </div>
-</main>
-</body></html>`;
 }
