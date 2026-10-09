@@ -774,23 +774,6 @@ footer :where(a, button, input, select, textarea):focus-visible{outline-color:#F
 /* Programa: quem dá a aula e quanto dura, embaixo do título */
 .imeta{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9A8F84;font-weight:600;margin:4px 0 5px}
 
-/* Professores: cinco cards. Uma fileira no desktop, 3 + 2 centrado no tablet, carrossel no celular. */
-@media (min-width:1101px){
-  #docentes > div:nth-child(2){max-width:1264px!important}
-  .prof-grid-5{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:16px!important}
-  .prof-grid-5 > .prof > div:last-child{padding:18px 18px 22px!important}
-  .prof-grid-5 h3{font-size:19px!important}
-  .prof-grid-5 .chip-modulo{letter-spacing:.13em!important}
-  /* a credencial cabe em duas linhas em quatro dos cinco cards: reservar as duas em todos alinha as bios */
-  .prof-grid-5 > .prof > div:last-child > div:first-of-type{min-height:2.8em;line-height:1.4}
-  .prof-grid-5 [style*="gap:17px"]{gap:12px!important}
-}
-@media (min-width:761px) and (max-width:1100px){
-  .prof-grid-5{display:flex!important;flex-wrap:wrap;justify-content:center}
-  .prof-grid-5 > .prof{flex:0 0 calc((100% - 37px)/3);min-width:0;box-sizing:border-box}
-  .prof-grid-5 .chip-modulo{letter-spacing:.12em!important}
-}
-
 /* Por dentro: telas reais da área do aluno */
 .pd{padding:100px 0 108px;margin-top:104px;background:linear-gradient(180deg,#EFE8DC 0%,#F3EEE4 100%);border-top:1px solid rgba(26,24,21,.07);border-bottom:1px solid rgba(26,24,21,.07);scroll-margin-top:76px}
 .pd-wrap{max-width:1180px;margin:0 auto;padding:0 28px}
@@ -926,3 +909,122 @@ footer :where(a, button, input, select, textarea):focus-visible{outline-color:#F
   .mod summary{gap:14px!important}
   .mod .mnum{flex-basis:34px!important;font-size:32px!important}
 }
+
+/* =====================================================================================
+   REVAMP DE 09/out/2026 (rebriefing do Marcelo): diagnóstico enxuto e sem aposta no câmbio,
+   professores em retrato grande, programa no formato do CCA e bandeiras de pagamento em SVG.
+   ===================================================================================== */
+
+/* Por que diversificar: um gráfico, três números e uma frase de fecho */
+.ts{padding:96px 0 84px;scroll-margin-top:76px}
+.ts-wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+.ts-cab{max-width:780px;margin-bottom:36px}
+.ts-eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#C1121F;font-weight:700;margin:0 0 14px}
+.ts-h2{font-family:'Playfair Display',serif;margin:0;font-size:clamp(30px,4vw,46px);font-weight:600;letter-spacing:-.018em;line-height:1.1;color:#1A1815;text-wrap:balance}
+.ts-lead{font-size:17px;line-height:1.6;color:#6B655C;margin:20px 0 0;max-width:680px;text-wrap:pretty}
+.ts-lead b{color:#1A1815;font-weight:600}
+.ts-num{list-style:none;margin:22px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:rgba(26,24,21,.11);border:1px solid rgba(26,24,21,.11);border-radius:14px;overflow:hidden}
+.ts-num li{background:#FDFBF6;padding:22px 24px}
+.ts-num b{display:block;font-family:var(--lp-sf);font-size:32px;font-weight:600;color:#1A1815;line-height:1;font-variant-numeric:lining-nums tabular-nums}
+.ts-num b.destaque{color:#C1121F}
+.ts-num span{display:block;margin-top:8px;font-size:13px;line-height:1.5;color:#6B655C}
+.ts-fecho{max-width:720px;margin:36px 0 0;font-size:18px;line-height:1.55;color:#4E4840;text-wrap:pretty}
+.ts-fecho b{color:#1A1815;font-weight:600}
+@media (max-width:760px){
+  .ts{padding:72px 0 64px}
+  .ts-num{grid-template-columns:1fr}
+  .ts-num li{padding:18px 20px}
+  .ts-num b{font-size:28px}
+  .ts-fecho{font-size:16.5px}
+}
+
+/* Professores: retrato grande, nome sobre a foto, 3 + 2 centrado */
+.dc{background:linear-gradient(150deg,#6B111C,#8E1522 75%);color:#F7F4EE;padding:96px 0;position:relative;overflow:hidden;scroll-margin-top:76px}
+.dc-pontos{position:absolute;inset:0;background-image:radial-gradient(rgba(247,245,242,.07) 1.3px,transparent 1.3px);background-size:30px 30px;pointer-events:none}
+.dc-wrap{max-width:1180px;margin:0 auto;padding:0 28px;position:relative;z-index:1}
+.dc-cab{max-width:760px;margin-bottom:48px}
+.dc-eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#F7F4EE;font-weight:700;margin:0 0 14px}
+.dc-h2{font-family:'Playfair Display',serif;margin:0;font-weight:600;font-size:clamp(28px,3.6vw,44px);color:#F7F4EE;letter-spacing:-.01em;line-height:1.12;text-wrap:balance}
+.dc-lead{font-size:15px;color:#D2BCBA;margin:16px 0 0;max-width:620px;line-height:1.6;text-wrap:pretty}
+.dc-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:24px}
+.dc-card{grid-column:span 2;display:flex;flex-direction:column;background:rgba(247,245,242,.05);border:1px solid rgba(247,244,238,.22);border-radius:16px;overflow:hidden;transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease}
+.dc-card:nth-child(4){grid-column:2 / span 2}
+.dc-card:nth-child(5){grid-column:4 / span 2}
+@media (hover:hover){.dc-card:hover{transform:translateY(-6px);border-color:rgba(247,244,238,.45);box-shadow:0 26px 56px rgba(0,0,0,.32)}}
+.dc-foto{position:relative;aspect-ratio:4/5;overflow:hidden;background:#3a0d12}
+.dc-foto img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;transition:transform .6s ease}
+@media (hover:hover){.dc-card:hover .dc-foto img{transform:scale(1.04)}}
+.dc-foto::after{content:"";position:absolute;inset:auto 0 0 0;height:46%;background:linear-gradient(to top,rgba(36,8,12,.92),rgba(36,8,12,.55) 45%,transparent);pointer-events:none}
+.dc-mod{position:absolute;top:16px;left:16px;z-index:1;background:rgba(253,251,246,.94);color:#8E1522;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:6px 10px;border-radius:999px}
+.dc-id{position:absolute;left:22px;right:22px;bottom:18px;z-index:1}
+.dc-id h3{margin:0;font-family:var(--lp-sf);font-size:24px;font-weight:600;line-height:1.15;color:#FDFBF6}
+.dc-id p{margin:6px 0 0;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:#EBD9D7}
+.dc-corpo{padding:20px 22px 22px;display:flex;flex-direction:column;gap:16px;flex:1}
+.dc-bio{margin:0;font-size:13.5px;line-height:1.6;color:#E3D2D0;text-wrap:pretty}
+.dc-logos{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:auto;padding-top:16px;border-top:1px solid rgba(247,244,238,.16);min-height:30px}
+@media (max-width:1000px) and (min-width:761px){
+  .dc-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .dc-card:nth-child(4){grid-column:span 2}
+  .dc-card:nth-child(5){grid-column:2 / span 2}
+}
+@media (max-width:760px){
+  .dc{padding:72px 0}
+  .dc-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;-webkit-overflow-scrolling:touch;padding-bottom:10px;scrollbar-width:none}
+  .dc-grid::-webkit-scrollbar{display:none}
+  .dc-card{flex:0 0 82%;scroll-snap-align:center}
+  .dc-id h3{font-size:22px}
+}
+
+/* Programa: duas colunas, lista de módulos como no CCA */
+.pg{padding:104px 0 0;scroll-margin-top:76px}
+.pg-wrap{max-width:1180px;margin:0 auto;padding:0 28px;display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.38fr);gap:64px;align-items:start}
+.pg-lado{position:sticky;top:100px}
+.pg-eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#C1121F;font-weight:700;margin:0 0 14px}
+.pg-h2{font-family:'Playfair Display',serif;margin:0;font-weight:600;font-size:clamp(30px,3.6vw,44px);color:#8E1522;letter-spacing:-.01em;line-height:1.08}
+.pg-lead{font-size:15px;color:#6B655C;margin:16px 0 0;line-height:1.6;text-wrap:pretty}
+.pg-fatos{list-style:none;margin:28px 0 22px;padding:0;display:flex;border:1px solid #E6DDD1;border-radius:12px;background:#fff;overflow:hidden}
+.pg-fatos li{flex:1;padding:16px 14px;border-left:1px solid #EDE6DD}
+.pg-fatos li:first-child{border-left:0}
+.pg-fatos b{display:block;font-family:var(--lp-sf);font-size:26px;font-weight:600;color:#8E1522;line-height:1}
+.pg-fatos span{display:block;margin-top:6px;font-size:11.5px;color:#6B655C;letter-spacing:.02em}
+.pg-nota{margin:10px 0 0;font-size:13px;line-height:1.55;color:#6B655C}
+.pg-nota b{color:#C1121F;font-weight:700}
+.pg-btn{display:inline-flex;align-items:center;gap:10px;margin-top:24px;padding:14px 22px;border-radius:12px;background:#1A1815;color:#FDFBF6;font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:transform .12s ease,background-color .2s ease}
+.pg-btn:hover{background:#8E1522;transform:translateY(-1px);color:#FDFBF6}
+.pg-lista{border-top:1px solid #DCCFC3}
+.pg-mod{border-bottom:1px solid #DCCFC3}
+.pg-mod summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:16px;padding:22px 4px}
+.pg-mod summary::-webkit-details-marker{display:none}
+.pg-ico{width:26px;height:26px;flex:0 0 auto;fill:none;stroke:#8E1522;stroke-width:1.6;stroke-linejoin:round}
+.pg-ico path{fill:#8E1522;stroke:none}
+.pg-cab{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.pg-kicker{font-family:'Jost',var(--lp-sf);font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;color:#C1121F}
+.pg-titulo{font-family:'Jost',var(--lp-sf);font-size:20px;font-weight:500;color:#1A1815;line-height:1.25;transition:color .2s ease}
+.pg-quem{font-size:12.5px;color:#8A8279}
+.pg-mod summary:hover .pg-titulo{color:#8E1522}
+.pg-chev{width:20px;height:20px;flex:0 0 auto;fill:none;stroke:#8A8279;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s ease,stroke .3s ease}
+.pg-mod[open] .pg-chev{transform:rotate(180deg);stroke:#8E1522}
+.pg-aulas{list-style:none;margin:0;padding:0 4px 26px 46px;display:grid;gap:20px}
+.pg-aulas li{display:grid;grid-template-columns:62px minmax(0,1fr);gap:14px;align-items:baseline}
+.pg-n{font-family:'Jost',var(--lp-sf);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8A8279;font-weight:500;white-space:nowrap}
+.pg-aulas h4{margin:0;font-family:'Jost',var(--lp-sf);font-size:16px;font-weight:500;color:#1A1815;line-height:1.35}
+.pg-meta{margin:3px 0 0;font-size:11.5px;letter-spacing:.06em;color:#9A8F84;text-transform:uppercase;font-weight:600}
+.pg-desc{margin:6px 0 0;font-size:14px;line-height:1.6;color:#6B655C;text-wrap:pretty}
+@media (max-width:900px){
+  .pg-wrap{grid-template-columns:1fr;gap:28px}
+  .pg-lado{position:static}
+}
+@media (max-width:600px){
+  .pg{padding-top:76px}
+  .pg-aulas{padding-left:0}
+  .pg-aulas li{grid-template-columns:1fr;gap:4px}
+  .pg-titulo{font-size:18px}
+}
+
+/* Bandeiras de pagamento: chips iguais, ícone vetorial na cor da tinta */
+.of-pag{gap:8px!important;flex-wrap:wrap}
+.of-band{display:inline-flex;align-items:center;justify-content:center;gap:5px;height:30px;min-width:46px;padding:0 9px;border:1px solid #E6DDD1;border-radius:7px;background:#fff}
+.of-band svg{height:17px;width:auto;fill:#4E4840;display:block}
+.of-band[title="Visa"] svg{height:22px}
+.of-band[title="American Express"] svg{height:20px}
+.of-band i{font-style:normal;font-size:11.5px;font-weight:700;color:#4E4840;letter-spacing:.02em}

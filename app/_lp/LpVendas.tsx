@@ -13,7 +13,6 @@ import GloboCanvas from "./GloboCanvas";
 import CarrosselDots from "./CarrosselDots";
 import VslMount from "./VslMount";
 import GraficoEntrada from "./GraficoEntrada";
-import DolarVivo from "./DolarVivo";
 import BarraCompra from "./BarraCompra";
 import CheckoutUtm from "./CheckoutUtm";
 
@@ -73,7 +72,6 @@ export default function LpVendas() {
       <CarrosselDots />
       <VslMount />
       <GraficoEntrada />
-      <DolarVivo />
       <BarraCompra />
       <CheckoutUtm />
     </>
