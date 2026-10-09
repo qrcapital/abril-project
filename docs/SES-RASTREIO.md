@@ -73,7 +73,14 @@ A variável `SES_SNS_TOPIC_ARN` precisa estar no ar **antes** de criar a assinat
    }
    ```
 
-   **Save changes**. Sem isso o destino do passo D é criado, mas nenhum evento chega ao tópico.
+   **Save changes**. Na prática não foi preciso: tópico e configuration set na mesma conta, e os
+   eventos chegaram sem essa política (teste de 09/10). Só use se um dia os eventos pararem.
+
+> **Ligado em 09/10/2026.** Configuration set `estrategia-transacional`, tópico
+> `arn:aws:sns:us-east-1:540579831301:ses-eventos-estrategia`, assinatura HTTPS confirmada,
+> destino `sns-eventos` com Send, Delivery, Bounce, Complaint, Reject, DeliveryDelay e Rendering
+> failure. Variáveis na Netlify e redeploy feitos. Teste no simulador gravou Send e Delivery em
+> `email_eventos` em 1 segundo.
 
 ## C. Variáveis na Netlify (antes da assinatura)
 

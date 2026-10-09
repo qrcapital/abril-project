@@ -28,11 +28,15 @@
 - Admin, página do aluno: botão **Gerar link de acesso**. Gera o mesmo link de criação de senha e mostra para copiar e mandar por WhatsApp. É o plano B imediato para qualquer aluno cujo e-mail não chegue.
 - Rastreio de entrega do SES (código pronto, falta ligar na AWS): cada envio guarda o `MessageId`; uma rota nova (`/api/webhooks/ses`) recebe do SNS os eventos de Entrega, Adiamento, Devolução e Reclamação; a página do aluno no admin mostra, por e-mail, "entregue", "adiado: motivo" ou "devolvido: motivo". Passo a passo em `docs/SES-RASTREIO.md`. Migration `0033_email_entrega.sql`.
 
+## Atualização 09/10, fim do dia
+- Migration 0033 rodada; rastreio de entrega ligado e testado (ver `SES-RASTREIO.md`).
+- Acesso direto pós-compra no ar: `/obrigado?v=<marketplace_id>` cria a sessão e leva à criação de senha, sem depender do e-mail. Testado com a venda do Marcelo (cai em "Sua conta já está ativa", como esperado para conta já usada).
+- DMARC: cabeçalhos de um e-mail do RD (02/10) mostram DKIM `d=blocktrends.com.br` (via SendGrid, seletor `s1`) e Return-Path em `emailmkt.blocktrends.com.br`. RD está alinhado. O Gmail lê o registro atual como `p=NONE`, ou seja, hoje não há política valendo.
+- Registro recomendado: `v=DMARC1; p=quarantine; pct=100; adkim=r; aspf=r`. Alinhamento relaxado porque já houve envio com From em `mail.blocktrends.com.br`, que falharia com `adkim=s`. Subir para `p=reject` depois de algumas semanas sem problema.
+
 ## O que falta (Marcelo)
-1. Rodar a migration 0033 no Supabase.
-2. Configurar na AWS o Configuration Set + tópico SNS (`docs/SES-RASTREIO.md`) e pôr `SES_CONFIGURATION_SET` e `SES_SNS_TOPIC_ARN` na Netlify.
-3. Corrigir o DMARC no Cloudflare (item 3 acima).
-4. Opcional, para reputação na Microsoft: cadastrar o domínio no Microsoft SNDS/JMRP e, se o volume crescer, avaliar IP dedicado no SES.
+1. Trocar o TXT `_dmarc` no Cloudflare pelo registro acima.
+2. Opcional, para reputação na Microsoft: cadastrar o domínio no Microsoft SNDS/JMRP e, se o volume crescer, avaliar IP dedicado no SES.
 
 ## Para a Luana agora
 Gerar o link no admin (Alunos, Luana, **Gerar link de acesso**) e mandar por WhatsApp. Pedir também que ela adicione `contato@blocktrends.com.br` aos remetentes confiáveis do Outlook.
