@@ -62,7 +62,9 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/app/login") ||
     path.startsWith("/app/primeiro-acesso") ||
     path.startsWith("/app/recuperar-senha") ||
-    path.startsWith("/app/redefinir-senha");
+    path.startsWith("/app/redefinir-senha") ||
+    // A página de compra aprovada recebe quem acabou de pagar e ainda não tem sessão.
+    path.startsWith("/app/obrigado");
 
   if (!user && path.startsWith("/app") && !isAccessScreen) {
     const url = request.nextUrl.clone();

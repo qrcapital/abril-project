@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { botao, casca, esc, eyebrow, lead, link, rodape, titulo } from "@/lib/auth-casca";
-import AcessoClient from "../acesso/AcessoClient";
+import ObrigadoClient from "./ObrigadoClient";
 
 export const metadata: Metadata = { title: "Compra aprovada" };
 
@@ -39,6 +39,23 @@ const html = casca(
     rodape(`O e-mail não chegou em alguns minutos? Olhe o spam e a aba Promoções, ou ${link("/app/recuperar-senha", "peça um novo link")}.`),
 );
 
+/** Enquanto a página abre o acesso direto (ver `ObrigadoClient`). */
+const preparando = casca(
+  eyebrow("Compra aprovada") +
+    titulo("Preparando o seu acesso") +
+    lead("Estamos confirmando o pagamento e abrindo a sua conta. Em instantes você cria a sua senha e já entra na formação.") +
+    `<div class="au-carregando" role="status" aria-live="polite"><span></span><span></span><span></span></div>`,
+);
+
+/** O id da venda já foi usado: a conta existe e já entrou uma vez. */
+const jaEntrou = casca(
+  eyebrow("Compra aprovada") +
+    titulo("Sua conta já está ativa") +
+    lead("Este acesso já foi aberto antes. Entre com o e-mail da compra e a sua senha, ou peça um link novo se ainda não criou a senha.") +
+    `<p style="margin:22px 0 0"><a href="/app/login" class="au-botao" style="display:inline-block;text-align:center;text-decoration:none">ENTRAR</a></p>` +
+    rodape(`Ainda sem senha? ${link("/app/recuperar-senha", "Peça um link novo")}.`),
+);
+
 export default function ObrigadoPage() {
-  return <AcessoClient html={html} />;
+  return <ObrigadoClient padrao={html} preparando={preparando} jaEntrou={jaEntrou} />;
 }
