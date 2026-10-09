@@ -1030,3 +1030,43 @@ footer :where(a, button, input, select, textarea):focus-visible{outline-color:#F
 .of-band i{font-style:normal;font-size:11.5px;font-weight:700;color:#4E4840;letter-spacing:.02em}
 
 .of-band i.amex{font-size:11px;font-weight:800;letter-spacing:.12em;color:#4E4840}
+
+/* Por dentro, versão 2 (09/out/2026): copy à esquerda e um único conjunto Mac + iPad + iPhone
+   sobrepostos à direita, com as telas reais da área do aluno (aula, glossário e linha do tempo). */
+.pd-dois{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.3fr);gap:56px;align-items:center}
+.pd-texto .pd-h2{font-size:clamp(28px,3.3vw,42px)}
+.pd-itens{list-style:none;margin:30px 0 0;padding:0;display:grid;gap:20px}
+.pd-itens li{display:flex;gap:16px;align-items:flex-start}
+.pd-itens svg{width:22px;height:22px;flex:0 0 auto;margin-top:2px;fill:none;stroke:#8E1522;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.pd-itens svg .ch{fill:#8E1522;stroke:none}
+.pd-itens svg circle{fill:#8E1522;stroke:none}
+.pd-itens h3{margin:0;font-family:'Jost',var(--lp-sf);font-size:17px;font-weight:500;color:#1A1815;line-height:1.3}
+.pd-itens p{margin:4px 0 0;font-size:14px;line-height:1.55;color:#6B655C;text-wrap:pretty}
+
+.dv{position:relative;width:100%;aspect-ratio:1.18/1}
+.dv-brilho{position:absolute;inset:6% 2% 4% 8%;background:radial-gradient(closest-side,rgba(193,18,31,.16),transparent 72%);filter:blur(20px);pointer-events:none}
+.dv img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+/* Mac: ao fundo, à direita */
+.dv-mac{position:absolute;top:2%;right:0;width:86%}
+.dv-mac-tela{position:relative;background:#141210;border-radius:14px 14px 4px 4px;padding:2.6% 2.6% 3.4%;box-shadow:0 0 0 1px #3b3633,0 30px 60px rgba(48,30,20,.28)}
+.dv-mac-tela img{aspect-ratio:16/10;border-radius:3px;height:auto}
+.dv-cam{position:absolute;top:1%;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:#2c2826;box-shadow:inset 0 0 0 1px #47403c}
+.dv-mac-base{position:relative;margin:0 -7%;height:0;padding-bottom:3.2%;background:linear-gradient(#e6e1d9,#c9c2b8 55%,#a8a096);border-radius:0 0 14px 14px;box-shadow:0 18px 30px rgba(48,30,20,.25)}
+.dv-mac-base i{position:absolute;top:0;left:50%;width:16%;height:38%;transform:translateX(-50%);background:linear-gradient(#bdb5aa,#d6d0c7);border-radius:0 0 8px 8px}
+/* iPad: à frente, à esquerda, invadindo o Mac */
+.dv-ipad{position:absolute;left:0;bottom:3%;width:33%;aspect-ratio:820/1180;box-sizing:content-box;padding:2.1%;background:#141210;border-radius:22px;box-shadow:0 0 0 1px #3b3633,0 28px 54px rgba(48,30,20,.34),0 6px 14px rgba(48,30,20,.2)}
+.dv-ipad img{border-radius:9px}
+/* iPhone: à frente, à direita */
+.dv-iphone{position:absolute;right:5%;bottom:0;width:17%;aspect-ratio:390/844;box-sizing:content-box;padding:1.15%;background:#141210;border-radius:26px;box-shadow:0 0 0 1px #3b3633,0 28px 50px rgba(48,30,20,.36),0 6px 14px rgba(48,30,20,.22)}
+.dv-iphone img{border-radius:20px}
+.dv-ilha{position:absolute;top:2.6%;left:50%;width:30%;height:2.6%;transform:translateX(-50%);background:#141210;border-radius:999px;z-index:1}
+@media (max-width:1000px){
+  .pd-dois{grid-template-columns:1fr;gap:40px}
+  .dv{max-width:720px;margin:0 auto}
+}
+@media (max-width:560px){
+  .dv-ipad{border-radius:14px}
+  .dv-iphone{border-radius:16px}
+  .dv-iphone img{border-radius:12px}
+  .dv-mac-tela{border-radius:9px 9px 3px 3px}
+}
