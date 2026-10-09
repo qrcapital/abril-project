@@ -218,9 +218,9 @@ export default async function IndicadoresPage() {
       </div>
       {v.cortesias > 0 && (
         <p className="mt-2 text-[12px] text-medio">
-          {v.cortesias} matrícula{v.cortesias > 1 ? "s" : ""} sem pedido do Guru (cortesia ou teste) não
-          entra{v.cortesias > 1 ? "m" : ""} nas vendas, mas conta{v.cortesias > 1 ? "m" : ""} entre os
-          matriculados.
+          {v.cortesias} matrícula{v.cortesias > 1 ? "s" : ""} sem venda paga (cortesia, aluno adicionado pelo
+          admin ou compra de teste com cupom de 100%) não entra{v.cortesias > 1 ? "m" : ""} nas vendas, mas
+          conta{v.cortesias > 1 ? "m" : ""} entre os matriculados.
         </p>
       )}
 
