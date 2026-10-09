@@ -16,6 +16,10 @@ export async function updateSession(request: NextRequest) {
   if (!path.startsWith("/app") && !path.startsWith("/auth") && !path.startsWith("/admin")) {
     return response;
   }
+  // O `/auth/confirm` troca o token do e-mail por uma sessão NOVA, de outra conta talvez. Renovar
+  // aqui a sessão que já estava no navegador gravaria cookies da conta antiga na mesma resposta
+  // e podia vencer os da conta nova (bug da compra de teste, 10/out/2026). A rota cuida sozinha.
+  if (path.startsWith("/auth/confirm")) return response;
 
   // Lido ANTES do getUser: quando o refresh token não vale mais, o cliente do Supabase
   // limpa os cookies da sessão pelo `setAll` abaixo, e a checagem depois daria sempre falso.

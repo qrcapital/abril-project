@@ -15,9 +15,9 @@ const CAMPOS = [
 ];
 
 /** Redefinição comum: a conta já aceitou os documentos, então não há o que colher aqui. */
-const htmlSemAceite = telaSenha({
+const htmlSemAceite = (email: string) => telaSenha({
   titulo: "Criar uma senha nova",
-  lead: `Escolha uma senha de ${REGRA_SENHA}. Ela passa a valer assim que você confirmar.`,
+  lead: `Senha da conta ${email}. Escolha uma de ${REGRA_SENHA}; ela passa a valer assim que você confirmar.`,
   campos: CAMPOS,
   botao: "SALVAR A SENHA",
 });
@@ -28,9 +28,9 @@ const htmlSemAceite = telaSenha({
  * O título muda junto com a caixa de propósito: "criar uma senha nova" numa tela que também está
  * pedindo o aceite dos Termos descreveria metade do que está acontecendo.
  */
-const htmlComAceite = telaSenha({
+const htmlComAceite = (email: string) => telaSenha({
   titulo: "Crie sua senha de acesso",
-  lead: `Escolha uma senha de ${REGRA_SENHA} e confirme os documentos do curso para entrar.`,
+  lead: `Senha da conta ${email}. Escolha uma de ${REGRA_SENHA} e confirme os documentos do curso para entrar.`,
   campos: CAMPOS,
   botao: "CRIAR SENHA E ENTRAR",
   aceiteHtml: caixaAceite({
@@ -62,5 +62,5 @@ export default async function RedefinirSenhaPage() {
   // as próprias linhas. Quem lê o log é sempre o servidor.
   const jaAceitou = await aceitouVigente(createAdminClient(), user.id);
 
-  return <RedefinirClient html={jaAceitou ? htmlSemAceite : htmlComAceite} exigeAceite={!jaAceitou} />;
+  return <RedefinirClient html={jaAceitou ? htmlSemAceite(user.email ?? "") : htmlComAceite(user.email ?? "")} exigeAceite={!jaAceitou} />;
 }

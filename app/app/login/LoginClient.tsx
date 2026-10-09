@@ -143,6 +143,9 @@ export default function LoginClient({
           router.push("/app");
           router.refresh();
         } else {
+          // Sai de qualquer sessão que já estivesse no navegador antes de entrar com outra conta,
+          // para não sobrar cookie da anterior (10/out/2026).
+          await supabase.auth.signOut({ scope: "local" }).catch(() => {});
           const { error } = await supabase.auth.signInWithPassword({ email, password: p1 });
           if (error) return showError("E-mail ou senha incorretos.");
           // Porta única para as duas áreas (decisão do Pedro, 30/jul/2026): quem entra aqui

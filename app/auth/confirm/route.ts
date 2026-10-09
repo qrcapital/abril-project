@@ -81,6 +81,21 @@ export async function POST(req: NextRequest) {
   if (!tokenHash || !TIPOS.has(tipo)) return paraRecuperar(req, "invalido");
 
   const supabase = await createClient();
+
+  // ┌─ SESSÃO ANTERIOR SAI ANTES DO TOKEN ENTRAR (10/out/2026) ──────────────────────────────────┐
+  // │ Bug visto na compra de teste do Marcelo: o navegador já estava logado em OUTRA conta (a do  │
+  // │ admin), ele abriu o link de primeiro acesso da conta nova, e a senha foi gravada na conta   │
+  // │ antiga, que seguiu logada. A sessão nova e a velha conviviam nos cookies (o `@supabase/ssr` │
+  // │ divide a sessão em pedaços `.0`, `.1`, e um pedaço velho podia vencer a leitura). Agora a   │
+  // │ sessão que estiver no navegador é encerrada aqui, antes do `verifyOtp`, e o que fica é só   │
+  // │ a do dono do link. Falhar ao sair não bloqueia: o pior caso é o comportamento antigo.       │
+  // └─────────────────────────────────────────────────────────────────────────────────────────────┘
+  try {
+    await supabase.auth.signOut({ scope: "local" });
+  } catch (e) {
+    console.warn("[auth/confirm] signOut(local) antes do token:", e instanceof Error ? e.message : e);
+  }
+
   const { error } = await supabase.auth.verifyOtp({
     // `magiclink` é o nome antigo do tipo `email`; o Auth aceita os dois, mas o SDK tipa só o novo.
     type: (ENTRADA.has(tipo) ? "email" : tipo) as "recovery" | "invite" | "email",
