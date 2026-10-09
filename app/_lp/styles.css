@@ -1070,3 +1070,37 @@ footer :where(a, button, input, select, textarea):focus-visible{outline-color:#F
   .dv-iphone img{border-radius:12px}
   .dv-mac-tela{border-radius:9px 9px 3px 3px}
 }
+
+/* Ficha técnica (09/out/2026): exatamente a largura do vídeo de cima (mesmo container de 1020px com
+   28px de respiro), números em Jost, sem serifa. */
+.ft{position:relative;z-index:5;max-width:1020px;margin:-44px auto 0;padding:0 28px}
+.ft-faixa{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(0,1.15fr);background:#fff;border:1px solid #EDE6DD;border-radius:12px;overflow:hidden;box-shadow:0 14px 38px rgba(142,21,34,.10)}
+.ft-i{padding:22px 12px 20px;text-align:center;border-left:1px solid #EDE6DD;display:flex;flex-direction:column;justify-content:center;gap:7px;text-decoration:none}
+.ft-i:first-child{border-left:0}
+.ft-i b{font-family:'Jost',var(--lp-sf);font-size:28px;font-weight:500;color:#8E1522;line-height:1;letter-spacing:-.01em;font-variant-numeric:lining-nums}
+.ft-i > span{font-family:'Jost',var(--lp-sf);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#6B655C;font-weight:500;line-height:1.35}
+.ft-preco{background:#8E1522;border-left-color:#8E1522;transition:background-color .2s ease}
+.ft-preco:hover{background:#A01827}
+.ft-preco b{color:#FDFBF6}
+.ft-preco b span{font-size:17px;font-weight:400;vertical-align:3px}
+.ft-preco > span{color:#EDE6DD}
+@media (max-width:760px){
+  .ft-faixa{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ft-i:nth-child(odd){border-left:0}
+  .ft-i:nth-child(n+3){border-top:1px solid #EDE6DD}
+  .ft-preco{grid-column:1 / -1;border-left:0}
+  .ft-i b{font-size:25px}
+}
+
+/* Card de preço: a marca do curso em lockup (a mesma da barra do topo), sem serifa */
+.of-lock{display:flex;align-items:center;justify-content:center;gap:16px}
+.of-lock img{height:34px;width:auto;display:block}
+.of-lock i{width:1px;height:38px;background:rgba(26,24,21,.22);display:block}
+.of-lock span{font-family:'Jost',var(--lp-sf);font-size:15px;font-weight:400;letter-spacing:.15em;text-transform:uppercase;color:#4E4840;line-height:1.28;text-align:left;white-space:nowrap}
+.of-preco .of-sub{margin-top:14px}
+@media (max-width:420px){
+  .of-lock img{height:28px}
+  .of-lock span{font-size:12.5px}
+  .of-lock i{height:32px}
+}
+.of-valor{font-family:'Jost',var(--lp-sf)!important;font-weight:500!important}
