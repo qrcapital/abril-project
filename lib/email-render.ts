@@ -164,12 +164,7 @@ const paragrafos = (corpo: string) =>
  * texto pequeno cansa, e o creme sobre o vermelho dá 5,6:1, acima do AA.
  */
 const PAPEL = "#f7f4ee";
-const CARTAO = "#fdfbf6";
-const BORDA = "#e2dacd";
 const TINTA = "#1a1815";
-const TINTA_2 = "#6b655c";
-const ACENTO = "#C1121F";
-const FAIXA = "#8E1522";
 const CREME = "#f7f4ee";
 
 const SANS = "-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif";
@@ -248,51 +243,69 @@ function moldura(
   preheader: string,
   banner: string,
   titulo: string,
+  assinatura: string | null = null,
 ): string {
   const site = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
+  const img = (caminho: string) => (site ? `${site}${caminho}` : "");
   const linkRodape = (caminho: string, rotulo: string) =>
     site
-      ? `<a href="${esc(site + caminho)}" style="color:${TINTA_2};text-decoration:underline">${rotulo}</a>`
+      ? `<a href="${esc(site + caminho)}" style="color:#8c8c8c;text-decoration:underline">${rotulo}</a>`
       : rotulo;
+  // Cabeçalho e rodapé no mesmo desenho dos e-mails da live no RD Station (09/out/2026, pedido do
+  // Marcelo): filete vinho, faixa creme com o lockup em imagem, corpo branco, assinatura em Jost e
+  // rodapé creme com VEJA Negócios × BlockTrends. A imagem do cabeçalho tem alt com o nome inteiro,
+  // então com imagem bloqueada a marca continua lá, em texto.
+  const cabecalho = img("/email/ei-cabecalho.png")
+    ? `<img src="${esc(img("/email/ei-cabecalho.png"))}" width="600" alt="VEJA Negócios | Estratégia Internacional" style="display:block;width:100%;max-width:600px;height:auto;border:0;font-family:${TITULO};font-size:18px;line-height:24px;color:${TINTA};text-align:center">`
+    : `<p style="margin:0;padding:26px 48px;font-family:${TITULO};font-size:16px;letter-spacing:.14em;color:${TINTA}">VEJA NEGÓCIOS | ESTRATÉGIA INTERNACIONAL</p>`;
+  const marcas = img("/email/ei-marca-veja-negocios.png")
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td valign="middle"><img src="${esc(img("/email/ei-marca-veja-negocios.png"))}" width="88" alt="VEJA Negócios" style="display:block;width:88px;height:auto;border:0"></td>
+<td valign="middle" style="padding:0 16px;font-family:Arial,sans-serif;font-size:14px;color:#8c8c8c">×</td>
+<td valign="middle"><img src="${esc(img("/email/ei-marca-blocktrends.png"))}" width="110" alt="BlockTrends" style="display:block;width:110px;height:auto;border:0"></td>
+</tr></table>`
+    : `<p style="margin:0;font-family:${TITULO};font-size:14px;color:${TINTA}">VEJA Negócios × BlockTrends</p>`;
   return `<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only">
 <meta name="supported-color-schemes" content="light only">
 <title>${esc(titulo || "Estratégia Internacional")}</title>
-<style>@import url(https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap);</style></head>
+<style>@import url(https://fonts.googleapis.com/css2?family=Jost:wght@400;500&display=swap);
+@media (max-width:620px){.px{padding-left:24px!important;padding-right:24px!important}.tt{font-size:22px!important;line-height:29px!important}}</style></head>
 <body style="margin:0;padding:0;background:${PAPEL};color-scheme:light only">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all">${esc(preheader)}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="${PAPEL}" style="background:${PAPEL};padding:32px 12px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${PAPEL}" style="background:${PAPEL};padding:28px 12px">
 <tr><td align="center">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" bgcolor="${CARTAO}" style="width:100%;max-width:600px;background:${CARTAO};border:1px solid ${BORDA};border-radius:16px;border-collapse:separate;overflow:hidden">
-<tr><td bgcolor="${FAIXA}" style="background:${FAIXA};padding:18px 32px;border-radius:16px 16px 0 0;font-family:${SANS};font-size:11px;font-weight:700;letter-spacing:.16em;color:${CREME}">
-VEJA NEGÓCIOS&nbsp;&nbsp;|&nbsp;&nbsp;ESTRATÉGIA INTERNACIONAL
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="width:100%;max-width:600px;background:#ffffff;border:1px solid #e3dccb;text-align:left">
+<tr><td height="4" bgcolor="#6b111c" style="background:#6b111c;font-size:0;line-height:0">&nbsp;</td></tr>
+<tr><td bgcolor="${PAPEL}" style="background:${PAPEL}">${cabecalho}</td></tr>
+${banner}<tr><td class="px" style="padding:36px 48px 0">
+<h1 class="tt" style="margin:0;font-family:${TITULO};font-size:26px;line-height:33px;font-weight:500;color:#0a0a0a">${esc(titulo)}</h1>
 </td></tr>
-${banner}<tr><td style="padding:30px 32px 0">
-<h1 style="margin:0;font-family:${TITULO};font-size:24px;line-height:1.3;font-weight:500;color:${TINTA}">${esc(titulo)}</h1>
-</td></tr>
-<tr><td style="padding:18px 32px 8px;font-family:${SANS};font-size:15px;line-height:1.65;color:${TINTA}">
+<tr><td class="px" style="padding:20px 48px 8px;font-family:${SANS};font-size:15px;line-height:25px;color:#2b2b2b">
 ${corpoHtml}
 </td></tr>
-<tr><td style="padding:18px 32px 28px;font-family:${SANS};font-size:12px;line-height:1.7;color:${TINTA_2};border-top:1px solid ${BORDA}">
-Powered by BlockTrends · <a href="mailto:contato@blocktrends.com.br" style="color:${TINTA_2};text-decoration:underline">contato@blocktrends.com.br</a><br>
+${assinatura ? `<tr><td class="px" style="padding:20px 48px 34px"><p style="margin:0;font-family:${TITULO};font-size:18px;line-height:24px;font-weight:500;color:#0a0a0a">${assinatura}</p></td></tr>` : `<tr><td style="padding:0 0 26px;font-size:0;line-height:0">&nbsp;</td></tr>`}
+<tr><td class="px" bgcolor="${PAPEL}" align="center" style="background:${PAPEL};padding:26px 48px 22px;border-top:1px solid #e3dccb">
+${marcas}
+<p style="margin:16px 0 0;font-family:${SANS};font-size:12px;line-height:19px;color:#8c8c8c">Dúvidas? <a href="mailto:contato@blocktrends.com.br" style="color:#8c8c8c;text-decoration:underline">contato@blocktrends.com.br</a><br>
 ${linkRodape("/privacidade", "Política de Privacidade")} · ${linkRodape("/termos-de-uso", "Termos de Uso")}<br>
 Abril Comunicações S.A. · CNPJ 44.597.052/0001-62<br>
-Esta mensagem é sobre a sua conta no curso, então ela não tem descadastro.
+Esta mensagem é sobre a sua conta no curso, então ela não tem descadastro.</p>
 </td></tr>
 </table>
 </td></tr></table>
 </body></html>`;
 }
 
-/** O botão, em tabela: `<a>` com padding some no Outlook. */
+/** O botão, em tabela: `<a>` com padding some no Outlook. Vinho com texto creme, como no RD. */
 function botao(rotulo: string, url: string): string {
-  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:22px 0 6px">
-<tr><td align="center" bgcolor="${ACENTO}" style="background:${ACENTO};border-radius:14px">
-<a data-botao href="${esc(url)}" style="display:inline-block;padding:14px 28px;font-family:${SANS};font-size:15px;font-weight:700;color:${CREME};text-decoration:none;border-radius:14px">${esc(rotulo)}</a>
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 6px">
+<tr><td align="center" bgcolor="#6b111c" style="background:#6b111c;border-radius:10px">
+<a data-botao href="${esc(url)}" target="_blank" style="display:inline-block;padding:15px 30px;font-family:${TITULO};font-size:16px;line-height:20px;font-weight:500;color:${CREME};text-decoration:none;border-radius:10px">${esc(rotulo)}</a>
 </td></tr></table>
-<p style="margin:12px 0 0;font-family:${SANS};font-size:12px;line-height:1.6;color:${TINTA_2}">Se o botão não abrir, copie este endereço no navegador:<br><span style="color:${ACENTO};word-break:break-all">${esc(url)}</span></p>`;
+<p style="margin:14px 0 0;font-family:${SANS};font-size:12px;line-height:19px;color:#8c8c8c">Se o botão não abrir, copie este endereço no navegador:<br><span style="color:#6b111c;word-break:break-all">${esc(url)}</span></p>`;
 }
 
 export type Renderizado = { assunto: string; html: string; texto: string };
@@ -314,9 +327,8 @@ export function renderizar(template: Template, dados: Dados): Renderizado {
   // o botão um apêndice. Só a última linha, e só se ela for a assinatura.
   const assina = linhas.length > 1 && /^Equipe\b/.test(linhas[linhas.length - 1]) ? linhas.pop()! : null;
   const html = moldura(
-    linhas.map((l) => `<p style="margin:0 0 14px">${l}</p>`).join("\n") +
-      (cta && link ? botao(cta, link) : "") +
-      (assina ? `<p style="margin:22px 0 0">${assina}</p>` : ""),
+    linhas.map((l) => `<p style="margin:0 0 16px">${l}</p>`).join("\n") +
+      (cta && link ? botao(cta, link) : ""),
     // Preheader é a prévia que a caixa de entrada mostra ao lado do assunto. Sem ele, o cliente
     // pesca o primeiro texto do HTML, que aqui seria o wordmark repetido.
     paragrafos(interpolar(template.corpo, dados, false))[0] ?? "",
@@ -327,6 +339,7 @@ export function renderizar(template: Template, dados: Dados): Renderizado {
       ? bannerHtml(template.banner.trim(), template.banner_alt.trim())
       : "",
     assunto,
+    assina,
   );
 
   const texto =

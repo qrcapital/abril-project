@@ -109,7 +109,7 @@ const base = (extra: Partial<Template> = {}): Template => ({
 {
   const r = renderizar(base(), { nome: "", link: "https://ei.test/s" });
   assert.ok(
-    r.html.includes("<p style=\"margin:0 0 14px\">Sua matrícula está confirmada.</p>"),
+    r.html.includes("<p style=\"margin:0 0 16px\">Sua matrícula está confirmada.</p>"),
     "nome vazio deixaria virgula orfa e minuscula: 3 das 8 contas do homolog nao tem nome",
   );
   assert.ok(
@@ -140,14 +140,16 @@ const base = (extra: Partial<Template> = {}): Template => ({
 // --- 5. cada linha do editor é um parágrafo ---
 {
   const r = renderizar(base({ corpo: "Um.\nDois.\n\n\nTrês." }), {});
-  assert.equal((r.html.match(/<p style="margin:0 0 14px">/g) ?? []).length, 3);
+  assert.equal((r.html.match(/<p style="margin:0 0 16px">/g) ?? []).length, 3);
   assert.equal(r.texto.split("\n\n")[0], "Um.");
 }
 
 // --- 5b. o banner: absoluto, com alt, e só quando os dois existem ---
 {
   const sem = renderizar(base(), { nome: "Ana" });
-  assert.ok(!sem.html.includes("<img"), "sem banner, nenhuma imagem no e-mail");
+  // Cabeçalho e rodapé têm as marcas em imagem (/email/ei-*), desde 09/out/2026; o que não pode
+  // aparecer é imagem de banner.
+  assert.ok(!/<img[^>]+src="(?![^"]*\/email\/ei-)/.test(sem.html), "sem banner, nenhuma imagem alem das marcas");
 
   const relativo = renderizar(base({ banner: "/lp/banner.png", banner_alt: "Estratégia" }), {});
   assert.ok(
@@ -174,14 +176,14 @@ const base = (extra: Partial<Template> = {}): Template => ({
   // Alt vazio deixaria uma caixa muda no topo de um e-mail com imagem bloqueada. A tela recusa
   // salvar assim; se chegar, o e-mail sai sem banner em vez de sair mudo.
   const semAlt = renderizar(base({ banner: "https://cdn.test/b.png", banner_alt: "  " }), {});
-  assert.ok(!semAlt.html.includes("<img"), "banner sem alt nao sai");
+  assert.ok(!semAlt.html.includes("cdn.test/b.png"), "banner sem alt nao sai");
   assert.ok(semAlt.html.includes("matrícula está confirmada"), "e o e-mail segue legivel");
 
   // Ambiente sem site configurado: melhor sem banner que com imagem quebrada no topo.
   const site = process.env.NEXT_PUBLIC_SITE_URL;
   delete process.env.NEXT_PUBLIC_SITE_URL;
   const orfao = renderizar(base({ banner: "/lp/banner.png", banner_alt: "Estratégia" }), {});
-  assert.ok(!orfao.html.includes("<img"), "sem NEXT_PUBLIC_SITE_URL, o banner relativo nao sai");
+  assert.ok(!orfao.html.includes("<img"), "sem NEXT_PUBLIC_SITE_URL, o banner relativo nao sai (e as marcas viram texto)");
   process.env.NEXT_PUBLIC_SITE_URL = site;
 }
 
@@ -218,13 +220,13 @@ const base = (extra: Partial<Template> = {}): Template => ({
 // --- 7. a identidade VEJA Negócios, e nada da anterior ---
 {
   const r = renderizar(base(), { nome: "Ana", link: "https://ei.test/s" });
-  assert.ok(r.html.includes("#8E1522"), "a faixa vermelha do cabecalho");
-  assert.ok(r.html.includes("VEJA NEGÓCIOS"), "o lockup em texto: SVG nao abre em cliente de e-mail");
-  assert.ok(r.html.includes('bgcolor="#C1121F"'), "o botao no vermelho da campanha");
+  assert.ok(r.html.includes("#6b111c"), "o filete vinho do cabecalho, como no RD");
+  assert.ok(r.html.includes('alt="VEJA Negócios | Estratégia Internacional"'), "o lockup em PNG com alt: imagem bloqueada ainda mostra a marca");
+  assert.ok(r.html.includes('bgcolor="#6b111c"'), "o botao no vinho da campanha");
   for (const antiga of ["#0B2D20", "#A98E4E", "#D9BE85", "#7E6836"]) {
     assert.ok(!r.html.includes(antiga), `a paleta verde e dourada saiu: ${antiga} ainda no HTML`);
   }
-  assert.ok(!r.html.includes("<img"), "sem banner, nenhuma imagem: a marca e texto");
+  assert.ok(!/<img[^>]+src="(?![^"]*\/email\/ei-)/.test(r.html), "sem banner, so as marcas em imagem (com alt em texto)");
   assert.ok(r.html.includes("light only"), "pede ao cliente para nao inverter as cores");
   assert.ok(r.html.includes("max-width:600px"), "600px, a largura que todo cliente respeita");
   // O título do corpo é o assunto, escapado.
