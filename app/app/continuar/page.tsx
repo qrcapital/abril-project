@@ -7,8 +7,10 @@ import { destinoSeguro } from "@/lib/seguranca";
 export const metadata: Metadata = {
   title: "Confirmar acesso",
   robots: { index: false, follow: false },
-  // O token está na URL desta página: nada de levá-lo junto em `Referer` para fora.
-  referrer: "no-referrer",
+  // O token está na URL desta página: nada de levá-lo em `Referer` para OUTRO site. `same-origin`, e
+  // não `no-referrer`: com `no-referrer` o navegador manda `Origin: null` no POST do botão, e o
+  // `/auth/confirm` recusa origem nula ("Esse link chegou incompleto", teste de 09/out/2026).
+  referrer: "same-origin",
 };
 
 // Lê o token da query a cada pedido: nunca pode virar página estática nem ir para cache.
