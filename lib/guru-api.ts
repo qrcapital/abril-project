@@ -84,8 +84,10 @@ export async function buscarVendaNoGuru(v: string): Promise<ConsultaGuru> {
   const caminhos: [string, string][] = UUID.test(v)
     ? [["id", `/transactions/${q}`]]
     : [
-        ["marketplace_id", `/transactions?marketplace_id=${q}&${janela}`],
+        // Testado em 09/out/2026: `marketplace_ids[]` responde 200 (a venda veio na lista);
+        // `marketplace_id` responde 422. Fica em segundo só por garantia.
         ["marketplace_ids[]", `/transactions?marketplace_ids[]=${q}&${janela}`],
+        ["marketplace_id", `/transactions?marketplace_id=${q}&${janela}`],
       ];
 
   for (const [via, caminho] of caminhos) {
