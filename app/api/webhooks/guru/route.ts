@@ -62,6 +62,11 @@ export async function POST(req: NextRequest) {
     }
     console.warn("[guru] GURU_API_TOKEN ausente: token nao conferido (ambiente de teste).");
   } else if (!tokenConfere((payload as Record<string, unknown> | null)?.api_token, esperado)) {
+    // Deixa rastro da recusa (09/out/2026): na ligação das vendas não estava claro qual token do
+    // Guru vem no corpo (o da conta ou um "Token API" do perfil). Sem este registro, uma entrega
+    // com o token errado sumia sem deixar sinal do nosso lado. Grava só tipo, status e id da
+    // transação: nada de payload, e-mail ou token, porque a origem não foi autenticada.
+    await registrarRecusa(payload);
     return NextResponse.json({ error: "invalid token" }, { status: 401 });
   }
 
@@ -127,6 +132,26 @@ export async function POST(req: NextRequest) {
 
   await concluir("processado");
   return NextResponse.json({ ok: true });
+}
+
+/** Rastro mínimo de uma entrega recusada por token. Melhor esforço: nunca lança. */
+async function registrarRecusa(payload: unknown) {
+  try {
+    const e = normalizarGuru(payload);
+    await createAdminClient()
+      .from("guru_events")
+      .insert({
+        transaction_id: e.transacaoId?.slice(0, 200) ?? null,
+        status: e.status?.slice(0, 50) ?? null,
+        webhook_type: e.webhookType?.slice(0, 50) ?? null,
+        email: null,
+        payload: {},
+        processed_at: new Date().toISOString(),
+        resultado: "recusado: token nao confere com GURU_API_TOKEN",
+      });
+  } catch (err) {
+    console.error("[guru] recusa nao registrada:", err instanceof Error ? err.message : err);
+  }
 }
 
 /** Grava a entrega em `guru_events`, sem o token. Devolve o id, ou null se não deu. */
