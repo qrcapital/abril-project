@@ -9,6 +9,11 @@ exatamente, procure pelo nome da opção.
 
 ## A. Amazon SES (envio dos e-mails)
 
+> **Atualização de 09/out/2026:** o domínio `blocktrends.com.br` já está verificado e fora do sandbox
+> na região **Leste dos EUA (N. Virgínia), us-east-1** (50 mil e-mails/dia). Em São Paulo a conta
+> está no sandbox e sem identidade. Use us-east-1: `SES_REGION=us-east-1` já está na Netlify, e
+> os passos 1 a 4 e 7 abaixo já estão feitos. Falta só o usuário IAM e a chave (passos 5 e 6).
+
 1. Entre no console da AWS e troque a região, no canto superior direito, para **América do Sul
    (São Paulo), sa-east-1**. Tudo abaixo acontece nessa região.
 2. Abra **Amazon SES > Identities > Create identity**, escolha **Domain** e digite
@@ -29,7 +34,7 @@ exatamente, procure pelo nome da opção.
          "Effect": "Allow",
          "Action": ["ses:SendEmail", "ses:SendRawEmail"],
          "Resource": "*",
-         "Condition": { "StringEquals": { "aws:RequestedRegion": "sa-east-1" } }
+         "Condition": { "StringEquals": { "aws:RequestedRegion": "us-east-1" } }
        }
      ]
    }
