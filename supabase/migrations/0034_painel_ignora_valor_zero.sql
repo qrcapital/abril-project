@@ -6,7 +6,9 @@
 -- derrubavam o ticket médio. Agora venda cujo valor bruto é ZERO sai de "vendas" (contagem, somas,
 -- vendas por dia) e entra em "cortesias", junto das matrículas sem pedido e das `manual-*`.
 -- Venda sem valor conhecido (bruto nulo) continua contando como venda, como antes: ali o problema
--- é o payload, não o preço.
+-- é o payload, não o preço. E só é venda a matrícula cujo pedido tem evento do Guru processado: a
+-- `interno-admin-marcelo` (matrícula do admin criada à mão em 30/set) contava como venda sem valor.
+-- Cortesias passam a ser simplesmente as matrículas que não são venda.
 --
 -- Rodar inteira no SQL editor. Só troca a função (create or replace); nada de dado muda.
 
@@ -80,7 +82,7 @@ begin
     from pagas p
     left join ultimo_status u on u.transaction_id = p.guru_order_id
     left join valores v on v.transaction_id = p.guru_order_id
-    where coalesce(v.bruto, -1) <> 0
+    where u.transaction_id is not null and coalesce(v.bruto, -1) <> 0
   ),
   dias as (
     select generate_series(
@@ -100,10 +102,7 @@ begin
       'com_liquido',      (select count(*) from vendas where not estornada and liquido is not null),
       'bruto',            (select sum(bruto) from vendas where not estornada),
       'liquido',          (select sum(liquido) from vendas where not estornada),
-      'cortesias',        (select count(*) from enrollments
-                            where guru_order_id is null or guru_order_id like 'manual-%')
-                          + (select count(*) from pagas p join valores v on v.transaction_id = p.guru_order_id
-                             where v.bruto = 0),
+      'cortesias',        (select count(*) from enrollments) - (select count(*) from vendas),
       'por_dia', (
         select coalesce(jsonb_agg(jsonb_build_object('dia', d.dia, 'n', coalesce(c.n, 0)) order by d.dia), '[]'::jsonb)
         from dias d
