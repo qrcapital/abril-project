@@ -207,9 +207,11 @@ begin
   por_aluno as (
     select user_id, count(*) as n from feitas group by user_id
   ),
-  -- Vendas: matrícula com pedido do Guru. As sem pedido são cortesia ou cadastro de homologação.
+  -- Vendas: matrícula com pedido do Guru. As sem pedido são cortesia ou cadastro de homologação, e
+  -- as `manual-*` (09/out/2026) são alunos adicionados pelo admin, que também não são venda.
   pagas as (
-    select e.guru_order_id, e.purchased_at from enrollments e where e.guru_order_id is not null
+    select e.guru_order_id, e.purchased_at from enrollments e
+    where e.guru_order_id is not null and e.guru_order_id not like 'manual-%'
   ),
   ultimo_status as (
     select distinct on (g.transaction_id) g.transaction_id, g.status
@@ -269,7 +271,8 @@ begin
       'com_liquido',      (select count(*) from vendas where not estornada and liquido is not null),
       'bruto',            (select sum(bruto) from vendas where not estornada),
       'liquido',          (select sum(liquido) from vendas where not estornada),
-      'cortesias',        (select count(*) from enrollments where guru_order_id is null),
+      'cortesias',        (select count(*) from enrollments
+                            where guru_order_id is null or guru_order_id like 'manual-%'),
       'por_dia', (
         select coalesce(jsonb_agg(jsonb_build_object('dia', d.dia, 'n', coalesce(c.n, 0)) order by d.dia), '[]'::jsonb)
         from dias d
