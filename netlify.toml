@@ -56,3 +56,10 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+
+# Blocos HTML dos e-mails do RD Station (13/out/2026): o editor do RD lê estes arquivos por
+# fetch a partir de app.rdstation.com.br. Conteúdo público (é o próprio e-mail), só leitura.
+[[headers]]
+  for = "/email/rd/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
