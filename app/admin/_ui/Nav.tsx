@@ -38,6 +38,14 @@ const ITENS = [
   { href: "/admin/consentimentos", rotulo: "Consentimentos", pronto: true },
 ];
 
+/**
+ * A sala, na lista do observador (13/out/2026). Para ele é a segunda tela de trabalho, não um atalho
+ * de rodapé: revisar o produto é metade do que ele veio fazer. Mesma aba, porque o chrome da sala
+ * tem o "Indicadores" de volta. Fica fora de `ITENS` para não aparecer duplicado na lista do admin,
+ * que já tem o "Área do aluno" no rodapé.
+ */
+const CURSO: (typeof ITENS)[number] = { href: "/app", rotulo: "Ver o curso", pronto: true };
+
 export default function Nav({
   email,
   temAcesso,
@@ -50,7 +58,7 @@ export default function Nav({
   observador?: boolean;
 }) {
   const pathname = usePathname();
-  const itens = observador ? ITENS.filter((i) => i.observador) : ITENS;
+  const itens = observador ? [...ITENS.filter((i) => i.observador), CURSO] : ITENS;
   const router = useRouter();
 
   // `/admin` casa exato; o resto por prefixo, para `/admin/alunos/<id>` manter "Alunos" aceso.
@@ -136,14 +144,14 @@ export default function Nav({
             aluno X": é o admin entrando no curso como ele mesmo, com a matrícula dele, então a
             esteira semanal e o progresso são os da conta dele.
 
-            Abre em outra aba porque o caminho de volta não existe: o chrome do aluno não tem
-            link para o `/admin`, e sem a aba o admin voltaria digitando o endereço. A seta é o
-            que avisa isso, e é por ela que este item não se parece com o "Voltar ao site" logo
-            abaixo, que troca de tela na mesma aba.
+            Abre em outra aba porque foi assim que nasceu, quando o chrome do aluno ainda não tinha
+            link para o `/admin` (desde 13/out/2026 tem o "Painel"). A seta é o que avisa isso, e é
+            por ela que este item não se parece com o "Voltar ao site" logo abaixo, que troca de
+            tela na mesma aba.
 
             Sem matrícula ativa vira texto morto, pelo mesmo motivo do `pronto: false` lá em
-            cima. */}
-        {temAcesso ? (
+            cima. O observador não vê este item: o curso dele é o "Ver o curso" da lista. */}
+        {observador ? null : temAcesso ? (
           <Link
             href="/app"
             target="_blank"

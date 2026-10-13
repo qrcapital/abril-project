@@ -5,6 +5,7 @@ import { getMatricula } from "@/lib/matricula";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getUsuario } from "@/lib/usuario";
 import Chrome from "@/app/app/_ui/Chrome";
+import { CORPO, Painel } from "@/app/app/_ui/feedback";
 
 /**
  * O certificado tem guarda própria, e por isso saiu do grupo `(sala)`.
@@ -30,9 +31,25 @@ import Chrome from "@/app/app/_ui/Chrome";
 export default async function CertificadoLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [{ estado }, user] = await Promise.all([getMatricula(), getUsuario()]);
+  const [{ estado, observador }, user] = await Promise.all([getMatricula(), getUsuario()]);
 
   if (estado === "revogada") redirect("/app/acesso");
+
+  // O observador (0029) navega pela sala, mas não é aluno: não há formação a certificar. Mensagem em
+  // vez de redirect para ele entender por que o botão não leva a uma folha. A emissão em si já é
+  // recusada em `emitirSeConcluiu`, que é a guarda de verdade (a página roda em paralelo com este
+  // layout e chama a emissão por conta própria).
+  if (observador)
+    return (
+      <Chrome>
+        <Painel titulo="Certificado só para alunos" role="status">
+          <p style={CORPO}>
+            Sua conta é de acompanhamento: você pode assistir às aulas e ler todo o material, mas o certificado é
+            emitido apenas para quem se matriculou no curso.
+          </p>
+        </Painel>
+      </Chrome>
+    );
 
   const db = createAdminClient();
   const liberado =

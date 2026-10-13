@@ -92,9 +92,11 @@ export default function AreaChrome({
 
       if (a.closest("#account-menu")) {
         e.preventDefault();
-        // Item com endereço real (o Glossário, que só aparece aqui no celular).
+        // Item com endereço real (o Glossário e o atalho do painel de admin e observador, que só
+        // aparecem aqui no celular). Sem o `/admin` nesta condição, o atalho cairia no `else` lá
+        // embaixo e abriria "Minha conta".
         const ir = a.getAttribute("href");
-        if (ir?.startsWith("/app/")) {
+        if (ir?.startsWith("/app/") || ir?.startsWith("/admin")) {
           const m = menu();
           if (m) m.hidden = true;
           return router.push(ir);

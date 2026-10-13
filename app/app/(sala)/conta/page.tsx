@@ -17,6 +17,18 @@ const template = tela("conta");
 export default async function ContaPage() {
   // O prazo sai do `expires_at` REAL da matrícula (o proxy de `created_at + 1 ano` errava
   // para matrícula estendida ou renovada). `getMatricula` é cache(): o layout já a leu.
-  const [user, { expiraEm }] = await Promise.all([getUsuario(), getMatricula()]);
-  return <ContaClient html={preencherUsuario(template, user, expiraEm)} />;
+  const [user, { expiraEm, observador }] = await Promise.all([getUsuario(), getMatricula()]);
+  const html = preencherUsuario(template, user, expiraEm);
+  return <ContaClient html={observador ? acessoDoObservador(html) : html} />;
+}
+
+/**
+ * O observador (0029) não comprou e não tem prazo: o acesso dura o papel. Sem esta troca, o cartão
+ * diria "1 ano a partir da compra" com uma data inventada (`created_at` + 1 ano, o recuo do
+ * `preencherUsuario` para quem não tem matrícula).
+ */
+function acessoDoObservador(html: string): string {
+  return html
+    .replace(">Acesso liberado por 1 ano<", ">Acesso de acompanhamento<")
+    .replace(/A partir da compra[\s\S]*?<\/b>/, "Vale enquanto sua conta de observador estiver ativa");
 }

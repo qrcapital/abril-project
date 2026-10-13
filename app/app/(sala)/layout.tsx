@@ -26,7 +26,8 @@ export default async function SalaLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   // Sem `?estado=` na URL: a tela de acesso lê o estado do banco, porque parâmetro de query é
   // escolhido por quem digita o endereço e faria a tela contar a história que o visitante quiser.
-  const { estado } = await getMatricula();
+  // O observador (0029) chega aqui com `estado: "ativa"` pelo papel, sem matrícula: ver `getMatricula`.
+  const { estado, observador } = await getMatricula();
   if (estado !== "ativa") redirect("/app/acesso");
 
   // Segunda guarda, do log de consentimento (migration 0023). A ordem é esta de propósito: quem
@@ -38,6 +39,12 @@ export default async function SalaLayout({
   //
   // Custa uma consulta por navegação na sala. Se isso pesar, o caminho é um campo em `profiles`
   // com a última versão aceita, escrito junto do insert, não tirar a guarda daqui.
+  //
+  // O observador fica de fora: os Termos e a Política são os do aluno que comprou, e quem só revisa
+  // o produto não é parte desse contrato. É a mesma exceção que a troca de senha já faz
+  // (`app/app/redefinir-senha/actions.ts`), e sem ela o aceite dele entraria no log de
+  // consentimento que o jurídico da Abril confere.
+  if (observador) return <Chrome>{children}</Chrome>;
   const {
     data: { user },
   } = await (await createClient()).auth.getUser();

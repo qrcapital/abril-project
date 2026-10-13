@@ -138,6 +138,26 @@ export async function concluiuAFormacao(db: SupabaseClient, userId: string): Pro
 }
 
 /**
+ * A conta é de observador (0029)? Observador navega pela sala e marca aula como qualquer um, mas não
+ * comprou e não é aluno: certificado com o nome dele seria um diploma de formação que não houve, e o
+ * e-mail iria para um endereço sintético que volta.
+ *
+ * Mora AQUI, e não só na tela, porque esta função tem três chamadores (a action que marca aula, a
+ * página do certificado e a rota do admin) e o `userId` é o do dono do progresso, não o de quem está
+ * logado. Pergunta pela coluna, com a service role, porque a rota do admin não tem a sessão dele.
+ * Erro de leitura cai em "não é observador": recusar aqui travaria o certificado de aluno de verdade
+ * por um soluço do banco.
+ */
+async function eObservador(db: SupabaseClient, userId: string): Promise<boolean> {
+  const { data, error } = await db.from("profiles").select("is_observer").eq("id", userId).maybeSingle();
+  if (error) {
+    console.error(`[certificado] falha ao ler o papel de ${userId}:`, error.message);
+    return false;
+  }
+  return data?.is_observer === true;
+}
+
+/**
  * Emite o certificado SE o aluno concluiu todas as aulas que contam, e avisa por e-mail na primeira
  * vez. É o gatilho do certificado desde 30/set/2026, chamado depois de toda marcação de conclusão:
  * pela action `marcarAula` (o aluno) e pela rota de progresso do admin (o suporte concluindo um
@@ -155,6 +175,8 @@ export async function concluiuAFormacao(db: SupabaseClient, userId: string): Pro
 export async function emitirSeConcluiu(db: SupabaseClient, userId: string): Promise<Certificado | null> {
   try {
     if (!(await concluiuAFormacao(db, userId))) return null;
+    // Depois da conclusão, e não antes: a pergunta extra só é paga por quem de fato concluiu.
+    if (await eObservador(db, userId)) return null;
     const cert = await emitirCertificado(db, userId);
     if (!cert?.novo) return cert;
 
