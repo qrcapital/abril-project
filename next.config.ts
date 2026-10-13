@@ -36,12 +36,27 @@ const ENDERECOS_ANTIGOS = [
   { source: "/admin/questoes/:resto*", destination: "/admin", permanent: false },
 ];
 
+/**
+ * A raiz manda para a página do curso (13/out/2026, pedido do dono, depois da live).
+ *
+ * Redirect, e não a raiz servindo o curso (o `VENDAS_ABERTAS` de `app/_lp/fase.ts`), porque todos
+ * os links já distribuídos apontam para `blocktrends.abril.com.br` sem caminho: e-mails do RD,
+ * jabá e bio do Instagram, matérias, anúncios. Com o redirect nenhum deles precisa ser trocado, e
+ * o endereço que fica na barra é o `/curso`, o mesmo da página de vendas.
+ *
+ * A query string vai junto (o Next preserva por padrão), então as UTMs dos links antigos chegam
+ * inteiras no `/curso`. 307 pelo mesmo motivo dos redirects acima: se a raiz voltar a ter
+ * conteúdo próprio, nenhum navegador fica preso num 308 gravado. A pré-lista continua acessível
+ * em `/lista-de-espera`.
+ */
+const RAIZ_PARA_CURSO = { source: "/", destination: "/curso", permanent: false };
+
 const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: SEGURANCA }];
   },
   async redirects() {
-    return ENDERECOS_ANTIGOS;
+    return [RAIZ_PARA_CURSO, ...ENDERECOS_ANTIGOS];
   },
 };
 
