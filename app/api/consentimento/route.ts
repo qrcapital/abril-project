@@ -1,7 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { TEXTO_AVISO_LISTA, ipDaRequisicao, registrarConsentimento } from "@/lib/consentimento";
+import { ipDaRequisicao, registrarConsentimento } from "@/lib/consentimento";
 import { consumirLimite } from "@/lib/limite";
+import { textoLogLista } from "@/lib/textos-lista";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -86,7 +87,9 @@ export async function POST(req: NextRequest) {
       email,
       nome: texto(corpo.nome, 200),
       origem: "lista-de-espera",
-      texto: TEXTO_AVISO_LISTA,
+      // As duas caixas na mesma linha, com o estado da opcional (ver `textoLogLista`). Só
+      // `true` literal conta como marcada: qualquer outra coisa no corpo é "não marcada".
+      texto: textoLogLista(corpo.comunicacoes === true),
       tipos: ["politica"],
     });
   } catch (e) {

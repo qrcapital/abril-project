@@ -2,6 +2,12 @@
 
 import { useState } from "react";
 import CartaoConfirmado from "./CartaoConfirmado";
+import {
+  TEXTO_LISTA_COMUNICACOES,
+  TEXTO_LISTA_DADOS,
+  TRECHO_LINK_POLITICA,
+  URL_POLITICA_LISTA,
+} from "@/lib/textos-lista";
 
 /**
  * Formulário da pré-lista. Uma conversão só: nome, e-mail, WhatsApp e uma
@@ -22,9 +28,8 @@ import CartaoConfirmado from "./CartaoConfirmado";
 
 const OPCOES = ["Ainda não", "Só um pouco", "Sim, já invisto"] as const;
 
-/** Pendência do cliente (item 23 do PENDENCIAS-LP). Vazio: o texto do aceite sai
- *  sem link, que é melhor que um link morto numa tela que coleta dado pessoal. */
-const POLITICA = process.env.NEXT_PUBLIC_POLITICA_PRIVACIDADE_URL ?? "";
+/** A frase 1 sem o trecho que vira link (ver `lib/textos-lista.ts`). */
+const DADOS_ANTES_DO_LINK = TEXTO_LISTA_DADOS.slice(0, TEXTO_LISTA_DADOS.lastIndexOf(TRECHO_LINK_POLITICA));
 
 /**
  * Dígitos apenas, no máximo 11: (99) → (99) 9999 → (99) 9999-9999 → (99) 99999-9999.
@@ -70,6 +75,7 @@ export default function Formulario() {
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<"envio" | "aceite" | null>(null);
   const [aceite, setAceite] = useState(false);
+  const [comunicacoes, setComunicacoes] = useState(false);
   const [investidor, setInvestidor] = useState("");
   const [telefone, setTelefone] = useState("");
 
@@ -147,7 +153,7 @@ export default function Formulario() {
         const r = await fetch("/api/consentimento", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ email, nome: campo("nome") }),
+          body: JSON.stringify({ email, nome: campo("nome"), comunicacoes }),
           signal: corta,
         });
         // O `ok` do CORPO, e não o `r.ok` do status. A rota responde 200 mesmo quando não
@@ -284,11 +290,12 @@ export default function Formulario() {
 
           O hidden continua, agora dizendo COMO o aceite foi colhido: a captura
           automática do RD só enxerga campo de formulário, e sem ele a base legal
-          da conversão chegaria em branco no painel.
-
-          Os dois `le-junto` são nomes próprios que não podem partir no meio de
-          uma linha: a marca e o nome da política. */}
-      <label className="le-aceite" htmlFor="aceite">
+          da conversão chegaria em branco no painel. */}
+      {/* DUAS CAIXAS desde 13/out/2026, a pedido do jurídico da Abril (item 3.2 da
+          Política: consentimento específico por finalidade). A primeira é obrigatória;
+          a segunda, de comunicações futuras, é opcional e não trava o envio. Os textos
+          são os do jurídico e moram em lib/textos-lista.ts, a mesma fonte do log. */}
+      <label className="le-aceite le-aceite-1" htmlFor="aceite">
         <input
           className="le-aceite-caixa"
           type="checkbox"
@@ -299,15 +306,28 @@ export default function Formulario() {
           onChange={(ev) => setAceite(ev.target.checked)}
         />
         <span className="le-lgpd le-aceite-texto">
-          Autorizo o contato da <span className="le-junto">VEJA Negócios</span> e do BlockTrends
-          sobre esta formação e concordo com a{" "}
-          {POLITICA
-            ? <a className="le-junto" href={POLITICA} target="_blank" rel="noopener noreferrer">Política de Privacidade · LGPD</a>
-            : <span className="le-junto">Política de Privacidade · LGPD</span>}
+          {DADOS_ANTES_DO_LINK}
+          <a href={URL_POLITICA_LISTA} target="_blank" rel="noopener noreferrer">
+            {TRECHO_LINK_POLITICA}
+          </a>
           .
         </span>
       </label>
+      <label className="le-aceite" htmlFor="aceite-comunicacoes">
+        <input
+          className="le-aceite-caixa"
+          type="checkbox"
+          id="aceite-comunicacoes"
+          checked={comunicacoes}
+          onChange={(ev) => setComunicacoes(ev.target.checked)}
+        />
+        <span className="le-lgpd le-aceite-texto">{TEXTO_LISTA_COMUNICACOES}</span>
+      </label>
+      {/* Hiddens para a captura automática do RD, que só enxerga campo de formulário.
+          `comunicacoes_futuras` é o que separa, no RD, quem pode receber e-mail de
+          outros cursos ("sim") de quem só autorizou a inscrição nesta live e curso. */}
       <input type="hidden" name="lgpd" value="aceito-em-caixa" />
+      <input type="hidden" name="comunicacoes_futuras" value={comunicacoes ? "sim" : "nao"} />
 
       {/* Botão em trabalho (DESIGN.md §3): o rótulo vira gerúndio, o botão
           desabilita e anuncia aria-busy. Sem spinner, e sem travar largura —
@@ -321,7 +341,7 @@ export default function Formulario() {
           resolver sozinha. Sem acusar: "pode estar barrando". */}
       {erro === "aceite" && (
         <p className="le-erro" role="alert">
-          Marque a caixa acima para continuar. Sem ela não podemos registrar o seu consentimento.
+          Marque a primeira caixa acima para continuar. Sem ela não podemos registrar a sua inscrição.
         </p>
       )}
       {erro === "envio" && (

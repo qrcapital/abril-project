@@ -642,6 +642,9 @@ body:has(.le-escuro) { background: #0a0a0a }
    da caixa, `text-wrap: balance` encurtava a última linha e abria um vão que
    fazia o bloco parecer torto. */
 .le-aceite-texto { text-align: left; text-wrap: initial }
+/* Duas caixas desde 13/out/2026 (jurídico da Abril): a primeira encosta na
+   segunda, e só a segunda guarda o respiro antes do botão. */
+.le-aceite-1 { margin-bottom: 10px }
 
 /* O botão carrega o vermelho da campanha, no lugar do dourado antigo: nos
    banners é ele que marca o ponto de ação, e aqui o ponto de ação é este. */

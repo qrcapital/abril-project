@@ -48,22 +48,10 @@ export const TEXTO_ACEITE =
   "Li e aceito os Termos de Uso e a Política de Privacidade, e autorizo o tratamento dos meus dados pessoais nas condições descritas nesses documentos.";
 
 /**
- * A frase ao lado da caixa da `/lista-de-espera`.
- *
- * HISTÓRIA CURTA, PORQUE ELA SE INVERTEU DUAS VEZES: a tela nasceu com caixa, a caixa saiu e o
- * consentimento virou o próprio envio (aviso acima do botão, sem atrito de topo de funil), e em
- * 28/set/2026 a caixa voltou, a pedido do jurídico da Abril, que nomeou o checkbox ao perguntar
- * pelo log de consentimento.
- *
- * O texto acompanhou a inversão: era "Ao enviar, você autoriza", descrevendo um ato que acontecia
- * no botão, e virou "Autorizo", na primeira pessoa, porque agora o ato é marcar a caixa. Gravar
- * "ao enviar, você autoriza" num log colhido por checkbox descreveria errado o que a pessoa fez.
- *
- * Tem de ser igual ao JSX do `Formulario.tsx`, palavra por palavra: é isto que vai congelado em
- * `consents.texto`, e o valor do log é justamente ser o que estava na tela.
+ * As frases da pré-lista moram em `lib/textos-lista.ts` desde 13/out/2026, quando a caixa única
+ * virou duas a pedido do jurídico da Abril (uma obrigatória, uma opcional). Lá, porque o
+ * formulário é componente de cliente e este arquivo é `server-only`.
  */
-export const TEXTO_AVISO_LISTA =
-  "Autorizo o contato da VEJA Negócios e do BlockTrends sobre esta formação e concordo com a Política de Privacidade · LGPD.";
 
 /**
  * Onde os dois documentos vivem.
