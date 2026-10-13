@@ -132,9 +132,13 @@ export default async function IndicadoresPage() {
     },
     {
       rotulo: "Receita bruta",
-      valor: reais(v.bruto),
+      // Sem venda válida, a receita é zero, não "indisponível": a tela é vista por quem é de fora,
+      // e "indisponível" com zero vendas parecia defeito (13/out/2026).
+      valor: v.validas === 0 ? reais(0) : reais(v.bruto),
       nota:
-        v.bruto === null
+        v.validas === 0
+          ? "nenhuma venda paga até agora"
+          : v.bruto === null
           ? "nenhuma venda trouxe valor no aviso do Guru"
           : v.comValor < v.validas
             ? `soma de ${v.comValor} das ${v.validas} vendas; as outras chegaram sem valor`
@@ -142,9 +146,11 @@ export default async function IndicadoresPage() {
     },
     {
       rotulo: "Receita líquida",
-      valor: reais(v.liquido),
+      valor: v.validas === 0 ? reais(0) : reais(v.liquido),
       nota:
-        v.liquido === null
+        v.validas === 0
+          ? "nenhuma venda paga até agora"
+          : v.liquido === null
           ? "o aviso do Guru não trouxe o valor líquido"
           : v.comLiquido < v.validas
             ? `soma de ${v.comLiquido} das ${v.validas} vendas; as outras chegaram sem líquido`
@@ -153,7 +159,12 @@ export default async function IndicadoresPage() {
     {
       rotulo: "Ticket médio",
       valor: reais(ticket),
-      nota: ticket === null ? "depende do valor bruto" : "receita bruta por venda com valor",
+      nota:
+        v.validas === 0
+          ? "aparece com a primeira venda paga"
+          : ticket === null
+            ? "depende do valor bruto"
+            : "receita bruta por venda com valor",
     },
   ];
 
