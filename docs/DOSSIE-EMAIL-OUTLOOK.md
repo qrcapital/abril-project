@@ -35,7 +35,7 @@
 - Registro recomendado: `v=DMARC1; p=quarantine; pct=100; adkim=r; aspf=r`. Alinhamento relaxado porque já houve envio com From em `mail.blocktrends.com.br`, que falharia com `adkim=s`. Subir para `p=reject` depois de algumas semanas sem problema.
 
 ## O que falta (Marcelo)
-1. Trocar o TXT `_dmarc` no Cloudflare pelo registro acima.
+1. ~~Trocar o TXT `_dmarc` no Cloudflare pelo registro acima.~~ Feito em 10/out/2026, conferido no DNS público: `v=DMARC1; p=quarantine; pct=100; adkim=r; aspf=r`. Subir para `p=reject` depois de algumas semanas sem problema.
 2. Opcional, para reputação na Microsoft: cadastrar o domínio no Microsoft SNDS/JMRP e, se o volume crescer, avaliar IP dedicado no SES.
 
 ## Para a Luana agora
