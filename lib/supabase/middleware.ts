@@ -1,6 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { precisaTrocarSenha } from "@/lib/usuario-login";
+
 /**
  * Renova a sessão do Supabase a cada request e protege as rotas da área do aluno.
  * Sem sessão em /app/* (exceto as telas de acesso), redireciona para /app/login.
@@ -78,6 +80,29 @@ export async function updateSession(request: NextRequest) {
     // entrado leria que a sessão dele expirou, o que manda procurar um problema que não existe.
     if (tinhaSessao) url.searchParams.set("estado", "expirou");
     return NextResponse.redirect(url);
+  }
+
+  // TROCA DE SENHA OBRIGATÓRIA (13/out/2026). Conta criada pelo admin com senha gerada (os
+  // observadores por usuário) nasce com `app_metadata.trocar_senha`, e até trocar não abre nada em
+  // /app nem em /admin. Fica aqui porque é o único lugar que já tem o usuário em toda navegação, e o
+  // `getUser()` lê do Auth, não do JWT: a marca limpa pela troca vale já na requisição seguinte.
+  // As telas de acesso (inclusive a própria troca) e as rotas de API ficam de fora, para não haver
+  // laço nem POST redirecionado; as rotas do admin recusam o observador sozinhas.
+  if (
+    precisaTrocarSenha(user) &&
+    !isAccessScreen &&
+    !path.startsWith("/admin/api/") &&
+    (path.startsWith("/app") || path.startsWith("/admin"))
+  ) {
+    // Location relativo, como o `redirecionar303`: atrás da Netlify a URL da requisição pode
+    // trazer o host interno. Os cookies que o getUser() renovou acima vão junto, senão a sessão
+    // renovada se perderia neste redirect.
+    const destino = new NextResponse(null, {
+      status: 307,
+      headers: { Location: "/app/redefinir-senha?primeiro=1", "Cache-Control": "no-store" },
+    });
+    response.cookies.getAll().forEach((c) => destino.cookies.set(c));
+    return destino;
   }
 
   return response;

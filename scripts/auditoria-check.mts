@@ -76,6 +76,15 @@ import { descrever, rotularAcao } from "../lib/auditoria-texto.ts";
   assert.deepEqual(descrever("papel.promover", { email: "ana@x.com", era_mestre: false }), [
     "ana@x.com",
   ]);
+  // Observador por usuário (13/out/2026): aparece pelo usuário, não pelo e-mail interno.
+  assert.deepEqual(
+    descrever("papel.observador-usuario-criar", {
+      login: "abril.indicadores",
+      nome: "Abril",
+      email: "abril.indicadores@acesso.blocktrends.abril.com.br",
+    }),
+    ["abril.indicadores", "Abril"],
+  );
 }
 
 // --- questões e conteúdo (item 19 do plano de 17/ago): o gabarito é o porquê do rastro ---

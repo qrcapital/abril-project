@@ -1,9 +1,18 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 
 import BotaoPapel from "./BotaoPapel";
-import { ConcederObservador, RevogarObservador } from "./Observador";
+import {
+  ConcederObservador,
+  CriarObservadorUsuario,
+  NovaSenhaObservador,
+  QuadroCredencial,
+  RevogarObservador,
+} from "./Observador";
 import { exigirAdmin } from "@/lib/admin-guarda";
+import { COOKIE_CREDENCIAL, lerCredencial } from "@/lib/credencial";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { rotuloDaConta, usuarioDoEmail } from "@/lib/usuario-login";
 
 export const metadata: Metadata = { title: "Equipe" };
 
@@ -59,6 +68,16 @@ const MENSAGENS: Record<string, { tom: "sucesso" | "erro"; texto: string }> = {
       "Conta criada com acesso de observador, mas o e-mail de senha não saiu. Peça para a pessoa usar Esqueci minha senha na tela de login.",
   },
   "observador-revogado": { tom: "sucesso", texto: "Acesso de observador removido." },
+  // Os dois do observador por usuário. O quadro com a senha vem à parte, do cookie; se ele não
+  // chegar (recarregou depois de dois minutos), esta frase é o que sobra, e diz o que fazer.
+  "usuario-criado": {
+    tom: "sucesso",
+    texto: "Acesso por usuário criado. Se a senha não aparece abaixo, gere outra com Nova senha.",
+  },
+  "usuario-senha": {
+    tom: "sucesso",
+    texto: "Senha nova gerada. Se ela não aparece abaixo, gere outra com Nova senha.",
+  },
 };
 
 export default async function Equipe({
@@ -71,6 +90,10 @@ export default async function Equipe({
   const eu = await exigirAdmin();
   const { q = "", ok, erro } = await searchParams;
   const termo = q.trim();
+  // A senha gerada pela rota de observador por usuário, quando o admin acabou de criar ou trocar.
+  // A tela não consegue apagar cookie (componente de servidor); o `QuadroCredencial` pede isso à
+  // rota assim que aparece.
+  const credencial = lerCredencial((await cookies()).get(COOKIE_CREDENCIAL)?.value);
 
   const db = createAdminClient();
 
@@ -102,6 +125,16 @@ export default async function Equipe({
           conteúdo do curso e os e-mails. Observador vê só os indicadores, em números agregados.
         </p>
       </header>
+
+      {credencial && (
+        <QuadroCredencial
+          login={credencial.login}
+          nome={credencial.nome}
+          senha={credencial.senha}
+          url={credencial.url}
+          nova={credencial.tipo === "nova"}
+        />
+      )}
 
       {aviso && (
         <p
@@ -192,6 +225,14 @@ export default async function Equipe({
         </p>
         <ConcederObservador q={q} />
 
+        <h3 className="mt-6 mb-1 text-[14px] text-tinta">Criar acesso por usuário</h3>
+        <p className="mb-3 max-w-2xl text-[12px] text-medio">
+          Para quem entra sem e-mail, com um nome de usuário. A senha é gerada aqui e aparece uma vez
+          só; no primeiro acesso a pessoa cria a dela. A mesma conta pode ficar aberta em vários
+          aparelhos ao mesmo tempo.
+        </p>
+        <CriarObservadorUsuario />
+
         <div className="mt-4">
           {listaObs.error ? (
             <p className="text-[13px] text-medio">
@@ -204,7 +245,7 @@ export default async function Equipe({
               <table className="w-full min-w-[560px] border-collapse text-left">
                 <thead>
                   <tr className="border-b border-bege">
-                    {["E-mail", "Nome", ""].map((h) => (
+                    {["Conta", "Nome", ""].map((h) => (
                       <th
                         key={h}
                         className="px-4 py-2.5 text-[11px] font-semibold tracking-[0.1em] text-pedra uppercase"
@@ -215,15 +256,24 @@ export default async function Equipe({
                   </tr>
                 </thead>
                 <tbody>
-                  {observadores.map((o) => (
-                    <tr key={o.id} className="border-b border-bege last:border-0">
-                      <td className="px-4 py-3 text-[13px] text-grafite">{o.email}</td>
-                      <td className="px-4 py-3 text-[13px] text-medio">{o.nome || "sem nome"}</td>
-                      <td className="px-4 py-3 text-right">
-                        <RevogarObservador userId={o.id} email={o.email} q={q} />
-                      </td>
-                    </tr>
-                  ))}
+                  {observadores.map((o) => {
+                    const login = usuarioDoEmail(o.email);
+                    return (
+                      <tr key={o.id} className="border-b border-bege last:border-0">
+                        <td className="px-4 py-3 text-[13px] text-grafite">
+                          {rotuloDaConta(o.email)}
+                          {login && <span className="ml-2 text-[11px] text-pedra">usuário</span>}
+                        </td>
+                        <td className="px-4 py-3 text-[13px] text-medio">{o.nome || "sem nome"}</td>
+                        <td className="px-4 py-3">
+                          <div className="flex justify-end gap-2">
+                            {login && <NovaSenhaObservador userId={o.id} login={login} />}
+                            <RevogarObservador userId={o.id} email={rotuloDaConta(o.email)} q={q} />
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

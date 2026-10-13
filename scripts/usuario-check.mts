@@ -10,6 +10,17 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 import { preencherUsuario } from "../lib/usuario-template.ts";
+import {
+  DOMINIO_LOGIN,
+  emailDoUsuario,
+  emailParaEntrar,
+  gerarSenha,
+  precisaTrocarSenha,
+  rotuloDaConta,
+  usuarioDoEmail,
+  usuarioValido,
+} from "../lib/usuario-login.ts";
+import { validarSenha } from "../lib/senha.ts";
 
 const ler = (p: string) => readFileSync(`app/app/_ui/${p}`, "utf8");
 
@@ -84,5 +95,32 @@ assert.ok(
   ler("screens/conta.html").includes("Trocar senha"),
   "conta.html perdeu o link 'Trocar senha', âncora do formulário de troca",
 );
+
+// Login por usuário (13/out/2026). O login converte no navegador e a rota do admin valida no
+// servidor com as mesmas funções; se as duas pontas divergirem, a conta criada não entra.
+assert.equal(emailDoUsuario("Abril.Indicadores"), `abril.indicadores@${DOMINIO_LOGIN}`);
+assert.equal(emailParaEntrar(" aluno@x.com "), "aluno@x.com", "e-mail de aluno mudou no login");
+assert.equal(emailParaEntrar(" qr-capital "), `qr-capital@${DOMINIO_LOGIN}`);
+assert.equal(usuarioDoEmail(`teste_1@${DOMINIO_LOGIN}`), "teste_1");
+assert.equal(usuarioDoEmail("aluno@x.com"), null);
+assert.equal(rotuloDaConta("aluno@x.com"), "aluno@x.com");
+for (const ok of ["abril.indicadores", "qr-capital", "abc", "teste_1", "a".repeat(40)])
+  assert.ok(usuarioValido(ok), `${ok} deveria valer`);
+for (const ruim of ["ab", "a".repeat(41), ".abril", "abril.", "ab..cd", "Abril", "a b", "abril@x", "ação"])
+  assert.ok(!usuarioValido(ruim), `${ruim} não deveria valer`);
+assert.ok(precisaTrocarSenha({ app_metadata: { trocar_senha: true } }));
+assert.ok(!precisaTrocarSenha({ app_metadata: { trocar_senha: false } }));
+assert.ok(!precisaTrocarSenha(null));
+
+// A senha gerada passa na regra do produto, não tem caractere ambíguo e não se repete.
+const senhas = new Set<string>();
+for (let i = 0; i < 300; i++) {
+  const s = gerarSenha();
+  assert.equal(s.length, 16);
+  assert.equal(validarSenha(s), null, `senha gerada recusada: ${s}`);
+  assert.ok(!/[0O1lI]/.test(s), `senha gerada com caractere ambíguo: ${s}`);
+  senhas.add(s);
+}
+assert.equal(senhas.size, 300, "senha gerada repetiu");
 
 console.log("usuario-check: ok");

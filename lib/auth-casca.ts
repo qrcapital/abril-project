@@ -92,6 +92,17 @@ const EMAIL =
   rotulo("E-mail", "email") +
   input({ nome: "email", tipo: "email", autoComplete: "email", placeholder: "seu@email.com" });
 
+/**
+ * O campo do login com senha aceita e-mail OU usuário (13/out/2026): as contas de observador
+ * entram com usuário (`lib/usuario-login.ts`). Por isso é `text` e `username`, e não `email`: o
+ * navegador recusaria "abril.indicadores" num campo de e-mail. O `id` continua `email`, que é como
+ * o `LoginClient` acha o campo. O primeiro acesso segue com o campo de e-mail, porque ali a conta
+ * nasce de uma compra e o e-mail é obrigatório.
+ */
+const LOGIN_CAMPO =
+  rotulo("E-mail ou usuário", "email") +
+  input({ nome: "email", tipo: "text", autoComplete: "username", placeholder: "seu@email.com" });
+
 const AJUDA = rodape(`Precisa de ajuda? <a href="#" class="au-link">Fale no WhatsApp</a>`);
 
 /** Senha do login normal: o rótulo divide a linha com o "Esqueci minha senha". */
@@ -110,13 +121,13 @@ const CABECA_LOGIN =
  * barra "Teste" do `LoginClient`); a regular é a que o aluno vê.
  */
 export const LOGIN = {
-  regular: casca(CABECA_LOGIN + EMAIL + SENHA_LOGIN + botao("Entrar", "button") + AJUDA),
+  regular: casca(CABECA_LOGIN + LOGIN_CAMPO + SENHA_LOGIN + botao("Entrar", "button") + AJUDA),
 
   erro: casca(
     CABECA_LOGIN +
       `<div class="au-caixa au-caixa-erro" role="alert"><span class="au-caixa-glifo" aria-hidden="true">!</span>` +
       `<span>E-mail ou senha incorretos. Verifique os dados e tente novamente, ou redefina sua senha abaixo.</span></div>` +
-      EMAIL +
+      LOGIN_CAMPO +
       SENHA_LOGIN +
       botao("Entrar", "button") +
       AJUDA,
@@ -129,7 +140,7 @@ export const LOGIN = {
       `<path d="M12 7v5l3 2"></path></svg><span>Seu pagamento está em processamento. Assim que o banco ` +
       `confirmar (boleto e Pix levam até 1 dia útil), seu acesso é liberado e avisamos por e-mail. ` +
       `Precisa de ajuda? Fale com o suporte.</span></div>` +
-      EMAIL +
+      LOGIN_CAMPO +
       SENHA_LOGIN +
       botao("Entrar", "button") +
       AJUDA,

@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import Nav from "@/app/admin/_ui/Nav";
 import { papelAtual } from "@/lib/admin";
 import { getMatricula } from "@/lib/matricula";
+import { rotuloDaConta } from "@/lib/usuario-login";
 
 import "./admin.css";
 
@@ -53,7 +54,8 @@ export default async function AdminLayout({
   return (
     <div className="admin-root grid min-h-dvh grid-cols-[232px_1fr]">
       <aside className="sticky top-0 h-dvh">
-        <Nav email={email} temAcesso={estado === "ativa"} observador={papel === "observador"} />
+        {/* Conta de usuário (observador) aparece pelo usuário, não pelo e-mail interno. */}
+        <Nav email={email ? rotuloDaConta(email) : email} temAcesso={estado === "ativa"} observador={papel === "observador"} />
       </aside>
       <main className="min-w-0 px-8 py-8">{children}</main>
     </div>

@@ -22,6 +22,9 @@ export const ROTULO_ACAO: Record<string, string> = {
   "papel.revogar": "Revogou admin",
   "papel.observador-conceder": "Deu observador",
   "papel.observador-revogar": "Revogou observador",
+  // Observador por usuário (13/out/2026), em `admin/api/observador-usuario`.
+  "papel.observador-usuario-criar": "Criou observador",
+  "papel.observador-usuario-senha": "Gerou senha nova",
   // Ações da prova final, que saiu do curso em 30/set/2026. Nenhuma tela gera mais estes registros;
   // os rótulos ficam para as linhas antigas de `admin_audit` continuarem legíveis.
   "prova.segunda-chamada": "Liberou 2ª chamada",
@@ -115,7 +118,9 @@ export function descrever(acao: string, detalhe: Record<string, unknown> | null)
   }
 
   if (acao.startsWith("papel.")) {
-    const linhas = [String(d.email ?? "")].filter(Boolean);
+    // Conta de usuário aparece pelo usuário: o e-mail dela é interno e ninguém o reconhece.
+    const linhas = [String(d.login ?? d.email ?? "")].filter(Boolean);
+    if (d.nome) linhas.push(String(d.nome));
     if (d.era_mestre === true) linhas.push("era admin mestre");
     // Observador (0029): conta nova criada pelo próprio ato, e se o link de senha saiu.
     if (d.conta_criada === true) {

@@ -6,6 +6,7 @@ import { vaiAoPainel } from "@/lib/acesso-painel";
 import { createClient } from "@/lib/supabase/client";
 import { criarConta } from "./actions";
 import { validarSenha } from "@/lib/senha";
+import { emailParaEntrar, precisaTrocarSenha } from "@/lib/usuario-login";
 import { emTrabalho, ligarExigencias, pintarCaixa } from "@/app/app/_ui/feedback";
 
 import contato from "@/lib/contato.json";
@@ -65,7 +66,9 @@ export default function LoginClient({
 
     const inputs = [...root.querySelectorAll<HTMLInputElement>("input")];
     inputs.forEach((i) => (i.value = "")); // limpa os valores de exemplo do design
-    const emailInput = inputs.find((i) => i.type === "email");
+    // Pelo `id`, e não pelo `type`: no login com senha o campo virou `text` para aceitar usuário
+    // (13/out/2026); no primeiro acesso ele continua `email`.
+    const emailInput = inputs.find((i) => i.id === "email");
     const camposSenha = inputs.filter((i) => i.type === "password");
     const passwords = () => camposSenha.map((i) => i.value);
     const btn = root.querySelector<HTMLButtonElement>("button");
@@ -125,7 +128,7 @@ export default function LoginClient({
       clearError();
       const email = (emailInput?.value || "").trim();
       const [p1, p2] = passwords();
-      if (!email) return showError("Informe o e-mail.");
+      if (!email) return showError(mode === "primeiro" ? "Informe o e-mail." : "Informe o e-mail ou usuário.");
       if (!p1) return showError("Informe a senha.");
 
       const restaurar = emTrabalho(btn, mode === "primeiro" ? "Criando conta..." : "Entrando...");
@@ -147,8 +150,19 @@ export default function LoginClient({
           // Sai de qualquer sessão que já estivesse no navegador antes de entrar com outra conta,
           // para não sobrar cookie da anterior (10/out/2026).
           await supabase.auth.signOut({ scope: "local" }).catch(() => {});
-          const { error } = await supabase.auth.signInWithPassword({ email, password: p1 });
-          if (error) return showError("E-mail ou senha incorretos.");
+          // Sem `@` é usuário (observador) e vira o e-mail interno; com `@` segue como sempre.
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: emailParaEntrar(email),
+            password: p1,
+          });
+          if (error) return showError(email.includes("@") ? "E-mail ou senha incorretos." : "Usuário ou senha incorretos.");
+          // Conta com senha gerada pelo admin troca a senha antes de qualquer coisa. O proxy faria
+          // o mesmo desvio na próxima navegação; ir direto poupa um redirect e uma tela piscando.
+          if (precisaTrocarSenha(data.user)) {
+            router.push("/app/redefinir-senha?primeiro=1");
+            router.refresh();
+            return;
+          }
           // Porta única para as duas áreas (decisão do Pedro, 30/jul/2026): quem entra aqui
           // pode ser aluno ou admin, e o DESTINO decide pelo papel. Uma tela própria em
           // /admin/login dobraria a superfície de autenticação e pediria o próprio fluxo de

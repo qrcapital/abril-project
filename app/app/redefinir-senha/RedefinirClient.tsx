@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { definirSenha } from "./actions";
+import { createClient } from "@/lib/supabase/client";
 import { validarSenha } from "@/lib/senha";
 import { emTrabalho, ligarExigencias, pintarCaixa } from "@/app/app/_ui/feedback";
 import Html from "@/app/app/_ui/Html";
@@ -13,8 +14,9 @@ import Html from "@/app/app/_ui/Html";
  * digitação e não precisa de ida ao servidor; o tamanho mínimo é conferido nos dois lados,
  * já que validação de cliente não é garantia de nada.
  *
- * Deu certo, vai direto para `/app`: o aluno acabou de provar posse do e-mail, então exigir
- * login em seguida seria atrito sem ganho.
+ * Deu certo, vai direto para o destino que a action devolve (`/app` para aluno, o painel para
+ * admin e observador): a pessoa acabou de provar quem é, então exigir login em seguida seria atrito
+ * sem ganho.
  *
  * `exigeAceite` diz se a tela veio com a caixa dos documentos (migration `0023`). A conferência
  * aqui é só para a mensagem aparecer sem ida ao servidor; quem de fato recusa é a action, que
@@ -84,7 +86,13 @@ export default function RedefinirClient({
       //
       // Primeiro acesso e senha redefinida caem na página inicial da área logada (09/out/2026,
       // pedido do Marcelo). Antes iam direto para a aula do Módulo I, pulando o início.
-      router.push("/app");
+      //
+      // Na troca obrigatória a action limpou `trocar_senha` no Auth, mas o JWT deste navegador
+      // ainda carrega a marca antiga. O proxy lê do Auth e já deixaria passar; renovar a sessão é
+      // para o token não contradizer o servidor. Falhar aqui não impede nada.
+      if (r.renovar) await createClient().auth.refreshSession().catch(() => {});
+      router.push(r.destino);
+      router.refresh();
     } else {
       restaurar();
       setErro(r.erro);
